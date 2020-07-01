@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+//Getters
+
+Route::get('/productos','Product_Controller@getAll');
+
+Route::get('/recetas','Recipe_Controller@getAll');
