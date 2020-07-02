@@ -28,3 +28,11 @@ Route::get('/dietas','DietController@getAll');
 Route::get('/agendas','AgendaController@getAll');
 Route::get('/grupos','GroupController@getAll');
 Route::get('/marcas','BrandController@getAll');
+Route::get('/categorias','CategoryController@getAll');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

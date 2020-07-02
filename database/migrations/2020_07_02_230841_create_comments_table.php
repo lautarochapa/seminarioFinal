@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLiistProductTable extends Migration
+class CreateCommentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateLiistProductTable extends Migration
      */
     public function up()
     {
-        Schema::create('liist_product', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->integer('liist_id')->unsigned();
-            $table->integer('product_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->integer('sobre');
+            $table->integer('sobre_id')->unsigned();
+            $table->string("comentario");
+            $table->integer("padre")->nullable;
+            $table->integer("estado");
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateLiistProductTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('liist_product');
+        Schema::dropIfExists('comments');
     }
 }
