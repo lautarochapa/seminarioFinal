@@ -11,7 +11,7 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        DB::table('categories')->insert(['nombre' => 'Almacen', 'padre' => '']);
+        DB::table('categories')->insert(['nombre' => 'Almacen', 'padre' => '0']);
         DB::table('categories')->insert(['nombre' => 'Golosinas', 'padre' => '1']);
         DB::table('categories')->insert(['nombre' => 'Alfajores', 'padre' => '2']);
         DB::table('categories')->insert(['nombre' => 'Bombones y bocadillos', 'padre' => '2']);
@@ -88,7 +88,7 @@ class CategorySeeder extends Seeder
         DB::table('categories')->insert(['nombre' => 'Maiz saborizado', 'padre' => '72']);
         DB::table('categories')->insert(['nombre' => 'Mani', 'padre' => '72']);
         DB::table('categories')->insert(['nombre' => 'Leche en polvo', 'padre' => '1']);
-        DB::table('categories')->insert(['nombre' => 'Bebidas', 'padre' => '']);
+        DB::table('categories')->insert(['nombre' => 'Bebidas', 'padre' => '0']);
         DB::table('categories')->insert(['nombre' => 'Bebidas sin alcohol', 'padre' => '78']);
         DB::table('categories')->insert(['nombre' => 'Gaseosas', 'padre' => '79']);
         DB::table('categories')->insert(['nombre' => 'Jugos', 'padre' => '79']);
@@ -99,7 +99,7 @@ class CategorySeeder extends Seeder
         DB::table('categories')->insert(['nombre' => 'Vinos', 'padre' => '84']);
         DB::table('categories')->insert(['nombre' => 'Aperitivos', 'padre' => '84']);
         DB::table('categories')->insert(['nombre' => 'Champagne y espumantes', 'padre' => '84']);
-        DB::table('categories')->insert(['nombre' => 'Frescos', 'padre' => '']);
+        DB::table('categories')->insert(['nombre' => 'Frescos', 'padre' => '0']);
         DB::table('categories')->insert(['nombre' => 'Lacteos', 'padre' => '89']);
         DB::table('categories')->insert(['nombre' => 'Leches', 'padre' => '90']);
         DB::table('categories')->insert(['nombre' => 'Yogures', 'padre' => '90']);
@@ -139,7 +139,7 @@ class CategorySeeder extends Seeder
         DB::table('categories')->insert(['nombre' => 'Pastas rellenas', 'padre' => '124']);
         DB::table('categories')->insert(['nombre' => 'Tapas para pacualina y empanadas', 'padre' => '124']);
         DB::table('categories')->insert(['nombre' => 'Masas preparadas', 'padre' => '124']);
-        DB::table('categories')->insert(['nombre' => 'Congelados', 'padre' => '']);
+        DB::table('categories')->insert(['nombre' => 'Congelados', 'padre' => '0']);
         DB::table('categories')->insert(['nombre' => 'Helados y postres', 'padre' => '129']);
         DB::table('categories')->insert(['nombre' => 'Postres helados', 'padre' => '130']);
         DB::table('categories')->insert(['nombre' => 'Yogur helados', 'padre' => '130']);
