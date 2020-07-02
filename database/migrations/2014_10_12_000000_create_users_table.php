@@ -16,21 +16,21 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             
-            $table->integer('diet_id');
-            $table->integer('product_id');
-            $table->integer('recipe_id');
+            $table->integer('diet_id')->nullable;
+            $table->integer('product_id')->nullable;
+            $table->integer('recipe_id')->nullable;
 
 
             $table->string('name');
             $table->string('lastname');
-            $table->string('username');
+            $table->string('username')->unique();
 
-            $table->string('img');
+            $table->string('img')->nullable;
             
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('nivel_acceso')->default(0);
+            $table->string('nivel_acceso')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
