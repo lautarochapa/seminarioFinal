@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Recipe;
+use App\Product;
 
-class Recipe_Controller extends Controller
+class ProductController extends Controller
 {
     function getAll(){
-        return Recipe::all();
+        return Product::all();
       }
 }

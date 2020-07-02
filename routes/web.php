@@ -20,6 +20,11 @@ Route::get('/', function () {
 
 //Getters
 
-Route::get('/productos','Product_Controller@getAll');
-
-Route::get('/recetas','Recipe_Controller@getAll');
+Route::get('/productos','ProductController@getAll');
+Route::get('/recetas','RecipeController@getAll');
+Route::get('/utensillos','UtensilController@getAll');
+Route::get('/pasos','StepController@getAll');
+Route::get('/dietas','DietController@getAll');
+Route::get('/agendas','AgendaController@getAll');
+Route::get('/grupos','GroupController@getAll');
+Route::get('/marcas','BrandController@getAll');
