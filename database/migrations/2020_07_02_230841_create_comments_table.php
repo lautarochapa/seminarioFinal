@@ -18,7 +18,7 @@ class CreateCommentsTable extends Migration
             $table->integer('sobre');
             $table->integer('sobre_id')->unsigned();
             $table->string("comentario");
-            $table->integer("padre")->nullable;
+            $table->integer("padre")->nullable();
             $table->integer("estado");
             $table->timestamps();
         });

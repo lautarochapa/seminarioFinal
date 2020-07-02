@@ -11,11 +11,11 @@ class ProfileSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('products')->insert([ 'nombre' => 'Comensal', ]);
-        DB::table('products')->insert([ 'nombre' => 'Admin', ]);
-        DB::table('products')->insert([ 'nombre' => 'SuperAdmin', ]);
-        DB::table('products')->insert([ 'nombre' => 'Somelier', ]);
-        DB::table('products')->insert([ 'nombre' => 'Chef', ]);
-        DB::table('products')->insert([ 'nombre' => 'Nutricionista', ]);
+        DB::table('profiles')->insert([ 'nombre' => 'Comensal', ]);
+        DB::table('profiles')->insert([ 'nombre' => 'Admin', ]);
+        DB::table('profiles')->insert([ 'nombre' => 'SuperAdmin', ]);
+        DB::table('profiles')->insert([ 'nombre' => 'Somelier', ]);
+        DB::table('profiles')->insert([ 'nombre' => 'Chef', ]);
+        DB::table('profiles')->insert([ 'nombre' => 'Nutricionista', ]);
     }
 }
