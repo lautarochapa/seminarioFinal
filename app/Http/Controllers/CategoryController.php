@@ -49,10 +49,7 @@ function recursiveGroup($level, $grouped) {
           foreach ($array as $valor) {
             $child = $valor['id'];
             $parent= $valor['padre'];
-              if (array_key_exists($parent, $grouped)) {
                   $grouped[$parent][] = $child;
-                  unset($array[$child]);
-              }
           }
         //}
 
@@ -63,7 +60,7 @@ function recursiveGroup($level, $grouped) {
         
        // $result[$minId] = recursiveGroup($minId, $grouped);
        // var_dump($result);
-        return $array;
+        return $grouped;
       }
 
 
