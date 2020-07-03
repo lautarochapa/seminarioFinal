@@ -9,7 +9,7 @@ use App\Category;
 /**
 * @OA\Info(title="API Usuarios", version="1.0")
 *
-* @OA\Server(url="http://swagger.local")
+* @OA\Server(url="https://comidacocinacontrol.herokuapp.com")
 */
 
 class CategoryController extends Controller
@@ -17,7 +17,7 @@ class CategoryController extends Controller
 
     /**
     * @OA\Get(
-    *     path="/api/users",
+    *     path="/api/categoriasOrdenadas",
     *     summary="Mostrar usuarios",
     *     @OA\Response(
     *         response=200,
