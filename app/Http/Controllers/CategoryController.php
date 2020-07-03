@@ -25,7 +25,7 @@ class CategoryController extends Controller
 }
 
       function getAllOrdenadas(){
-        $array = Auditorias::all();
+        $array = Category::all();
 
 
         $grouped = [];
