@@ -6,8 +6,7 @@
 <meta name="google-signin-client_id" content="623128501385-5iaciaqn2e29igc5j9vrim31i1mnj3oa.apps.googleusercontent.com">
 
 
-<div class="g-signin2" data-onsuccess="onSignIn"></div>
-<a href="#" onclick="signOut();">Sign out</a>
+
 <script>
   function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
@@ -127,7 +126,13 @@ function onSignIn(googleUser) {
                                 </button>
                             </div>
                         </div>
+
+
+                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                        <a href="#" onclick="signOut();">Sign out</a>
                     </form>
+
+
                 </div>
             </div>
         </div>
