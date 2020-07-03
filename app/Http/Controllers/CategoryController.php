@@ -24,7 +24,7 @@ function ffather($arr,$el=0){
   $final=array();
   foreach ($arr as $key => $value) {
       if ($el == $value["padre"]){
-          $value['nombre']["hijos"]=ffather($arr,$value["id"]);
+          $value["hijos"]=ffather($arr,$value["id"]);
           $final[]= $value;
       }
   }
