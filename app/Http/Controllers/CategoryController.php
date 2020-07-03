@@ -30,28 +30,39 @@ function recursiveGroup($level, $grouped) {
       }
 
 
-        $array = Category::all();
-
-
+      $array = Category::all();
+     // $arrayBkp = Category::all();
         $grouped = [];
+
+
         foreach ($array as $valor) {
           $child = $valor['id'];
           $parent= $valor['padre'];
-
-
-
-            if (!array_key_exists($parent, $grouped)) {
-                $grouped[$parent] = [];
+            if ($parent = 0) {
+                $grouped[$valor['nombre']] = [];
             }
-        
-            $grouped[$parent][] = $child;
         }
+
+
+
+        while(count($array) > 1) {
+          foreach ($array as $valor) {
+            $child = $valor['id'];
+            $parent= $valor['padre'];
+              if (array_key_exists($parent, $grouped)) {
+                  $grouped[$parent][] = $child;
+                  unset($array[$child]);
+              }
+          }
+        }
+
+        
         
         // Here we find minimal id for the beginning of our grouped array
-        $minId = min(array_keys($grouped));
+      //  $minId = min(array_keys($grouped));
         
-        $result[$minId] = recursiveGroup($minId, $grouped);
-        var_dump($result);
+       // $result[$minId] = recursiveGroup($minId, $grouped);
+       // var_dump($result);
         return $array;
       }
 
