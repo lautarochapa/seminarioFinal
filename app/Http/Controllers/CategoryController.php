@@ -45,7 +45,7 @@ function recursiveGroup($level, $grouped) {
 
 
 
-        while(count($array) > 1) {
+      //  while(count($array) > 1) {
           foreach ($array as $valor) {
             $child = $valor['id'];
             $parent= $valor['padre'];
@@ -54,7 +54,7 @@ function recursiveGroup($level, $grouped) {
                   unset($array[$child]);
               }
           }
-        }
+        //}
 
         
         
