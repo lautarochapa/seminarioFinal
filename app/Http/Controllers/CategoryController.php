@@ -35,7 +35,7 @@ function ffather($arr,$el=0){
           // volvemos a llamar a la funcion find father para buscar ahora los hijos de los hijos
           $value["hijos"]=ffather($arr,$value["id"]);
           // cargamos el nuevo valor en $final
-          $final[]= $value;
+          $final[]= $value['nombre'];
       }
   }
   // retornamos $final
