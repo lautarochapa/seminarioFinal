@@ -29,6 +29,12 @@ Route::get('/agendas','AgendaController@getAll');
 Route::get('/grupos','GroupController@getAll');
 Route::get('/marcas','BrandController@getAll');
 Route::get('/categorias','CategoryController@getAll');
+
+//Getters con logica
+
+Route::get('/categoriasOrdenadas','CategoryController@getAllOrdenadas');
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
