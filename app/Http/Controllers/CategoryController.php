@@ -13,18 +13,23 @@ class CategoryController extends Controller
 
 
       
+
+
+      function getAllOrdenadas(){
+
+
+
       //codigo tomado de: https://stackoverflow.com/questions/57680077/how-can-i-order-this-list-using-paired-father-son-with-php
 //funcion auxiliar para ordenar las categorias
-      function recursiveGroup($level, $grouped) {
+function recursiveGroup($level, $grouped) {
   $result = [];
   foreach ($grouped[$level] as $item) {
       $result[$item] = recursiveGroup($item, $grouped);
   }
+        return $result;
+      }
 
-  return $result;
-}
 
-      function getAllOrdenadas(){
         $array = Category::all();
 
 
