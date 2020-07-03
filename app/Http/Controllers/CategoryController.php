@@ -18,49 +18,36 @@ class CategoryController extends Controller
       function getAllOrdenadas(){
 
 
-
-      //codigo tomado de: https://stackoverflow.com/questions/57680077/how-can-i-order-this-list-using-paired-father-son-with-php
-//funcion auxiliar para ordenar las categorias
-function recursiveGroup($level, $grouped) {
-  $result = [];
-  foreach ($grouped[$level] as $item) {
-      $result[$item] = recursiveGroup($item, $grouped);
-  }
-        return $result;
-      }
-
-
       $array = Category::all();
-     // $arrayBkp = Category::all();
-        $grouped = [];
-
-
-        foreach ($array as $valor) {
-          $child = $valor['id'];
-          $parent= $valor['padre'];
-            if ($parent = 0) {
-                $grouped[$valor['nombre']] = [];
-            }
-        }
+   
 
 
 
-      //  while(count($array) > 1) {
-          foreach ($array as $valor) {
-            $child = $valor['id'];
-            $parent= $valor['padre'];
-                  $grouped[$parent][] = $child;
-          }
-        //}
 
-        
-        
-        // Here we find minimal id for the beginning of our grouped array
-      //  $minId = min(array_keys($grouped));
-        
-       // $result[$minId] = recursiveGroup($minId, $grouped);
-       // var_dump($result);
-        return $grouped;
+// funcion find father recibe el arreglo y el id por defecto 0
+function ffather($arr,$el=0){
+  // creamos una varible final que contendra nuestros hijos
+  $final=array();
+  // recorremos el arreglo
+  foreach ($arr as $key => $value) {
+      // validamos que el id actual coincida con el id_padre "encontramos un hijo"
+      if ($el == $value["padre"]){
+          // volvemos a llamar a la funcion find father para buscar ahora los hijos de los hijos
+          $value["hijos"]=ffather($arr,$value["id"]);
+          // cargamos el nuevo valor en $final
+          $final[]= $value;
+      }
+  }
+  // retornamos $final
+  return $final;
+}
+
+
+
+
+
+
+        return ffather($array);
       }
 
 
