@@ -18,7 +18,3 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-//Getters con logica
-
-Route::get('/categoriasOrdenadas','CategoryController@getAllOrdenadas');

@@ -26,6 +26,12 @@ Route::get('/productos','ProductController@getAll');
 Route::get('/marcas','BrandController@getAll');
 
 
+
+//Getters con logica
+
+Route::get('/categoriasOrdenadas','CategoryController@getAllOrdenadas');
+
+
 Route::get('/recetas','RecipeController@getAll');
 Route::get('/utensillos','UtensilController@getAll');
 Route::get('/pasos','StepController@getAll');

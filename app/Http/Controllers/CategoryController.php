@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use App\Supply;
 
 
 /**
@@ -39,7 +40,7 @@ class CategoryController extends Controller
       
 
 
-      function getAllOrdenadas(){
+      function getAllWithSupplies(){
 
 
       $array = Category::all();
@@ -48,7 +49,8 @@ function ffather($arr,$el=0){
   $final=array();
   foreach ($arr as $key => $value) {
       if ($el == $value["padre"]){
-          $value["hijos"]=ffather($arr,$value["id"]);
+        $value["hijos"]=ffather($arr,$value["id"]);
+        $value["insumos"]= Supply::where('category_id', '=', $value['id'])->get();
           $final[]= $value;
       }
   }
