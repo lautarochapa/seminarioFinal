@@ -13,6 +13,11 @@
 
 
                 <p>para descargar la aplicacion por favor hace click aca : </p>
+
+
+                <p>esta aplicacion fue desarrollada como seminario final de la carrera Analista de Sistemas de la Escuela Davinci. 
+                para conocer mas del proyecto navega a:</p> 
+                    <a href="https://vapor.laravel.com">Proyecto</a>
 <!--
                 <div class="links">
                     <a href="https://laravel.com/docs">Docs</a>

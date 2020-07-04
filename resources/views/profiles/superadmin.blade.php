@@ -14,7 +14,11 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido!') }}
+                    {{ __('Bienvenido SuperAdmin!') }}
+
+
+
+                    <p> desde aca podras ver todas las vistas de la aplicacion y sus funcionalidades y ver la documentacion de las API</p>
                 </div>
             </div>
         </div>

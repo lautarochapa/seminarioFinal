@@ -14,7 +14,10 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido!') }}
+                    {{ __('Bienvenido Admin!') }}
+
+
+                    <p> desde aca podras administrar los productos, las recetas, las dietas y los usuarios</p>
                 </div>
             </div>
         </div>

@@ -37,6 +37,36 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['middleware' => 'App\Http\Middleware\ComensalMiddleware'], function()
+{
+    Route::get('/comensal', function() { return view('comensal'); });
+});
+
+Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
+{
+    Route::get('/admin', function() { return view('admin'); });
+});
+
+Route::group(['middleware' => 'App\Http\Middleware\SuperadminMiddleware'], function()
+{
+    Route::get('/superadmin', function() { return view('superadmin'); });
+});
+
+
+Route::group(['middleware' => 'App\Http\Middleware\SomelierMiddleware'], function()
+{
+    Route::get('/somelier', function() { return view('somelier'); });
+});
+
+Route::group(['middleware' => 'App\Http\Middleware\ChefMiddleware'], function()
+{
+    Route::get('/chef', function() { return view('chef'); });
+});
+
+
+Route::group(['middleware' => 'App\Http\Middleware\NutricionistaMiddleware'], function()
+{
+    Route::get('/nutricionista', function(){ return view('nutricionista'); });
+});

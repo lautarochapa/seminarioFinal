@@ -15,6 +15,10 @@
                     @endif
 
                     {{ __('Bienvenido!') }}
+
+
+
+                    <p> desde aca podras ver tu agenda y tu stock de productos</p>
                 </div>
             </div>
         </div>

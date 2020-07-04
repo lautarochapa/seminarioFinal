@@ -53,18 +53,50 @@
 
 
                         @if (auth()->user()->nivel_acceso == 1)
-                            <p>nivel de acceso 1</p>
+                            <p>nivel de acceso 1: COMENSAL</p>
+                            <a class="nav-link" href="{{ url('/comensal') }}" >{{ __('Panel Comensal') }}</a>
                         @else 
 
 
                             @if (auth()->user()->nivel_acceso == 2)
-                                <p>nivel de acceso 2</p>
+                                <p>nivel de acceso 2: ADMIN</p>
+                                <a class="nav-link" href="{{ url('/admin') }}" >{{ __('Panel Admin') }}</a>
                             @else 
+
+                                @if (auth()->user()->nivel_acceso == 3)
+                                    <p>nivel de acceso 3: SUPERADMIN</p>
+                                    <a class="nav-link" href="{{ url('/superadmin') }}" >{{ __('Panel SuperAdmin') }}</a>
+                                @else 
+
+
+                                    @if (auth()->user()->nivel_acceso == 4)
+                                        <p>nivel de acceso 4: SOMELIER</p>
+                                        <a class="nav-link" href="{{ url('/soemlier') }}" >{{ __('Panel Somelier') }}</a>
+                                    @else 
+
+                                        @if (auth()->user()->nivel_acceso == 4)
+                                            <p>nivel de acceso 4: CHEF</p>
+                                            <a class="nav-link" href="{{ url('/chef') }}" >{{ __('Panel Chef') }}</a>
+                                        @else 
+
+                                            @if (auth()->user()->nivel_acceso == 4)
+                                                <p>nivel de acceso 4: NUTRICIONISTA</p>
+                                                <a class="nav-link" href="{{ url('/nutricionista') }}" >{{ __('Panel Nutricionista') }}</a>
+                                            @else 
+                                                
+                                            @endif
+                                            
+                                        @endif
+                                        
+                                    @endif
+                                    
+                                @endif
                                 
                             @endif
 
                             
                         @endif
+
 
 
                             <li class="nav-item dropdown">

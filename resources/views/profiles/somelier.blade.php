@@ -14,7 +14,9 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido!') }}
+                    {{ __('Bienvenido Somelier!') }}
+
+                    <p> desde aca podras crear y modificar las combinaciones de comidas y sus maridajes</p>
                 </div>
             </div>
         </div>

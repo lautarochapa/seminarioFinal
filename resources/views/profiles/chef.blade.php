@@ -14,7 +14,10 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido!') }}
+                    {{ __('Bienvenido Chef!') }}
+        }else{
+            return $next($request);
+        }
                 </div>
             </div>
         </div>

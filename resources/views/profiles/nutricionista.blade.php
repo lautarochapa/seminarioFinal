@@ -14,7 +14,10 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido!') }}
+                    {{ __('Bienvenido Nutricionista!') }}
+
+
+                    <p> desde aca podras crear y modificar las dietas</p>
                 </div>
             </div>
         </div>
