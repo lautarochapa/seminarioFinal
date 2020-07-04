@@ -47,7 +47,7 @@
                     @if (auth()->user()->nivel_acceso == 1)
                            <!-- <p>nivel de acceso 1: COMENSAL</p>
                                --> <li class="nav-item">
-                            <a class="nav-link" href="{{ route('comensal') }}" >{{ __('Panel Comensal') }}</a>
+                            <a class="nav-link" href="{{ url('/comensal') }}" >{{ __('Panel Comensal') }}</a>
                                 </li>
                         @else 
 
@@ -55,14 +55,14 @@
                             @if (auth()->user()->nivel_acceso == 2)
                                 <!--<p>nivel de acceso 2: ADMIN</p>
                                 --><li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin') }}" >{{ __('Panel Admin') }}</a>
+                                <a class="nav-link" href="{{ url('/admin') }}" >{{ __('Panel Admin') }}</a>
                                 </li>
                             @else 
 
                                 @if (auth()->user()->nivel_acceso == 3)
                                  <!--   <p>nivel de acceso 3: SUPERADMIN</p>
                                 --><li class="nav-item">
-                                    <a class="nav-link" href="{{ route('superadmin') }}" >{{ __('Panel SuperAdmin') }}</a>
+                                    <a class="nav-link" href="{{ url('/superadmin') }}" >{{ __('Panel SuperAdmin') }}</a>
                                 </li>
                                 @else 
 
@@ -70,21 +70,21 @@
                                     @if (auth()->user()->nivel_acceso == 4)
                                   <!--      <p>nivel de acceso 4: SOMELIER</p>
                                 --><li class="nav-item">
-                                        <a class="nav-link" href="{{ route('soemlier') }}" >{{ __('Panel Somelier') }}</a>
+                                        <a class="nav-link" href="{{ url('/soemlier') }}" >{{ __('Panel Somelier') }}</a>
                                 </li>
                                     @else 
 
                                         @if (auth()->user()->nivel_acceso == 4)
                                  <!--           <p>nivel de acceso 4: CHEF</p>
                                 --><li class="nav-item">
-                                            <a class="nav-link" href="{{ route('chef') }}" >{{ __('Panel Chef') }}</a>
+                                            <a class="nav-link" href="{{ url('/chef') }}" >{{ __('Panel Chef') }}</a>
                                 </li>
                                         @else 
 
                                             @if (auth()->user()->nivel_acceso == 4)
                                   <!--              <p>nivel de acceso 4: NUTRICIONISTA</p>
                                 --><li class="nav-item">
-                                                <a class="nav-link" href="{{ route('nutricionista') }}" >{{ __('Panel Nutricionista') }}</a>
+                                                <a class="nav-link" href="{{ url('/nutricionista') }}" >{{ __('Panel Nutricionista') }}</a>
                                 </li>
                                             @else 
                                                 
