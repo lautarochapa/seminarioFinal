@@ -20,15 +20,18 @@ Route::get('/', function () {
 
 //Getters
 
+Route::get('/categorias','CategoryController@getAll');
+Route::get('/insumos','SupplyController@getAll');
 Route::get('/productos','ProductController@getAll');
+Route::get('/marcas','BrandController@getAll');
+
+
 Route::get('/recetas','RecipeController@getAll');
 Route::get('/utensillos','UtensilController@getAll');
 Route::get('/pasos','StepController@getAll');
 Route::get('/dietas','DietController@getAll');
 Route::get('/agendas','AgendaController@getAll');
 Route::get('/grupos','GroupController@getAll');
-Route::get('/marcas','BrandController@getAll');
-Route::get('/categorias','CategoryController@getAll');
 
 
 
