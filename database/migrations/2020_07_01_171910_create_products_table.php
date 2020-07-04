@@ -22,6 +22,7 @@ class CreateProductsTable extends Migration
             $table->string('medida');
             $table->string('cantidad');
             $table->string('img');
+            $table->integer('habilitado');
             $table->timestamps();
         });
     }
