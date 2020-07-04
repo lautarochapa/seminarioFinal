@@ -10,4 +10,10 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    public function supplies()
+    {
+        return $this->hasMany('App\Supply');
+    }
+
 }

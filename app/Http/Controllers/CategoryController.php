@@ -45,12 +45,16 @@ class CategoryController extends Controller
 
       $array = Category::all();
 
+      foreach ($array as $valor) {
+        $valor['insumos'] = Category::find($valor['id'])->supplies();
+    }
+
+
 function ffather($arr,$el=0){
   $final=array();
   foreach ($arr as $key => $value) {
       if ($el == $value["padre"]){
         $value["hijos"]=ffather($arr,$value["id"]);
-        $value["insumos"]= Supply::where('category_id', '=', $value['id'])->get();
           $final[]= $value;
       }
   }
@@ -61,4 +65,6 @@ function ffather($arr,$el=0){
 
 
 }
+
+$comments = App\Post::find(1)->comments;
 
