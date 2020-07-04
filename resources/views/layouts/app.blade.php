@@ -38,21 +38,13 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Iniciar Sesion') }}</a>
-                            </li>
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Registrarse') }}</a>
-                                </li>
-                            @endif
-                        @else
 
 
 
-                        @if (auth()->user()->nivel_acceso == 1)
+
+
+                    @auth
+                    @if (auth()->user()->nivel_acceso == 1)
                             <p>nivel de acceso 1: COMENSAL</p>
                                 <li class="nav-item">
                             <a class="nav-link" href="{{ url('/comensal') }}" >{{ __('Panel Comensal') }}</a>
@@ -110,6 +102,32 @@
                         @endif
 
 
+
+                        @else 
+                         
+                         @endif
+
+
+
+
+
+
+
+
+
+
+
+                        <!-- Authentication Links -->
+                        @guest
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Iniciar Sesion') }}</a>
+                            </li>
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Registrarse') }}</a>
+                                </li>
+                            @endif
+                        @else
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
