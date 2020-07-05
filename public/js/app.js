@@ -38242,7 +38242,7 @@ var render = function() {
     "li",
     { staticClass: "node-tree" },
     [
-      _c("span", { staticClass: "label" }, [
+      _c("span", { staticClass: "label caret" }, [
         _vm._v(_vm._s(_vm.categoria.nombre))
       ]),
       _vm._v(" "),
@@ -38257,6 +38257,7 @@ var render = function() {
       _vm.categoria.allchildren && _vm.categoria.allchildren.length
         ? _c(
             "ul",
+            { staticClass: "nested" },
             _vm._l(_vm.categoria.allchildren, function(child) {
               return _c("categoria", { attrs: { categoria: child } })
             }),
