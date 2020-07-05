@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Socialite;
-namespace App\Services\SocialGoogleAccountService;
+use App\Services\SocialGoogleAccountService;
 class SocialAuthGoogleController extends Controller
 {
   /**
