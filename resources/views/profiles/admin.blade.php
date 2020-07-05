@@ -21,6 +21,10 @@
 
                     <a class="nav-link" href="{{ url('/categories') }}" >{{ __('Panel Categorias') }}</a>
 
+                    <main class="py-4">
+                        @yield('content2')
+                    </main>
+
                 </div>
             </div>
         </div>
