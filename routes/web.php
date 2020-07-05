@@ -41,9 +41,8 @@ Route::get('/grupos','GroupController@getAll');
 
 
 
-Route::get('/redirect', 'Auth\LoginController@redirectToProvider');
-Route::get('/callback', 'Auth\LoginController@handleProviderCallback');
-
+Route::get('/redirect', 'SocialAuthGoogleController@redirect');
+Route::get('/callback', 'SocialAuthGoogleController@callback');
 
 Auth::routes();
 

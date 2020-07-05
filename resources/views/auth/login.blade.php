@@ -25,6 +25,19 @@
                             </div>
                         </div>
 
+
+
+                        <br />
+                        <p style="margin-left:265px">OR</p>
+                        <br />
+                        <div class="form-group">
+                            <div class="col-md-8 col-md-offset-4">
+                              <a href="{{url('/redirect')}}" class="btn btn-primary">Login with Google</a>
+                            </div>
+                        </div>
+
+                        
+
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
