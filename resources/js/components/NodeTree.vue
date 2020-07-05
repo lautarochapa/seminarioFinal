@@ -1,18 +1,18 @@
 <template>
   <li class="node-tree">
-    <span class="label">{{ node.nombre }}</span>
+    <span class="label">{{ categoria.nombre }}</span>
 
-    <ul v-if="node.allchildren && node.allchildren.length">
-      <node v-for="child in node.allchildren" :node="child"></node>
+    <ul v-if="categoria.allchildren && categoria.allchildren.length">
+      <categoria v-for="child in categoria.allchildren" :categoria="child"></categoria>
     </ul>
   </li>
 </template>
 
 <script>
 export default {
-  name: "node",
+  name: "categoria",
   props: {
-    node: Object
+    categoria: Object
   }
 };
 </script>

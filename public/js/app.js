@@ -1961,9 +1961,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "node",
+  name: "categoria",
   props: {
-    node: Object
+    categoria: Object
   }
 });
 
@@ -38212,13 +38212,15 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("li", { staticClass: "node-tree" }, [
-    _c("span", { staticClass: "label" }, [_vm._v(_vm._s(_vm.node.nombre))]),
+    _c("span", { staticClass: "label" }, [
+      _vm._v(_vm._s(_vm.categoria.nombre))
+    ]),
     _vm._v(" "),
-    _vm.node.allchildren && _vm.node.allchildren.length
+    _vm.categoria.allchildren && _vm.categoria.allchildren.length
       ? _c(
           "ul",
-          _vm._l(_vm.node.allchildren, function(child) {
-            return _c("node", { attrs: { node: child } })
+          _vm._l(_vm.categoria.allchildren, function(child) {
+            return _c("categoria", { attrs: { categoria: child } })
           }),
           1
         )
@@ -38251,7 +38253,7 @@ var render = function() {
     _c(
       "ul",
       { staticClass: "tree-list" },
-      [_c("node-tree", { attrs: { node: _vm.treeData } })],
+      [_c("node-tree", { attrs: { categoria: _vm.treeData } })],
       1
     )
   ])
