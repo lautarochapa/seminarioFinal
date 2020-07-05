@@ -1948,7 +1948,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get('/categoriasConInsumos').then(function (response) {
-        _this.categorias = response.data.categories;
+        _this.categorias = response.data.categories[0];
       });
     }
   },
@@ -1971,7 +1971,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
 //
 //
 //
@@ -38237,8 +38236,6 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("li", { staticClass: "node-tree" }, [
     _c("p", [_vm._v(_vm._s(_vm.categoria))]),
-    _vm._v(" "),
-    _c("p", [_vm._v(_vm._s(_vm.categorias))]),
     _vm._v(" "),
     _c("span", { staticClass: "label" }, [
       _vm._v(_vm._s(_vm.categoria.nombre))
