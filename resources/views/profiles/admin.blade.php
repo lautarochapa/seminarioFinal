@@ -14,13 +14,21 @@
                         </div>
                     @endif
 
+
+                    @auth
+                    @if (auth()->user()->nivel_acceso == 3)
+                    <a href="{{ url('/superadmin') }}" ><button type="button" class="btn btn-primary">{{ __('SuperAdmin') }}</button></a>
+                        @else 
+                        @endif
+
                     <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
 
 
-                    <p> Desde aca podras administrar los productos, las recetas, las dietas y los usuarios</p>
+                    <p> Desde aca podras administrar las categorias y los productos</p>
 
                     
                     <a href="{{ url('/categories') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Categorias') }}</button></a>
+                    <a href="{{ url('/products') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Productos') }}</button></a>
 
                     <main class="py-4">
                         @yield('content2')

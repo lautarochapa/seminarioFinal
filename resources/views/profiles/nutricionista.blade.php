@@ -14,10 +14,26 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido Nutricionista!') }}
+
+                    @auth
+                    @if (auth()->user()->nivel_acceso == 3)
+                    <a href="{{ url('/superadmin') }}" ><button type="button" class="btn btn-primary">{{ __('SuperAdmin') }}</button></a>
+                        @else 
+                        @endif
+
+                    <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
 
 
-                    <p> desde aca podras crear y modificar las dietas</p>
+                    <p> Desde aca podras administrar las dietas y tus pacientes</p>
+
+                    
+                    <a href="{{ url('/diets') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Dietas') }}</button></a>
+                    <a href="{{ url('/patietns') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Pacientes') }}</button></a>
+
+                    <main class="py-4">
+                        @yield('content2')
+                    </main>
+
                 </div>
             </div>
         </div>

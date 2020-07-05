@@ -14,9 +14,26 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido Somelier!') }}
 
-                    <p> desde aca podras crear y modificar las combinaciones de comidas y sus maridajes</p>
+                    @auth
+                    @if (auth()->user()->nivel_acceso == 3)
+                    <a href="{{ url('/superadmin') }}" ><button type="button" class="btn btn-primary">{{ __('SuperAdmin') }}</button></a>
+                        @else 
+                        @endif
+
+                    <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
+
+
+                    <p> Desde aca podras administrar las bebidas y los maridajes</p>
+
+                    
+                    <a href="{{ url('/drinks') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Bebidas') }}</button></a>
+                    <a href="{{ url('/maridajes') }}" ><button type="button" class="btn btn-primary">{{ __('Panel MAridajes') }}</button></a>
+
+                    <main class="py-4">
+                        @yield('content2')
+                    </main>
+
                 </div>
             </div>
         </div>

@@ -14,10 +14,24 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido Chef!') }}
-        }else{
-            return $next($request);
-        }
+                    @auth
+                    @if (auth()->user()->nivel_acceso == 3)
+                    <a href="{{ url('/superadmin') }}" ><button type="button" class="btn btn-primary">{{ __('SuperAdmin') }}</button></a>
+                        @else 
+                        @endif
+
+                    <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
+
+
+                    <p> Desde aca podras administrar las recetas</p>
+
+                    
+                    <a href="{{ url('/recipes') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Recetas') }}</button></a>
+
+                    <main class="py-4">
+                        @yield('content2')
+                    </main>
+
                 </div>
             </div>
         </div>

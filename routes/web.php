@@ -57,26 +57,38 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
 {
     Route::get('/admin', function() { return view('profiles/admin'); });
     Route::get('/categories', function() { return view('profiles/admin/categories'); });
+    Route::get('/products', function() { return view('profiles/admin/products'); });
 });
 
 Route::group(['middleware' => 'App\Http\Middleware\SuperadminMiddleware'], function()
 {
     Route::get('/superadmin', function() { return view('profiles/superadmin'); });
+    Route::get('/users', function() { return view('profiles/superadmin/users'); });
 });
 
 
 Route::group(['middleware' => 'App\Http\Middleware\SomelierMiddleware'], function()
 {
     Route::get('/somelier', function() { return view('profiles/somelier'); });
+    Route::get('/drinks', function() { return view('profiles/somelier/drinks'); });
+    Route::get('/maridajes', function() { return view('profiles/somelier/maridajes'); });
 });
 
 Route::group(['middleware' => 'App\Http\Middleware\ChefMiddleware'], function()
 {
     Route::get('/chef', function() { return view('profiles/chef'); });
+    Route::get('/recipes', function() { return view('profiles/chef/recipes'); });
+
+    
 });
 
 
 Route::group(['middleware' => 'App\Http\Middleware\NutricionistaMiddleware'], function()
 {
-    Route::get('/nutricionista', function(){ return view('profiles/nutricionista'); });
+    Route::get('/nutritionist', function(){ return view('profiles/nutricionista'); });
+    Route::get('/diets', function() { return view('profiles/nutritionist/diets'); });
+    Route::get('/patietns', function() { return view('profiles/nutritionist/patietns'); });
 });
+
+
+

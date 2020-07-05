@@ -18,7 +18,27 @@
 
 
 
+
+
+
+                    <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
+
+
                     <p> desde aca podras ver todas las vistas de la aplicacion y sus funcionalidades y ver la documentacion de las API</p>
+
+                    
+                    <a href="{{ url('/admin') }}" ><button type="button" class="btn btn-primary">{{ __('Vista Admin') }}</button></a>
+                    <a href="{{ url('/chef') }}" ><button type="button" class="btn btn-primary">{{ __('Vista Chef') }}</button></a>
+                    <a href="{{ url('/nutritionist') }}" ><button type="button" class="btn btn-primary">{{ __('Vista Nutricionista') }}</button></a>
+                    <a href="{{ url('/somelier') }}" ><button type="button" class="btn btn-primary">{{ __('Vista Somelier') }}</button></a>
+                    <a href="{{ url('/users') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Usuarios') }}</button></a>
+
+                    <main class="py-4">
+                        @yield('content2')
+                    </main>
+
+
+
                 </div>
             </div>
         </div>
