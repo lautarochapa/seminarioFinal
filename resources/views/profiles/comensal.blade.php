@@ -14,6 +14,15 @@
                         </div>
                     @endif
 
+
+                    @auth
+                    @if (auth()->user()->nivel_acceso == 3)
+                    <a href="{{ url('/superadmin') }}" ><button type="button" class="btn btn-primary">{{ __('SuperAdmin') }}</button></a>
+                        @else 
+                        @endif
+                    @else 
+                    @endif
+
                     {{ __('Bienvenido!') }}
 
 

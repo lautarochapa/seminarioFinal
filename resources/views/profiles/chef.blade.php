@@ -19,6 +19,8 @@
                     <a href="{{ url('/superadmin') }}" ><button type="button" class="btn btn-primary">{{ __('SuperAdmin') }}</button></a>
                         @else 
                         @endif
+                    @else 
+                    @endif
 
                     <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
 
