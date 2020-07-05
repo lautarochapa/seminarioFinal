@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tree :tree-data="tree"></tree>
+    <tree :tree-data="categories"></tree>
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import Tree from "./Tree";
 
 export default {
   data: () => ({
-    tree: {
+    categories: {
       nombre: "A cool folder",
       allchildren: [
         {
