@@ -134,7 +134,8 @@
             getUsers(){
                 axios.get('/api/users')
                      .then((response)=>{
-                       this.users = response.data.users[0]
+                       this.users = response.data.users[0];
+                       console.log(this.users)
                      })
             }
         },
