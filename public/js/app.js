@@ -38576,7 +38576,7 @@ var render = function() {
             _c("td", { staticClass: "dinnLig" }, [_vm._v(_vm._s(usr.email))]),
             _vm._v(" "),
             _c("td", { staticClass: "dinnLig" }, [
-              _vm._v(_vm._s(usr.profile.name))
+              _vm._v(_vm._s(usr.profile.nombre))
             ]),
             _vm._v(" "),
             _c("td", { staticClass: "dinnLig" }, [_vm._v("implementar")]),

@@ -12,7 +12,7 @@ class ProductController extends Controller
       function getAll(){
 
 
-        $products = Product::with('brand', 'supply')->get();
+        $products = Product::with('brand', 'supply')->get()->paginate(15);
 
         return response()->json([
 

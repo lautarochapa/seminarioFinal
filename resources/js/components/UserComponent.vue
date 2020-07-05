@@ -35,7 +35,7 @@
                                 <td class="dinnLig">{{ usr.lastname }}</td>
                                 <td class="dinnLig">{{ usr.username }}</td>
                                 <td class="dinnLig">{{ usr.email }}</td>
-                                <td class="dinnLig">{{ usr.profile.name }}</td>
+                                <td class="dinnLig">{{ usr.profile.nombre }}</td>
                                 <!--<td class="dinnLig">{{ usr.status }}</td>--><td class="dinnLig">implementar</td>
                                 <td class="dinnLig">
                                     <button type="button" class="btn btn-primary dinn" data-toggle="modal" 
