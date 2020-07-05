@@ -38,14 +38,14 @@
                                         Editar
                                     </button>
                                 </td>
-                                <td class="dinnLig" v-if="usr.suspendido == 0 || usr.suspendido==null">
+                                <td class="dinnLig" v-if="usr.estado == 0 || usr.estado==null">
                                     <button type="button" class="btn btn-primary dinn" data-toggle="modal" 
                                     data-target="#ModalSuspenderUsuario" style="background-color: red; border: 2px solid red;">
                                     Suspender
                                     </button>
                                 
                                 </td>
-                                <td class="dinnLig" v-if="usr.suspendido == 1">
+                                <td class="dinnLig" v-if="usr.estado == 1">
                                     <button type="button" class="btn btn-primary dinn" data-toggle="modal" 
                                     data-target="#ModalActivarUsuario" style="background-color: #9aca3c; border: 2px solid #9aca3c;">
                                         Activar
@@ -134,7 +134,7 @@
             getUsers(){
                 axios.get('/api/users')
                      .then((response)=>{
-                       this.users = response.data.users[0];
+                       this.users = response.data.users;
                        console.log(this.users)
                      })
             }

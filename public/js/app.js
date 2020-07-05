@@ -2172,7 +2172,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get('/api/users').then(function (response) {
-        _this.users = response.data.users[0];
+        _this.users = response.data.users;
         console.log(_this.users);
       });
     }
@@ -38505,7 +38505,7 @@ var render = function() {
             _vm._v(" "),
             _vm._m(1, true),
             _vm._v(" "),
-            usr.suspendido == 0 || usr.suspendido == null
+            usr.estado == 0 || usr.estado == null
               ? _c("td", { staticClass: "dinnLig" }, [
                   _c(
                     "button",
@@ -38530,7 +38530,7 @@ var render = function() {
                 ])
               : _vm._e(),
             _vm._v(" "),
-            usr.suspendido == 1
+            usr.estado == 1
               ? _c("td", { staticClass: "dinnLig" }, [
                   _c(
                     "button",
