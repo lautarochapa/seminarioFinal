@@ -9,8 +9,6 @@
 
                    <p> Categorias</p>
                    <category-component></category-component>
-
-                   <app_component></app_component>
                    <!--
                    <div id="appCategorias">
 

@@ -7,14 +7,14 @@
 </template>
 
 <script>
-import NodeTree from "./NodeTree";
+import CategoryNodeTree from "./CategoryNodeTree";
 
 export default {
   props: {
     treeData: Object
   },
   components: {
-    NodeTree
+    CategoryNodeTree
   }
 };
 </script>
