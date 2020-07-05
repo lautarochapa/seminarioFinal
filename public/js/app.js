@@ -2015,6 +2015,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -38493,15 +38535,163 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    _vm._l(_vm.products, function(prod) {
-      return _c("div", [_c("p", [_vm._v(_vm._s(prod))])])
-    }),
-    0
-  )
+  return _c("table", { staticClass: "table table-striped" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c(
+      "tbody",
+      [
+        _vm._l(_vm.products.data, function(prod) {
+          return _c("tr", [
+            _c("td", [_vm._v(_vm._s(prod.id))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(prod.nombre))])
+          ])
+        }),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { attrs: { colspan: "5" } }, [
+            _c("nav", [
+              _c(
+                "ul",
+                { staticClass: "pagination" },
+                [
+                  _c(
+                    "li",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.products["prev_page_url"],
+                          expression: "products['prev_page_url']"
+                        }
+                      ],
+                      staticClass: "page-item"
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "page-link",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.getPreviousPage($event)
+                            }
+                          }
+                        },
+                        [_vm._m(1)]
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm._l(_vm.products["last_page"], function(n) {
+                    return _c(
+                      "li",
+                      {
+                        staticClass: "page-item",
+                        class: { active: _vm.products["current_page"] === n }
+                      },
+                      [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "page-link",
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.getPage(n)
+                              }
+                            }
+                          },
+                          [
+                            _c("span", [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(n) +
+                                  "\n                            "
+                              )
+                            ])
+                          ]
+                        )
+                      ]
+                    )
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "li",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.products["next_page_url"],
+                          expression: "products['next_page_url']"
+                        }
+                      ],
+                      staticClass: "page-item"
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "page-link",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.getNextPage($event)
+                            }
+                          }
+                        },
+                        [_vm._m(2)]
+                      )
+                    ]
+                  )
+                ],
+                2
+              )
+            ])
+          ])
+        ])
+      ],
+      2
+    )
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("td", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("td", [_vm._v("Nombre")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", [
+      _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("«")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", [
+      _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("»")])
+    ])
+  }
+]
 render._withStripped = true
 
 

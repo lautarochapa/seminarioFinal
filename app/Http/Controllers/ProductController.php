@@ -21,12 +21,6 @@ class ProductController extends Controller
       ], Response::HTTP_OK);
       }
 
-      function getAll2(){
-
-
-        return Product::with('brand', 'supply')->paginate(15);
-
-      }
 
 
 }
