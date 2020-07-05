@@ -9,10 +9,10 @@ class Category extends Model
 
 
     public function childrens() {
-        return $this->hasMany('Category','padre');
+        return $this->hasMany(Category::class,'padre');
     }
     public function parent() {
-        return $this->belongsTo('Category','padre');
+        return $this->belongsTo(Category::class,'padre');
     }
 
 
