@@ -8,7 +8,8 @@
 
                    <p> Usuarios</p>
 
-
+                    <user-component></user-component>
+                    
                    </div>
     </div>
 </div>

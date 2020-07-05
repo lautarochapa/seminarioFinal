@@ -29,7 +29,6 @@ Route::get('/marcas','BrandController@getAll');
 
 //Getters con logica
 
-Route::get('/categoriasConInsumos','CategoryController@getAllWithSupplies');
 
 
 Route::get('/recetas','RecipeController@getAll');
@@ -58,12 +57,19 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
     Route::get('/admin', function() { return view('profiles/admin'); });
     Route::get('/categories', function() { return view('profiles/admin/categories'); });
     Route::get('/products', function() { return view('profiles/admin/products'); });
+
+    //vistas
+    Route::get('/api/categories','CategoryController@getAllWithSupplies');
 });
 
 Route::group(['middleware' => 'App\Http\Middleware\SuperadminMiddleware'], function()
 {
+    //vistas
     Route::get('/superadmin', function() { return view('profiles/superadmin'); });
     Route::get('/users', function() { return view('profiles/superadmin/users'); });
+
+    //apis
+    Route::get('/api/users','UserController@getAll');
 });
 
 

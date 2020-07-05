@@ -37,7 +37,7 @@ import Tree from "./Tree";
         },
         methods: {
             getCategorias(){
-                axios.get('/categoriasConInsumos')
+                axios.get('/api/categories')
                      .then((response)=>{
                        this.categorias = response.data.categories[0]
                      })
