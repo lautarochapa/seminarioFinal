@@ -140,10 +140,7 @@
         },
         created() {
             this.getUsers()
-        },
-  components: {
-    Tree
-  }
+        }
     }
 
 </script>

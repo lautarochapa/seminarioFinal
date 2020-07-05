@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use Symfony\Component\HttpFoundation\Response;
 
-class User_Controller extends Controller
+class UserController extends Controller
 {
     function getAll(){
 
