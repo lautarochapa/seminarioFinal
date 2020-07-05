@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     function getAll(){
 
-      $users = User::with('profile')->get();
+      $users = User::with('profile:nombre')->get();
         return response()->json([
 
           'users' => $users
