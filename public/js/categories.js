@@ -21,6 +21,7 @@ ___________________________________________________________*/
         
     window.addEventListener("load",()=> {
         updateCategorias()
+        console.log(data.categorias)
 
 new Vue({
     el: '#appCategorias',
