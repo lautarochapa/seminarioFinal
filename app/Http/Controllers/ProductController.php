@@ -21,5 +21,12 @@ class ProductController extends Controller
       ], Response::HTTP_OK);
       }
 
+      function getAll2(){
+
+
+        return Product::paginate(15);
+
+      }
+
 
 }
