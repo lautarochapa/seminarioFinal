@@ -1,8 +1,13 @@
 <?php
 namespace App\Http\Controllers;
+
+
+use App\Providers\SocialGoogleAccountService;
 use Illuminate\Http\Request;
 use Socialite;
-use App\Services\SocialGoogleAccountService;
+
+
+
 class SocialAuthGoogleController extends Controller
 {
   /**
