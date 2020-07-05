@@ -37,45 +37,10 @@ class CategoryController extends Controller
       }
 
 
-      
-
-
       function getAllWithSupplies(){
 
 
-      $array = Category::all();
-
-      foreach ($array as $valor) {
-        $valor['insumos'] = Category::find($valor['id'])->supplies();
-    }
-
-
-function ffather($arr,$el=0){
-  $final=array();
-  foreach ($arr as $key => $value) {
-      if ($el == $value["padre"]){
-        $value["hijos"]=ffather($arr,$value["id"]);
-          $final[]= $value;
-      }
-  }
-  return $final;
-}
-        return ffather($array);
-      }
-
-
-      function getAll2(){
-
-
         $categories = Category::with('allchildren', 'supplies')->where('padre',0)->get();
-      // $array = Category::all();
-
-//        foreach ($array as $valor) {
-   //       $valor['hijos'] = Category::find($valor['id'])->childrens();
-    //  }
-
-
-
         return $categories;
       }
 
