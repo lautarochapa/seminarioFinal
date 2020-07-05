@@ -1,6 +1,6 @@
 <template>
   <li class="node-tree">
-    <p>{{ categoria }}</p>
+    <!--<p>{{ categoria }}</p>-->
     <span class="label">{{ categoria.nombre }}</span>
 
     <ul v-if="categoria.allchildren && categoria.allchildren.length">
