@@ -8,7 +8,9 @@
     <div class="row justify-content-center">
 
                    <p> Categorias</p>
+                   <category-component></category-component>
 
+                   <!--
                    <div id="appCategorias">
 
 
@@ -18,7 +20,7 @@
                             <tr><td class="dinnLig">@{{ cat }}</td>
                             </tr>
                         </tbody>
-                    </table> 
+                    </table> -->
 
 
                    </div>
