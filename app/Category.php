@@ -23,7 +23,7 @@ class Category extends Model
 
     public function supplies()
     {
-        return $this->hasMany('App\Supply');
+        return $this->hasMany(Supply::class);
     }
 
 }
