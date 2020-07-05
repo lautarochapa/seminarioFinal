@@ -2178,9 +2178,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.getUsers();
-  },
-  components: {
-    Tree: Tree
   }
 });
 
@@ -38482,7 +38479,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "table",
-    { staticClass: "table " },
+    { staticClass: "table" },
     [
       _vm._m(0),
       _vm._v(" "),
@@ -50787,10 +50784,7 @@ module.exports = function(module) {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-les.keys().map(function (key) {
-  return Vue.component(key.split('/').pop().split('.')[0], files(key)["default"]);
-}); //categorias
+window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); //categorias
 
 Vue.component('node-tree', __webpack_require__(/*! ./components/NodeTree.vue */ "./resources/js/components/NodeTree.vue")["default"]);
 Vue.component('tree', __webpack_require__(/*! ./components/Tree.vue */ "./resources/js/components/Tree.vue")["default"]);

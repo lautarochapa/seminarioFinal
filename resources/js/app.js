@@ -2,7 +2,6 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-les.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 //categorias
 Vue.component('node-tree', require('./components/NodeTree.vue').default);
