@@ -2060,7 +2060,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      products: []
+      products: {}
     };
   },
   methods: {
@@ -2075,26 +2075,26 @@ __webpack_require__.r(__webpack_exports__);
     getPage: function getPage(page) {
       var _this2 = this;
 
-      this.$http.get('/api/products?page=' + page).then(function (response) {
-        _this2.$set(_this2.$data, 'products', response.data);
-      }, function (response) {});
+      axios.get('/api/products?page=' + page).then(function (response) {
+        _this2.products = response.data.products;
+      });
     },
     getPreviousPage: function getPreviousPage() {
       var _this3 = this;
 
-      this.$http.get(this.products['prev_page_url']).then(function (response) {
-        _this3.$set(_this3.$data, 'products', response.data);
-      }, function (response) {});
+      axios.get(this.products['prev_page_url']).then(function (response) {
+        _this3.products = response.data.products;
+      });
     },
     getNextPage: function getNextPage() {
       var _this4 = this;
 
-      this.$http.get(this.products['next_page_url']).then(function (response) {
-        _this4.$set(_this4.$data, 'products', response.data);
-      }, function (response) {});
+      axios.get(this.products['next_page_url']).then(function (response) {
+        _this4.products = response.data.products;
+      });
     }
   },
-  created: function created() {
+  mounted: function mounted() {
     this.getProducts();
   }
 });

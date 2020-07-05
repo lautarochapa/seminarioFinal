@@ -54,7 +54,7 @@
 
         data() {
             return {
-              products: [],
+              products: {},
             }
         },
         methods: {
@@ -66,27 +66,26 @@
                      })
             },            
             getPage(page){
-                this.$http.get('/api/products?page='+page).then((response)=>{
-                    this.$set(this.$data, 'products', response.data);
-                },(response)=>{
+                axios.get('/api/products?page='+page).then((response)=>{
+                       this.products = response.data.products;
                 });
             },
             getPreviousPage(){
-                this.$http.get(this.products['prev_page_url']).then((response)=>{
-                    this.$set(this.$data, 'products', response.data);
-                },(response)=>{
+                axios.get(this.products['prev_page_url']).then((response)=>{
+                       this.products = response.data.products;
                 });
             },
             getNextPage(){
-                this.$http.get(this.products['next_page_url']).then((response)=>{
-                    this.$set(this.$data, 'products', response.data);
-                },(response)=>{
+                axios.get(this.products['next_page_url']).then((response)=>{
+                       this.products = response.data.products;
                 });
             },
         },
-        created() {
+        mounted() {
             this.getProducts()
         }
     }
 
 </script>
+
+
