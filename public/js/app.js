@@ -38238,31 +38238,34 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("li", { staticClass: "node-tree" }, [
-    _c("span", { staticClass: "label" }, [
-      _vm._v(_vm._s(_vm.categoria.nombre))
-    ]),
-    _vm._v(" "),
-    _vm.categoria.allchildren && _vm.categoria.allchildren.length
-      ? _c(
-          "ul",
-          [
+  return _c(
+    "li",
+    { staticClass: "node-tree" },
+    [
+      _c("span", { staticClass: "label" }, [
+        _vm._v(_vm._s(_vm.categoria.nombre))
+      ]),
+      _vm._v(" "),
+      _vm._l(_vm.categoria.supplies, function(supply) {
+        return _c("div", [
+          _c("p", { staticStyle: { color: "#FF0000" } }, [
+            _vm._v(_vm._s(supply.nombre))
+          ])
+        ])
+      }),
+      _vm._v(" "),
+      _vm.categoria.allchildren && _vm.categoria.allchildren.length
+        ? _c(
+            "ul",
             _vm._l(_vm.categoria.allchildren, function(child) {
               return _c("categoria", { attrs: { categoria: child } })
             }),
-            _vm._v(" "),
-            _vm._l(_vm.categoria.supplies, function(supply) {
-              return _c("div", [
-                _c("p", { staticStyle: { color: "#FF0000" } }, [
-                  _vm._v(_vm._s(supply))
-                ])
-              ])
-            })
-          ],
-          2
-        )
-      : _vm._e()
-  ])
+            1
+          )
+        : _vm._e()
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
