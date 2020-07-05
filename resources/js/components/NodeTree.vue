@@ -10,9 +10,6 @@
 
 <script>
 export default {
-  name: "categoria",
-  props: {
-    categoria: Array
-  }
+  name: "categoria"
 };
 </script>
