@@ -1,11 +1,12 @@
 <template>
   <div class="tree">
     <ul class="tree-list">
-      <node-tree :categoria="treeData"></node-tree>
+    <span class="label">{{ categoria.nombre }}</span>
+     <!-- <node-tree :categoria="treeData"></node-tree>-->
     </ul>
   </div>
 </template>
-
+<!--
 <script>
 import NodeTree from "./NodeTree";
 
@@ -18,7 +19,7 @@ export default {
   }
 };
 </script>
-
+-->
 <style>
 .tree-list ul {
   padding-left: 16px;

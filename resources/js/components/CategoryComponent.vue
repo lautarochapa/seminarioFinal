@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tree :tree-data="data.categorias"></tree>
+    <tree :tree-data="categorias"></tree>
   </div>
 </template>
 

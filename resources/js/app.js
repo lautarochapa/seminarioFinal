@@ -20,6 +20,8 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('node-tree', require('./components/NodeTree.vue').default);
+
+
 Vue.component('tree', require('./components/Tree.vue').default);
 //Vue.component('app_component', require('./components/App.vue').default);
 
