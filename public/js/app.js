@@ -1919,20 +1919,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      categorias: {}
+      tree: {
+        nombre: "A cool folder",
+        allchildren: [{
+          nombre: "A cool sub-folder 1",
+          allchildren: [{
+            nombre: "A cool sub-sub-folder 1"
+          }, {
+            nombre: "A cool sub-sub-folder 2"
+          }]
+        }, {
+          nombre: "This one is not that cool"
+        }]
+      }
     };
   },
-  methods: {
-    getCategorias: function getCategorias() {
-      var _this = this;
-
-      axios.get('/categoriasConInsumos').then(function (response) {
-        _this.categorias = response.data.categories;
-      });
-    }
-  },
-  created: function created() {
-    this.getCategorias();
+  components: {
+    Tree: _Tree__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
@@ -1953,14 +1956,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "node",
   props: {
-    node: Array
+    node: Object
   }
 });
 
@@ -1987,7 +1985,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    treeData: Array
+    treeData: Object
   },
   components: {
     NodeTree: _NodeTree__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -38184,7 +38182,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_c("tree", { attrs: { "tree-data": _vm.categorias } })], 1)
+  return _c("div", [_c("tree", { attrs: { "tree-data": _vm.tree } })], 1)
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -38209,17 +38207,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("li", { staticClass: "node-tree" }, [
-    _c("span", { staticClass: "label" }, [_vm._v(_vm._s(_vm.node.nombre))]),
-    _vm._v(" "),
-    _vm.node.allchildren && _vm.node.allchildren.length
-      ? _c(
-          "ul",
-          _vm._l(_vm.node.allchildren, function(child) {
-            return _c("node", { attrs: { node: child } })
-          }),
-          1
-        )
-      : _vm._e()
+    _c("span", { staticClass: "label" }, [_vm._v(_vm._s(_vm.node.label))])
   ])
 }
 var staticRenderFns = []
