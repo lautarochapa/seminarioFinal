@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+                <div class="card-header">{{ __('Perfil Administrador') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -14,10 +14,13 @@
                         </div>
                     @endif
 
-                    {{ __('Bienvenido Admin!') }}
+                    <p> Bienvenido {{ Auth::user()->name }} ,  {{ Auth::user()->lastname }} </p>
 
 
-                    <p> desde aca podras administrar los productos, las recetas, las dietas y los usuarios</p>
+                    <p> Desde aca podras administrar los productos, las recetas, las dietas y los usuarios</p>
+
+                    <a class="nav-link" href="{{ url('/categories') }}" >{{ __('Panel Categorias') }}</a>
+
                 </div>
             </div>
         </div>

@@ -26,6 +26,8 @@ class CreateRecipesTable extends Migration
         });
     }
 
+
+
     /**
      * Reverse the migrations.
      *
