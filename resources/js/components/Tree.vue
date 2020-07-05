@@ -11,7 +11,7 @@ import NodeTree from "./NodeTree";
 
 export default {
   props: {
-    treeData: Array
+    treeData: [Object, Array]
   },
   components: {
     NodeTree

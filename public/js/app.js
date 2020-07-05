@@ -1982,7 +1982,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "categoria"
+  name: "categoria",
+  props: {
+    categoria: [Object, Array]
+  }
 });
 
 /***/ }),
@@ -2008,7 +2011,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    treeData: Array
+    treeData: [Object, Array]
   },
   components: {
     NodeTree: _NodeTree__WEBPACK_IMPORTED_MODULE_0__["default"]
