@@ -65,6 +65,3 @@ function ffather($arr,$el=0){
 
 
 }
-
-$comments = App\Post::find(1)->comments;
-
