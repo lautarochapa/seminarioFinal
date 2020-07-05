@@ -67,7 +67,7 @@ function ffather($arr,$el=0){
       function getAll2(){
 
 
-        $categories = Category::with('children', 'supplies')->where('padre',0)->get();
+        $categories = Category::with('allchildren', 'supplies')->where('padre',0)->get();
       // $array = Category::all();
 
 //        foreach ($array as $valor) {

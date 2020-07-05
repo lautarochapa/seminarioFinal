@@ -11,6 +11,10 @@ class Category extends Model
     public function children() {
         return $this->hasMany(Category::class,'padre');
     }
+
+    public function allchildren() {
+        return $this->children()->with('allchildren');
+    }
     public function parent() {
         return $this->belongsTo(Category::class,'padre');
     }
@@ -27,3 +31,4 @@ class Category extends Model
     }
 
 }
+
