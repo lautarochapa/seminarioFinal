@@ -9,10 +9,13 @@
                                     <span>Apellido</span>
                                 </th>
                                 <th>
+                                    <span>Username</span>
+                                </th>
+                                <th>
                                     <span>Mail</span>
                                 </th>
                                 <th>
-                                    <span>Puesto</span>
+                                    <span>Perfil</span>
                                 </th>
                                 <th>
                                     <span>Estado</span>
@@ -28,10 +31,10 @@
                         <tbody v-for="usr in users">
                         
                         <tr class="success">                                
-                                <td class="dinnLig">@{{ usr.name }}</td>
-                                <td class="dinnLig">@{{ usr.lastname }}</td>
-                                <td class="dinnLig">@{{ usr.username }}</td>
-                                <td class="dinnLig">@{{ usr.email }}</td>
+                                <td class="dinnLig">{{ usr.name }}</td>
+                                <td class="dinnLig">{{ usr.lastname }}</td>
+                                <td class="dinnLig">{{ usr.username }}</td>
+                                <td class="dinnLig">{{ usr.email }}</td>
                                 <td class="dinnLig">
                                     <button type="button" class="btn btn-primary dinn" data-toggle="modal" 
                                     data-target="#ModalEditarUsuario" >

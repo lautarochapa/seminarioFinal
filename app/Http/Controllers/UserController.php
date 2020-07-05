@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     function getAll(){
 
-      $users = User::all();
+      $users = User::with('profile')->get();
         return response()->json([
 
           'users' => $users
@@ -19,4 +19,3 @@ class UserController extends Controller
       }
   
 }
-
