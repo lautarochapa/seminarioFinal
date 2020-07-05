@@ -66,15 +66,17 @@ function ffather($arr,$el=0){
 
       function getAll2(){
 
-        $array = Category::all();
 
-        foreach ($array as $valor) {
-          $valor['hijos'] = Category::find($valor['id'])->childrens();
-      }
+        $categories = Category::with('children')->where('padre',0)->get();
+      //  $array = Category::all();
+
+//        foreach ($array as $valor) {
+   //       $valor['hijos'] = Category::find($valor['id'])->childrens();
+    //  }
 
 
 
-        return $array;
+        return $categories;
       }
 
 
