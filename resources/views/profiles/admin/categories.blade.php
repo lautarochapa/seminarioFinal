@@ -13,7 +13,7 @@
 
 
                    <table class="table table-striped" >
-                        <tbody v-for="cat in categories">
+                        <tbody v-for="cat in categorias">
 
                             <tr><td class="dinnLig">@{{ cat }}</td>
                             </tr>
