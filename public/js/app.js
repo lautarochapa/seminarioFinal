@@ -2071,6 +2071,27 @@ __webpack_require__.r(__webpack_exports__);
         _this.products = response.data.products;
         console.log(_this.products);
       });
+    },
+    getPage: function getPage(page) {
+      var _this2 = this;
+
+      this.$http.get('/api/products?page=' + page).then(function (response) {
+        _this2.$set(_this2.$data, 'products', response.data);
+      }, function (response) {});
+    },
+    getPreviousPage: function getPreviousPage() {
+      var _this3 = this;
+
+      this.$http.get(this.products['prev_page_url']).then(function (response) {
+        _this3.$set(_this3.$data, 'products', response.data);
+      }, function (response) {});
+    },
+    getNextPage: function getNextPage() {
+      var _this4 = this;
+
+      this.$http.get(this.products['next_page_url']).then(function (response) {
+        _this4.$set(_this4.$data, 'products', response.data);
+      }, function (response) {});
     }
   },
   created: function created() {

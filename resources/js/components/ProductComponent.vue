@@ -64,7 +64,25 @@
                        this.products = response.data.products;
                        console.log(this.products)
                      })
-            }
+            },            
+            getPage(page){
+                this.$http.get('/api/products?page='+page).then((response)=>{
+                    this.$set(this.$data, 'products', response.data);
+                },(response)=>{
+                });
+            },
+            getPreviousPage(){
+                this.$http.get(this.products['prev_page_url']).then((response)=>{
+                    this.$set(this.$data, 'products', response.data);
+                },(response)=>{
+                });
+            },
+            getNextPage(){
+                this.$http.get(this.products['next_page_url']).then((response)=>{
+                    this.$set(this.$data, 'products', response.data);
+                },(response)=>{
+                });
+            },
         },
         created() {
             this.getProducts()
@@ -72,5 +90,3 @@
     }
 
 </script>
-
-
