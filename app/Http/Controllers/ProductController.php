@@ -24,7 +24,7 @@ class ProductController extends Controller
       function getAll2(){
 
 
-        return Product::with('brand', 'supply')->get()->paginate(15);
+        return Product::with('brand', 'supply')->paginate(15);
 
       }
 
