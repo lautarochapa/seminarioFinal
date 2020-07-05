@@ -1,13 +1,13 @@
 <template>
   <div>
-    <tree :tree-data="tree"></tree>
+    <tree :tree-data="categorias"></tree>
   </div>
 </template>
 
 <script>
 import Tree from "./Tree";
 
-export default {
+/*export default {
   data: () => ({
     tree: {
       nombre: "A cool folder",
@@ -26,5 +26,31 @@ export default {
   components: {
     Tree
   }
-};
+};*/
+
+    export default {
+
+        data() {
+            return {
+              categorias: {},
+            }
+        },
+        methods: {
+            getCategorias(){
+                axios.get('/categoriasConInsumos')
+                     .then((response)=>{
+                       this.categorias = response.data.categories
+                     })
+            }
+        },
+        created() {
+            this.getCategorias()
+        },
+  components: {
+    Tree
+  }
+    }
+
 </script>
+
+
