@@ -32,9 +32,9 @@ return [
 
 
     'google' => [
-        'client_id'     => env('762443463632-duogt0efa4lfd6ll0beukac3lde4t656.apps.googleusercontent.com'),
-        'client_secret' => env('2ixGU9VQl_5LSqNjwiGKq9gR'),
-        'redirect'      => env('http://comidacocinacontrol.herokuapp.com/callback')
+        'client_id'     => '762443463632-duogt0efa4lfd6ll0beukac3lde4t656.apps.googleusercontent.com',
+        'client_secret' => '2ixGU9VQl_5LSqNjwiGKq9gR',
+        'redirect'      => 'http://comidacocinacontrol.herokuapp.com/callback',
     ],
 
 ];
