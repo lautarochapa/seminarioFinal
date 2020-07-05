@@ -38212,7 +38212,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("li", { staticClass: "node-tree" }, [
-    _c("span", { staticClass: "label" }, [_vm._v(_vm._s(_vm.node.label))]),
+    _c("span", { staticClass: "label" }, [_vm._v(_vm._s(_vm.node.nombre))]),
     _vm._v(" "),
     _vm.node.allchildren && _vm.node.allchildren.length
       ? _c(
