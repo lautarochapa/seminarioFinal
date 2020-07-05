@@ -40,7 +40,7 @@ class User extends Authenticatable
 
     public function profile()
     {
-        return $this->hasOne(Profile::class);
+        return $this->hasOne(Profile::class, 'nivel_acceso');
     }
 
     public function products()
@@ -57,8 +57,5 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Agenda::class);
     }
-
-
-
 
 }
