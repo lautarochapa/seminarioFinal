@@ -15,15 +15,15 @@ class AdminMiddleware
      */
     public function handle($request, Closure $next)
     {
-    if ($request->user() && $request->user()->nivel_acceso  != '2')
+    if ($request->user() && $request->user()->nivel_acceso == '2')
     {
-        if ($request->user()->nivel_acceso  != '3')
+        return $next($request);
+    }else{
+        if ($request->user() && $request->user()->nivel_acceso == '3')
         {
-            return redirect('/');
-        }else{
             return $next($request);
-        }
-    }
-    return $next($request);
+        }else{
+            return redirect('/');
+        } 
     }
 }

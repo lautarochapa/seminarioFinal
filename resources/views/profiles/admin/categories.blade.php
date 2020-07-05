@@ -2,8 +2,8 @@
 
 @section('content2')
 
-<script src="{{ asset('js/categories.js') }}" defer></script>
-
+<!--<script src="{{ asset('js/categories.js') }}" defer></script>
+-->
 <div class="container">
     <div class="row justify-content-center">
 
