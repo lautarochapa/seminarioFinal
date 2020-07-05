@@ -1919,23 +1919,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      tree: {
-        nombre: "A cool folder",
-        allchildren: [{
-          nombre: "A cool sub-folder 1",
-          allchildren: [{
-            nombre: "A cool sub-sub-folder 1"
-          }, {
-            nombre: "A cool sub-sub-folder 2"
-          }]
-        }, {
-          nombre: "This one is not that cool"
-        }]
-      }
+      categorias: {}
     };
   },
-  components: {
-    Tree: _Tree__WEBPACK_IMPORTED_MODULE_0__["default"]
+  methods: {
+    getCategorias: function getCategorias() {
+      var _this = this;
+
+      axios.get('/categoriasConInsumos').then(function (response) {
+        _this.categorias = response.data.categories;
+      });
+    }
+  },
+  created: function created() {
+    this.getCategorias();
   }
 });
 
@@ -38187,7 +38184,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_c("tree", { attrs: { "tree-data": _vm.tree } })], 1)
+  return _c("div", [_c("tree", { attrs: { "tree-data": _vm.categorias } })], 1)
 }
 var staticRenderFns = []
 render._withStripped = true

@@ -1,30 +1,29 @@
 <template>
   <div>
-    <tree :tree-data="categories"></tree>
+    <tree :tree-data="categorias"></tree>
   </div>
 </template>
 
 <script>
 import Tree from "./Tree";
 
-export default {
-  data: () => ({
-    categories: {
-      nombre: "A cool folder",
-      allchildren: [
-        {
-          nombre: "A cool sub-folder 1",
-          allchildren: [
-            { nombre: "A cool sub-sub-folder 1" },
-            { nombre: "A cool sub-sub-folder 2" }
-          ]
+    export default {
+
+        data() {
+            return {
+              categorias: {},
+            }
         },
-        { nombre: "This one is not that cool" }
-      ]
-    }
-  }),
-  components: {
-    Tree
-  }
-};
+        methods: {
+            getCategorias(){
+                axios.get('/categoriasConInsumos')
+                     .then((response)=>{
+                       this.categorias = response.data.categories
+                     })
+            }
+        },
+        created() {
+            this.getCategorias()
+        }
+    };
 </script>
