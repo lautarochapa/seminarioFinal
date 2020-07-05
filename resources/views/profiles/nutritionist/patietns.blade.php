@@ -1,4 +1,4 @@
-@extends('profiles.admin')
+@extends('profiles.nutricionista')
 
 @section('content2')
 
