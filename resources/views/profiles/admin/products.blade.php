@@ -8,7 +8,7 @@
 
                    <p> Productos</p>
 
-
+                    <product-component></product-component>
 
                    </div>
     </div>

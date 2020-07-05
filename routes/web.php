@@ -60,6 +60,7 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
 
     //vistas
     Route::get('/api/categories','CategoryController@getAllWithSupplies');
+    Route::get('/api/products','ProductController@getAll');
 });
 
 Route::group(['middleware' => 'App\Http\Middleware\SuperadminMiddleware'], function()
