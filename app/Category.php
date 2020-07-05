@@ -8,7 +8,7 @@ class Category extends Model
 {
 
 
-    public function children() {
+    public function childrens() {
         return $this->hasMany('Category','padre');
     }
     public function parent() {

@@ -68,11 +68,11 @@ function ffather($arr,$el=0){
 
         $array = Category::all();
 
-        $parent = Category::where('id','=',$cat->id)->first()->parent;
-// btw since you have $cat, you probably can do simply:
-$cat->parent;
+        foreach ($array as $valor) {
+          $valor['hijos'] = Category::find($valor['id'])->childrens();
+      }
 
-echo $parent->title;
+
 
         return $array;
       }
