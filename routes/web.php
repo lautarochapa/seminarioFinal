@@ -30,6 +30,7 @@ Route::get('/marcas','BrandController@getAll');
 //Getters con logica
 
 Route::get('/categoriasOrdenadas','CategoryController@getAllWithSupplies');
+Route::get('/cat','CategoryController@getAll2');
 
 
 Route::get('/recetas','RecipeController@getAll');
