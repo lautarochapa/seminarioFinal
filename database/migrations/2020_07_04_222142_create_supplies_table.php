@@ -17,7 +17,6 @@ class CreateSuppliesTable extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('medida');
-            $table->string('cantidad');
             $table->integer('category_id');
             $table->timestamps();
         });

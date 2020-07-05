@@ -1,15 +1,22 @@
 <template>
+<div>
+<p>agregar filtros</p>
+
     <table class="table table-striped">
         <thead>
         <tr>
             <td>ID</td>
             <td>Nombre</td>
+            <td>Insumo</td>
+            <td>Marca</td>
         </tr>
         </thead>
         <tbody>
         <tr v-for="prod in products.data">
             <td>{{ prod.id }}</td>
             <td>{{ prod.nombre }}</td>
+            <td>{{ prod.supply.nombre }}</td>
+            <td>{{ prod.brand.nombre }}</td>
         </tr>
 
         <tr>
@@ -45,7 +52,7 @@
         </tbody>
     </table>
 
-
+</div>
 
 </template>
 
