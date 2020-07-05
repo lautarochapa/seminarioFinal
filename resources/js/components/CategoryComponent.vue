@@ -33,7 +33,7 @@
             getCategorias(){
                 axios.get('/categoriasConInsumos')
                      .then((response)=>{
-                       this.categorias = response.data
+                       this.categorias = response.data.categories
                      })
             }
         },

@@ -41,7 +41,12 @@ class CategoryController extends Controller
 
 
         $categories = Category::with('allchildren', 'supplies')->where('padre',0)->get();
-        return $categories;
+
+        return response()->json([
+
+          'categories' => $categories
+  
+      ], Response::HTTP_OK);
       }
 
 
