@@ -1982,6 +1982,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -38242,10 +38246,20 @@ var render = function() {
     _vm.categoria.allchildren && _vm.categoria.allchildren.length
       ? _c(
           "ul",
-          _vm._l(_vm.categoria.allchildren, function(child) {
-            return _c("categoria", { attrs: { categoria: child } })
-          }),
-          1
+          [
+            _vm._l(_vm.categoria.allchildren, function(child) {
+              return _c("categoria", { attrs: { categoria: child } })
+            }),
+            _vm._v(" "),
+            _vm._l(_vm.categoria.supplies, function(supply) {
+              return _c("div", [
+                _c("p", { staticStyle: { color: "#FF0000" } }, [
+                  _vm._v(_vm._s(supply))
+                ])
+              ])
+            })
+          ],
+          2
         )
       : _vm._e()
   ])

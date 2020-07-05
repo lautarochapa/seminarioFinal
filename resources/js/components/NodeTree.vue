@@ -5,6 +5,10 @@
 
     <ul v-if="categoria.allchildren && categoria.allchildren.length">
       <categoria v-for="child in categoria.allchildren" :categoria="child"></categoria>
+
+      <div v-for="supply in categoria.supplies">
+        <p style="color: #FF0000;">{{ supply }}</p>
+      </div>
     </ul>
   </li>
 </template>
