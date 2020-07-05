@@ -1,13 +1,27 @@
 @extends('profiles.admin')
 
 @section('content2')
+
+<script src="{{ asset('js/categories.js') }}" defer></script>
+
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
 
-                   <p> CATEGORIAS</p>
+                   <p> Categorias</p>
 
-        </div>
+                   <div id="appCategorias">
+
+
+                   <table class="table table-striped" >
+                        <tbody v-for="cat in categories">
+
+                            <tr><td class="dinnLig">@{{ cat }}</td>
+                            </tr>
+                        </tbody>
+                    </table> 
+
+
+                   </div>
     </div>
 </div>
 @endsection
