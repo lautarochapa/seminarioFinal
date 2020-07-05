@@ -32,7 +32,7 @@ import Tree from "./Tree";
 
         data() {
             return {
-              categorias: {},
+              categorias: [],
             }
         },
         methods: {
