@@ -2,9 +2,14 @@
 Inicializacion de variable Data
 ___________________________________________________________*/
 
-const data = {
+data = {
     categorias:[]
 }
+new Vue({
+    el: '#appCategorias',
+    data: data 
+})  
+
 
 function updateCategorias(){
     axios.get("/categoriasConInsumos")
@@ -23,10 +28,6 @@ ___________________________________________________________*/
     window.addEventListener("load",()=> {
         updateCategorias()
 
-new Vue({
-    el: '#appCategorias',
-    data: data 
-})  
 
 
 })  
