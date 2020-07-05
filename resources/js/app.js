@@ -19,8 +19,8 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('category-node-tree', require('./components/CategoryNodeTree.vue').default);
-Vue.component('category-tree', require('./components/CategoryTree.vue').default);
+Vue.component('node-tree', require('./components/NodeTree.vue').default);
+Vue.component('tree', require('./components/Tree.vue').default);
 
 Vue.component('category-component', require('./components/CategoryComponent.vue').default);
 

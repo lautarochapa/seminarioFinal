@@ -1908,7 +1908,7 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CategoryTree__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CategoryTree */ "./resources/js/components/CategoryTree.vue");
+/* harmony import */ var _Tree__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tree */ "./resources/js/components/Tree.vue");
 //
 //
 //
@@ -1919,29 +1919,1187 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      categorias: {}
+      "categories": [{
+        "id": 1,
+        "nombre": "Almacen",
+        "padre": 0,
+        "created_at": null,
+        "updated_at": null,
+        "allchildren": [{
+          "id": 2,
+          "nombre": "Golosinas",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 3,
+            "nombre": "Alfajores",
+            "padre": 2,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 4,
+            "nombre": "Bombones y bocadillos",
+            "padre": 2,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 5,
+            "nombre": "caramelos y chupetines",
+            "padre": 2,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 6,
+            "nombre": "chicles y pastillas",
+            "padre": 2,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 7,
+          "nombre": "Endulzantes",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 8,
+            "nombre": "Azucar",
+            "padre": 7,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 9,
+            "nombre": "Edulcorante",
+            "padre": 7,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 10,
+          "nombre": "Encurtidos",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 11,
+            "nombre": "Aceitunas",
+            "padre": 10,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 12,
+            "nombre": "Aji",
+            "padre": 10,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 13,
+            "nombre": "Alcaparras",
+            "padre": 10,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 14,
+            "nombre": "Berenjenas",
+            "padre": 10,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 15,
+          "nombre": "Alimento de bebes y ni\xF1os",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 16,
+            "nombre": "Alimentos para bebes",
+            "padre": 15,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 17,
+            "nombre": "infusiones infantiles",
+            "padre": 15,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 18,
+          "nombre": "Harinas",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 19,
+            "nombre": "Harina de trigo",
+            "padre": 18,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 20,
+            "nombre": "Harina de maiz",
+            "padre": 18,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 21,
+            "nombre": "Premezcla",
+            "padre": 18,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 22,
+            "nombre": "Semola",
+            "padre": 18,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 23,
+          "nombre": "Aderezos",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 24,
+            "nombre": "Mayonesas",
+            "padre": 23,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 25,
+            "nombre": "Mostazas",
+            "padre": 23,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 26,
+            "nombre": "Ketchup",
+            "padre": 23,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 27,
+            "nombre": "Salsas golf",
+            "padre": 23,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 28,
+          "nombre": "Infusiones",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 29,
+            "nombre": "Mate",
+            "padre": 28,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 30,
+            "nombre": "Te",
+            "padre": 28,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 31,
+            "nombre": "Cafe",
+            "padre": 28,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 32,
+            "nombre": "Mate cocido",
+            "padre": 28,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 33,
+          "nombre": "Conservas",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 34,
+            "nombre": "Conservas vegetal",
+            "padre": 33,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 35,
+            "nombre": "Conservas de pescado",
+            "padre": 33,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 36,
+            "nombre": "Conservas de fruta",
+            "padre": 33,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 37,
+            "nombre": "Conservas de carne",
+            "padre": 33,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 38,
+          "nombre": "Mermeladas y dulces",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 39,
+            "nombre": "Mermeladas",
+            "padre": 38,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 40,
+            "nombre": "Miel",
+            "padre": 38,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 41,
+            "nombre": "Jalea",
+            "padre": 38,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 42,
+            "nombre": "Dulce",
+            "padre": 38,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 43,
+          "nombre": "Salsas y pure de tomate",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 44,
+            "nombre": "Extracto tomates",
+            "padre": 43,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 45,
+            "nombre": "Pulpa de tomate",
+            "padre": 43,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 46,
+            "nombre": "Pure de tomate",
+            "padre": 43,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 47,
+            "nombre": "Salsa de tomates dkt",
+            "padre": 43,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 48,
+          "nombre": "Aceites y condimentos",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 49,
+            "nombre": "Aceites",
+            "padre": 48,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 50,
+            "nombre": "Condimentos",
+            "padre": 48,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 51,
+            "nombre": "Vinagres",
+            "padre": 48,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 52,
+          "nombre": "Sopas, caldos, pure y saborizantes",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 53,
+            "nombre": "Mezcla lista",
+            "padre": 52,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 54,
+            "nombre": "Sopas y saborizantes",
+            "padre": 52,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 55,
+          "nombre": "Arroz y legumbres",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 56,
+            "nombre": "Arroz",
+            "padre": 55,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 57,
+            "nombre": "Legumbres",
+            "padre": 55,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 58,
+          "nombre": "Panaderia",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 59,
+            "nombre": "Bizcochos",
+            "padre": 58,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 60,
+            "nombre": "Bizcochuelos y especialidades",
+            "padre": 58,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 61,
+            "nombre": "Galletas, tostadas y grisines",
+            "padre": 58,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 62,
+            "nombre": "Panificados",
+            "padre": 58,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 63,
+          "nombre": "Especias",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 64,
+            "nombre": "Especias",
+            "padre": 63,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 65,
+            "nombre": "Semillas",
+            "padre": 63,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 66,
+          "nombre": "Pasta seca, lista y rellenas",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 67,
+            "nombre": "Pasta lista y rellenas",
+            "padre": 66,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 68,
+            "nombre": "Pastas secas",
+            "padre": 66,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 69,
+            "nombre": "Polvo para postres y reposteria",
+            "padre": 66,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 70,
+            "nombre": "Premezcla postres",
+            "padre": 66,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 71,
+            "nombre": "Reposteria",
+            "padre": 66,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 72,
+          "nombre": "Snacks",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 73,
+            "nombre": "Bastones de maiz",
+            "padre": 72,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 74,
+            "nombre": "Galletitas copetin",
+            "padre": 72,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 75,
+            "nombre": "Maiz saborizado",
+            "padre": 72,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 76,
+            "nombre": "Mani",
+            "padre": 72,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 77,
+          "nombre": "Leche en polvo",
+          "padre": 1,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": []
+        }],
+        "supplies": [{
+          "id": 1,
+          "nombre": "insumo_1",
+          "medida": "gramos",
+          "cantidad": "501",
+          "category_id": 1,
+          "created_at": null,
+          "updated_at": null
+        }]
+      }, {
+        "id": 78,
+        "nombre": "Bebidas",
+        "padre": 0,
+        "created_at": null,
+        "updated_at": null,
+        "allchildren": [{
+          "id": 79,
+          "nombre": "Bebidas sin alcohol",
+          "padre": 78,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 80,
+            "nombre": "Gaseosas",
+            "padre": 79,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 81,
+            "nombre": "Jugos",
+            "padre": 79,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 82,
+            "nombre": "Amargos",
+            "padre": 79,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 83,
+            "nombre": "Energizantes",
+            "padre": 79,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 84,
+          "nombre": "Bebidas sin alcohol",
+          "padre": 78,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 85,
+            "nombre": "Cerveza",
+            "padre": 84,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 86,
+            "nombre": "Vinos",
+            "padre": 84,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 87,
+            "nombre": "Aperitivos",
+            "padre": 84,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 88,
+            "nombre": "Champagne y espumantes",
+            "padre": 84,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }],
+        "supplies": []
+      }, {
+        "id": 89,
+        "nombre": "Frescos",
+        "padre": 0,
+        "created_at": null,
+        "updated_at": null,
+        "allchildren": [{
+          "id": 90,
+          "nombre": "Lacteos",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 91,
+            "nombre": "Leches",
+            "padre": 90,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 92,
+            "nombre": "Yogures",
+            "padre": 90,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 93,
+            "nombre": "Dulce de leche",
+            "padre": 90,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 94,
+            "nombre": "Mantecas y margarinas",
+            "padre": 90,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 95,
+          "nombre": "Fiambres",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 96,
+            "nombre": "Salchichas y pates",
+            "padre": 95,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 97,
+            "nombre": "Encurtidos a granel",
+            "padre": 95,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 98,
+            "nombre": "Fiambres",
+            "padre": 95,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 99,
+          "nombre": "Frutas y verduras",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 100,
+            "nombre": "Frutas",
+            "padre": 99,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 101,
+            "nombre": "Verduras",
+            "padre": 99,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 102,
+            "nombre": "Frutas secas y disecadas",
+            "padre": 99,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 103,
+            "nombre": "Champignones",
+            "padre": 99,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 104,
+          "nombre": "Quesos",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 105,
+            "nombre": "Quesos especiales",
+            "padre": 104,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 106,
+            "nombre": "Queso rallado",
+            "padre": 104,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 107,
+            "nombre": "Queso muzzarella",
+            "padre": 104,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 108,
+            "nombre": "Queso crema y untables",
+            "padre": 104,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 109,
+          "nombre": "Pescados y mariscos",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 110,
+            "nombre": "Pescado entero",
+            "padre": 109,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 111,
+            "nombre": "Camarones y langostinos",
+            "padre": 109,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 112,
+            "nombre": "Pulpos y sepias",
+            "padre": 109,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 113,
+            "nombre": "Calamares",
+            "padre": 109,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 114,
+          "nombre": "Carniceria",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 115,
+            "nombre": "Carnes",
+            "padre": 114,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 116,
+            "nombre": "Aves",
+            "padre": 114,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 117,
+            "nombre": "Embutidos",
+            "padre": 114,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 118,
+            "nombre": "Carnes elaboradas",
+            "padre": 114,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 119,
+          "nombre": "Huevos",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 120,
+            "nombre": "Huevos color",
+            "padre": 119,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 121,
+            "nombre": "Huevos blanco",
+            "padre": 119,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 122,
+            "nombre": "Huevo codorniz",
+            "padre": 119,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 123,
+            "nombre": "Huevos deshidratados",
+            "padre": 119,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 124,
+          "nombre": "Pastas frescas y tapas",
+          "padre": 89,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 125,
+            "nombre": "Fideos y \xF1oquis",
+            "padre": 124,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 126,
+            "nombre": "Pastas rellenas",
+            "padre": 124,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 127,
+            "nombre": "Tapas para pacualina y empanadas",
+            "padre": 124,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 128,
+            "nombre": "Masas preparadas",
+            "padre": 124,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }],
+        "supplies": []
+      }, {
+        "id": 129,
+        "nombre": "Congelados",
+        "padre": 0,
+        "created_at": null,
+        "updated_at": null,
+        "allchildren": [{
+          "id": 130,
+          "nombre": "Helados y postres",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 131,
+            "nombre": "Postres helados",
+            "padre": 130,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 132,
+            "nombre": "Yogur helados",
+            "padre": 130,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 133,
+            "nombre": "Helados en pote",
+            "padre": 130,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 134,
+            "nombre": "Helados en palito",
+            "padre": 130,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 135,
+          "nombre": "Frutas congeladas",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 136,
+            "nombre": "Frutillas",
+            "padre": 135,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 137,
+            "nombre": "Arandanos",
+            "padre": 135,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 138,
+            "nombre": "Frambuesas",
+            "padre": 135,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 139,
+            "nombre": "Mango",
+            "padre": 135,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 140,
+          "nombre": "Comidas congeladas",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 141,
+            "nombre": "Pizzas y Pizzetas",
+            "padre": 140,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 142,
+            "nombre": "Pastas congeladas",
+            "padre": 140,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 143,
+            "nombre": "Panificados",
+            "padre": 140,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 144,
+            "nombre": "Croquetas",
+            "padre": 140,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 145,
+          "nombre": "Congelados de pollo",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 146,
+            "nombre": "Pollos",
+            "padre": 145,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 147,
+            "nombre": "Rebozados de pollo",
+            "padre": 145,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 148,
+            "nombre": "Hamburguesas y milanesas",
+            "padre": 145,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 149,
+            "nombre": "Hamburguesas",
+            "padre": 145,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 150,
+            "nombre": "Milanesas",
+            "padre": 145,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 151,
+          "nombre": "Pescados y mariscos",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 152,
+            "nombre": "Rebozados de pescado",
+            "padre": 151,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 153,
+            "nombre": "Filetes congelados",
+            "padre": 151,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 154,
+            "nombre": "Souffle",
+            "padre": 151,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 155,
+            "nombre": "Paella de mariscos",
+            "padre": 151,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 156,
+          "nombre": "Vegetales congelados",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 157,
+            "nombre": "Espinacas",
+            "padre": 156,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 158,
+            "nombre": "Acelga",
+            "padre": 156,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 159,
+            "nombre": "Arvejas",
+            "padre": 156,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 160,
+            "nombre": "Cebollas",
+            "padre": 156,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }, {
+          "id": 161,
+          "nombre": "Papas congeladas\/Fritas",
+          "padre": 129,
+          "created_at": null,
+          "updated_at": null,
+          "allchildren": [{
+            "id": 162,
+            "nombre": "Papas baston",
+            "padre": 161,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 163,
+            "nombre": "Papas noisettes",
+            "padre": 161,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 164,
+            "nombre": "Papas con formas",
+            "padre": 161,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }, {
+            "id": 165,
+            "nombre": "Papas estilo casero",
+            "padre": 161,
+            "created_at": null,
+            "updated_at": null,
+            "allchildren": []
+          }]
+        }],
+        "supplies": []
+      }]
     };
   },
-  methods: {
-    getCategorias: function getCategorias() {
-      var _this = this;
-
-      axios.get('/categoriasConInsumos').then(function (response) {
-        _this.categorias = response.data.categories;
-      });
-    }
-  },
-  created: function created() {
-    this.getCategorias();
+  components: {
+    Tree: _Tree__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryNodeTree.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoryNodeTree.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NodeTree.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NodeTree.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1966,16 +3124,16 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoryTree.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Tree.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CategoryNodeTree__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CategoryNodeTree */ "./resources/js/components/CategoryNodeTree.vue");
+/* harmony import */ var _NodeTree__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NodeTree */ "./resources/js/components/NodeTree.vue");
 //
 //
 //
@@ -1990,7 +3148,7 @@ __webpack_require__.r(__webpack_exports__);
     treeData: Object
   },
   components: {
-    CategoryNodeTree: _CategoryNodeTree__WEBPACK_IMPORTED_MODULE_0__["default"]
+    NodeTree: _NodeTree__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
@@ -6426,10 +7584,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css&":
-/*!******************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css& ***!
-  \******************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37555,15 +38713,15 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css&":
-/*!**********************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css& ***!
-  \**********************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./CategoryTree.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css&");
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./Tree.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -38184,11 +39342,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [_c("categories", { attrs: { "categories-data": _vm.categories } })],
-    1
-  )
+  return _c("div", [_c("tree", { attrs: { "tree-data": _vm.categories } })], 1)
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -38197,10 +39351,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryNodeTree.vue?vue&type=template&id=4d5d096e&":
-/*!*******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoryNodeTree.vue?vue&type=template&id=4d5d096e& ***!
-  \*******************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NodeTree.vue?vue&type=template&id=39d77a2b&":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NodeTree.vue?vue&type=template&id=39d77a2b& ***!
+  \***********************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -38233,10 +39387,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=template&id=009ba8b2&":
-/*!***************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CategoryTree.vue?vue&type=template&id=009ba8b2& ***!
-  \***************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=template&id=138228ee&":
+/*!*******************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Tree.vue?vue&type=template&id=138228ee& ***!
+  \*******************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -50451,8 +51605,8 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('category-node-tree', __webpack_require__(/*! ./components/CategoryNodeTree.vue */ "./resources/js/components/CategoryNodeTree.vue")["default"]);
-Vue.component('category-tree', __webpack_require__(/*! ./components/CategoryTree.vue */ "./resources/js/components/CategoryTree.vue")["default"]);
+Vue.component('node-tree', __webpack_require__(/*! ./components/NodeTree.vue */ "./resources/js/components/NodeTree.vue")["default"]);
+Vue.component('tree', __webpack_require__(/*! ./components/Tree.vue */ "./resources/js/components/Tree.vue")["default"]);
 Vue.component('category-component', __webpack_require__(/*! ./components/CategoryComponent.vue */ "./resources/js/components/CategoryComponent.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -50580,17 +51734,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryNodeTree.vue":
-/*!******************************************************!*\
-  !*** ./resources/js/components/CategoryNodeTree.vue ***!
-  \******************************************************/
+/***/ "./resources/js/components/NodeTree.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/NodeTree.vue ***!
+  \**********************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CategoryNodeTree_vue_vue_type_template_id_4d5d096e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CategoryNodeTree.vue?vue&type=template&id=4d5d096e& */ "./resources/js/components/CategoryNodeTree.vue?vue&type=template&id=4d5d096e&");
-/* harmony import */ var _CategoryNodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CategoryNodeTree.vue?vue&type=script&lang=js& */ "./resources/js/components/CategoryNodeTree.vue?vue&type=script&lang=js&");
+/* harmony import */ var _NodeTree_vue_vue_type_template_id_39d77a2b___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NodeTree.vue?vue&type=template&id=39d77a2b& */ "./resources/js/components/NodeTree.vue?vue&type=template&id=39d77a2b&");
+/* harmony import */ var _NodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NodeTree.vue?vue&type=script&lang=js& */ "./resources/js/components/NodeTree.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -50600,9 +51754,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CategoryNodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CategoryNodeTree_vue_vue_type_template_id_4d5d096e___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CategoryNodeTree_vue_vue_type_template_id_4d5d096e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _NodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _NodeTree_vue_vue_type_template_id_39d77a2b___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _NodeTree_vue_vue_type_template_id_39d77a2b___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -50612,55 +51766,55 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/CategoryNodeTree.vue"
+component.options.__file = "resources/js/components/NodeTree.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryNodeTree.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/components/CategoryNodeTree.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************/
+/***/ "./resources/js/components/NodeTree.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/NodeTree.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryNodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CategoryNodeTree.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryNodeTree.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryNodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./NodeTree.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NodeTree.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NodeTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryNodeTree.vue?vue&type=template&id=4d5d096e&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/CategoryNodeTree.vue?vue&type=template&id=4d5d096e& ***!
-  \*************************************************************************************/
+/***/ "./resources/js/components/NodeTree.vue?vue&type=template&id=39d77a2b&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/NodeTree.vue?vue&type=template&id=39d77a2b& ***!
+  \*****************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryNodeTree_vue_vue_type_template_id_4d5d096e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CategoryNodeTree.vue?vue&type=template&id=4d5d096e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryNodeTree.vue?vue&type=template&id=4d5d096e&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryNodeTree_vue_vue_type_template_id_4d5d096e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NodeTree_vue_vue_type_template_id_39d77a2b___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./NodeTree.vue?vue&type=template&id=39d77a2b& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NodeTree.vue?vue&type=template&id=39d77a2b&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NodeTree_vue_vue_type_template_id_39d77a2b___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryNodeTree_vue_vue_type_template_id_4d5d096e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NodeTree_vue_vue_type_template_id_39d77a2b___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryTree.vue":
-/*!**************************************************!*\
-  !*** ./resources/js/components/CategoryTree.vue ***!
-  \**************************************************/
+/***/ "./resources/js/components/Tree.vue":
+/*!******************************************!*\
+  !*** ./resources/js/components/Tree.vue ***!
+  \******************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CategoryTree_vue_vue_type_template_id_009ba8b2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CategoryTree.vue?vue&type=template&id=009ba8b2& */ "./resources/js/components/CategoryTree.vue?vue&type=template&id=009ba8b2&");
-/* harmony import */ var _CategoryTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CategoryTree.vue?vue&type=script&lang=js& */ "./resources/js/components/CategoryTree.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CategoryTree.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _Tree_vue_vue_type_template_id_138228ee___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tree.vue?vue&type=template&id=138228ee& */ "./resources/js/components/Tree.vue?vue&type=template&id=138228ee&");
+/* harmony import */ var _Tree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Tree.vue?vue&type=script&lang=js& */ "./resources/js/components/Tree.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tree.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -50671,9 +51825,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _CategoryTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CategoryTree_vue_vue_type_template_id_009ba8b2___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CategoryTree_vue_vue_type_template_id_009ba8b2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Tree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Tree_vue_vue_type_template_id_138228ee___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Tree_vue_vue_type_template_id_138228ee___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -50683,54 +51837,54 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/CategoryTree.vue"
+component.options.__file = "resources/js/components/Tree.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryTree.vue?vue&type=script&lang=js&":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/CategoryTree.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************/
+/***/ "./resources/js/components/Tree.vue?vue&type=script&lang=js&":
+/*!*******************************************************************!*\
+  !*** ./resources/js/components/Tree.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CategoryTree.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Tree.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css& ***!
-  \***********************************************************************************/
+/***/ "./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css& ***!
+  \***************************************************************************/
 /*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./CategoryTree.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./Tree.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CategoryTree.vue?vue&type=template&id=009ba8b2&":
-/*!*********************************************************************************!*\
-  !*** ./resources/js/components/CategoryTree.vue?vue&type=template&id=009ba8b2& ***!
-  \*********************************************************************************/
+/***/ "./resources/js/components/Tree.vue?vue&type=template&id=138228ee&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/Tree.vue?vue&type=template&id=138228ee& ***!
+  \*************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_template_id_009ba8b2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CategoryTree.vue?vue&type=template&id=009ba8b2& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CategoryTree.vue?vue&type=template&id=009ba8b2&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_template_id_009ba8b2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_template_id_138228ee___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Tree.vue?vue&type=template&id=138228ee& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tree.vue?vue&type=template&id=138228ee&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_template_id_138228ee___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CategoryTree_vue_vue_type_template_id_009ba8b2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Tree_vue_vue_type_template_id_138228ee___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
