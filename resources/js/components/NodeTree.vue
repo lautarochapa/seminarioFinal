@@ -12,7 +12,7 @@
 export default {
   name: "categoria",
   props: {
-    categoria: Object
+    categoria: Array
   }
 };
 </script>
