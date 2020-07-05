@@ -15,15 +15,17 @@ class NutricionistaMiddleware
      */
     public function handle($request, Closure $next)
     {
-    if ($request->user() && $request->user()->nivel_acceso  != '5')
-    {
-        if ($request->user()->nivel_acceso  != '3')
+        if ($request->user() && $request->user()->nivel_acceso == '5')
         {
-            return redirect('/');
-        }else{
             return $next($request);
+        }else{
+            if ($request->user() && $request->user()->nivel_acceso == '3')
+            {
+                return $next($request);
+            }else{
+                return redirect('/');
+            } 
         }
     }
-    return $next($request);
     }
-}
+    

@@ -15,10 +15,15 @@ class SuperadminMiddleware
      */
     public function handle($request, Closure $next)
     {
-    if ($request->user() && $request->user()->nivel_acceso  != '3')
-    {
-            return redirect('/');
+        if ($request->user() && $request->user()->nivel_acceso == '3')
+        {
+            return $next($request);
+        }else{
+    
+                return redirect('/');
+        }
     }
-    return $next($request);
     }
-}
+
+
+
