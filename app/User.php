@@ -40,7 +40,7 @@ class User extends Authenticatable
 
     public function profile()
     {
-        return $this->belongsTo(Profile::class, 'nivel_acceso');
+        return $this->belongsTo(Profile::class, 'nivel_acceso')->select(array('id', 'nombre'));;
     }
 
     public function products()
