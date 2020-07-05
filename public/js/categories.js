@@ -8,7 +8,8 @@ const data = {
 
 function updateCategorias(){
     axios.get("/categoriasConInsumos")
-        .then((resp)=> { data.categorias = resp.data })
+        .then((resp)=> { data.categorias = resp.data; 
+            console.log(data.categorias) })
         .catch((err)=> { console.error(err.response.data)})
 }
 
@@ -21,7 +22,6 @@ ___________________________________________________________*/
         
     window.addEventListener("load",()=> {
         updateCategorias()
-        console.log(data.categorias)
 
 new Vue({
     el: '#appCategorias',
