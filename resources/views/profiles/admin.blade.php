@@ -19,7 +19,8 @@
 
                     <p> Desde aca podras administrar los productos, las recetas, las dietas y los usuarios</p>
 
-                    <a class="nav-link" href="{{ url('/categories') }}" >{{ __('Panel Categorias') }}</a>
+                    
+                    <a href="{{ url('/categories') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Categorias') }}</button></a>
 
                     <main class="py-4">
                         @yield('content2')
