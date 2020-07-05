@@ -15,7 +15,7 @@ class Product extends Model
 
     public function supply()
     {
-        return $this->belongsTo(Supply::class, 'supply_id')->select(array('id', 'nombre', 'medida', 'cantidad', 'category_id'));;
+        return $this->belongsTo(Supply::class, 'supply_id')->select(array('id', 'nombre', 'medida', 'category_id'));;
     }
 
 //****+* */
