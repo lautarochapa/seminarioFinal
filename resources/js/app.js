@@ -14,6 +14,8 @@ Vue.component('user-component', require('./components/UserComponent.vue').defaul
 
 //product
 Vue.component('product-component', require('./components/ProductComponent.vue').default);
+//utensils
+Vue.component('utensils-component', require('./components/UtensilsComponent.vue').default);
 
 
 

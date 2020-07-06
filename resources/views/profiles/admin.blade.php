@@ -33,6 +33,7 @@
                     
                     <a href="{{ url('/categories') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Categorias') }}</button></a>
                     <a href="{{ url('/products') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Productos') }}</button></a>
+                    <a href="{{ url('/utensils') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Utensillos') }}</button></a>
 
                     <main class="py-4">
                         @yield('content2')

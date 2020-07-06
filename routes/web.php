@@ -36,7 +36,6 @@ Route::get('/utensillos','UtensilController@getAll');
 Route::get('/pasos','StepController@getAll');
 Route::get('/dietas','DietController@getAll');
 Route::get('/agendas','AgendaController@getAll');
-Route::get('/grupos','GroupController@getAll');
 
 
 
@@ -60,10 +59,12 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
     Route::get('/admin', function() { return view('profiles/admin'); });
     Route::get('/categories', function() { return view('profiles/admin/categories'); });
     Route::get('/products', function() { return view('profiles/admin/products'); });
+    Route::get('/utensils', function() { return view('profiles/admin/utensils'); });
 
     //vistas
     Route::get('/api/categories','CategoryController@getAllWithSupplies');
     Route::get('/api/products','ProductController@getAll');
+    Route::get('/api/utensils','UtensilController@getAll');
 });
 
 Route::group(['middleware' => 'App\Http\Middleware\SuperadminMiddleware'], function()
