@@ -38882,8 +38882,8 @@ var render = function() {
                       staticClass: "img-responsive",
                       attrs: {
                         src: "images/" + product.img + ".jpg",
-                        height: "700",
-                        width: "400"
+                        height: "200",
+                        width: "200"
                       }
                     })
                   ]),
