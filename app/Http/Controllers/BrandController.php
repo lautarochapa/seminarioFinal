@@ -9,7 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 class BrandController extends Controller
 {
   function getAll(){
-    $brands = Brand::all();
+    $brands = Brand::withCount(['products' => function ($query) {
+      $query->withFilters();
+  }])
+  ->get();
+  
     return response()->json([
     
       'brands' => $brands
@@ -17,3 +21,4 @@ class BrandController extends Controller
     ], Response::HTTP_OK);
     }
 }
+

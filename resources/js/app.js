@@ -18,6 +18,9 @@ Vue.component('product-component', require('./components/ProductComponent.vue').
 Vue.component('utensils-component', require('./components/UtensilsComponent.vue').default);
 
 
+Vue.component('front-component', require('./components/Front.vue').default);
+
+
 
 
 const app = new Vue({

@@ -15,7 +15,7 @@
   <!--<select class="form-control" :required="true" @change="changeLocation">-->
   <select class="form-control" :required="true">
    <option :selected="true">Elegir MArca</option>
-    <option v-for="br in brand" v-bind:value="br.id" >{{ br.nombre }}</option>
+    <option v-for="br in brands" v-bind:value="br.id" >{{ br.nombre }}</option>
   </select>
 
 
