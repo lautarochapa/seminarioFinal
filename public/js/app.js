@@ -2072,12 +2072,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       products: {},
       supplies: {},
-      selected: "Elegir Insumo"
+      brands: {}
     };
   },
   methods: {
@@ -2097,31 +2107,40 @@ __webpack_require__.r(__webpack_exports__);
         console.log(_this2.supplies);
       });
     },
-    getPage: function getPage(page) {
+    getBrands: function getBrands() {
       var _this3 = this;
 
-      axios.get('/api/products?page=' + page).then(function (response) {
-        _this3.products = response.data.products;
+      axios.get('/api/brands').then(function (response) {
+        _this3.brands = response.data.brands;
+        console.log(_this3.brands);
       });
     },
-    getPreviousPage: function getPreviousPage() {
+    getPage: function getPage(page) {
       var _this4 = this;
 
-      axios.get(this.products['prev_page_url']).then(function (response) {
+      axios.get('/api/products?page=' + page).then(function (response) {
         _this4.products = response.data.products;
       });
     },
-    getNextPage: function getNextPage() {
+    getPreviousPage: function getPreviousPage() {
       var _this5 = this;
 
-      axios.get(this.products['next_page_url']).then(function (response) {
+      axios.get(this.products['prev_page_url']).then(function (response) {
         _this5.products = response.data.products;
+      });
+    },
+    getNextPage: function getNextPage() {
+      var _this6 = this;
+
+      axios.get(this.products['next_page_url']).then(function (response) {
+        _this6.products = response.data.products;
       });
     }
   },
   mounted: function mounted() {
     this.getProducts();
     this.getSupplies();
+    this.getBrands();
   }
 });
 
@@ -38622,7 +38641,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("p", [_vm._v("agregar filtros")]),
+    _c("br"),
+    _vm._v(" "),
+    _c("p", [_vm._v("Filtrar por Insumo")]),
     _vm._v(" "),
     _c(
       "select",
@@ -38635,6 +38656,27 @@ var render = function() {
         _vm._l(_vm.supplies, function(sup) {
           return _c("option", { domProps: { value: sup.id } }, [
             _vm._v(_vm._s(sup.nombre))
+          ])
+        })
+      ],
+      2
+    ),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("p", [_vm._v("Filtrar por Marca")]),
+    _vm._v(" "),
+    _c(
+      "select",
+      { staticClass: "form-control", attrs: { required: true } },
+      [
+        _c("option", { domProps: { selected: true } }, [
+          _vm._v("Elegir MArca")
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.brand, function(br) {
+          return _c("option", { domProps: { value: br.id } }, [
+            _vm._v(_vm._s(br.nombre))
           ])
         })
       ],

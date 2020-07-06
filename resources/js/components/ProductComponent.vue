@@ -1,11 +1,21 @@
 <template>
 <div>
-<p>agregar filtros</p>
+    <br>
+<p>Filtrar por Insumo</p>
 
   <!--<select class="form-control" :required="true" @change="changeLocation">-->
   <select class="form-control" :required="true">
    <option :selected="true">Elegir Insumo</option>
     <option v-for="sup in supplies" v-bind:value="sup.id" >{{ sup.nombre }}</option>
+  </select>
+
+    <br>
+<p>Filtrar por Marca</p>
+
+  <!--<select class="form-control" :required="true" @change="changeLocation">-->
+  <select class="form-control" :required="true">
+   <option :selected="true">Elegir MArca</option>
+    <option v-for="br in brand" v-bind:value="br.id" >{{ br.nombre }}</option>
   </select>
 
 
@@ -71,7 +81,7 @@
             return {
               products: {},
               supplies: {},
-              selected: "Elegir Insumo",
+              brands: {},
             }
         },
         methods: {
@@ -87,6 +97,13 @@
                      .then((response)=>{
                        this.supplies = response.data.supplies;
                        console.log(this.supplies)
+                     })
+            },  
+            getBrands(){
+                axios.get('/api/brands')
+                     .then((response)=>{
+                       this.brands = response.data.brands;
+                       console.log(this.brands)
                      })
             },            
             getPage(page){
@@ -108,6 +125,7 @@
         mounted() {
             this.getProducts()
             this.getSupplies()
+            this.getBrands()
         }
     }
 
