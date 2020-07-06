@@ -2,7 +2,8 @@
 <div>
 <p>agregar filtros</p>
 
-  <select class="form-control" :required="true" @change="changeLocation">
+  <!--<select class="form-control" :required="true" @change="changeLocation">-->
+  <select class="form-control" :required="true">
    <option :selected="true">Elegir Insumo</option>
     <option v-for="sup in supplies" v-bind:value="sup.id" >{{ sup.nombre }}</option>
   </select>

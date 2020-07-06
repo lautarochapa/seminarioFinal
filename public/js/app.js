@@ -2071,6 +2071,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -38625,11 +38626,7 @@ var render = function() {
     _vm._v(" "),
     _c(
       "select",
-      {
-        staticClass: "form-control",
-        attrs: { required: true },
-        on: { change: _vm.changeLocation }
-      },
+      { staticClass: "form-control", attrs: { required: true } },
       [
         _c("option", { domProps: { selected: true } }, [
           _vm._v("Elegir Insumo")
