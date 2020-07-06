@@ -38881,7 +38881,7 @@ var render = function() {
                     _c("img", {
                       staticClass: "img-responsive",
                       attrs: {
-                        src: "images" + product.img + ".jpg",
+                        src: "images/" + product.img + ".jpg",
                         height: "70",
                         width: "90"
                       }

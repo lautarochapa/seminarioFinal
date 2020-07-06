@@ -28,7 +28,7 @@
                             <a href="#">
                                <!-- <img class="card-img-top" src="http://placehold.it/700x400" alt="">
                                  <img src="{{URL::asset('image/propic.png')}}" alt="profile Pic" height="200" width="200">
-                            --><img :src="'images'+ product.img + '.jpg'" class="img-responsive" height="70" width="90">
+                            --><img :src="'images/'+ product.img + '.jpg'" class="img-responsive" height="70" width="90">
                             
                             
                             </a>
