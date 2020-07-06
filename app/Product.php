@@ -18,6 +18,32 @@ class Product extends Model
         return $this->belongsTo(Supply::class, 'supply_id')->select(array('id', 'nombre', 'medida', 'category_id'));;
     }
 
+
+    public function scopeWithFilters($query)
+    {
+        return $query->when(count(request()->input('brands', [])), function ($query) {
+                $query->whereIn('brand_id', request()->input('brands'));
+            })
+            ->when(count(request()->input('supplies', [])), function ($query) {
+                $query->whereIn('supply_id', request()->input('supplies'));
+            });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //****+* */
 
 

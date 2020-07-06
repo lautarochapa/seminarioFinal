@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductController extends Controller
 {
 
-      function getAll(){
+    /*  function getAll(){
 
 
         $products = Product::with('brand', 'supply')->paginate(40);
@@ -19,7 +19,17 @@ class ProductController extends Controller
           'products' => $products
   
       ], Response::HTTP_OK);
-      }
+      }*/
+
+
+
+
+      public function getAll()
+    {
+        $products = Product::withFilters()->get();
+
+        return ProductResource::collection($products);
+    }
 
 
       function getOne($id){
