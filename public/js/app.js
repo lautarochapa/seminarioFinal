@@ -2327,7 +2327,7 @@ __webpack_require__.r(__webpack_exports__);
     getUtensils: function getUtensils() {
       var _this = this;
 
-      axios.get('/api/categories').then(function (response) {
+      axios.get('/api/utensils').then(function (response) {
         _this.utensils = response.data.categoutensilsries[0];
       });
     }
@@ -38980,7 +38980,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    _vm._l(_vm.utenils, function(ut) {
+    _vm._l(_vm.utensils, function(ut) {
       return _c("div", [_c("p", [_vm._v(_vm._s(ut))])])
     }),
     0

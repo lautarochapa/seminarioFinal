@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="ut in utenils">
+    <div v-for="ut in utensils">
       <p>{{ut}}</p>
     </div> 
    </div>
@@ -17,7 +17,7 @@
         },
         methods: {
             getUtensils(){
-                axios.get('/api/categories')
+                axios.get('/api/utensils')
                      .then((response)=>{
                        this.utensils = response.data.categoutensilsries[0]
                      })
