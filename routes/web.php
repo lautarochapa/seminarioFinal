@@ -68,7 +68,7 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
 
 
     Route::get('/api/supplies','SupplyController@getAll');
-    Route::get('/api/brand','BrandController@getAll');
+    Route::get('/api/brands','BrandController@getAll');
     Route::get('/api/products/bySupply/{id}','ProductController@getBySupply');
     Route::get('/api/products/{id}','ProductController@getOne');
 
