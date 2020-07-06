@@ -2064,10 +2064,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      products: {}
+      products: {},
+      supplies: {},
+      selected: "Elegir Insumo"
     };
   },
   methods: {
@@ -2079,30 +2088,39 @@ __webpack_require__.r(__webpack_exports__);
         console.log(_this.products);
       });
     },
-    getPage: function getPage(page) {
+    getSupplies: function getSupplies() {
       var _this2 = this;
 
-      axios.get('/api/products?page=' + page).then(function (response) {
-        _this2.products = response.data.products;
+      axios.get('/api/supplies').then(function (response) {
+        _this2.supplies = response.data.supplies;
+        console.log(_this2.supplies);
       });
     },
-    getPreviousPage: function getPreviousPage() {
+    getPage: function getPage(page) {
       var _this3 = this;
 
-      axios.get(this.products['prev_page_url']).then(function (response) {
+      axios.get('/api/products?page=' + page).then(function (response) {
         _this3.products = response.data.products;
       });
     },
-    getNextPage: function getNextPage() {
+    getPreviousPage: function getPreviousPage() {
       var _this4 = this;
 
-      axios.get(this.products['next_page_url']).then(function (response) {
+      axios.get(this.products['prev_page_url']).then(function (response) {
         _this4.products = response.data.products;
+      });
+    },
+    getNextPage: function getNextPage() {
+      var _this5 = this;
+
+      axios.get(this.products['next_page_url']).then(function (response) {
+        _this5.products = response.data.products;
       });
     }
   },
   mounted: function mounted() {
     this.getProducts();
+    this.getSupplies();
   }
 });
 
@@ -38604,6 +38622,27 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("p", [_vm._v("agregar filtros")]),
+    _vm._v(" "),
+    _c(
+      "select",
+      {
+        staticClass: "form-control",
+        attrs: { required: true },
+        on: { change: _vm.changeLocation }
+      },
+      [
+        _c("option", { domProps: { selected: true } }, [
+          _vm._v("Elegir Insumo")
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.supplies, function(sup) {
+          return _c("option", { domProps: { value: sup.id } }, [
+            _vm._v(_vm._s(sup.nombre))
+          ])
+        })
+      ],
+      2
+    ),
     _vm._v(" "),
     _c("table", { staticClass: "table table-striped" }, [
       _vm._m(0),

@@ -2,6 +2,13 @@
 <div>
 <p>agregar filtros</p>
 
+  <select class="form-control" :required="true" @change="changeLocation">
+   <option :selected="true">Elegir Insumo</option>
+    <option v-for="sup in supplies" v-bind:value="sup.id" >{{ sup.nombre }}</option>
+  </select>
+
+
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -62,6 +69,8 @@
         data() {
             return {
               products: {},
+              supplies: {},
+              selected: "Elegir Insumo",
             }
         },
         methods: {
@@ -70,6 +79,13 @@
                      .then((response)=>{
                        this.products = response.data.products;
                        console.log(this.products)
+                     })
+            }, 
+            getSupplies(){
+                axios.get('/api/supplies')
+                     .then((response)=>{
+                       this.supplies = response.data.supplies;
+                       console.log(this.supplies)
                      })
             },            
             getPage(page){
@@ -90,6 +106,7 @@
         },
         mounted() {
             this.getProducts()
+            this.getSupplies()
         }
     }
 

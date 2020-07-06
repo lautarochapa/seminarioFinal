@@ -7,7 +7,12 @@ use App\Supply;
 
 class SupplyController extends Controller
 {
-    function getAll(){
-        return Supply::all();
-      }
+  function getAll(){
+    $supplies = Supply::all();
+    return response()->json([
+    
+      'supplies' => $supplies
+    
+    ], Response::HTTP_OK);
+    }
 }
