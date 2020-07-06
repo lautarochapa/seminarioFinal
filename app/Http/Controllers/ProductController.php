@@ -27,8 +27,12 @@ class ProductController extends Controller
       public function getAll()
     {
         $products = Product::withFilters()->get();
+        
+        return response()->json([
 
-        return ProductResource::collection($products);
+          'products' => $products
+  
+      ], Response::HTTP_OK);
     }
 
 
