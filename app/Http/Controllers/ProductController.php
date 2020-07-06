@@ -37,7 +37,7 @@ class ProductController extends Controller
       function getBySupply($id){
 
 
-        $products = Product::with('brand', 'supply')::where('id_supply', '=', $id)->paginate(40);
+        $products = Product::with('brand', 'supply')->where('id_supply', '=', $id)->paginate(40);
         return response()->json([
 
           'products' => $products
