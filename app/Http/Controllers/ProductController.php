@@ -22,5 +22,29 @@ class ProductController extends Controller
       }
 
 
+      function getOne($id){
+
+
+        $products = Product::find($id);
+        return response()->json([
+
+          'products' => $products
+  
+      ], Response::HTTP_OK);
+      }
+
+
+      function getBySupply($id){
+
+
+        $products = Product::with('brand', 'supply')::where('id_supply', '=', $id)->paginate(40);
+        return response()->json([
+
+          'products' => $products
+  
+      ], Response::HTTP_OK);
+      }
+
+
 
 }
