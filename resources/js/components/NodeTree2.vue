@@ -37,8 +37,8 @@ export default {
 
 -->
 <template>
-     <li class="node-tree">
-    <select v-model="localState">
+     <li class="node-tree" v-model="localState">
+    <select v-model="localStateBus">
         <option v-for="(state, abbreviation) in states"
                 :value="abbreviation"
                 v-html="state"
@@ -57,7 +57,7 @@ export default {
 
 
     <ul v-if="categoria.allchildren && categoria.allchildren.length">
-      <categoria v-for="child in categoria.allchildren" :categoria="child"></categoria>
+      <categoria v-for="child in categoria.allchildren" :categoria="child" @bus="bus"></categoria>
 
 
     </ul>
@@ -83,10 +83,19 @@ export default {
             }
         },
         computed: {
+            localStateBus: {
+                get() {return this.value},
+                set(localStateBus) { this.$emit('bus', localStateBus)}
+            },
             localState: {
                 get() {return this.value},
                 set(localState) { this.$emit('input', localState)}
             }
-        }
+        },/*
+        methods: {
+          bus: function (data) {
+              this.$emit('bus', data)
+          }
+      }*/
     }
 </script>

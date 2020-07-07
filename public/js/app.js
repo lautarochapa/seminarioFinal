@@ -2269,6 +2269,14 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
+    localStateBus: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(localStateBus) {
+        this.$emit('bus', localStateBus);
+      }
+    },
     localState: {
       get: function get() {
         return this.value;
@@ -2278,6 +2286,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   }
+  /*
+  methods: {
+  bus: function (data) {
+      this.$emit('bus', data)
+  }
+  }*/
+
 });
 
 /***/ }),
@@ -39220,7 +39235,16 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "li",
-    { staticClass: "node-tree" },
+    {
+      staticClass: "node-tree",
+      model: {
+        value: _vm.localState,
+        callback: function($$v) {
+          _vm.localState = $$v
+        },
+        expression: "localState"
+      }
+    },
     [
       _c(
         "select",
@@ -39229,8 +39253,8 @@ var render = function() {
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.localState,
-              expression: "localState"
+              value: _vm.localStateBus,
+              expression: "localStateBus"
             }
           ],
           on: {
@@ -39243,7 +39267,7 @@ var render = function() {
                   var val = "_value" in o ? o._value : o.value
                   return val
                 })
-              _vm.localState = $event.target.multiple
+              _vm.localStateBus = $event.target.multiple
                 ? $$selectedVal
                 : $$selectedVal[0]
             }
@@ -39331,7 +39355,10 @@ var render = function() {
         ? _c(
             "ul",
             _vm._l(_vm.categoria.allchildren, function(child) {
-              return _c("categoria", { attrs: { categoria: child } })
+              return _c("categoria", {
+                attrs: { categoria: child },
+                on: { bus: _vm.bus }
+              })
             }),
             1
           )
