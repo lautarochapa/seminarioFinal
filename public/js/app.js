@@ -2178,13 +2178,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -39074,11 +39067,67 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
-      _vm._l(_vm.categoria.supplies, function(supply) {
-        return _c("div", [
-          _c("p", { staticStyle: { color: "#FF0000" } }, [
-            _vm._v(_vm._s(supply.nombre))
-          ])
+      _vm._l(_vm.categoria.supplies, function(supply, index) {
+        return _c("div", { staticClass: "form-check" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.selected.supplies,
+                expression: "selected.supplies"
+              }
+            ],
+            staticClass: "form-check-input",
+            attrs: { type: "checkbox", id: "supply" + index },
+            domProps: {
+              value: supply.id,
+              checked: Array.isArray(_vm.selected.supplies)
+                ? _vm._i(_vm.selected.supplies, supply.id) > -1
+                : _vm.selected.supplies
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.selected.supplies,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false
+                if (Array.isArray($$a)) {
+                  var $$v = supply.id,
+                    $$i = _vm._i($$a, $$v)
+                  if ($$el.checked) {
+                    $$i < 0 &&
+                      _vm.$set(_vm.selected, "supplies", $$a.concat([$$v]))
+                  } else {
+                    $$i > -1 &&
+                      _vm.$set(
+                        _vm.selected,
+                        "supplies",
+                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                      )
+                  }
+                } else {
+                  _vm.$set(_vm.selected, "supplies", $$c)
+                }
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "label",
+            {
+              staticClass: "form-check-label",
+              attrs: { for: "supply" + index }
+            },
+            [
+              _vm._v(
+                "\n                      --   " +
+                  _vm._s(supply.nombre) +
+                  " (" +
+                  _vm._s(supply.products_count) +
+                  ")\n                      "
+              )
+            ]
+          )
         ])
       }),
       _vm._v(" "),
