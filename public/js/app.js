@@ -2052,11 +2052,12 @@ __webpack_require__.r(__webpack_exports__);
         supplies: [],
         brands: [],
         categories: []
-      },
-      address: {
-        street: '',
-        state: ''
       }
+      /* address: {
+           street: '',
+           state: '',
+       }*/
+
     };
   },
   mounted: function mounted() {
@@ -2066,21 +2067,22 @@ __webpack_require__.r(__webpack_exports__);
     this.loadCategories();
   },
   watch: {
-    /*selected: {
-        handler: function () {
-            this.loadSupplies();
-            this.loadBrands();
-            this.loadProducts();
-            this.loadCategories();
-        },
-        deep: true
-    }*/
-    address: {
+    selected: {
       handler: function handler() {
-        console.log(this.address);
+        this.loadSupplies();
+        this.loadBrands();
+        this.loadProducts();
+        this.loadCategories();
       },
       deep: true
     }
+    /* address: {
+         handler: function () {
+            console.log(this.address)
+         },
+         deep: true
+     }*/
+
   },
   methods: {
     bus: function bus(data) {
@@ -2209,87 +2211,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
-    categoria: [Object, Array],
-    value: {
-      type: String,
-      required: true
-    }
+    categoria: [Object, Array]
   },
-  data: function data() {
-    return {
-      states: {
-        NY: 'New York',
-        WI: 'Wisconsin' // + rest of the states
-
-      }
-    };
-  },
-  computed: {
-    localStateBus: {
-      get: function get() {
-        return this.value;
-      },
-      set: function set(localStateBus) {
-        this.$emit('bus', localStateBus);
-      }
-    },
-    localState: {
-      get: function get() {
-        return this.value;
-      },
-      set: function set(localState) {
-        this.$emit('input', localState);
-      }
-    }
-  },
-  methods: {
-    bus: function bus(data) {
-      this.$emit('bus', data);
-    }
+  mounted: function mounted() {
+    this.$emit('bus', {
+      data1: 'somedata',
+      data2: 'somedata'
+    });
   }
 });
 
@@ -2496,66 +2427,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    treeData: [Object, Array],
-    value: {
-      type: Object,
-      required: true
-    }
+    treeData: [Object, Array]
   },
   components: {
     NodeTree2: _NodeTree2__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  computed: {
-    localAddress: {
-      get: function get() {
-        return this.value;
-      },
-      set: function set(localAddress) {
-        this.$emit('input', localAddress);
-      }
+  methods: {
+    bus: function bus(data) {
+      this.$emit('bus', data);
     }
   }
 });
@@ -39036,20 +38918,10 @@ var render = function() {
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Categorias")]),
             _vm._v(" "),
-            _c(
-              "form",
-              [
-                _c("tree2", {
-                  attrs: { "tree-data": _vm.categories, value: _vm.address },
-                  on: {
-                    input: function(newAddress) {
-                      _vm.address = newAddress
-                    }
-                  }
-                })
-              ],
-              1
-            ),
+            _c("tree2", {
+              attrs: { "tree-data": _vm.categories },
+              on: { bus: _vm.bus }
+            }),
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
@@ -39106,11 +38978,11 @@ var render = function() {
                   },
                   [
                     _vm._v(
-                      "\n                    " +
+                      "\n                        " +
                         _vm._s(br.nombre) +
                         " (" +
                         _vm._s(br.products_count) +
-                        ")\n                "
+                        ")\n                    "
                     )
                   ]
                 )
@@ -39233,52 +39105,8 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "li",
-    {
-      staticClass: "node-tree",
-      model: {
-        value: _vm.localState,
-        callback: function($$v) {
-          _vm.localState = $$v
-        },
-        expression: "localState"
-      }
-    },
+    { staticClass: "node-tree" },
     [
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.localStateBus,
-              expression: "localStateBus"
-            }
-          ],
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.localStateBus = $event.target.multiple
-                ? $$selectedVal
-                : $$selectedVal[0]
-            }
-          }
-        },
-        _vm._l(_vm.states, function(state, abbreviation) {
-          return _c("option", {
-            domProps: { value: abbreviation, innerHTML: _vm._s(state) }
-          })
-        }),
-        0
-      ),
-      _vm._v(" "),
       _c("span", { staticClass: "label" }, [
         _vm._v(
           _vm._s(_vm.categoria.nombre) +
@@ -39353,10 +39181,7 @@ var render = function() {
         ? _c(
             "ul",
             _vm._l(_vm.categoria.allchildren, function(child) {
-              return _c("categoria", {
-                attrs: { categoria: child },
-                on: { bus: _vm.bus }
-              })
+              return _c("categoria", { attrs: { categoria: child } })
             }),
             1
           )
@@ -39653,46 +39478,9 @@ var render = function() {
       "ul",
       { staticClass: "tree-list" },
       [
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.localAddress.street,
-              expression: "localAddress.street"
-            }
-          ],
-          attrs: { name: "street" },
-          domProps: { value: _vm.localAddress.street },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.localAddress, "street", $event.target.value)
-            }
-          }
-        }),
-        _vm._v(" "),
         _c("node-tree2", {
           attrs: { categoria: _vm.treeData },
-          model: {
-            value: _vm.localAddress.state,
-            callback: function($$v) {
-              _vm.$set(_vm.localAddress, "state", $$v)
-            },
-            expression: "localAddress.state"
-          }
-        }),
-        _vm._v(" "),
-        _c("node-tree2", {
-          model: {
-            value: _vm.localAddress.state,
-            callback: function($$v) {
-              _vm.$set(_vm.localAddress, "state", $$v)
-            },
-            expression: "localAddress.state"
-          }
+          on: { bus: _vm.bus }
         })
       ],
       1

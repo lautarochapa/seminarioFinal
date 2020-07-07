@@ -13,16 +13,16 @@
 
                 <h3 class="mt-2">Categorias</h3>
 
-           <!--       <tree2 :tree-data="categories" @bus="bus"></tree2>-->
+                 <tree2 :tree-data="categories" @bus="bus"></tree2>
 
-    <form>
+   <!--  <form>
         <tree2
             :tree-data="categories"
             :value="address"
             @input="(newAddress) => {address = newAddress}"
         />
     </form>
-
+-->
 
 
 
@@ -82,10 +82,10 @@ import Tree2 from "./Tree2";
                     brands: [],
                     categories: []
                 },
-                address: {
+               /* address: {
                     street: '',
                     state: '',
-                }
+                }*/
             }
         },
         mounted() {
@@ -95,7 +95,7 @@ import Tree2 from "./Tree2";
             this.loadCategories();
         },
         watch: {
-            /*selected: {
+            selected: {
                 handler: function () {
                     this.loadSupplies();
                     this.loadBrands();
@@ -103,13 +103,13 @@ import Tree2 from "./Tree2";
                     this.loadCategories();
                 },
                 deep: true
-            }*/
-            address: {
+            }
+           /* address: {
                 handler: function () {
                    console.log(this.address)
                 },
                 deep: true
-            }
+            }*/
         },
         methods: {
             bus: function (data) {

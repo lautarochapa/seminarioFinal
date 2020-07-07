@@ -1,9 +1,9 @@
-<!--<template>
+<template>
   <div class="tree">
     
     <ul class="tree-list">
       <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
-                     <node-tree2 v-model="localAddress.state" /> 
+<!--                        <node-tree2 v-model="localAddress.state" /> -->
 
     </ul>
   </div>
@@ -36,24 +36,18 @@ export default {
 }
 </style>
 
-
--->
+<!--
 
 <template>
-    <div class="tree">
-          <ul class="tree-list">
+    <div>
         <input name="street" v-model="localAddress.street">
-      <node-tree2 :categoria="treeData" v-model="localAddress.state"></node-tree2>
-                     <node-tree2 v-model="localAddress.state" /> 
-
-    </ul>
+        <node-tree2 v-model="localAddress.state" />
     </div>
 </template>
 <script>
     import NodeTree2 from "./NodeTree2";
     export default {
         props: {
-            treeData: [Object, Array],
             value: {
                 type: Object,
                 required: true
@@ -69,9 +63,4 @@ export default {
     }
 </script>
 
-<style>
-.tree-list ul {
-  padding-left: 16px;
-  margin: 6px 0;
-}
-</style>
+-->
