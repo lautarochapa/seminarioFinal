@@ -8,28 +8,28 @@
 
                    <p> Productos</p>
 
-              <!--     <ul id="myUL">
+                   <ul id="myUL">
   <li><span class="caret">Beverages</span>
     <ul class="nested">
-      <li>Water</li>
-      <li>Coffee</li>
+      <li><span class="caret">Water</span></li>
+      <li><span class="caret">Coffee</span></li>
       <li><span class="caret">Tea</span>
         <ul class="nested">
-          <li>Black Tea</li>
-          <li>White Tea</li>
+          <li><span class="caret">Black Tea</span></li>
+          <li><span class="caret">White Tea</span></li>
           <li><span class="caret">Green Tea</span>
             <ul class="nested">
-              <li>Sencha</li>
-              <li>Gyokuro</li>
-              <li>Matcha</li>
-              <li>Pi Lo Chun</li>
+              <li><span class="caret">Sencha</span></li>
+              <li><span class="caret">Gyokuro</span></li>
+              <li><span class="caret">Matcha</span></li>
+              <li><span class="caret">Pi Lo Chun</li>
             </ul>
           </li>
         </ul>
       </li>
     </ul>
   </li>
-</ul> -->
+</ul> 
 
 
 

@@ -39470,7 +39470,18 @@ var render = function() {
           _vm._s(_vm.categoria.products_count) +
           ")  \n  "
       )
-    ])
+    ]),
+    _vm._v(" "),
+    _vm.categoria.allchildren && _vm.categoria.allchildren.length
+      ? _c(
+          "ul",
+          { staticClass: "nested" },
+          _vm._l(_vm.categoria.allchildren, function(child) {
+            return _c("categoria", { attrs: { categoria: child } })
+          }),
+          1
+        )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
