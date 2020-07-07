@@ -1,8 +1,10 @@
 <template>
-    <ul id="myUL">
+<div>
+      <ul id="myUL">
       <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
 
     </ul>
+    </div>
 </template>
 
 
