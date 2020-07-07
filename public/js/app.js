@@ -2090,9 +2090,8 @@ __webpack_require__.r(__webpack_exports__);
         if (data.substring(0, 5) == 'false') {
           //console.log(data.substring(11,20) + " false")
           if (this.selected.supplies.includes(data.substring(11, 20))) {
-            this.selected.supplies.push(data.substring(10, 20));
             this.selected.supplies.splice(this.selected.supplies.findIndex(function (sup) {
-              return sup === data.substring(10, 20);
+              return sup === data.substring(11, 20);
             }), 1); //console.log(data.substring(11,20) + " eliminar")
           }
         }

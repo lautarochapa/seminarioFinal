@@ -122,10 +122,8 @@ import Tree2 from "./Tree2";
                         //console.log(data.substring(11,20) + " false")
                         if( this.selected.supplies.includes(data.substring(11,20))){
 
-                        this.selected.supplies.push(data.substring(10,20))
-
-
-this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === data.substring(10,20)), 1)
+                        
+this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === data.substring(11,20)), 1)
 
                             //console.log(data.substring(11,20) + " eliminar")
                         }
