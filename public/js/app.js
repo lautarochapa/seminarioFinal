@@ -2216,6 +2216,21 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     categoria: [Object, Array]
   },
+  methods: {
+    bus: function bus(data) {
+      this.$emit('bus', data);
+    }
+  },
+  computed: {
+    supplies2: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(supplies2) {
+        this.$emit('bus', supplies2);
+      }
+    }
+  },
   mounted: function mounted() {
     this.$emit('bus', {
       data1: 'somedata',
@@ -39181,7 +39196,10 @@ var render = function() {
         ? _c(
             "ul",
             _vm._l(_vm.categoria.allchildren, function(child) {
-              return _c("categoria", { attrs: { categoria: child } })
+              return _c("categoria", {
+                attrs: { categoria: child },
+                on: { bus: _vm.bus }
+              })
             }),
             1
           )

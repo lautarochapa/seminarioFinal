@@ -15,7 +15,7 @@
 
 
     <ul v-if="categoria.allchildren && categoria.allchildren.length">
-      <categoria v-for="child in categoria.allchildren" :categoria="child"></categoria>
+      <categoria v-for="child in categoria.allchildren" :categoria="child" @bus="bus"></categoria>
 
 
     </ul>
@@ -28,7 +28,18 @@ export default {
   props: {
     categoria: [Object, Array],  
 
+  },       
+  methods: {
+            bus: function (data) {
+                this.$emit('bus', data)
+            },
   },
+        computed: {
+            supplies2: {
+                get() {return this.value},
+                set(supplies2) { this.$emit('bus', supplies2)}
+            }
+        },
 
           mounted() {
             this.$emit('bus', {data1: 'somedata', data2: 'somedata'})
