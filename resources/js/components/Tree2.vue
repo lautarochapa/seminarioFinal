@@ -25,7 +25,9 @@ export default {
             bus: function (data) {
                 this.$emit('bus', data)
             },
-  }
+  },
+        mounted() {console.log(this.treeData)
+        },
   
   };
 </script>

@@ -166,7 +166,7 @@ import Tree2 from "./Tree2";
                     this.loadBrands();
                     this.loadProducts();
                     this.loadCategories();
-                    console.log(this.selected.supplies)
+                   // console.log(this.selected.supplies)
                    // console.log(this.selected.brands)
                 },
                 deep: true
@@ -257,6 +257,7 @@ import Tree2 from "./Tree2";
                     })
                     .then((response) => {
                         this.categories = response.data.categories;
+                        console.log(this.categories)
                         this.loading = false;
                     })
                     .catch(function (error) {

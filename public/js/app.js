@@ -2137,8 +2137,8 @@ __webpack_require__.r(__webpack_exports__);
       handler: function handler() {
         this.loadBrands();
         this.loadProducts();
-        this.loadCategories();
-        console.log(this.selected.supplies); // console.log(this.selected.brands)
+        this.loadCategories(); // console.log(this.selected.supplies)
+        // console.log(this.selected.brands)
       },
       deep: true
     }
@@ -2238,6 +2238,7 @@ __webpack_require__.r(__webpack_exports__);
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
         _this8.categories = response.data.categories;
+        console.log(_this8.categories);
         _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
@@ -2333,6 +2334,9 @@ __webpack_require__.r(__webpack_exports__);
     return {
       supplies2: []
     };
+  },
+  mounted: function mounted() {
+    console.log(this.categoria);
   }
 });
 
@@ -2552,6 +2556,9 @@ __webpack_require__.r(__webpack_exports__);
     bus: function bus(data) {
       this.$emit('bus', data);
     }
+  },
+  mounted: function mounted() {
+    console.log(this.treeData);
   }
 });
 
