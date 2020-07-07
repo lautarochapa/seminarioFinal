@@ -1,9 +1,12 @@
-<!--<template>
+<template>
   <li class="node-tree">
     <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
                         <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="supplies">
+                        <!--                                            :value="abbreviation"                   v-model="localState"
+
+                        -->
                         <label class="form-check-label" :for="'supply' + index">
                         --   {{ supply.nombre }} ({{ supply.products_count }})
                         </label>
@@ -24,22 +27,20 @@ export default {
   name: "categoria",
   props: {
     categoria: [Object, Array],   
-    supplies: [],
+    value: [],
 
   },
-        watch: {
-            supplies() {
-                this.$emit('input', this.supplies);
+        computed: {
+              supplies: {
+            //localState: {
+                get() {return this.value},
+                set(supplies) { this.$emit('input', supplies)}
+                //set(localState) { this.$emit('input', localState)}
             }
         }
 };
 </script>
--->
-
-
-
-
-
+<!--
 <template>
     <select v-model="localState">
         <option v-for="(state, abbreviation) in states"
@@ -73,3 +74,5 @@ export default {
         }
     }
 </script>
+
+-->
