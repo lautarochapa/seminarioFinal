@@ -41,7 +41,16 @@
 
                 <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}} </p>
                 <br>
-                <p> Filtrado:  {{this.sups}} </p>
+
+                <p> Filtrado:</p>
+            
+            <div v-for="sup in this.sups">
+
+                <p>{{sup.nombre}} / {{sup.category.nombre}} / {{sup.category.grandparent.nombre}} / {{sup.category.grandparent.grandparent.nombre}}</p> 
+            </div>
+
+
+
                 
                 <nav>
                     <ul class="pagination">
