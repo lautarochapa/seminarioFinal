@@ -1,5 +1,8 @@
 <template>
 <div>
+
+<p>{{treeData}}</p>
+
       <ul id="myUL">
 
       <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>

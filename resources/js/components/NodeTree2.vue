@@ -1,7 +1,7 @@
 <template>
   <li>
     <span class="caret">CATGORIAS  </span> 
-      <p>{{categoria}}</p>
+      <!--<p>{{categoria}}</p>-->
 
 <!--
     <span class="caret">{{ categoria.nombre }} ({{ categoria.products_count }})  </span>   

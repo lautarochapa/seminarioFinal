@@ -2544,6 +2544,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -39462,13 +39465,18 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("li", [
-    _c("span", { staticClass: "caret" }, [_vm._v("CATGORIAS  ")]),
-    _vm._v(" "),
-    _c("p", [_vm._v(_vm._s(_vm.categoria))])
-  ])
+  return _vm._m(0)
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [
+      _c("span", { staticClass: "caret" }, [_vm._v("CATGORIAS  ")])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -39752,6 +39760,8 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
+    _c("p", [_vm._v(_vm._s(_vm.treeData))]),
+    _vm._v(" "),
     _c(
       "ul",
       { attrs: { id: "myUL" } },
