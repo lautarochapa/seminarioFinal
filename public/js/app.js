@@ -39761,7 +39761,12 @@ var render = function() {
       return _c(
         "ul",
         { attrs: { id: "myUL" } },
-        [_c("node-tree2", { attrs: { categoria: cat }, on: { bus: _vm.bus } })],
+        [
+          _c("node-tree2", {
+            attrs: { categoria: _vm.treeData[cat] },
+            on: { bus: _vm.bus }
+          })
+        ],
         1
       )
     }),

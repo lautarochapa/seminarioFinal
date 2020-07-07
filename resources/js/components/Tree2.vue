@@ -1,7 +1,7 @@
 <template>
 <div>
       <ul id="myUL" v-for="cat in treeData">
-      <node-tree2 :categoria="cat" @bus="bus" ></node-tree2>
+      <node-tree2 :categoria="treeData[cat]" @bus="bus" ></node-tree2>
 
     </ul>
     </div>
