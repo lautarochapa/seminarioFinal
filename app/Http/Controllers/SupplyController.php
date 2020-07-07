@@ -28,7 +28,7 @@ class SupplyController extends Controller
 
 
     function getAll2(){
-      $supplies = Supply::with('grandparent');
+      $supplies = Supply::with('parent');
   
     
       return response()->json([
