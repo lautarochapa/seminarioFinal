@@ -22,4 +22,8 @@ class Supply extends Model
     }
 
 
+    public function grandparent() {
+        return $this->parent()->with('grandparent');
+    }
+
 }
