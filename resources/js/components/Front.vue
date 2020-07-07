@@ -45,8 +45,7 @@
                 <p> Filtrado:</p>
             
             <div v-for="sup in this.sups">
-
-                <p>{{sup.nombre}} / {{sup.category.nombre}} / {{sup.category.grandparent.nombre}} / {{sup.category.grandparent.grandparent.nombre}}</p> 
+                <p>{{sup.category.grandparent.grandparent.nombre}}/{{sup.category.grandparent.nombre}}/{{sup.category.nombre}}/{{sup.nombre}}</p> <p @click="eliminarFiltro(sup.id)">x</p>
             </div>
 
 
@@ -288,6 +287,11 @@ import Tree2 from "./Tree2";
                     .catch(function (error) {
                         console.log(error);
                     });
+            },
+            eliminarFiltro: function(id){
+
+                var checkbox = document.getElementsById("supply"+id).checked = false;
+
             },
 
 

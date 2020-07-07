@@ -2129,7 +2129,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2270,6 +2269,9 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    eliminarFiltro: function eliminarFiltro(id) {
+      var checkbox = document.getElementsById("supply" + id).checked = false;
+    },
     loadCategories: function loadCategories() {
       var _this9 = this;
 
@@ -2337,36 +2339,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -39151,15 +39123,27 @@ var render = function() {
               return _c("div", [
                 _c("p", [
                   _vm._v(
-                    _vm._s(sup.nombre) +
-                      " / " +
-                      _vm._s(sup.category.nombre) +
-                      " / " +
+                    _vm._s(sup.category.grandparent.grandparent.nombre) +
+                      "/" +
                       _vm._s(sup.category.grandparent.nombre) +
-                      " / " +
-                      _vm._s(sup.category.grandparent.grandparent.nombre)
+                      "/" +
+                      _vm._s(sup.category.nombre) +
+                      "/" +
+                      _vm._s(sup.nombre)
                   )
-                ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "p",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.eliminarFiltro(sup.id)
+                      }
+                    }
+                  },
+                  [_vm._v("x")]
+                )
               ])
             }),
             _vm._v(" "),
