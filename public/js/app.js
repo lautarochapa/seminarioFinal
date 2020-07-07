@@ -2270,7 +2270,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     eliminarFiltro: function eliminarFiltro(id) {
-      var checkbox = document.getElementsById("supply" + id).checked = false;
+      var checkbox = document.getElementById("supply" + id).checked = false;
     },
     loadCategories: function loadCategories() {
       var _this9 = this;
@@ -39121,7 +39121,7 @@ var render = function() {
             _vm._v(" "),
             _vm._l(this.sups, function(sup) {
               return _c("div", [
-                _c("p", [
+                _c("span", [
                   _vm._v(
                     _vm._s(sup.category.grandparent.grandparent.nombre) +
                       "/" +
@@ -39134,7 +39134,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c(
-                  "p",
+                  "span",
                   {
                     on: {
                       click: function($event) {
