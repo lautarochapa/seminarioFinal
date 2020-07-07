@@ -2249,7 +2249,9 @@ __webpack_require__.r(__webpack_exports__);
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
         _this8.categories = response.data.categories;
-        treeViewLoad();
+
+        _this8.treeViewLoad();
+
         _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
