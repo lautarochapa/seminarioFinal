@@ -36,13 +36,9 @@ export default {
   },
         computed: {
             supplies2: {
-                get() {return this.value},
+                get() {return this},
                 set(supplies2) { this.$emit('bus', supplies2)}
             }
-        },
-
-          mounted() {
-            this.$emit('bus', {data1: 'somedata', data2: 'somedata'})
         },
 
 };

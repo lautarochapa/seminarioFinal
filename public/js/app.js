@@ -2086,6 +2086,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     bus: function bus(data) {
+      this.selected.supplies = data;
       console.log(data);
     },
     loadSupplies: function loadSupplies() {
@@ -2224,18 +2225,12 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     supplies2: {
       get: function get() {
-        return this.value;
+        return this;
       },
       set: function set(supplies2) {
         this.$emit('bus', supplies2);
       }
     }
-  },
-  mounted: function mounted() {
-    this.$emit('bus', {
-      data1: 'somedata',
-      data2: 'somedata'
-    });
   }
 });
 
