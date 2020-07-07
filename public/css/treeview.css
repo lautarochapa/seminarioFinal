@@ -1,10 +1,25 @@
 /* Remove default bullets */
-ul, #myUL {
-    list-style-type: none;
-  }
+ul, #myUL1 {
+  list-style-type: none;
+}ul, #myUL2 {
+  list-style-type: none;
+}ul, #myUL3 {
+  list-style-type: none;
+}ul, #myUL4 {
+  list-style-type: none;
+}
   
   /* Remove margins and padding from the parent ul */
-  #myUL {
+  #myUL1 {
+    margin: 0;
+    padding: 0;
+  }  #myUL2 {
+    margin: 0;
+    padding: 0;
+  }  #myUL3 {
+    margin: 0;
+    padding: 0;
+  }  #myUL4 {
     margin: 0;
     padding: 0;
   }

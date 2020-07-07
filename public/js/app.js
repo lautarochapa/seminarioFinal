@@ -39790,7 +39790,7 @@ var render = function() {
       return _c("div", [
         _c(
           "ul",
-          { attrs: { id: "myUL" } },
+          { attrs: { id: "myUL" + a.id } },
           [_c("node-tree2", { attrs: { categoria: a }, on: { bus: _vm.bus } })],
           1
         )
