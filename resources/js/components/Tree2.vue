@@ -1,9 +1,9 @@
-<template>
+<!--<template>
   <div class="tree">
     
     <ul class="tree-list">
       <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
-<!--                        <node-tree2 v-model="localAddress.state" /> -->
+                     <node-tree2 v-model="localAddress.state" /> 
 
     </ul>
   </div>
@@ -36,7 +36,8 @@ export default {
 }
 </style>
 
-<!--
+
+-->
 
 <template>
     <div>
@@ -62,5 +63,3 @@ export default {
         }
     }
 </script>
-
--->

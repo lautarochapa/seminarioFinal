@@ -8,6 +8,8 @@
 
                    <p> Productos</p>
 
+                   
+
                   <!-- <product-component></product-component>-->
                     <front-component></front-component>
 
