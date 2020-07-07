@@ -97,7 +97,7 @@
                         params: this.selected
                     })
                     .then((response) => {
-                        this.products = response.data.products[0];
+                        this.products = response.data.products;
                         this.loading = false;
                     })
                     .catch(function (error) {

@@ -51,8 +51,25 @@ class CategoryController extends Controller
       }
 
 
+      function getAll2(){
+        $categories = Category::with('allchildren', 'supplies')->withCount(['products' => function ($query) {
+          $query->withFilters();
+      }])
+      ->get();
+      
+      
+        return response()->json([
+        
+          'categories' => $categories
+        
+        ], Response::HTTP_OK);
+        }
+
 
 }
+
+
+
 
 
 

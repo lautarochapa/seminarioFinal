@@ -27,6 +27,10 @@ Route::get('/marcas','BrandController@getAll');
 
 
 
+
+Route::get('/a','CategoryController@getAll2');
+
+
 //Getters con logica
 
 
