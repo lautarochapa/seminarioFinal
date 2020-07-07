@@ -105,7 +105,7 @@ import Tree2 from "./Tree2";
             }*/
             address: {
                 handler: function () {
-                   console.log(address)
+                   console.log(this.address)
                 },
                 deep: true
             }

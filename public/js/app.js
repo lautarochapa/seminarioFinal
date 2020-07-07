@@ -2076,7 +2076,7 @@ __webpack_require__.r(__webpack_exports__);
     }*/
     address: {
       handler: function handler() {
-        console.log(address);
+        console.log(this.address);
       },
       deep: true
     }
