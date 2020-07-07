@@ -2502,6 +2502,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -39733,7 +39735,9 @@ var render = function() {
       { staticClass: "tree-list" },
       [_c("node-tree", { attrs: { categoria: _vm.treeData } })],
       1
-    )
+    ),
+    _vm._v(" "),
+    _c("p", [_vm._v(_vm._s(_vm.treeData))])
   ])
 }
 var staticRenderFns = []
