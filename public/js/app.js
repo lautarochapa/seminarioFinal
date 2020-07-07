@@ -39455,17 +39455,11 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "li",
-    [
-      _c("span", { staticClass: "caret" }, [_vm._v("CATGORIAS  ")]),
-      _vm._v(" "),
-      _vm._l(_vm.categoria, function(child) {
-        return _c("p", [_vm._v(_vm._s(child))])
-      })
-    ],
-    2
-  )
+  return _c("li", [
+    _c("span", { staticClass: "caret" }, [_vm._v("CATGORIAS  ")]),
+    _vm._v(" "),
+    _c("p", [_vm._v(_vm._s(_vm.categoria))])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

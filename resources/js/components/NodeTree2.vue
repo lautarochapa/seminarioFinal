@@ -1,7 +1,7 @@
 <template>
   <li>
     <span class="caret">CATGORIAS  </span> 
-      <p v-for="child in categoria">{{child}}</p>
+      <p>{{categoria}}</p>
 
 <!--
     <span class="caret">{{ categoria.nombre }} ({{ categoria.products_count }})  </span>   
