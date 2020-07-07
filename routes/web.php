@@ -30,7 +30,7 @@ Route::get('/marcas','BrandController@getAll');
 
 Route::get('/a','CategoryController@getAll2');
 
-Route::get('/api/s/{ids}','SupplyController@getAll2');
+Route::get('/api/s','SupplyController@getAll2');
 
 //Getters con logica
 

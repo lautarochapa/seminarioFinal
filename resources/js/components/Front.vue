@@ -268,7 +268,10 @@ import Tree2 from "./Tree2";
                     });
             },
             loadSups: function () {
-                axios.get('/api/s/'+this.selected.supplies)
+                axios.get('/api/s', {
+  params: {
+    sups: this.selected.supplies
+  },})
                     .then((response) => {
                         this.sups = response.data.supplies;
                         this.loading = false;
@@ -277,6 +280,11 @@ import Tree2 from "./Tree2";
                         console.log(error);
                     });
             },
+
+
+
+
+
             loadCategories: function () {
                 axios.get('/api/categories', {
                         params: _.omit(this.selected, 'categories')

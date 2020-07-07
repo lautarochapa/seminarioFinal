@@ -25,10 +25,10 @@ class SupplyController extends Controller
 
 
  
-    function getAll2($ids){
+    function getAll2(){
       $supplies = Supply::with(['category'=> function ($query) {
         $query->with('grandparent');
-    }])->whereIn('id', [1, 2, 3])->get();
+    }])->whereIn('id', request()->input('sups'))->get();
   
     
       return response()->json([
@@ -37,6 +37,9 @@ class SupplyController extends Controller
       
       ], Response::HTTP_OK);
       }
+
+      
+      
 
 
 

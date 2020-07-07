@@ -2250,7 +2250,11 @@ __webpack_require__.r(__webpack_exports__);
     loadSups: function loadSups() {
       var _this8 = this;
 
-      axios.get('/api/s/' + this.selected.supplies).then(function (response) {
+      axios.get('/api/s', {
+        params: {
+          sups: this.selected.supplies
+        }
+      }).then(function (response) {
         _this8.sups = response.data.supplies;
         _this8.loading = false;
       })["catch"](function (error) {
