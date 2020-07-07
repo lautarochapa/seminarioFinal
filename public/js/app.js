@@ -2424,7 +2424,7 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     treeData: [Object, Array],
     value: {
-      type: Object,
+      type: [Object, Array],
       required: true
     }
   },

@@ -16,7 +16,7 @@ export default {
   props: {
     treeData: [Object, Array],
             value: {
-                type: Object,
+                type: [Object, Array],
                 required: true
             }
   },
