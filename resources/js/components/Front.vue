@@ -1,5 +1,16 @@
 <template>
     <div class="container" :class="{'loading': loading}">
+
+
+    <form>
+        <tree2
+            :value="address"
+            @input="(newAddress) => {address = newAddress}"
+        />
+    </form>
+
+
+
         <div class="row">
             <div class="col-lg-3 mb-4">
                 <h1 class="mt-4">Filtros</h1>
@@ -7,7 +18,12 @@
 
                 <h3 class="mt-2">Categorias</h3>
 
-                <tree2 :tree-data="categories" v-model="selected.supplies"></tree2>
+              <!--  <tree2 :tree-data="categories" v-model="selected.supplies"></tree2> -->
+
+
+
+
+
 
 
 
@@ -66,6 +82,10 @@ import Tree2 from "./Tree2";
                     supplies: [],
                     brands: [],
                     categories: []
+                },
+                                address: {
+                    street: '',
+                    state: '',
                 }
             }
         },

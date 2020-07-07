@@ -1,13 +1,6 @@
-<template>
+<!--<template>
   <li class="node-tree">
-    <!--<p>{{ categoria }}</p>-->
     <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
-
-<!--    
-    <div v-for="supply in categoria.supplies">
-        <p style="color: #FF0000;">{{ supply.nombre }}</p>
-      </div>
--->
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
                         <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="supplies">
@@ -41,4 +34,42 @@ export default {
         }
 };
 </script>
+-->
 
+
+
+
+
+<template>
+    <select v-model="localState">
+        <option v-for="(state, abbreviation) in states"
+                :value="abbreviation"
+                v-html="state"
+        ></option>
+    </select>
+</template>
+<script type="text/babel">
+    export default {
+        props: {
+            value: {
+                type: String,
+                required: true
+            }
+        },
+        data() {
+            return {
+                states: {
+                    NY: 'New York',
+                    WI: 'Wisconsin'
+                    // + rest of the states
+                }
+            }
+        },
+        computed: {
+            localState: {
+                get() {return this.value},
+                set(localState) { this.$emit('input', localState)}
+            }
+        }
+    }
+</script>

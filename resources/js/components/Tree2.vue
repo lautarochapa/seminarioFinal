@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <div class="tree">
     
     <ul class="tree-list">
@@ -36,4 +36,30 @@ export default {
   margin: 6px 0;
 }
 </style>
+-->
 
+
+<template>
+    <div>
+        <input name="street" v-model="localAddress.street">
+        <node-tree2 v-model="localAddress.state" />
+    </div>
+</template>
+<script>
+    import NodeTree2 from "./NodeTree2";
+    export default {
+        props: {
+            value: {
+                type: Object,
+                required: true
+            }
+        },
+        components: { NodeTree2 },
+        computed: {
+            localAddress: {
+                get() { return this.value },
+                set(localAddress) {this.$emit('input', localAddress)}
+            }
+        }
+    }
+</script>
