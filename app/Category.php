@@ -21,7 +21,7 @@ class Category extends Model
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren')->hasManyThrough(Product::class, Supply::class)->with(['supplies' => function($query){
+        return $this->children()->with('allchildren')->with(['supplies' => function($query){
             $query->withCount('products');
         }]);
     }
@@ -31,27 +31,6 @@ class Category extends Model
     public function allchildren2() {
         return $this->allchildren()->sum('products_count');
     }
-
-
-
-// Post model
-public function comments()
-{
-  return $this->hasMany('Comment');
-}
- 
-public function commentsCount()
-{
-  return $this->comments()
-    ->selectRaw('post_id, count(*) as aggregate')
-    ->groupBy('post_id');
-}
-
-
-
-
-
-
 
 
 
