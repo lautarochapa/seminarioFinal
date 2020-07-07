@@ -2040,6 +2040,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -38769,22 +38770,15 @@ var render = function() {
               return _c(
                 "div",
                 [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "form-check-label",
-                      attrs: { for: "category" + index }
-                    },
-                    [
-                      _vm._v(
-                        "\n                    " +
-                          _vm._s(category.nombre) +
-                          " (" +
-                          _vm._s(category.products_count) +
-                          ")\n                "
-                      )
-                    ]
-                  ),
+                  _c("label", [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(category.nombre) +
+                        " (" +
+                        _vm._s(category.products_count) +
+                        ")\n                "
+                    )
+                  ]),
                   _vm._v(" "),
                   _vm._l(category.supplies, function(supply, index) {
                     return _c("div", { staticClass: "form-check" }, [
@@ -38793,21 +38787,21 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.selected.supply,
-                            expression: "selected.supply"
+                            value: _vm.selected.supplies,
+                            expression: "selected.supplies"
                           }
                         ],
                         staticClass: "form-check-input",
                         attrs: { type: "checkbox", id: "supply" + index },
                         domProps: {
                           value: supply.id,
-                          checked: Array.isArray(_vm.selected.supply)
-                            ? _vm._i(_vm.selected.supply, supply.id) > -1
-                            : _vm.selected.supply
+                          checked: Array.isArray(_vm.selected.supplies)
+                            ? _vm._i(_vm.selected.supplies, supply.id) > -1
+                            : _vm.selected.supplies
                         },
                         on: {
                           change: function($event) {
-                            var $$a = _vm.selected.supply,
+                            var $$a = _vm.selected.supplies,
                               $$el = $event.target,
                               $$c = $$el.checked ? true : false
                             if (Array.isArray($$a)) {
@@ -38817,19 +38811,19 @@ var render = function() {
                                 $$i < 0 &&
                                   _vm.$set(
                                     _vm.selected,
-                                    "supply",
+                                    "supplies",
                                     $$a.concat([$$v])
                                   )
                               } else {
                                 $$i > -1 &&
                                   _vm.$set(
                                     _vm.selected,
-                                    "supply",
+                                    "supplies",
                                     $$a.slice(0, $$i).concat($$a.slice($$i + 1))
                                   )
                               }
                             } else {
-                              _vm.$set(_vm.selected, "supply", $$c)
+                              _vm.$set(_vm.selected, "supplies", $$c)
                             }
                           }
                         }

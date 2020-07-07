@@ -10,11 +10,12 @@
                 <!--<div class="form-check" v-for="(category, index) in categories">-->
                 <div v-for="(category, index) in categories">
                    <!-- <input class="form-check-input" type="checkbox" :value="category.id" :id="'category'+index" v-model="selected.categories">-->
-                    <label class="form-check-label" :for="'category' + index">
+                    <!--<label class="form-check-label" :for="'category' + index">-->
+                     <label>
                         {{ category.nombre }} ({{ category.products_count }})
                     </label>
                     <div class="form-check" v-for="(supply, index) in category.supplies">
-                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="selected.supply">
+                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="selected.supplies">
                         <label class="form-check-label" :for="'supply' + index">
                         --   {{ supply.nombre }} ({{ supply.products_count }})
                         </label>
