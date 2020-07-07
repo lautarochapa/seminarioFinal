@@ -2089,7 +2089,7 @@ __webpack_require__.r(__webpack_exports__);
     bus: function bus(data) {
       this.selected.supplies = data;
       console.log(data);
-      console.log(selected.supplies);
+      console.log(this.selected.supplies);
     },
     loadSupplies: function loadSupplies() {
       var _this = this;
@@ -39155,9 +39155,9 @@ var render = function() {
             staticClass: "form-check-input",
             attrs: { type: "checkbox", id: "supply" + index },
             domProps: {
-              value: supply.id,
+              value: this,
               checked: Array.isArray(_vm.supplies2)
-                ? _vm._i(_vm.supplies2, supply.id) > -1
+                ? _vm._i(_vm.supplies2, this) > -1
                 : _vm.supplies2
             },
             on: {
@@ -39166,7 +39166,7 @@ var render = function() {
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false
                 if (Array.isArray($$a)) {
-                  var $$v = supply.id,
+                  var $$v = this,
                     $$i = _vm._i($$a, $$v)
                   if ($$el.checked) {
                     $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))

@@ -117,7 +117,7 @@ import Tree2 from "./Tree2";
             bus: function (data) {
                 this.selected.supplies = data
                 console.log(data)
-                console.log(selected.supplies)
+                console.log(this.selected.supplies)
             },
             loadSupplies: function () {
                 axios.get('/api/supplies', {
