@@ -2238,10 +2238,22 @@ __webpack_require__.r(__webpack_exports__);
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
         _this8.categories = response.data.categories;
+        treeViewLoad();
         _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    treeViewLoad: function treeViewLoad() {
+      var toggler = document.getElementsByClassName("caret");
+      var i;
+
+      for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function () {
+          this.parentElement.querySelector(".nested").classList.toggle("active");
+          this.classList.toggle("caret-down");
+        });
+      }
     }
   },
   components: {
