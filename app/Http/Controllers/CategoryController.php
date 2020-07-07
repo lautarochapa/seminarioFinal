@@ -52,7 +52,7 @@ class CategoryController extends Controller
 
 
       function getAll2(){
-        $categories = Category::with('allchildren')->where('padre',0)->get();
+        $categories = Category::with('allchildren', 'supplies')->where('padre',0)->get();
       
       
         return response()->json([

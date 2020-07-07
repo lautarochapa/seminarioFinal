@@ -38957,34 +38957,31 @@ var render = function() {
           _c(
             "div",
             { staticClass: "row mt-4" },
-            [
-              _vm._v('import Tree from "./Tree";\n\n                '),
-              _vm._l(_vm.products, function(product) {
-                return _c("div", { staticClass: "col-lg-4 col-md-6 mb-4" }, [
-                  _c("div", { staticClass: "card h-100" }, [
-                    _c("a", { attrs: { href: "#" } }, [
-                      _c("img", {
-                        staticClass: "img-responsive",
-                        attrs: {
-                          src: "images/" + product.img + ".jpg",
-                          height: "200",
-                          width: "200"
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "card-body" }, [
-                      _c("h4", { staticClass: "card-title" }, [
-                        _c("a", { attrs: { href: "#" } }, [
-                          _vm._v(_vm._s(product.nombre))
-                        ])
+            _vm._l(_vm.products, function(product) {
+              return _c("div", { staticClass: "col-lg-4 col-md-6 mb-4" }, [
+                _c("div", { staticClass: "card h-100" }, [
+                  _c("a", { attrs: { href: "#" } }, [
+                    _c("img", {
+                      staticClass: "img-responsive",
+                      attrs: {
+                        src: "images/" + product.img + ".jpg",
+                        height: "200",
+                        width: "200"
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c("h4", { staticClass: "card-title" }, [
+                      _c("a", { attrs: { href: "#" } }, [
+                        _vm._v(_vm._s(product.nombre))
                       ])
                     ])
                   ])
                 ])
-              })
-            ],
-            2
+              ])
+            }),
+            0
           )
         ])
       ])

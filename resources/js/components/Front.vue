@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-lg-9">
-                <div class="row mt-4">import Tree from "./Tree";
+                <div class="row mt-4">
 
                     <div class="col-lg-4 col-md-6 mb-4" v-for="product in products">
                         <div class="card h-100">
