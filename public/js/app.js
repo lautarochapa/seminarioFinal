@@ -2043,7 +2043,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      supplies: [],
       categories: [],
       brands: [],
       products: [],
@@ -2210,11 +2209,11 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
-    supplies: {
+    supplies2: {
       get: function get() {
         return this.value;
       },
-      set: function set(supplies) {
+      set: function set(supplies2) {
         this.$emit('bus', {
           data1: 'somedata2',
           data2: 'somedata2'
@@ -39129,36 +39128,36 @@ var render = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.supplies,
-                expression: "supplies"
+                value: _vm.supplies2,
+                expression: "supplies2"
               }
             ],
             staticClass: "form-check-input",
             attrs: { type: "checkbox", id: "supply" + index },
             domProps: {
               value: supply.id,
-              checked: Array.isArray(_vm.supplies)
-                ? _vm._i(_vm.supplies, supply.id) > -1
-                : _vm.supplies
+              checked: Array.isArray(_vm.supplies2)
+                ? _vm._i(_vm.supplies2, supply.id) > -1
+                : _vm.supplies2
             },
             on: {
               change: function($event) {
-                var $$a = _vm.supplies,
+                var $$a = _vm.supplies2,
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false
                 if (Array.isArray($$a)) {
                   var $$v = supply.id,
                     $$i = _vm._i($$a, $$v)
                   if ($$el.checked) {
-                    $$i < 0 && (_vm.supplies = $$a.concat([$$v]))
+                    $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
                   } else {
                     $$i > -1 &&
-                      (_vm.supplies = $$a
+                      (_vm.supplies2 = $$a
                         .slice(0, $$i)
                         .concat($$a.slice($$i + 1)))
                   }
                 } else {
-                  _vm.supplies = $$c
+                  _vm.supplies2 = $$c
                 }
               }
             }

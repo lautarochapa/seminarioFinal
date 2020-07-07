@@ -72,7 +72,6 @@ import Tree2 from "./Tree2";
     export default {
         data: function () {
             return {
-                supplies: [],
                 categories: [],
                 brands: [],
                 products: [],

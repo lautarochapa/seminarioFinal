@@ -3,7 +3,7 @@
     <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
-                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="supplies">
+                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="supplies2">
                         <!--                                            :value="abbreviation"                   v-model="localState"
 
                         -->
@@ -35,9 +35,9 @@ export default {
         },
 
         computed: {
-            supplies: {
+            supplies2: {
                 get() {return this.value},
-                set(supplies) { this.$emit('bus', {data1: 'somedata2', data2: 'somedata2'})}
+                set(supplies2) { this.$emit('bus', {data1: 'somedata2', data2: 'somedata2'})}
             }
         },
 
