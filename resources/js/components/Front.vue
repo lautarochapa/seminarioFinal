@@ -252,6 +252,7 @@ import Tree2 from "./Tree2";
                     });
             },
             treeViewLoad : function(){
+                console.log("treviewingggggggggggg")
                 var toggler = document.getElementsByClassName("caret");
                 var i;
 

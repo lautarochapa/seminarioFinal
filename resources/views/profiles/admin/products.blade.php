@@ -8,7 +8,7 @@
 
                    <p> Productos</p>
 
-                   <ul id="myUL">
+                 <!--  <ul id="myUL">
   <li><span class="caret">Beverages</span>
     <ul class="nested">
       <li><span class="caret">Water</span></li>
@@ -29,7 +29,7 @@
       </li>
     </ul>
   </li>
-</ul> 
+</ul> -->
 
 
 
