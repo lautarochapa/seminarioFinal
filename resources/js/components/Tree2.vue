@@ -1,12 +1,8 @@
 <template>
 <div>
-      <ul id="myUL" v-for="cat in treeData">
+      <ul id="myUL">
 
-<p>{{treeData}}</p>
-<p>{{cat}}</p>
-<p>{{treeData[cat]}}</p>
-
-      <node-tree2 :categoria="treeData[cat]" @bus="bus" ></node-tree2>
+      <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
 
     </ul>
     </div>

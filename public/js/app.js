@@ -2309,6 +2309,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -2524,10 +2528,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _NodeTree2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NodeTree2 */ "./resources/js/components/NodeTree2.vue");
-//
-//
-//
-//
 //
 //
 //
@@ -39455,27 +39455,17 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("li", [
-    _c("span", { staticClass: "caret" }, [
-      _vm._v(
-        _vm._s(_vm.categoria.nombre) +
-          " (" +
-          _vm._s(_vm.categoria.products_count) +
-          ")  "
-      )
-    ]),
-    _vm._v(" "),
-    _vm.categoria.allchildren && _vm.categoria.allchildren.length
-      ? _c(
-          "ul",
-          { staticClass: "nested" },
-          _vm._l(_vm.categoria.allchildren, function(child) {
-            return _c("categoria", { attrs: { categoria: child } })
-          }),
-          1
-        )
-      : _vm._e()
-  ])
+  return _c(
+    "li",
+    [
+      _c("span", { staticClass: "caret" }, [_vm._v("CATGORIAS  ")]),
+      _vm._v(" "),
+      _vm._l(_vm.categoria, function(child) {
+        return _c("p", [_vm._v(_vm._s(child))])
+      })
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -39760,29 +39750,19 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    _vm._l(_vm.treeData, function(cat) {
-      return _c(
-        "ul",
-        { attrs: { id: "myUL" } },
-        [
-          _c("p", [_vm._v(_vm._s(_vm.treeData))]),
-          _vm._v(" "),
-          _c("p", [_vm._v(_vm._s(cat))]),
-          _vm._v(" "),
-          _c("p", [_vm._v(_vm._s(_vm.treeData[cat]))]),
-          _vm._v(" "),
-          _c("node-tree2", {
-            attrs: { categoria: _vm.treeData[cat] },
-            on: { bus: _vm.bus }
-          })
-        ],
-        1
-      )
-    }),
-    0
-  )
+  return _c("div", [
+    _c(
+      "ul",
+      { attrs: { id: "myUL" } },
+      [
+        _c("node-tree2", {
+          attrs: { categoria: _vm.treeData },
+          on: { bus: _vm.bus }
+        })
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
