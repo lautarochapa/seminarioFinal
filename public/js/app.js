@@ -38932,25 +38932,106 @@ var render = function() {
               }
             }),
             _vm._v(" "),
-            _c("img", {
-              staticClass: "img-responsive",
-              attrs: {
-                src: "images/" + _vm.product.img + ".jpg",
-                height: "200",
-                width: "200"
-              }
-            }),
+            _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _c("h4", { staticClass: "card-title" }, [
-                _c("a", { attrs: { href: "#" } }, [
-                  _vm._v(_vm._s(_vm.product.nombre))
+            _vm._l(_vm.brands, function(br, index) {
+              return _c("div", { staticClass: "form-check" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selected.brands,
+                      expression: "selected.brands"
+                    }
+                  ],
+                  staticClass: "form-check-input",
+                  attrs: { type: "checkbox", id: "br" + index },
+                  domProps: {
+                    value: br.id,
+                    checked: Array.isArray(_vm.selected.brands)
+                      ? _vm._i(_vm.selected.brands, br.id) > -1
+                      : _vm.selected.brands
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.selected.brands,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = br.id,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 &&
+                            _vm.$set(_vm.selected, "brands", $$a.concat([$$v]))
+                        } else {
+                          $$i > -1 &&
+                            _vm.$set(
+                              _vm.selected,
+                              "brands",
+                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                            )
+                        }
+                      } else {
+                        _vm.$set(_vm.selected, "brands", $$c)
+                      }
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: "br" + index }
+                  },
+                  [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(br.nombre) +
+                        " (" +
+                        _vm._s(br.products_count) +
+                        ")\n                    "
+                    )
+                  ]
+                )
+              ])
+            })
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-lg-9" }, [
+          _c(
+            "div",
+            { staticClass: "row mt-4" },
+            _vm._l(_vm.products, function(product) {
+              return _c("div", { staticClass: "col-lg-4 col-md-6 mb-4" }, [
+                _c("div", { staticClass: "card h-100" }, [
+                  _c("a", { attrs: { href: "#" } }, [
+                    _c("img", {
+                      staticClass: "img-responsive",
+                      attrs: {
+                        src: "images/" + product.img + ".jpg",
+                        height: "200",
+                        width: "200"
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c("h4", { staticClass: "card-title" }, [
+                      _c("a", { attrs: { href: "#" } }, [
+                        _vm._v(_vm._s(product.nombre))
+                      ])
+                    ])
+                  ])
                 ])
               ])
-            ])
-          ],
-          1
-        )
+            }),
+            0
+          )
+        ])
       ])
     ]
   )
