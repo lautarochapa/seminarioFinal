@@ -12,11 +12,7 @@ class Category extends Model
         return $this->hasManyThrough(Product::class, Supply::class);
     }
 
-
-    public function products2()
-    {
-        return $this->hasManyThrough(Supply::class, Category::class);
-    }
+    
 
     public function children() {
         return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
@@ -25,9 +21,9 @@ class Category extends Model
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren')->with(['supplies' => function($query){
+        return $this->children()->with('allchildren')->hasManyThrough(Product::class, Supply::class)->with(['supplies' => function($query){
             $query->withCount('products');
-        }])->withCount('products2');
+        }]);
     }
 
 
