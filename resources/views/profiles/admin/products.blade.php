@@ -27,5 +27,8 @@
 
                    </div>
     </div>
+
+    <script src="./bower_components/jquery/dist/jquery.js"></script>
+    <script src="./js/bootstrap-treeview.js"></script>
 </div>
 @endsection
