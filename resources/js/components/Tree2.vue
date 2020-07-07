@@ -1,5 +1,5 @@
 <template>
-  <div id="treeview4" class="treeview">
+  <div id="treeview7" class="treeview">
     
     <ul class="list-group">
       <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
