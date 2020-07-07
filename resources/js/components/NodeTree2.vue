@@ -26,18 +26,13 @@
 export default {
   name: "categoria",
   props: {
-    categoria: [Object, Array],   
-    value: [Object, Array],
+    categoria: [Object, Array],  
 
   },
-        computed: {
-              supplies: {
-            //localState: {
-                get() {return this.value},
-                set(supplies) { this.$emit('input', supplies)}
-                //set(localState) { this.$emit('input', localState)}
-            }
+          mounted() {
+            this.$emit('bus', {data1: 'somedata', data2: 'somedata'})
         },
+
 };
 </script>
 <!--

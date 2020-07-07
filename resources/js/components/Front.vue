@@ -13,7 +13,7 @@
 
                 <h3 class="mt-2">Categorias</h3>
 
-                <tree2 :tree-data="categories" v-model="supplies"></tree2>
+                <tree2 :tree-data="categories" @bus="bus" v-model="selected.supplies"></tree2>
 
 <!--      <form>
         <tree2
@@ -78,10 +78,11 @@ import Tree2 from "./Tree2";
                 products: [],
                 loading: true,
                 selected: {
+                supplies: [],
                     brands: [],
                     categories: []
                 },
-                supplies: [],
+                bus: new Vue(),
             }
         },
         mounted() {
@@ -93,7 +94,7 @@ import Tree2 from "./Tree2";
         watch: {
             selected: {
                 handler: function () {
-                    console.log(this.selected.supplies)
+                    console.log(this.supplies)
                     console.log(this.selected)
                     this.loadSupplies();
                     this.loadBrands();
@@ -101,15 +102,12 @@ import Tree2 from "./Tree2";
                     this.loadCategories();
                 },
                 deep: true
-            },
-            supplies: {
-                handler: function () {
-                    console.log(this.supplies)
-                },
-                deep: true
-            },
+            }
         },
         methods: {
+            bus: function (data) {
+                console.log(data)
+            },
             loadSupplies: function () {
                 axios.get('/api/supplies', {
                         params: _.omit(this.selected, 'supplies')

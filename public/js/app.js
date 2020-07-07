@@ -1972,8 +1972,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Tree2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tree2 */ "./resources/js/components/Tree2.vue");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -2044,17 +2042,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return _defineProperty({
+    return {
       supplies: [],
       categories: [],
       brands: [],
       products: [],
       loading: true,
       selected: {
+        supplies: [],
         brands: [],
         categories: []
-      }
-    }, "supplies", []);
+      },
+      bus: new Vue()
+    };
   },
   mounted: function mounted() {
     this.loadSupplies();
@@ -2065,7 +2065,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   watch: {
     selected: {
       handler: function handler() {
-        console.log(this.selected.supplies);
+        console.log(this.supplies);
         console.log(this.selected);
         this.loadSupplies();
         this.loadBrands();
@@ -2073,15 +2073,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.loadCategories();
       },
       deep: true
-    },
-    supplies: {
-      handler: function handler() {
-        console.log(this.supplies);
-      },
-      deep: true
     }
   },
   methods: {
+    bus: function bus(data) {
+      console.log(data);
+    },
     loadSupplies: function loadSupplies() {
       var _this = this;
 
@@ -2208,20 +2205,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
-    categoria: [Object, Array],
-    value: [Object, Array]
+    categoria: [Object, Array]
   },
-  computed: {
-    supplies: {
-      //localState: {
-      get: function get() {
-        return this.value;
-      },
-      set: function set(supplies) {
-        this.$emit('input', supplies);
-      } //set(localState) { this.$emit('input', localState)}
-
-    }
+  mounted: function mounted() {
+    this.$emit('bus', {
+      data1: 'somedata',
+      data2: 'somedata'
+    });
   }
 });
 
@@ -2431,25 +2421,14 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    treeData: [Object, Array],
-    value: {
-      type: [Object, Array],
-      required: true
-    }
+    treeData: [Object, Array]
   },
   components: {
     NodeTree2: _NodeTree2__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  computed: {
-    supplies: {
-      //localAddress: {
-      get: function get() {
-        return this.value;
-      },
-      set: function set(supplies) {
-        this.$emit('input', supplies);
-      } //set(localAddress) {this.$emit('input', localAddress)}
-
+  methods: {
+    bus: function bus(data) {
+      this.$emit('bus', data);
     }
   }
 });
@@ -38932,12 +38911,13 @@ var render = function() {
             _vm._v(" "),
             _c("tree2", {
               attrs: { "tree-data": _vm.categories },
+              on: { bus: _vm.bus },
               model: {
-                value: _vm.supplies,
+                value: _vm.selected.supplies,
                 callback: function($$v) {
-                  _vm.supplies = $$v
+                  _vm.$set(_vm.selected, "supplies", $$v)
                 },
-                expression: "supplies"
+                expression: "selected.supplies"
               }
             }),
             _vm._v(" "),
@@ -39498,6 +39478,7 @@ var render = function() {
       [
         _c("node-tree2", {
           attrs: { categoria: _vm.treeData },
+          on: { bus: _vm.bus },
           model: {
             value: _vm.supplies,
             callback: function($$v) {

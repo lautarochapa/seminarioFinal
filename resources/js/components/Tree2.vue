@@ -2,7 +2,7 @@
   <div class="tree">
     
     <ul class="tree-list">
-      <node-tree2 :categoria="treeData" v-model="supplies"></node-tree2>
+      <node-tree2 :categoria="treeData" @bus="bus" v-model="supplies"></node-tree2>
 <!--                        <node-tree2 v-model="localAddress.state" /> -->
 
     </ul>
@@ -15,22 +15,18 @@ import NodeTree2 from "./NodeTree2";
 export default {
   props: {
     treeData: [Object, Array],
-            value: {
-                type: [Object, Array],
-                required: true
-            }
+
   },
   components: {
     NodeTree2
-  },   
-        computed: {
-            supplies: {
-            //localAddress: {
-                get() { return this.value },
-                set(supplies) {this.$emit('input', supplies)}
-                //set(localAddress) {this.$emit('input', localAddress)}
-            }
-}};
+  },       
+  methods: {
+            bus: function (data) {
+                this.$emit('bus', data)
+            },
+  }
+  
+  };
 </script>
 
 <style>
