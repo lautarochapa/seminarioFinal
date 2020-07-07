@@ -36,7 +36,7 @@ export default {
             },
                 handleChange: function(e) {
       const name = e.target.name;
-      console.log(e)
+      console.log(e.srcElement)
       console.log(name)
     }
   },
