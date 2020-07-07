@@ -2271,7 +2271,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     eliminarFiltro: function eliminarFiltro(id) {
       var checkbox = document.getElementById("supply" + id).checked = false;
-      this.selected.supplies.splice(this.selected.supplies.findIndex(id), 1);
+      this.selected.supplies.splice(this.selected.supplies.findIndex(function (sup) {
+        return sup === id;
+      }), 1);
     },
     loadCategories: function loadCategories() {
       var _this9 = this;

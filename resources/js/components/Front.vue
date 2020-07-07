@@ -291,7 +291,7 @@ import Tree2 from "./Tree2";
             eliminarFiltro: function(id){
 
                 var checkbox = document.getElementById("supply"+id).checked = false;
-                this.selected.supplies.splice(this.selected.supplies.findIndex(id), 1)
+                this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === id), 1)
 
             },
 
