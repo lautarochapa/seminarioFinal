@@ -3,7 +3,7 @@
     <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
-                        <input class="form-check-input" type="checkbox" :value="supply.id" :unchecked-value="supply.id + 'off'" 
+                        <input class="form-check-input" type="checkbox" @change="handleChange($event)" :value="supply.id" :unchecked-value="supply.id + 'off'" 
                         :id="'supply'+index" v-model="supplies2">
                         <!--                                            :value="abbreviation"                   v-model="localState"
 
@@ -34,6 +34,11 @@ export default {
             bus: function (data) {
                 this.$emit('bus', data)
             },
+                handleChange: function(e) {
+      const name = e.target.name;
+      console.log(e)
+      console.log(name)
+    }
   },
       /*  computed: {
             supplies2: {
@@ -49,10 +54,7 @@ export default {
             },
         watch: {
             supplies2: {
-                handler: function (val, oldval) {
-                    console.log(this.supplies2)
-                    console.log(this.val)
-                    console.log(this.oldval)
+                handler: function () {
                     { this.$emit('bus', this.supplies2)}
                 },
                 deep: true

@@ -2222,6 +2222,11 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     bus: function bus(data) {
       this.$emit('bus', data);
+    },
+    handleChange: function handleChange(e) {
+      var name = e.target.name;
+      console.log(e);
+      console.log(name);
     }
   },
 
@@ -2238,10 +2243,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     supplies2: {
-      handler: function handler(val, oldval) {
-        console.log(this.supplies2);
-        console.log(this.val);
-        console.log(this.oldval);
+      handler: function handler() {
         {
           this.$emit('bus', this.supplies2);
         }
@@ -39167,25 +39169,30 @@ var render = function() {
                 : _vm.supplies2
             },
             on: {
-              change: function($event) {
-                var $$a = _vm.supplies2,
-                  $$el = $event.target,
-                  $$c = $$el.checked ? true : false
-                if (Array.isArray($$a)) {
-                  var $$v = supply.id,
-                    $$i = _vm._i($$a, $$v)
-                  if ($$el.checked) {
-                    $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
+              change: [
+                function($event) {
+                  var $$a = _vm.supplies2,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = supply.id,
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        (_vm.supplies2 = $$a
+                          .slice(0, $$i)
+                          .concat($$a.slice($$i + 1)))
+                    }
                   } else {
-                    $$i > -1 &&
-                      (_vm.supplies2 = $$a
-                        .slice(0, $$i)
-                        .concat($$a.slice($$i + 1)))
+                    _vm.supplies2 = $$c
                   }
-                } else {
-                  _vm.supplies2 = $$c
+                },
+                function($event) {
+                  return _vm.handleChange($event)
                 }
-              }
+              ]
             }
           }),
           _vm._v(" "),
