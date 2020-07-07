@@ -2535,6 +2535,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -39762,6 +39767,12 @@ var render = function() {
         "ul",
         { attrs: { id: "myUL" } },
         [
+          _c("p", [_vm._v(_vm._s(_vm.treeData))]),
+          _vm._v(" "),
+          _c("p", [_vm._v(_vm._s(cat))]),
+          _vm._v(" "),
+          _c("p", [_vm._v(_vm._s(_vm.treeData[cat]))]),
+          _vm._v(" "),
           _c("node-tree2", {
             attrs: { categoria: _vm.treeData[cat] },
             on: { bus: _vm.bus }
