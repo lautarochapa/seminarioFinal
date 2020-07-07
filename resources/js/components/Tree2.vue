@@ -1,16 +1,17 @@
 <template>
 <div>
 <div v-for="a in treeData">
-
-
-<p>{{a}}</p>
-</div>
-
+     
       <ul id="myUL">
 
-      <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
+      <node-tree2 :categoria="a" @bus="bus" ></node-tree2>
 
     </ul>
+
+<p>{{a.nombre}}</p>
+</div>
+
+
     </div>
 </template>
 

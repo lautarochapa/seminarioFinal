@@ -2550,6 +2550,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -39764,24 +39765,19 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    [
-      _vm._l(_vm.treeData, function(a) {
-        return _c("div", [_c("p", [_vm._v(_vm._s(a))])])
-      }),
-      _vm._v(" "),
-      _c(
-        "ul",
-        { attrs: { id: "myUL" } },
-        [
-          _c("node-tree2", {
-            attrs: { categoria: _vm.treeData },
-            on: { bus: _vm.bus }
-          })
-        ],
-        1
-      )
-    ],
-    2
+    _vm._l(_vm.treeData, function(a) {
+      return _c("div", [
+        _c(
+          "ul",
+          { attrs: { id: "myUL" } },
+          [_c("node-tree2", { attrs: { categoria: a }, on: { bus: _vm.bus } })],
+          1
+        ),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(a.nombre))])
+      ])
+    }),
+    0
   )
 }
 var staticRenderFns = []
