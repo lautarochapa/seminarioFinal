@@ -65,6 +65,7 @@ export default {
 </template>
 <script type="text/babel">
     export default {
+  name: "categoria",
         props: {
             categoria: [Object, Array],  
             value: {
