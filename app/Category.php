@@ -8,6 +8,11 @@ class Category extends Model
 {
 
 
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, Supply::class);
+    }
+
     public function children() {
         return $this->hasMany(Category::class,'padre');
     }
@@ -19,11 +24,6 @@ class Category extends Model
         return $this->belongsTo(Category::class,'padre');
     }
 
-
-    public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
 
     public function supplies()
     {
