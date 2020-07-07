@@ -8,7 +8,7 @@
 
     </ul>
 
-<p>{{a.nombre}}</p>
+<!--<p>{{a.nombre}}</p>-->
 </div>
 
 
