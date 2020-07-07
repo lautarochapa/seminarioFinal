@@ -20,7 +20,9 @@ class Category extends Model
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren', 'supplies');
+        return $this->children()->with('allchildren', ['supplies' => function($query){
+            $query->withCount('products');
+        }]);
     }
     public function parent() {
         return $this->belongsTo(Category::class,'padre');
@@ -33,4 +35,10 @@ class Category extends Model
     }
 
 }
-
+/*
+Tutorial::withCount('chapters')
+->with(['chapters' => function($query){
+    $query->withCount('videos');
+}])
+->all();
+*/
