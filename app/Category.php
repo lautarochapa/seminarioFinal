@@ -12,14 +12,22 @@ class Category extends Model
         return $this->hasManyThrough(Product::class, Supply::class);
     }
 
+
+    public function products2()
+    {
+        return $this->hasManyThrough(Product::class, products());
+    }
+
     public function children() {
-        return $this->hasMany(Category::class,'padre');
+        return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
+            $query->withFilters();
+        }]);
     }
 
     public function allchildren() {
         return $this->children()->with('allchildren')->with(['supplies' => function($query){
             $query->withCount('products');
-        }]);
+        }])->withCount('products2');
     }
 
 
