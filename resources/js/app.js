@@ -23,6 +23,12 @@ Vue.component('front-component', require('./components/Front.vue').default);
 
 
 
+Vue.component('node-tree2', require('./components/NodeTree2.vue').default);
+Vue.component('tree2', require('./components/Tree2.vue').default);
+
+
+
+
 const app = new Vue({
     el: '#app',
 });

@@ -6,29 +6,10 @@
 
 
                 <h3 class="mt-2">Categorias</h3>
-                
-                <!--<div class="form-check" v-for="(category, index) in categories">-->
-                <div v-for="(category, index) in categories">
-                   <!-- <input class="form-check-input" type="checkbox" :value="category.id" :id="'category'+index" v-model="selected.categories">-->
-                    <!--<label class="form-check-label" :for="'category' + index">-->
-                     <label>
-                        {{ category.nombre }} ({{ category.products_count }})
-                    </label>
-                    <div class="form-check" v-for="(supply, index) in category.supplies">
-                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="selected.supplies">
-                        <label class="form-check-label" :for="'supply' + index">
-                        --   {{ supply.nombre }} ({{ supply.products_count }})
-                        </label>
-                    </div>
-                </div>
 
-              <!--  <h3 class="mt-2">Insumos</h3>
-                <div class="form-check" v-for="(supply, index) in supplies">
-                    <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="selected.supplies">
-                    <label class="form-check-label" :for="'supply' + index">
-                        {{ supply.nombre }} ({{ supply.products_count }})
-                    </label>
-                </div> -->
+                <tree2 :tree-data="categories"></tree2>
+
+
 
                 <h3 class="mt-2">Marcas</h3>
                 <div class="form-check" v-for="(br, index) in brands">
@@ -39,7 +20,8 @@
                 </div>
             </div>
             <div class="col-lg-9">
-                <div class="row mt-4">
+                <div class="row mt-4">import Tree from "./Tree";
+
                     <div class="col-lg-4 col-md-6 mb-4" v-for="product in products">
                         <div class="card h-100">
                             <a href="#">
@@ -69,6 +51,9 @@
 
 
 <script>
+import Tree2 from "./Tree2";
+
+
     export default {
         data: function () {
             return {
@@ -142,13 +127,16 @@
                         params: _.omit(this.selected, 'categories')
                     })
                     .then((response) => {
-                        this.categories = response.data.categories;
+                        this.categories = response.data.categories[0];
                         this.loading = false;
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
             },
+        },
+        components: {
+            Tree2
         }
     }
 </script>

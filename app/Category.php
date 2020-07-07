@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
 
-
-
     public function products()
     {
         return $this->hasManyThrough(Product::class, Supply::class);
@@ -34,6 +32,8 @@ class Category extends Model
     {
         return $this->hasMany(Supply::class);
     }
+
+
 
 }
 /*

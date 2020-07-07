@@ -52,8 +52,7 @@ class CategoryController extends Controller
 
 
       function getAll2(){
-        $categories = Category::with('allchildren')->sum('products_count','AS','products_count')
-        ->get();
+        $categories = Category::with('allchildren')->where('padre',0)->get();
       
       
         return response()->json([
