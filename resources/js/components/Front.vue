@@ -41,7 +41,7 @@
 
                 <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}} </p>
                 <br>
-                <p> Filtrado:  {{this.selected.supplies}} </p>
+                <p> Filtrado:  {{this.sups}} </p>
                 
                 <nav>
                     <ul class="pagination">
@@ -163,6 +163,7 @@ import Tree2 from "./Tree2";
                     brands: [],
                     categories: []
                 },
+                sups: [],
                /* address: {
                     street: '',
                     state: '',
@@ -180,6 +181,7 @@ import Tree2 from "./Tree2";
                     this.loadBrands();
                     this.loadProducts();
                     this.loadCategories();
+                    this.loadSups();
                    // console.log(this.selected.supplies)
                    // console.log(this.selected.brands)
                 },
@@ -265,17 +267,15 @@ import Tree2 from "./Tree2";
                         console.log(error);
                     });
             },
-            treeViewLoad : function(){
-                console.log("treviewingggggggggggg")
-                var toggler = document.getElementsByClassName("caret");
-                var i;
-
-                for (i = 0; i < toggler.length; i++) {
-                toggler[i].addEventListener("click", function() {
-                    this.parentElement.querySelector(".nested").classList.toggle("active");
-                    this.classList.toggle("caret-down");
-                });
-                }
+            loadSups: function () {
+                axios.get('/api/s/'+this.selected.supplies)
+                    .then((response) => {
+                        this.sups = response.data.supplies;
+                        this.loading = false;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             },
             loadCategories: function () {
                 axios.get('/api/categories', {

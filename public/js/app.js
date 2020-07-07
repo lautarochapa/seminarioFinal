@@ -2133,7 +2133,8 @@ __webpack_require__.r(__webpack_exports__);
         supplies: [],
         brands: [],
         categories: []
-      }
+      },
+      sups: []
       /* address: {
            street: '',
            state: '',
@@ -2151,7 +2152,8 @@ __webpack_require__.r(__webpack_exports__);
       handler: function handler() {
         this.loadBrands();
         this.loadProducts();
-        this.loadCategories(); // console.log(this.selected.supplies)
+        this.loadCategories();
+        this.loadSups(); // console.log(this.selected.supplies)
         // console.log(this.selected.brands)
       },
       deep: true
@@ -2245,26 +2247,24 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    treeViewLoad: function treeViewLoad() {
-      console.log("treviewingggggggggggg");
-      var toggler = document.getElementsByClassName("caret");
-      var i;
+    loadSups: function loadSups() {
+      var _this8 = this;
 
-      for (i = 0; i < toggler.length; i++) {
-        toggler[i].addEventListener("click", function () {
-          this.parentElement.querySelector(".nested").classList.toggle("active");
-          this.classList.toggle("caret-down");
-        });
-      }
+      axios.get('/api/s/' + this.selected.supplies).then(function (response) {
+        _this8.sups = response.data.supplies;
+        _this8.loading = false;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     },
     loadCategories: function loadCategories() {
-      var _this8 = this;
+      var _this9 = this;
 
       axios.get('/api/categories', {
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
-        _this8.categories = response.data.categories;
-        _this8.loading = false;
+        _this9.categories = response.data.categories;
+        _this9.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -39129,9 +39129,7 @@ var render = function() {
           _vm._v(" "),
           _c("br"),
           _vm._v(" "),
-          _c("p", [
-            _vm._v(" Filtrado:  " + _vm._s(this.selected.supplies) + " ")
-          ]),
+          _c("p", [_vm._v(" Filtrado:  " + _vm._s(this.sups) + " ")]),
           _vm._v(" "),
           _c("nav", [
             _c(

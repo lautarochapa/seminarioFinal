@@ -24,13 +24,11 @@ class SupplyController extends Controller
 
 
 
-
-
-
-    function getAll2(){
+ 
+    function getAll2($ids){
       $supplies = Supply::with(['category'=> function ($query) {
         $query->with('grandparent');
-    }])->get();
+    }])->whereIn('id', $ids)->get();
   
     
       return response()->json([
