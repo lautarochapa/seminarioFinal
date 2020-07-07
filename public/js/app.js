@@ -2093,6 +2093,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -39216,31 +39240,104 @@ var render = function() {
                         class: { active: _vm.products["current_page"] === n }
                       },
                       [
-                        n - _vm.products["current_page"] < 10 &&
-                        n - _vm.products["current_page"] > 0
+                        _vm.products["current_page"] < 5
                           ? _c("div", [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      return _vm.getPage(n)
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("span", [
-                                    _vm._v(
-                                      "\n                                    " +
-                                        _vm._s(n) +
-                                        "\n                                "
+                              n - _vm.products["current_page"] < 10 &&
+                              n - _vm.products["current_page"] > 0
+                                ? _c("div", [
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "page-link",
+                                        attrs: { href: "#" },
+                                        on: {
+                                          click: function($event) {
+                                            $event.preventDefault()
+                                            return _vm.getPage(n)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("span", [
+                                          _vm._v(
+                                            "\n                                            " +
+                                              _vm._s(n) +
+                                              "\n                                        "
+                                          )
+                                        ])
+                                      ]
                                     )
                                   ])
-                                ]
-                              )
+                                : _vm._e()
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm.products["current_page"] > 5 &&
+                        _vm.products["last_page"] -
+                          _vm.products["current_page"] >
+                          10
+                          ? _c("div", [
+                              n - _vm.products["current_page"] < 10 &&
+                              n - _vm.products["current_page"] > 0
+                                ? _c("div", [
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "page-link",
+                                        attrs: { href: "#" },
+                                        on: {
+                                          click: function($event) {
+                                            $event.preventDefault()
+                                            return _vm.getPage(n)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("span", [
+                                          _vm._v(
+                                            "\n                                            " +
+                                              _vm._s(n) +
+                                              "\n                                        "
+                                          )
+                                        ])
+                                      ]
+                                    )
+                                  ])
+                                : _vm._e()
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm.products["last_page"] -
+                          _vm.products["current_page"] <
+                        10
+                          ? _c("div", [
+                              n - _vm.products["current_page"] < 10 &&
+                              n - _vm.products["current_page"] > 0
+                                ? _c("div", [
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "page-link",
+                                        attrs: { href: "#" },
+                                        on: {
+                                          click: function($event) {
+                                            $event.preventDefault()
+                                            return _vm.getPage(n)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("span", [
+                                          _vm._v(
+                                            "\n                                            " +
+                                              _vm._s(n) +
+                                              "\n                                        "
+                                          )
+                                        ])
+                                      ]
+                                    )
+                                  ])
+                                : _vm._e()
                             ])
                           : _vm._e()
                       ]

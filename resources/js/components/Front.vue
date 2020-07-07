@@ -59,13 +59,37 @@
                         <li class="page-item" :class="{ 'active': (products['current_page']=== n) }" v-for="n in products['last_page']">
 
 
-                            <div v-if="n- products['current_page'] < 10 && n- products['current_page'] > 0">
-                            <a href="#" class="page-link" @click.prevent="getPage(n)">
-                                <span >
-                                    {{ n }}
-                                </span>
-                            </a>
+                            <div v-if="products['current_page'] < 5">
+                                <div v-if="n- products['current_page'] < 10 && n- products['current_page'] > 0">
+                                    <a href="#" class="page-link" @click.prevent="getPage(n)">
+                                        <span >
+                                            {{ n }}
+                                        </span>
+                                    </a>
+                                </div>
                             </div>
+
+                            <div v-if="products['current_page'] > 5 && products['last_page'] - products['current_page'] > 10">
+                                <div v-if="n- products['current_page'] < 10 && n- products['current_page'] > 0">
+                                    <a href="#" class="page-link" @click.prevent="getPage(n)">
+                                        <span >
+                                            {{ n }}
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div v-if="products['last_page'] - products['current_page'] < 10">
+                                <div v-if="n- products['current_page'] < 10 && n- products['current_page'] > 0">
+                                    <a href="#" class="page-link" @click.prevent="getPage(n)">
+                                        <span >
+                                            {{ n }}
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+
                         </li>
                         <li class="page-item" v-show="products['next_page_url']">
                             <a href="#" class="page-link" @click.prevent="getNextPage">
