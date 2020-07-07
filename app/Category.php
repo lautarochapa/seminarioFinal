@@ -14,7 +14,9 @@ class Category extends Model
     }
 
     public function children() {
-        return $this->hasMany(Category::class,'padre');
+        return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
+            $query->withFilters();
+        }]);
     }
 
     public function allchildren() {
