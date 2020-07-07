@@ -2142,12 +2142,10 @@ __webpack_require__.r(__webpack_exports__);
     this.loadCategories();
     this.loadBrands();
     this.loadProducts();
-    this.loadSupplies();
   },
   watch: {
     selected: {
       handler: function handler() {
-        this.loadSupplies();
         this.loadBrands();
         this.loadProducts();
         this.loadCategories();
@@ -2175,94 +2173,83 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
     },
-    loadSupplies: function loadSupplies() {
-      var _this = this;
-
-      axios.get('/api/supplies', {
-        params: _.omit(this.selected, 'supplies')
-      }).then(function (response) {
-        _this.supplies = response.data.supplies;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
     loadProducts: function loadProducts() {
-      var _this2 = this;
+      var _this = this;
 
       axios.get('/api/products', {
         params: this.selected
       }).then(function (response) {
-        _this2.products = response.data.products;
-        _this2.loading = false;
+        _this.products = response.data.products;
+        _this.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     getPage: function getPage(page) {
-      var _this3 = this;
+      var _this2 = this;
 
       axios.get('/api/products?page=' + page, {
+        params: this.selected
+      }).then(function (response) {
+        _this2.products = response.data.products;
+      });
+    },
+    getPreviousPage: function getPreviousPage() {
+      var _this3 = this;
+
+      axios.get(this.products['prev_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this3.products = response.data.products;
       });
     },
-    getPreviousPage: function getPreviousPage() {
+    getNextPage: function getNextPage() {
       var _this4 = this;
 
-      axios.get(this.products['prev_page_url'], {
+      axios.get(this.products['next_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this4.products = response.data.products;
       });
     },
-    getNextPage: function getNextPage() {
+    getLastPage: function getLastPage() {
       var _this5 = this;
 
-      axios.get(this.products['next_page_url'], {
+      axios.get(this.products['last_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this5.products = response.data.products;
       });
     },
-    getLastPage: function getLastPage() {
+    getFirstPage: function getFirstPage() {
       var _this6 = this;
 
-      axios.get(this.products['last_page_url'], {
+      axios.get(this.products['first_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this6.products = response.data.products;
       });
     },
-    getFirstPage: function getFirstPage() {
-      var _this7 = this;
-
-      axios.get(this.products['first_page_url'], {
-        params: this.selected
-      }).then(function (response) {
-        _this7.products = response.data.products;
-      });
-    },
     loadBrands: function loadBrands() {
-      var _this8 = this;
+      var _this7 = this;
 
       axios.get('/api/brands', {
         params: _.omit(this.selected, 'brands')
       }).then(function (response) {
-        _this8.brands = response.data.brands;
-        _this8.loading = false;
+        _this7.brands = response.data.brands;
+        _this7.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     loadCategories: function loadCategories() {
-      var _this9 = this;
+      var _this8 = this;
 
-      axios.get('/a', {
+      axios.get('/api/categories', {
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
-        _this9.categories = response.data.categories[0];
-        _this9.loading = false;
+        _this8.categories = response.data.categories[0];
+        _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });

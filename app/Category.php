@@ -13,17 +13,23 @@ class Category extends Model
     }
 
     public function children() {
-        return $this->hasMany(Category::class,'padre');
-    }
-    // ->withCount(['products' => function ($query) {$query->withFilters(); }])
-
-    public function allchildren() {
-        return $this->children()->with(['allchildren' => function($query){
-            $query->with(['supplies' => function($query2){
-                $query2->withCount('products');
-                }])->sum('supplies.products_count');
+        return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
+            $query->withFilters();
         }]);
     }
+
+    public function allchildren() {
+        return $this->children()->with('allchildren')->with(['supplies' => function($query){
+            $query->withCount('products');
+        }]);
+    }
+
+
+
+    public function allchildren2() {
+        return $this->allchildren()->sum('products_count');
+    }
+
     public function parent() {
         return $this->belongsTo(Category::class,'padre');
     }

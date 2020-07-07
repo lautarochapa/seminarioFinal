@@ -170,12 +170,10 @@ import Tree2 from "./Tree2";
             this.loadCategories();
             this.loadBrands();
             this.loadProducts();
-            this.loadSupplies();
         },
         watch: {
             selected: {
                 handler: function () {
-                    this.loadSupplies();
                     this.loadBrands();
                     this.loadProducts();
                     this.loadCategories();
@@ -199,25 +197,11 @@ import Tree2 from "./Tree2";
                     if(data.substring(0,5) == 'false'){
                         //console.log(data.substring(11,20) + " false")
                         if( this.selected.supplies.includes(data.substring(11,20))){
-
-                        
-this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === data.substring(11,20)), 1)
-
+                            this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === data.substring(11,20)), 1)
                             //console.log(data.substring(11,20) + " eliminar")
                         }
                     }    
                 }
-            },
-            loadSupplies: function () {
-                axios.get('/api/supplies', {
-                        params: _.omit(this.selected, 'supplies')
-                    })
-                    .then((response) => {
-                        this.supplies = response.data.supplies;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
             },
             loadProducts: function () {
                 axios.get('/api/products', {
@@ -279,7 +263,7 @@ this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === da
                     });
             },
             loadCategories: function () {
-                axios.get('/a', {
+                axios.get('/api/categories', {
                         params: _.omit(this.selected, 'categories')
                     })
                     .then((response) => {
