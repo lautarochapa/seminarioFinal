@@ -34,6 +34,10 @@ class Category extends Model
         return $this->belongsTo(Category::class,'padre');
     }
 
+    public function grandparent() {
+        return $this->parent()->with('grandparent');
+    }
+
 
     public function supplies()
     {
