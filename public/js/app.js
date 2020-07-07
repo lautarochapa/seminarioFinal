@@ -2073,6 +2073,7 @@ __webpack_require__.r(__webpack_exports__);
         this.loadBrands();
         this.loadProducts();
         this.loadCategories();
+        console.log(this.selected.brands);
       },
       deep: true
     }
@@ -2086,7 +2087,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     bus: function bus(data) {
-      this.selected.supplies = data;
+      //this.selected.supplies = data
       console.log(data);
     },
     loadSupplies: function loadSupplies() {
