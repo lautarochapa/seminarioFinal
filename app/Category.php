@@ -11,7 +11,7 @@ class Category extends Model
 
     public function products()
     {
-        return $this->hasManyThrough(Product::class, Supply::class)->sum('products','AS','products_count');
+        return $this->hasManyThrough(Product::class, Supply::class);
     }
 
     public function children() {
