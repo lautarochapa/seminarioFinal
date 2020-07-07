@@ -57,6 +57,33 @@
                         </div>
                     </div>
                 </div>
+
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" v-show="products['prev_page_url']">
+                            <a href="#" class="page-link" @click.prevent="getPreviousPage">
+                                <span>
+                                  <span aria-hidden="true">«</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="page-item" :class="{ 'active': (products['current_page']=== n) }" v-for="n in products['last_page']">
+                            <a href="#" class="page-link" @click.prevent="getPage(n)">
+                                <span >
+                                    {{ n }}
+                                </span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-show="products['next_page_url']">
+                            <a href="#" class="page-link" @click.prevent="getNextPage">
+                                <span>
+                                  <span aria-hidden="true">»</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
         </div>
     </div>
@@ -89,10 +116,10 @@ import Tree2 from "./Tree2";
             }
         },
         mounted() {
-            this.loadSupplies();
+            this.loadCategories();
             this.loadBrands();
             this.loadProducts();
-            this.loadCategories();
+            this.loadSupplies();
         },
         watch: {
             selected: {
@@ -152,6 +179,27 @@ this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === da
                     .catch(function (error) {
                         console.log(error);
                     });
+            },           
+            getPage(page){
+                axios.get('/api/products?page='+page, {
+                        params: this.selected
+                    }).then((response)=>{
+                       this.products = response.data.products;
+                });
+            },
+            getPreviousPage(){
+                axios.get(this.products['prev_page_url'], {
+                        params: this.selected
+                    }).then((response)=>{
+                       this.products = response.data.products;
+                });
+            },
+            getNextPage(){
+                axios.get(this.products['next_page_url'], {
+                        params: this.selected
+                    }).then((response)=>{
+                       this.products = response.data.products;
+                });
             },
             loadBrands: function () {
                 axios.get('/api/brands', {

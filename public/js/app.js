@@ -2040,6 +2040,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2061,10 +2088,10 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.loadSupplies();
+    this.loadCategories();
     this.loadBrands();
     this.loadProducts();
-    this.loadCategories();
+    this.loadSupplies();
   },
   watch: {
     selected: {
@@ -2120,26 +2147,53 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    loadBrands: function loadBrands() {
+    getPage: function getPage(page) {
       var _this3 = this;
+
+      axios.get('/api/products?page=' + page, {
+        params: this.selected
+      }).then(function (response) {
+        _this3.products = response.data.products;
+      });
+    },
+    getPreviousPage: function getPreviousPage() {
+      var _this4 = this;
+
+      axios.get(this.products['prev_page_url'], {
+        params: this.selected
+      }).then(function (response) {
+        _this4.products = response.data.products;
+      });
+    },
+    getNextPage: function getNextPage() {
+      var _this5 = this;
+
+      axios.get(this.products['next_page_url'], {
+        params: this.selected
+      }).then(function (response) {
+        _this5.products = response.data.products;
+      });
+    },
+    loadBrands: function loadBrands() {
+      var _this6 = this;
 
       axios.get('/api/brands', {
         params: _.omit(this.selected, 'brands')
       }).then(function (response) {
-        _this3.brands = response.data.brands;
-        _this3.loading = false;
+        _this6.brands = response.data.brands;
+        _this6.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     loadCategories: function loadCategories() {
-      var _this4 = this;
+      var _this7 = this;
 
       axios.get('/a', {
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
-        _this4.categories = response.data.categories[0];
-        _this4.loading = false;
+        _this7.categories = response.data.categories[0];
+        _this7.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -39052,7 +39106,112 @@ var render = function() {
               ])
             }),
             0
-          )
+          ),
+          _vm._v(" "),
+          _c("nav", [
+            _c(
+              "ul",
+              { staticClass: "pagination" },
+              [
+                _c(
+                  "li",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.products["prev_page_url"],
+                        expression: "products['prev_page_url']"
+                      }
+                    ],
+                    staticClass: "page-item"
+                  },
+                  [
+                    _c(
+                      "a",
+                      {
+                        staticClass: "page-link",
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.getPreviousPage($event)
+                          }
+                        }
+                      },
+                      [_vm._m(1)]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm._l(_vm.products["last_page"], function(n) {
+                  return _c(
+                    "li",
+                    {
+                      staticClass: "page-item",
+                      class: { active: _vm.products["current_page"] === n }
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "page-link",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.getPage(n)
+                            }
+                          }
+                        },
+                        [
+                          _c("span", [
+                            _vm._v(
+                              "\n                                    " +
+                                _vm._s(n) +
+                                "\n                                "
+                            )
+                          ])
+                        ]
+                      )
+                    ]
+                  )
+                }),
+                _vm._v(" "),
+                _c(
+                  "li",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.products["next_page_url"],
+                        expression: "products['next_page_url']"
+                      }
+                    ],
+                    staticClass: "page-item"
+                  },
+                  [
+                    _c(
+                      "a",
+                      {
+                        staticClass: "page-link",
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.getNextPage($event)
+                          }
+                        }
+                      },
+                      [_vm._m(2)]
+                    )
+                  ]
+                )
+              ],
+              2
+            )
+          ])
         ])
       ])
     ]
@@ -39068,6 +39227,22 @@ var staticRenderFns = [
         staticClass: "card-img-top",
         attrs: { src: "http://placehold.it/700x400", alt: "" }
       })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", [
+      _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("«")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", [
+      _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("»")])
     ])
   }
 ]
