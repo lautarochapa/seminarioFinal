@@ -26,7 +26,7 @@
 -->
 
                 <h3 class="mt-2">Marcas</h3>
-                <select  name="select">
+                <select  name="select" multiple>
 
                  <option v-for="(br, index) in brands" v-model="selected.brands" :value="br.id">{{ br.nombre }} ({{ br.products_count }})</option>
                 
@@ -39,8 +39,10 @@
             <div class="col-lg-9">
 
 
-                <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}}
-
+                <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}} </p>
+                <br>
+<p> Filtrado:  {{this.selected.supplies}} </p>
+                
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-show="products['first_page_url']">
