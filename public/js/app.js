@@ -2070,7 +2070,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/api/products', {
         params: this.selected
       }).then(function (response) {
-        _this2.products = response.data.products;
+        _this2.products = response.data.products[0];
         _this2.loading = false;
       })["catch"](function (error) {
         console.log(error);
