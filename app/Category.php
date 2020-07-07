@@ -15,7 +15,7 @@ class Category extends Model
 
     public function products2()
     {
-        return $this->hasManyThrough(Product::class, Category::class);
+        return $this->hasManyThrough(Supply::class, Category::class);
     }
 
     public function children() {
