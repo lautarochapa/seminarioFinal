@@ -2226,8 +2226,7 @@ __webpack_require__.r(__webpack_exports__);
     handleChange: function handleChange(e) {
       var name = e.target.name;
       console.log(e.srcElement);
-      console.log(e.srcElement.value);
-      console.log(e.srcElement.id);
+      console.log(e.srcElement.checked);
       console.log(e.target);
     }
   },
@@ -39165,8 +39164,9 @@ var render = function() {
               id: "supply" + index
             },
             domProps: {
+              value: supply.id,
               checked: Array.isArray(_vm.supplies2)
-                ? _vm._i(_vm.supplies2, null) > -1
+                ? _vm._i(_vm.supplies2, supply.id) > -1
                 : _vm.supplies2
             },
             on: {
@@ -39176,7 +39176,7 @@ var render = function() {
                     $$el = $event.target,
                     $$c = $$el.checked ? true : false
                   if (Array.isArray($$a)) {
-                    var $$v = null,
+                    var $$v = supply.id,
                       $$i = _vm._i($$a, $$v)
                     if ($$el.checked) {
                       $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
