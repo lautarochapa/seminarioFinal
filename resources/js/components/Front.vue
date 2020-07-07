@@ -41,7 +41,7 @@
 
                 <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}} </p>
                 <br>
-<p> Filtrado:  {{this.selected.supplies}} </p>
+                <p> Filtrado:  {{this.selected.supplies}} </p>
                 
                 <nav>
                     <ul class="pagination">

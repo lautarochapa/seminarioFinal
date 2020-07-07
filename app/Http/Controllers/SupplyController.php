@@ -21,4 +21,25 @@ class SupplyController extends Controller
     
     ], Response::HTTP_OK);
     }
+
+
+
+
+
+
+    function getAll2(){
+      $supplies = Supply::with('grandparent');
+  
+    
+      return response()->json([
+      
+        'supplies' => $supplies
+      
+      ], Response::HTTP_OK);
+      }
+
+
+
+
+
 }
