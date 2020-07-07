@@ -39183,7 +39183,7 @@ var render = function() {
             attrs: {
               type: "checkbox",
               "unchecked-value": supply.id + "off",
-              id: supply.id
+              id: "supply" + supply.id
             },
             domProps: {
               value: supply.id,
