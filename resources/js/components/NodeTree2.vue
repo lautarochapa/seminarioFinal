@@ -10,7 +10,7 @@
 -->
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
-                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="this.selected.supplies">
+                        <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="supplies">
                         <label class="form-check-label" :for="'supply' + index">
                         --   {{ supply.nombre }} ({{ supply.products_count }})
                         </label>
@@ -30,10 +30,9 @@
 export default {
   name: "categoria",
   props: {
-    categoria: [Object, Array],
-                selected: {
-                    supplies: [],
-                }
+    categoria: [Object, Array],   
+    supplies: [],
+    
   }
 };
 </script>

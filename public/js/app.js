@@ -2189,9 +2189,7 @@ __webpack_require__.r(__webpack_exports__);
   name: "categoria",
   props: {
     categoria: [Object, Array],
-    selected: {
-      supplies: []
-    }
+    supplies: []
   }
 });
 
@@ -39081,39 +39079,36 @@ var render = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: this.selected.supplies,
-                expression: "this.selected.supplies"
+                value: _vm.supplies,
+                expression: "supplies"
               }
             ],
             staticClass: "form-check-input",
             attrs: { type: "checkbox", id: "supply" + index },
             domProps: {
               value: supply.id,
-              checked: Array.isArray(this.selected.supplies)
-                ? _vm._i(this.selected.supplies, supply.id) > -1
-                : this.selected.supplies
+              checked: Array.isArray(_vm.supplies)
+                ? _vm._i(_vm.supplies, supply.id) > -1
+                : _vm.supplies
             },
             on: {
               change: function($event) {
-                var $$a = this.selected.supplies,
+                var $$a = _vm.supplies,
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false
                 if (Array.isArray($$a)) {
                   var $$v = supply.id,
                     $$i = _vm._i($$a, $$v)
                   if ($$el.checked) {
-                    $$i < 0 &&
-                      _vm.$set(this.selected, "supplies", $$a.concat([$$v]))
+                    $$i < 0 && (_vm.supplies = $$a.concat([$$v]))
                   } else {
                     $$i > -1 &&
-                      _vm.$set(
-                        this.selected,
-                        "supplies",
-                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                      )
+                      (_vm.supplies = $$a
+                        .slice(0, $$i)
+                        .concat($$a.slice($$i + 1)))
                   }
                 } else {
-                  _vm.$set(this.selected, "supplies", $$c)
+                  _vm.supplies = $$c
                 }
               }
             }
