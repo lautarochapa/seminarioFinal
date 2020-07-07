@@ -20,7 +20,7 @@ class Category extends Model
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren', ['supplies' => function($query){
+        return $this->children()->with('allchildren')->with(['supplies' => function($query){
             $query->withCount('products');
         }]);
     }
