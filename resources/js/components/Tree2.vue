@@ -2,7 +2,7 @@
 <div>
 <div v-for="a in treeData">
      
-      <ul :id="'myUL' + a.id">
+      <ul class="myUL">
 
       <node-tree2 :categoria="a" @bus="bus" ></node-tree2>
 

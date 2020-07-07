@@ -2312,9 +2312,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -39465,40 +39462,15 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("li", [
-    _vm.categoria.allchildren && _vm.categoria.allchildren.length
-      ? _c("span", { staticClass: "caret" }, [
-          _vm._v(
-            "\n      " +
-              _vm._s(_vm.categoria.nombre) +
-              " (" +
-              _vm._s(_vm.categoria.products_count) +
-              ")  \n  "
-          )
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    !_vm.categoria.allchildren && !_vm.categoria.allchildren.length
-      ? _c("span", [
-          _vm._v(
-            "\n      " +
-              _vm._s(_vm.categoria.nombre) +
-              " (" +
-              _vm._s(_vm.categoria.products_count) +
-              ")  \n  "
-          )
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.categoria.allchildren && _vm.categoria.allchildren.length
-      ? _c(
-          "ul",
-          { staticClass: "nested" },
-          _vm._l(_vm.categoria.allchildren, function(child) {
-            return _c("categoria", { attrs: { categoria: child } })
-          }),
-          1
-        )
-      : _vm._e()
+    _c("span", { staticClass: "caret" }, [
+      _vm._v(
+        "\n      " +
+          _vm._s(_vm.categoria.nombre) +
+          " (" +
+          _vm._s(_vm.categoria.products_count) +
+          ")  \n  "
+      )
+    ])
   ])
 }
 var staticRenderFns = []
@@ -39790,7 +39762,7 @@ var render = function() {
       return _c("div", [
         _c(
           "ul",
-          { attrs: { id: "myUL" + a.id } },
+          { staticClass: "myUL" },
           [_c("node-tree2", { attrs: { categoria: a }, on: { bus: _vm.bus } })],
           1
         )
