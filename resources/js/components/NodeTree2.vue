@@ -36,7 +36,7 @@ export default {
   },
         computed: {
             supplies2: {
-                get() {return this},
+                get() {return this.id},
                 set(supplies2) { this.$emit('bus', supplies2)}
             }
         },

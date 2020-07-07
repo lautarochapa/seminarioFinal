@@ -2226,7 +2226,7 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     supplies2: {
       get: function get() {
-        return this;
+        return this.id;
       },
       set: function set(supplies2) {
         this.$emit('bus', supplies2);
