@@ -2072,35 +2072,28 @@ __webpack_require__.r(__webpack_exports__);
         this.loadSupplies();
         this.loadBrands();
         this.loadProducts();
-        this.loadCategories(); // console.log(this.selected.brands)
+        this.loadCategories();
+        console.log(this.selected.supplies); // console.log(this.selected.brands)
       },
       deep: true
     }
-    /* address: {
-         handler: function () {
-            console.log(this.address)
-         },
-         deep: true
-     }*/
-
   },
   methods: {
     bus: function bus(data) {
-      console.log(data);
-
+      //console.log(data)
       if (data.substring(0, 4) == 'true') {
-        console.log(data.substring(10, 20) + " true");
-
+        //console.log(data.substring(10,20) + " true")
         if (this.selected.supplies.includes(data.substring(10, 20)) == false) {
-          this.selected.supplies.push(data.substring(10, 20));
-          console.log(this.selected.supplies);
+          this.selected.supplies.push(data.substring(10, 20)); //console.log(this.selected.supplies)
         }
       } else {
         if (data.substring(0, 5) == 'false') {
-          console.log(data.substring(11, 20) + " false");
-
+          //console.log(data.substring(11,20) + " false")
           if (this.selected.supplies.includes(data.substring(11, 20))) {
-            console.log(data.substring(11, 20) + " eliminar");
+            this.selected.supplies.push(data.substring(10, 20));
+            this.selected.supplies.splice(this.selected.supplies.findIndex(function (sup) {
+              return sup === data.substring(10, 20);
+            }), 1); //console.log(data.substring(11,20) + " eliminar")
           }
         }
       }
