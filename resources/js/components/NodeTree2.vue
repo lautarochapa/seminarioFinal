@@ -30,7 +30,10 @@
 export default {
   name: "categoria",
   props: {
-    categoria: [Object, Array]
+    categoria: [Object, Array],
+                selected: {
+                    supplies: [],
+                }
   }
 };
 </script>
