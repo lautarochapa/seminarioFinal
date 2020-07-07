@@ -2107,6 +2107,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -39072,8 +39084,9 @@ var render = function() {
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
             _vm._l(_vm.brands, function(br, index) {
-              return _c("div", { staticClass: "form-check" }, [
-                _c("input", {
+              return _c(
+                "select",
+                {
                   directives: [
                     {
                       name: "model",
@@ -39082,57 +39095,35 @@ var render = function() {
                       expression: "selected.brands"
                     }
                   ],
-                  staticClass: "form-check-input",
-                  attrs: { type: "checkbox", id: "br" + index },
-                  domProps: {
-                    value: br.id,
-                    checked: Array.isArray(_vm.selected.brands)
-                      ? _vm._i(_vm.selected.brands, br.id) > -1
-                      : _vm.selected.brands
-                  },
+                  attrs: { name: "select" },
                   on: {
                     change: function($event) {
-                      var $$a = _vm.selected.brands,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false
-                      if (Array.isArray($$a)) {
-                        var $$v = br.id,
-                          $$i = _vm._i($$a, $$v)
-                        if ($$el.checked) {
-                          $$i < 0 &&
-                            _vm.$set(_vm.selected, "brands", $$a.concat([$$v]))
-                        } else {
-                          $$i > -1 &&
-                            _vm.$set(
-                              _vm.selected,
-                              "brands",
-                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                            )
-                        }
-                      } else {
-                        _vm.$set(_vm.selected, "brands", $$c)
-                      }
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.$set(
+                        _vm.selected,
+                        "brands",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
                     }
                   }
-                }),
-                _vm._v(" "),
-                _c(
-                  "label",
-                  {
-                    staticClass: "form-check-label",
-                    attrs: { for: "br" + index }
-                  },
-                  [
+                },
+                [
+                  _c("option", { domProps: { value: br.id } }, [
                     _vm._v(
-                      "\n                    " +
-                        _vm._s(br.nombre) +
-                        " (" +
-                        _vm._s(br.products_count) +
-                        ")\n                "
+                      _vm._s(br.nombre) + " (" + _vm._s(br.products_count) + ")"
                     )
-                  ]
-                )
-              ])
+                  ])
+                ]
+              )
             })
           ],
           2
@@ -39147,7 +39138,7 @@ var render = function() {
                 _vm._s(_vm.products.to) +
                 " de " +
                 _vm._s(_vm.products.total) +
-                "\n\n            "
+                "\n\n                "
             ),
             _c("nav", [
               _c(
@@ -39243,9 +39234,9 @@ var render = function() {
                                       [
                                         _c("span", [
                                           _vm._v(
-                                            "\n                                        " +
+                                            "\n                                            " +
                                               _vm._s(n) +
-                                              "\n                                    "
+                                              "\n                                        "
                                           )
                                         ])
                                       ]
@@ -39278,9 +39269,9 @@ var render = function() {
                                       [
                                         _c("span", [
                                           _vm._v(
-                                            "\n                                        " +
+                                            "\n                                            " +
                                               _vm._s(n) +
-                                              "\n                                    "
+                                              "\n                                        "
                                           )
                                         ])
                                       ]
@@ -39311,9 +39302,9 @@ var render = function() {
                                       [
                                         _c("span", [
                                           _vm._v(
-                                            "\n                                        " +
+                                            "\n                                            " +
                                               _vm._s(n) +
-                                              "\n                                    "
+                                              "\n                                        "
                                           )
                                         ])
                                       ]

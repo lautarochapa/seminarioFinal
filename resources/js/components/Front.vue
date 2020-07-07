@@ -15,7 +15,7 @@
 
                  <tree2 :tree-data="categories" @bus="bus"></tree2>
 
-
+<!--
                 <h3 class="mt-2">Marcas</h3>
                 <div class="form-check" v-for="(br, index) in brands">
                     <input class="form-check-input" type="checkbox" :value="br.id" :id="'br'+index" v-model="selected.brands">
@@ -23,6 +23,18 @@
                         {{ br.nombre }} ({{ br.products_count }})
                     </label>
                 </div>
+-->
+
+                <h3 class="mt-2">Marcas</h3>
+                <select v-for="(br, index) in brands" v-model="selected.brands" name="select">
+
+                 <option :value="br.id">{{ br.nombre }} ({{ br.products_count }})</option>
+                
+</select>
+
+
+
+
             </div>
             <div class="col-lg-9">
 
