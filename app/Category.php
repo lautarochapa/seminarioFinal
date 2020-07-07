@@ -15,13 +15,13 @@ class Category extends Model
     public function children() {
         return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
             $query->withFilters();
-        }]);
+        }])->with(['supplies' => function($query){
+            $query->withCount('products');
+        }]);;
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren')->with(['supplies' => function($query){
-            $query->withCount('products');
-        }]);
+        return $this->children()->with('allchildren')
     }
 
 
@@ -29,6 +29,29 @@ class Category extends Model
     public function allchildren2() {
         return $this->allchildren()->sum('products_count');
     }
+
+
+
+// Post model
+public function comments()
+{
+  return $this->hasMany('Comment');
+}
+ 
+public function commentsCount()
+{
+  return $this->comments()
+    ->selectRaw('post_id, count(*) as aggregate')
+    ->groupBy('post_id');
+}
+
+
+
+
+
+
+
+
 
     public function parent() {
         return $this->belongsTo(Category::class,'padre');
