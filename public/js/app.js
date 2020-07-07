@@ -39036,7 +39036,7 @@ var render = function() {
           _c(
             "div",
             { staticClass: "row mt-4" },
-            _vm._l(_vm.products, function(product) {
+            _vm._l(_vm.products.data, function(product) {
               return _c("div", { staticClass: "col-lg-4 col-md-6 mb-4" }, [
                 _c("div", { staticClass: "card h-100" }, [
                   _vm._m(0, true),
