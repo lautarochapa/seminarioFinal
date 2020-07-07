@@ -2190,6 +2190,11 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     categoria: [Object, Array],
     supplies: []
+  },
+  watch: {
+    supplies: function supplies() {
+      this.$emit('input', this.supplies);
+    }
   }
 });
 
@@ -2397,10 +2402,24 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    treeData: [Object, Array]
+    treeData: [Object, Array],
+    supplies: {
+      type: Object,
+      required: true
+    }
   },
   components: {
     NodeTree2: _NodeTree2__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  computed: {
+    local: {
+      get: function get() {
+        return this.supplies;
+      },
+      set: function set(local) {
+        this.$emit('input', local);
+      }
+    }
   }
 });
 
@@ -38880,7 +38899,16 @@ var render = function() {
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Categorias")]),
             _vm._v(" "),
-            _c("tree2", { attrs: { "tree-data": _vm.categories } }),
+            _c("tree2", {
+              attrs: { "tree-data": _vm.categories },
+              model: {
+                value: _vm.selected.supplies,
+                callback: function($$v) {
+                  _vm.$set(_vm.selected, "supplies", $$v)
+                },
+                expression: "selected.supplies"
+              }
+            }),
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
@@ -39433,7 +39461,18 @@ var render = function() {
     _c(
       "ul",
       { staticClass: "tree-list" },
-      [_c("node-tree2", { attrs: { categoria: _vm.treeData } })],
+      [
+        _c("node-tree2", {
+          attrs: { categoria: _vm.treeData },
+          model: {
+            value: _vm.local.supplies,
+            callback: function($$v) {
+              _vm.$set(_vm.local, "supplies", $$v)
+            },
+            expression: "local.supplies"
+          }
+        })
+      ],
       1
     )
   ])

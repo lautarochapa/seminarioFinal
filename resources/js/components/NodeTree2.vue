@@ -32,8 +32,13 @@ export default {
   props: {
     categoria: [Object, Array],   
     supplies: [],
-    
-  }
+
+  },
+        watch: {
+            supplies() {
+                this.$emit('input', this.supplies);
+            }
+        }
 };
 </script>
 

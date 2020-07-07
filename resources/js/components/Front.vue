@@ -7,7 +7,7 @@
 
                 <h3 class="mt-2">Categorias</h3>
 
-                <tree2 :tree-data="categories"></tree2>
+                <tree2 :tree-data="categories" v-model="selected.supplies"></tree2>
 
 
 
