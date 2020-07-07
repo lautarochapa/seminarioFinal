@@ -15,8 +15,6 @@ class Category extends Model
     public function children() {
         return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
             $query->withFilters();
-        }])->with(['supplies' => function($query){
-            $query->withCount('products');
         }]);
     }
 
