@@ -35,7 +35,13 @@
                   <!-- <product-component></product-component>-->
                     <front-component></front-component>
 
-<style>
+
+
+                   </div>
+    </div>
+
+  
+    <style>
 /* Remove default bullets */
 ul, #myUL {
   list-style-type: none;
@@ -88,11 +94,5 @@ for (i = 0; i < toggler.length; i++) {
   });
 }
 </script>
-
-                   </div>
-    </div>
-
-  
-
 </div>
 @endsection

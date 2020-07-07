@@ -15,17 +15,6 @@
 
                  <tree2 :tree-data="categories" @bus="bus"></tree2>
 
-   <!--  <form>
-        <tree2
-            :tree-data="categories"
-            :value="address"
-            @input="(newAddress) => {address = newAddress}"
-        />
-    </form>
--->
-
-
-
 
                 <h3 class="mt-2">Marcas</h3>
                 <div class="form-check" v-for="(br, index) in brands">

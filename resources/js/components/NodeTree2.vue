@@ -11,9 +11,6 @@
       <span class="icon expand-icon glyphicon glyphicon-minus"></span>
                         <input class="form-check-input" type="checkbox" @change="handleChange($event)" :value="supply.id"  
                         :id="'supply'+supply.id" v-model="supplies2">
-                        <!--                                            :value="abbreviation"                   v-model="localState"
-
-                        -->
                         <label class="form-check-label" :for="'supply' + index">
                         <span class="indent"></span> {{ supply.nombre }} ({{ supply.products_count }})
                         </label>
@@ -48,73 +45,16 @@ export default {
             },
                 handleChange: function(e) {
 
-
-     // const name = e.target.name;
-     // console.log(e.srcElement)
-     // console.log(e.srcElement.checked)
-     // console.log(e.target)
-
      { this.$emit('bus', e.srcElement.checked + e.srcElement.id )}
     }
   },
-      /*  computed: {
-            supplies2: {
-                get() {return this.value},
-                set(supplies2) { this.$emit('bus', supplies2)}
-            }
-        },*/
 
        data: function () {
             return {
                     supplies2: [],
                 }
             },
-       /* watch: {
-            supplies2: {
-                handler: function () {
-                    { this.$emit('bus', this.supplies2)}
-                },
-                deep: true
-            }
-        },*/
-
 
 
 };
 </script>
-<!--
-<template>
-    <select v-model="localState">
-        <option v-for="(state, abbreviation) in states"
-                :value="abbreviation"
-                v-html="state"
-        ></option>
-    </select>
-</template>
-<script type="text/babel">
-    export default {
-        props: {
-            value: {
-                type: String,
-                required: true
-            }
-        },
-        data() {
-            return {
-                states: {
-                    NY: 'New York',
-                    WI: 'Wisconsin'
-                    // + rest of the states
-                }
-            }
-        },
-        computed: {
-            localState: {
-                get() {return this.value},
-                set(localState) { this.$emit('input', localState)}
-            }
-        }
-    }
-</script>
-
--->
