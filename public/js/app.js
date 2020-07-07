@@ -2072,8 +2072,7 @@ __webpack_require__.r(__webpack_exports__);
         this.loadSupplies();
         this.loadBrands();
         this.loadProducts();
-        this.loadCategories();
-        console.log(this.selected.brands);
+        this.loadCategories(); // console.log(this.selected.brands)
       },
       deep: true
     }
@@ -2088,8 +2087,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     bus: function bus(data) {
       this.selected.supplies = data;
-      console.log(data);
-      console.log(this.selected.supplies);
+      console.log(data); // console.log(this.selected.supplies)
     },
     loadSupplies: function loadSupplies() {
       var _this = this;
@@ -2241,6 +2239,7 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     supplies2: {
       handler: function handler() {
+        console.log(this.supplies2.id);
         {
           this.$emit('bus', this.supplies2);
         }
@@ -39160,9 +39159,9 @@ var render = function() {
               id: "supply" + index
             },
             domProps: {
-              value: supply.id + "on",
+              value: supply.id,
               checked: Array.isArray(_vm.supplies2)
-                ? _vm._i(_vm.supplies2, supply.id + "on") > -1
+                ? _vm._i(_vm.supplies2, supply.id) > -1
                 : _vm.supplies2
             },
             on: {
@@ -39171,7 +39170,7 @@ var render = function() {
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false
                 if (Array.isArray($$a)) {
-                  var $$v = supply.id + "on",
+                  var $$v = supply.id,
                     $$i = _vm._i($$a, $$v)
                   if ($$el.checked) {
                     $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))

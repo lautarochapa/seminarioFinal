@@ -102,7 +102,7 @@ import Tree2 from "./Tree2";
                     this.loadProducts();
                     this.loadCategories();
 
-                    console.log(this.selected.brands)
+                   // console.log(this.selected.brands)
                 },
                 deep: true
             }
@@ -117,7 +117,7 @@ import Tree2 from "./Tree2";
             bus: function (data) {
                 this.selected.supplies = data
                 console.log(data)
-                console.log(this.selected.supplies)
+               // console.log(this.selected.supplies)
             },
             loadSupplies: function () {
                 axios.get('/api/supplies', {
