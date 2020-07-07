@@ -2086,8 +2086,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     bus: function bus(data) {
-      this.selected.supplies = data;
-      console.log(data); // console.log(this.selected.supplies)
+      console.log(data); //this.selected.supplies = data
+      // console.log(this.selected.supplies)
     },
     loadSupplies: function loadSupplies() {
       var _this = this;
@@ -2224,10 +2224,13 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('bus', data);
     },
     handleChange: function handleChange(e) {
-      var name = e.target.name;
-      console.log(e.srcElement);
-      console.log(e.srcElement.checked);
-      console.log(e.target);
+      // const name = e.target.name;
+      // console.log(e.srcElement)
+      // console.log(e.srcElement.checked)
+      // console.log(e.target)
+      {
+        this.$emit('bus', e.srcElement.id + e.srcElement.checked);
+      }
     }
   },
 
@@ -2241,17 +2244,16 @@ __webpack_require__.r(__webpack_exports__);
     return {
       supplies2: []
     };
-  },
-  watch: {
-    supplies2: {
-      handler: function handler() {
-        {
-          this.$emit('bus', this.supplies2);
-        }
-      },
-      deep: true
-    }
   }
+  /* watch: {
+       supplies2: {
+           handler: function () {
+               { this.$emit('bus', this.supplies2)}
+           },
+           deep: true
+       }
+   },*/
+
 });
 
 /***/ }),

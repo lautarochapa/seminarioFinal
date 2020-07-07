@@ -115,8 +115,9 @@ import Tree2 from "./Tree2";
         },
         methods: {
             bus: function (data) {
-                this.selected.supplies = data
+                
                 console.log(data)
+                //this.selected.supplies = data
                // console.log(this.selected.supplies)
             },
             loadSupplies: function () {

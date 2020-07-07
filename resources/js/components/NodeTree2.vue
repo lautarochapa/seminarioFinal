@@ -35,10 +35,14 @@ export default {
                 this.$emit('bus', data)
             },
                 handleChange: function(e) {
-      const name = e.target.name;
-      console.log(e.srcElement)
-      console.log(e.srcElement.checked)
-      console.log(e.target)
+
+
+     // const name = e.target.name;
+     // console.log(e.srcElement)
+     // console.log(e.srcElement.checked)
+     // console.log(e.target)
+
+     { this.$emit('bus', e.srcElement.id + e.srcElement.checked)}
     }
   },
       /*  computed: {
@@ -53,14 +57,14 @@ export default {
                     supplies2: [],
                 }
             },
-        watch: {
+       /* watch: {
             supplies2: {
                 handler: function () {
                     { this.$emit('bus', this.supplies2)}
                 },
                 deep: true
             }
-        },
+        },*/
 
 
 
