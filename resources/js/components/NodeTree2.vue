@@ -27,7 +27,7 @@ export default {
   name: "categoria",
   props: {
     categoria: [Object, Array],   
-    value: [],
+    value: [Object, Array],
 
   },
         computed: {

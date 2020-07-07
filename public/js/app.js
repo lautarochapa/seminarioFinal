@@ -2200,7 +2200,7 @@ __webpack_require__.r(__webpack_exports__);
   name: "categoria",
   props: {
     categoria: [Object, Array],
-    value: []
+    value: [Object, Array]
   },
   computed: {
     supplies: {
