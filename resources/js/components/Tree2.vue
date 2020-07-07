@@ -2,7 +2,7 @@
   <div class="tree">
     
     <ul class="tree-list">
-      <node-tree2 :categoria="treeData" v-model="local.supplies"></node-tree2>
+      <node-tree2 :categoria="treeData" v-model="supplies"></node-tree2>
 <!--                        <node-tree2 v-model="localAddress.state" /> -->
 
     </ul>
@@ -24,10 +24,10 @@ export default {
     NodeTree2
   },   
         computed: {
-            local: {
+            supplies: {
             //localAddress: {
                 get() { return this.value },
-                set(local) {this.$emit('input', local)}
+                set(supplies) {this.$emit('input', supplies)}
                 //set(localAddress) {this.$emit('input', localAddress)}
             }
 }};

@@ -1972,6 +1972,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Tree2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tree2 */ "./resources/js/components/Tree2.vue");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2042,7 +2044,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {
+    return _defineProperty({
       supplies: [],
       categories: [],
       brands: [],
@@ -2051,11 +2053,8 @@ __webpack_require__.r(__webpack_exports__);
       selected: {
         brands: [],
         categories: []
-      },
-      sup: {
-        supplies: []
       }
-    };
+    }, "supplies", []);
   },
   mounted: function mounted() {
     this.loadSupplies();
@@ -2075,9 +2074,9 @@ __webpack_require__.r(__webpack_exports__);
       },
       deep: true
     },
-    sup: {
+    supplies: {
       handler: function handler() {
-        console.log(this.sup);
+        console.log(this.supplies);
       },
       deep: true
     }
@@ -2222,15 +2221,6 @@ __webpack_require__.r(__webpack_exports__);
         this.$emit('input', supplies);
       } //set(localState) { this.$emit('input', localState)}
 
-    }
-  },
-  watch: {
-    supplies: {
-      handler: function handler() {
-        console.log(this.value);
-        console.log(this.supplies);
-      },
-      deep: true
     }
   }
 });
@@ -2451,13 +2441,13 @@ __webpack_require__.r(__webpack_exports__);
     NodeTree2: _NodeTree2__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   computed: {
-    local: {
+    supplies: {
       //localAddress: {
       get: function get() {
         return this.value;
       },
-      set: function set(local) {
-        this.$emit('input', local);
+      set: function set(supplies) {
+        this.$emit('input', supplies);
       } //set(localAddress) {this.$emit('input', localAddress)}
 
     }
@@ -38943,11 +38933,11 @@ var render = function() {
             _c("tree2", {
               attrs: { "tree-data": _vm.categories },
               model: {
-                value: _vm.sup,
+                value: _vm.supplies,
                 callback: function($$v) {
-                  _vm.sup = $$v
+                  _vm.supplies = $$v
                 },
-                expression: "sup"
+                expression: "supplies"
               }
             }),
             _vm._v(" "),
@@ -39509,11 +39499,11 @@ var render = function() {
         _c("node-tree2", {
           attrs: { categoria: _vm.treeData },
           model: {
-            value: _vm.local.supplies,
+            value: _vm.supplies,
             callback: function($$v) {
-              _vm.$set(_vm.local, "supplies", $$v)
+              _vm.supplies = $$v
             },
-            expression: "local.supplies"
+            expression: "supplies"
           }
         })
       ],

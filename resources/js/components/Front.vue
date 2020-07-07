@@ -13,7 +13,7 @@
 
                 <h3 class="mt-2">Categorias</h3>
 
-                <tree2 :tree-data="categories" v-model="sup"></tree2>
+                <tree2 :tree-data="categories" v-model="supplies"></tree2>
 
 <!--      <form>
         <tree2
@@ -81,9 +81,7 @@ import Tree2 from "./Tree2";
                     brands: [],
                     categories: []
                 },
-                sup: {
-                    supplies: [],
-                }
+                supplies: [],
             }
         },
         mounted() {
@@ -104,9 +102,9 @@ import Tree2 from "./Tree2";
                 },
                 deep: true
             },
-            sup: {
+            supplies: {
                 handler: function () {
-                    console.log(this.sup)
+                    console.log(this.supplies)
                 },
                 deep: true
             },
