@@ -1,18 +1,9 @@
 <template>
   <div class="tree">
     
-
- <ul v-for="cat in treeData.categoria">
-
-      <node-tree :categoria="cat"></node-tree>
- </ul>
-
-
     <ul class="tree-list">
       <node-tree :categoria="treeData"></node-tree>
     </ul>
-
-    <p>{{treeData}}</p>
   </div>
 </template>
 

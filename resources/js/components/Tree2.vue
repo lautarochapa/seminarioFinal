@@ -1,15 +1,11 @@
 <template>
 <div>
-      <ul id="myUL">
-      <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
+      <ul id="myUL" v-for="cat in treeData">
+      <node-tree2 :categoria="cat" @bus="bus" ></node-tree2>
 
     </ul>
     </div>
 </template>
-
-
-
-
 
 
 
