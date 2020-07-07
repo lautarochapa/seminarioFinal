@@ -2089,10 +2089,21 @@ __webpack_require__.r(__webpack_exports__);
       console.log(data);
 
       if (data.substring(0, 4) == 'true') {
-        console.log(data.substring(10, 11) + " true");
+        id = data.substring(10, 20);
+        console.log(id + " true");
+
+        if (this.selected.supplies.includes(id) == false) {
+          this.selected.supplies.push(id);
+          console.log(this.selected.supplies);
+        }
       } else {
         if (data.substring(0, 5) == 'false') {
-          console.log(data.substring(11, 12) + " false");
+          id = data.substring(11, 20);
+          console.log(id + " false");
+
+          if (this.selected.supplies.includes(id)) {
+            console.log(id + " eliminar"); //this.selected.supplies.push(id)
+          }
         }
       } //this.selected.supplies = data
       // console.log(this.selected.supplies)
@@ -39172,7 +39183,7 @@ var render = function() {
             attrs: {
               type: "checkbox",
               "unchecked-value": supply.id + "off",
-              id: "supply" + index
+              id: supply.id
             },
             domProps: {
               value: supply.id,

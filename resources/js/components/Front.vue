@@ -120,12 +120,27 @@ import Tree2 from "./Tree2";
 
 
 if(data.substring(0,4) == 'true'){
+    id = data.substring(10,20)
+    console.log(id + " true")
 
-    console.log(data.substring(10,11) + " true")
+
+if( this.selected.supplies.includes(id) == false){
+
+    this.selected.supplies.push(id)
+    console.log(this.selected.supplies)
+}
+
 }else{
    if(data.substring(0,5) == 'false'){
 
-    console.log(data.substring(11,12) + " false")
+    id = data.substring(11,20)
+    console.log(id + " false")
+    
+    if( this.selected.supplies.includes(id)){
+
+    console.log(id + " eliminar")
+    //this.selected.supplies.push(id)
+}
 } 
 }
 
