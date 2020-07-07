@@ -1,7 +1,10 @@
 <template>
 <div>
+<div v-for="a in treeData">
 
-<p>{{treeData}}</p>
+
+<p>{{a}}</p>
+</div>
 
       <ul id="myUL">
 
