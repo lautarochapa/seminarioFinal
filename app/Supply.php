@@ -16,14 +16,9 @@ class Supply extends Model
     }
 
 
-
     public function parent() {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-
-    public function grandparent() {
-        return $this->parent()->with('grandparent');
-    }
 
 }
