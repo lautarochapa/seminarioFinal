@@ -2209,15 +2209,17 @@ __webpack_require__.r(__webpack_exports__);
       supplies: []
     };
   },
-  watch: {
+  computed: {
     supplies: {
-      handler: function handler() {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(supplies) {
         this.$emit('bus', {
           data1: 'somedata2',
           data2: 'somedata2'
         });
-      },
-      deep: true
+      }
     }
   },
   mounted: function mounted() {
