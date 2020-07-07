@@ -2305,27 +2305,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -39477,78 +39456,7 @@ var render = function() {
           _vm._s(_vm.categoria.products_count) +
           ")  "
       )
-    ]),
-    _vm._v(" "),
-    _c(
-      "ul",
-      { staticClass: "nested" },
-      _vm._l(_vm.categoria.supplies, function(supply, index) {
-        return _c("li", [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.supplies2,
-                expression: "supplies2"
-              }
-            ],
-            staticClass: "form-check-input",
-            attrs: { type: "checkbox", id: "supply" + supply.id },
-            domProps: {
-              value: supply.id,
-              checked: Array.isArray(_vm.supplies2)
-                ? _vm._i(_vm.supplies2, supply.id) > -1
-                : _vm.supplies2
-            },
-            on: {
-              change: [
-                function($event) {
-                  var $$a = _vm.supplies2,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false
-                  if (Array.isArray($$a)) {
-                    var $$v = supply.id,
-                      $$i = _vm._i($$a, $$v)
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
-                    } else {
-                      $$i > -1 &&
-                        (_vm.supplies2 = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)))
-                    }
-                  } else {
-                    _vm.supplies2 = $$c
-                  }
-                },
-                function($event) {
-                  return _vm.handleChange($event)
-                }
-              ]
-            }
-          }),
-          _vm._v(" "),
-          _c(
-            "label",
-            {
-              staticClass: "form-check-label",
-              attrs: { for: "supply" + index }
-            },
-            [
-              _vm._v(
-                " " +
-                  _vm._s(supply.nombre) +
-                  " (" +
-                  _vm._s(supply.products_count) +
-                  ")\n                        "
-              )
-            ]
-          )
-        ])
-      }),
-      0
-    )
+    ])
   ])
 }
 var staticRenderFns = []
