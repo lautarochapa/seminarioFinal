@@ -33,8 +33,6 @@ export default {
                 this.$emit('bus', data)
             },
   },
-        mounted() {console.log(this.treeData)
-        },
   
   };
 </script>

@@ -35,8 +35,6 @@ export default {
                     supplies2: [],
                 }
             },
-        mounted() {console.log(this.categoria)
-        },
 
 
 };
