@@ -2064,6 +2064,8 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     selected: {
       handler: function handler() {
+        console.log(this.selected.supplies);
+        console.log(this.selected);
         this.loadSupplies();
         this.loadBrands();
         this.loadProducts();

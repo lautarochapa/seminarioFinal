@@ -93,6 +93,8 @@ import Tree2 from "./Tree2";
         watch: {
             selected: {
                 handler: function () {
+                    console.log(this.selected.supplies)
+                    console.log(this.selected)
                     this.loadSupplies();
                     this.loadBrands();
                     this.loadProducts();
