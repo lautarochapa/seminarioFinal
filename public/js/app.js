@@ -2086,8 +2086,17 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     bus: function bus(data) {
-      console.log(data); //this.selected.supplies = data
+      console.log(data);
+
+      if (data.substring(0, 4) == 'true') {
+        console.log(data.substring(10, 11) + " true");
+      } else {
+        if (data.substring(0, 5) == 'false') {
+          console.log(data.substring(11, 12) + " false");
+        }
+      } //this.selected.supplies = data
       // console.log(this.selected.supplies)
+
     },
     loadSupplies: function loadSupplies() {
       var _this = this;
@@ -2229,7 +2238,7 @@ __webpack_require__.r(__webpack_exports__);
       // console.log(e.srcElement.checked)
       // console.log(e.target)
       {
-        this.$emit('bus', e.srcElement.id + e.srcElement.checked);
+        this.$emit('bus', e.srcElement.checked + e.srcElement.id);
       }
     }
   },

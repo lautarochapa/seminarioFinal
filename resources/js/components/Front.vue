@@ -117,6 +117,18 @@ import Tree2 from "./Tree2";
             bus: function (data) {
                 
                 console.log(data)
+
+
+if(data.substring(0,4) == 'true'){
+
+    console.log(data.substring(10,11) + " true")
+}else{
+   if(data.substring(0,5) == 'false'){
+
+    console.log(data.substring(11,12) + " false")
+} 
+}
+
                 //this.selected.supplies = data
                // console.log(this.selected.supplies)
             },

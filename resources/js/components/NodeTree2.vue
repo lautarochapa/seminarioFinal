@@ -42,7 +42,7 @@ export default {
      // console.log(e.srcElement.checked)
      // console.log(e.target)
 
-     { this.$emit('bus', e.srcElement.id + e.srcElement.checked)}
+     { this.$emit('bus', e.srcElement.checked + e.srcElement.id )}
     }
   },
       /*  computed: {
