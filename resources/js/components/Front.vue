@@ -36,6 +36,56 @@
                 </div>
             </div>
             <div class="col-lg-9">
+
+
+                <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}}
+
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" v-show="products['first_page_url']">
+                            <a href="#" class="page-link" @click.prevent="getFirstPage">
+                                <span>
+                                  <span aria-hidden="true">«</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-show="products['prev_page_url']">
+                            <a href="#" class="page-link" @click.prevent="getPreviousPage">
+                                <span>
+                                  <span aria-hidden="true">〈</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="page-item" :class="{ 'active': (products['current_page']=== n) }" v-for="n in products['last_page']">
+
+
+                            <div v-if="n- products['current_page'] < 10">
+                            <a href="#" class="page-link" @click.prevent="getPage(n)">
+                                <span >
+                                    {{ n }}
+                                </span>
+                            </a>
+                            </div>
+                        </li>
+                        <li class="page-item" v-show="products['next_page_url']">
+                            <a href="#" class="page-link" @click.prevent="getNextPage">
+                                <span>
+                                  <span aria-hidden="true">〉</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-show="products['last_page_url']">
+                            <a href="#" class="page-link" @click.prevent="getLastPage">
+                                <span>
+                                  <span aria-hidden="true">»</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+
+
                 <div class="row mt-4">
 
                     <div class="col-lg-4 col-md-6 mb-4" v-for="product in products.data">
@@ -58,31 +108,7 @@
                     </div>
                 </div>
 
-                <nav>
-                    <ul class="pagination">
-                        <li class="page-item" v-show="products['prev_page_url']">
-                            <a href="#" class="page-link" @click.prevent="getPreviousPage">
-                                <span>
-                                  <span aria-hidden="true">«</span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="page-item" :class="{ 'active': (products['current_page']=== n) }" v-for="n in products['last_page']">
-                            <a href="#" class="page-link" @click.prevent="getPage(n)">
-                                <span >
-                                    {{ n }}
-                                </span>
-                            </a>
-                        </li>
-                        <li class="page-item" v-show="products['next_page_url']">
-                            <a href="#" class="page-link" @click.prevent="getNextPage">
-                                <span>
-                                  <span aria-hidden="true">»</span>
-                                </span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+
 
             </div>
         </div>
@@ -196,6 +222,20 @@ this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === da
             },
             getNextPage(){
                 axios.get(this.products['next_page_url'], {
+                        params: this.selected
+                    }).then((response)=>{
+                       this.products = response.data.products;
+                });
+            },
+            getLastPage(){
+                axios.get(this.products['last_page_url'], {
+                        params: this.selected
+                    }).then((response)=>{
+                       this.products = response.data.products;
+                });
+            },
+            getFirstPage(){
+                axios.get(this.products['first_page_url'], {
                         params: this.selected
                     }).then((response)=>{
                        this.products = response.data.products;
