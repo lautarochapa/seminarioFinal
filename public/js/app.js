@@ -39083,50 +39083,33 @@ var render = function() {
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
-            _vm._l(_vm.brands, function(br, index) {
-              return _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
+            _c(
+              "select",
+              { attrs: { name: "select" } },
+              _vm._l(_vm.brands, function(br, index) {
+                return _c(
+                  "option",
+                  {
+                    domProps: { value: br.id },
+                    model: {
                       value: _vm.selected.brands,
+                      callback: function($$v) {
+                        _vm.$set(_vm.selected, "brands", $$v)
+                      },
                       expression: "selected.brands"
                     }
-                  ],
-                  attrs: { name: "select" },
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.$set(
-                        _vm.selected,
-                        "brands",
-                        $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      )
-                    }
-                  }
-                },
-                [
-                  _c("option", { domProps: { value: br.id } }, [
+                  },
+                  [
                     _vm._v(
                       _vm._s(br.nombre) + " (" + _vm._s(br.products_count) + ")"
                     )
-                  ])
-                ]
-              )
-            })
+                  ]
+                )
+              }),
+              0
+            )
           ],
-          2
+          1
         ),
         _vm._v(" "),
         _c("div", { staticClass: "col-lg-9" }, [

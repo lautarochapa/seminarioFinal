@@ -26,9 +26,9 @@
 -->
 
                 <h3 class="mt-2">Marcas</h3>
-                <select v-for="(br, index) in brands" v-model="selected.brands" name="select">
+                <select  name="select">
 
-                 <option :value="br.id">{{ br.nombre }} ({{ br.products_count }})</option>
+                 <option v-for="(br, index) in brands" v-model="selected.brands" :value="br.id">{{ br.nombre }} ({{ br.products_count }})</option>
                 
 </select>
 
