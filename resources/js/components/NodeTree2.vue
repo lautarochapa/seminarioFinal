@@ -3,6 +3,8 @@
     <span class="icon expand-icon glyphicon glyphicon-minus"></span>
     <span class="icon node-icon"></span>{{ categoria.nombre }} ({{ categoria.products_count }})     
   
+        <ul class="list-group">
+
                 
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
 <li class="list-group-item node-treeview7" data-nodeid="0" style="color:undefined;background-color:undefined;">
