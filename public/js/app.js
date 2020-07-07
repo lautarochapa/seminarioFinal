@@ -2249,9 +2249,6 @@ __webpack_require__.r(__webpack_exports__);
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
         _this8.categories = response.data.categories;
-
-        _this8.treeViewLoad();
-
         _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
@@ -2260,6 +2257,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     Tree2: _Tree2__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  ready: function ready() {
+    this.treeViewLoad();
   }
 });
 

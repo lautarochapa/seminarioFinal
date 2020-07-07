@@ -268,7 +268,7 @@ import Tree2 from "./Tree2";
                     })
                     .then((response) => {
                         this.categories = response.data.categories;
-                        this.treeViewLoad()
+                       
                         this.loading = false;
                     })
                     .catch(function (error) {
@@ -280,6 +280,10 @@ import Tree2 from "./Tree2";
         },
         components: {
             Tree2
-        }
+        }, ready: function()
+  {
+     this.treeViewLoad()
+
+  }
     }
 </script>
