@@ -1,7 +1,11 @@
 <template>
   <li>
     <span class="caret">{{ categoria.nombre }} ({{ categoria.products_count }})  </span>   
+    <ul v-if="categoria.allchildren && categoria.allchildren.length">
+      <categoria v-for="child in categoria.allchildren" :categoria="child"></categoria>
 
+
+    </ul>
   </li>
 </template>
 
