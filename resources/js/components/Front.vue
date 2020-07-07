@@ -60,7 +60,7 @@
 
 
                             <div v-if="products['current_page'] < 5">
-                                <div v-if="n < 10">
+                                <div v-if="n <= 10">
                                     <a href="#" class="page-link" @click.prevent="getPage(n)">
                                         <span >
                                             {{ n }}
@@ -69,8 +69,8 @@
                                 </div>
                             </div>
 
-                            <div v-if="products['current_page'] > 5 && products['last_page'] - products['current_page'] > 10">
-                                <div v-if="n > products['current_page']-4 && n > products['current_page']+5">
+                            <div v-if="products['current_page'] > 5 && products['last_page'] - products['current_page'] > 5">
+                                <div v-if="n > products['current_page']-4 && n < products['current_page']+5">
                                     <a href="#" class="page-link" @click.prevent="getPage(n)">
                                         <span >
                                             {{ n }}
@@ -79,8 +79,8 @@
                                 </div>
                             </div>
 
-                            <div v-if="products['last_page'] - products['current_page'] < 10">
-                                <div v-if="n > products['last_page'] -9">
+                            <div v-if="products['last_page'] - products['current_page'] < 5">
+                                <div v-if="n > products['last_page'] -4">
                                     <a href="#" class="page-link" @click.prevent="getPage(n)">
                                         <span >
                                             {{ n }}
