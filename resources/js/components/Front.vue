@@ -17,6 +17,7 @@
 
     <form>
         <tree2
+            :tree-data="categories"
             :value="address"
             @input="(newAddress) => {address = newAddress}"
         />

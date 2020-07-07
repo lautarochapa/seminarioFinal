@@ -40,15 +40,20 @@ export default {
 -->
 
 <template>
-    <div>
+    <div class="tree">
+          <ul class="tree-list">
         <input name="street" v-model="localAddress.street">
-        <node-tree2 v-model="localAddress.state" />
+      <node-tree2 :categoria="treeData" v-model="localAddress.state"></node-tree2>
+                     <node-tree2 v-model="localAddress.state" /> 
+
+    </ul>
     </div>
 </template>
 <script>
     import NodeTree2 from "./NodeTree2";
     export default {
         props: {
+            treeData: [Object, Array],
             value: {
                 type: Object,
                 required: true

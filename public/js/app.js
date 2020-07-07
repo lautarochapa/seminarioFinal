@@ -2039,6 +2039,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2230,8 +2231,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
+    categoria: [Object, Array],
     value: {
       type: String,
       required: true
@@ -2497,9 +2518,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
+    treeData: [Object, Array],
     value: {
       type: Object,
       required: true
@@ -38951,7 +38977,7 @@ var render = function() {
               "form",
               [
                 _c("tree2", {
-                  attrs: { value: _vm.address },
+                  attrs: { "tree-data": _vm.categories, value: _vm.address },
                   on: {
                     input: function(newAddress) {
                       _vm.address = newAddress
@@ -39143,38 +39169,125 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "select",
-    {
-      directives: [
+    "li",
+    { staticClass: "node-tree" },
+    [
+      _c(
+        "select",
         {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.localState,
-          expression: "localState"
-        }
-      ],
-      on: {
-        change: function($event) {
-          var $$selectedVal = Array.prototype.filter
-            .call($event.target.options, function(o) {
-              return o.selected
-            })
-            .map(function(o) {
-              var val = "_value" in o ? o._value : o.value
-              return val
-            })
-          _vm.localState = $event.target.multiple
-            ? $$selectedVal
-            : $$selectedVal[0]
-        }
-      }
-    },
-    _vm._l(_vm.states, function(state, abbreviation) {
-      return _c("option", {
-        domProps: { value: abbreviation, innerHTML: _vm._s(state) }
-      })
-    }),
-    0
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.localState,
+              expression: "localState"
+            }
+          ],
+          on: {
+            change: function($event) {
+              var $$selectedVal = Array.prototype.filter
+                .call($event.target.options, function(o) {
+                  return o.selected
+                })
+                .map(function(o) {
+                  var val = "_value" in o ? o._value : o.value
+                  return val
+                })
+              _vm.localState = $event.target.multiple
+                ? $$selectedVal
+                : $$selectedVal[0]
+            }
+          }
+        },
+        _vm._l(_vm.states, function(state, abbreviation) {
+          return _c("option", {
+            domProps: { value: abbreviation, innerHTML: _vm._s(state) }
+          })
+        }),
+        0
+      ),
+      _vm._v(" "),
+      _c("span", { staticClass: "label" }, [
+        _vm._v(
+          _vm._s(_vm.categoria.nombre) +
+            " (" +
+            _vm._s(_vm.categoria.products_count) +
+            ")"
+        )
+      ]),
+      _vm._v(" "),
+      _vm._l(_vm.categoria.supplies, function(supply, index) {
+        return _c("div", { staticClass: "form-check" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.supplies2,
+                expression: "supplies2"
+              }
+            ],
+            staticClass: "form-check-input",
+            attrs: { type: "checkbox", id: "supply" + index },
+            domProps: {
+              value: supply.id,
+              checked: Array.isArray(_vm.supplies2)
+                ? _vm._i(_vm.supplies2, supply.id) > -1
+                : _vm.supplies2
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.supplies2,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false
+                if (Array.isArray($$a)) {
+                  var $$v = supply.id,
+                    $$i = _vm._i($$a, $$v)
+                  if ($$el.checked) {
+                    $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
+                  } else {
+                    $$i > -1 &&
+                      (_vm.supplies2 = $$a
+                        .slice(0, $$i)
+                        .concat($$a.slice($$i + 1)))
+                  }
+                } else {
+                  _vm.supplies2 = $$c
+                }
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "label",
+            {
+              staticClass: "form-check-label",
+              attrs: { for: "supply" + index }
+            },
+            [
+              _vm._v(
+                "\n                      --   " +
+                  _vm._s(supply.nombre) +
+                  " (" +
+                  _vm._s(supply.products_count) +
+                  ")\n                      "
+              )
+            ]
+          )
+        ])
+      }),
+      _vm._v(" "),
+      _vm.categoria.allchildren && _vm.categoria.allchildren.length
+        ? _c(
+            "ul",
+            _vm._l(_vm.categoria.allchildren, function(child) {
+              return _c("categoria", { attrs: { categoria: child } })
+            }),
+            1
+          )
+        : _vm._e()
+    ],
+    2
   )
 }
 var staticRenderFns = []
@@ -39460,42 +39573,56 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.localAddress.street,
-            expression: "localAddress.street"
-          }
-        ],
-        attrs: { name: "street" },
-        domProps: { value: _vm.localAddress.street },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
+  return _c("div", { staticClass: "tree" }, [
+    _c(
+      "ul",
+      { staticClass: "tree-list" },
+      [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.localAddress.street,
+              expression: "localAddress.street"
             }
-            _vm.$set(_vm.localAddress, "street", $event.target.value)
+          ],
+          attrs: { name: "street" },
+          domProps: { value: _vm.localAddress.street },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.localAddress, "street", $event.target.value)
+            }
           }
-        }
-      }),
-      _vm._v(" "),
-      _c("node-tree2", {
-        model: {
-          value: _vm.localAddress.state,
-          callback: function($$v) {
-            _vm.$set(_vm.localAddress, "state", $$v)
-          },
-          expression: "localAddress.state"
-        }
-      })
-    ],
-    1
-  )
+        }),
+        _vm._v(" "),
+        _c("node-tree2", {
+          attrs: { categoria: _vm.treeData },
+          model: {
+            value: _vm.localAddress.state,
+            callback: function($$v) {
+              _vm.$set(_vm.localAddress, "state", $$v)
+            },
+            expression: "localAddress.state"
+          }
+        }),
+        _vm._v(" "),
+        _c("node-tree2", {
+          model: {
+            value: _vm.localAddress.state,
+            callback: function($$v) {
+              _vm.$set(_vm.localAddress, "state", $$v)
+            },
+            expression: "localAddress.state"
+          }
+        })
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
