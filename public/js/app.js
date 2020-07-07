@@ -2117,6 +2117,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -39414,7 +39415,21 @@ var render = function() {
             _vm._l(_vm.products.data, function(product) {
               return _c("div", { staticClass: "col-lg-4 col-md-6 mb-4" }, [
                 _c("div", { staticClass: "card h-100" }, [
-                  _vm._m(4, true),
+                  _c("a", { attrs: { href: "#" } }, [
+                    _c("img", {
+                      staticClass: "img-responsive",
+                      attrs: {
+                        src: "images/" + product.img + ".jpg",
+                        height: "200",
+                        width: "200"
+                      },
+                      on: {
+                        error: function($event) {
+                          $event.target.src = "http://placehold.it/700x400"
+                        }
+                      }
+                    })
+                  ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-body" }, [
                     _c("h4", { staticClass: "card-title" }, [
@@ -39464,17 +39479,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("span", [
       _c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("»")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("a", { attrs: { href: "#" } }, [
-      _c("img", {
-        staticClass: "card-img-top",
-        attrs: { src: "http://placehold.it/700x400", alt: "" }
-      })
     ])
   }
 ]

@@ -115,11 +115,12 @@
                     <div class="col-lg-4 col-md-6 mb-4" v-for="product in products.data">
                         <div class="card h-100">
                             <a href="#">
-                                <img class="card-img-top" src="http://placehold.it/700x400" alt="">
-                                 <!--
-                            <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" height="200" width="200">
-                            -->
+                               <!-- <img class="card-img-top" src="http://placehold.it/700x400" alt=""> -->
+                                 
+                            <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
+                           @error="$event.target.src='http://placehold.it/700x400'" height="200" width="200">
                             
+
                             </a>
                             <div class="card-body">
                                 <h4 class="card-title">
