@@ -39242,8 +39242,7 @@ var render = function() {
                       [
                         _vm.products["current_page"] < 5
                           ? _c("div", [
-                              n - _vm.products["current_page"] < 10 &&
-                              n - _vm.products["current_page"] > 0
+                              n < 10
                                 ? _c("div", [
                                     _c(
                                       "a",
@@ -39277,8 +39276,8 @@ var render = function() {
                           _vm.products["current_page"] >
                           10
                           ? _c("div", [
-                              n - _vm.products["current_page"] < 10 &&
-                              n - _vm.products["current_page"] > 0
+                              n > _vm.products["current_page"] - 4 &&
+                              n > _vm.products["current_page"] + 5
                                 ? _c("div", [
                                     _c(
                                       "a",
@@ -39311,8 +39310,7 @@ var render = function() {
                           _vm.products["current_page"] <
                         10
                           ? _c("div", [
-                              n - _vm.products["current_page"] < 10 &&
-                              n - _vm.products["current_page"] > 0
+                              n > _vm.products["last_page"] - 9
                                 ? _c("div", [
                                     _c(
                                       "a",
