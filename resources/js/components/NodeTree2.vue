@@ -49,8 +49,10 @@ export default {
             },
         watch: {
             supplies2: {
-                handler: function () {
-                    console.log(this.supplies2.id)
+                handler: function (val, oldval) {
+                    console.log(this.supplies2)
+                    console.log(this.val)
+                    console.log(this.oldval)
                     { this.$emit('bus', this.supplies2)}
                 },
                 deep: true

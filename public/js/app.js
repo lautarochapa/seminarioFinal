@@ -2238,8 +2238,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     supplies2: {
-      handler: function handler() {
-        console.log(this.supplies2.id);
+      handler: function handler(val, oldval) {
+        console.log(this.supplies2);
+        console.log(this.val);
+        console.log(this.oldval);
         {
           this.$emit('bus', this.supplies2);
         }
