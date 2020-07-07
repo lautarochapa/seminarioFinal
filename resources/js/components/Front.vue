@@ -82,7 +82,6 @@ import Tree2 from "./Tree2";
                     brands: [],
                     categories: []
                 },
-                bus: new Vue(),
             }
         },
         mounted() {

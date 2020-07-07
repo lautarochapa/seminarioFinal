@@ -2052,8 +2052,7 @@ __webpack_require__.r(__webpack_exports__);
         supplies: [],
         brands: [],
         categories: []
-      },
-      bus: new Vue()
+      }
     };
   },
   mounted: function mounted() {
