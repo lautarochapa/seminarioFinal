@@ -38798,7 +38798,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-check-input",
-                        attrs: { type: "checkbox", id: "category" + index },
+                        attrs: { type: "checkbox", id: "supply" + index },
                         domProps: {
                           value: supply.id,
                           checked: Array.isArray(_vm.selected.supply)
@@ -38839,7 +38839,7 @@ var render = function() {
                         "label",
                         {
                           staticClass: "form-check-label",
-                          attrs: { for: "category" + index }
+                          attrs: { for: "supply" + index }
                         },
                         [
                           _vm._v(
