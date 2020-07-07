@@ -91,11 +91,11 @@ export default {
                 get() {return this.value},
                 set(localState) { this.$emit('input', localState)}
             }
-        },/*
+        },
         methods: {
           bus: function (data) {
               this.$emit('bus', data)
           }
-      }*/
+      }
     }
 </script>

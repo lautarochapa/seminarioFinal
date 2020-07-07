@@ -2285,14 +2285,12 @@ __webpack_require__.r(__webpack_exports__);
         this.$emit('input', localState);
       }
     }
-  }
-  /*
+  },
   methods: {
-  bus: function (data) {
-      this.$emit('bus', data)
+    bus: function bus(data) {
+      this.$emit('bus', data);
+    }
   }
-  }*/
-
 });
 
 /***/ }),
