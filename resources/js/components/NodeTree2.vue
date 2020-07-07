@@ -3,7 +3,7 @@
     <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
-                        <input class="form-check-input" type="checkbox" @change="handleChange($event)" :value="supply.id" :unchecked-value="supply.id + 'off'" 
+                        <input class="form-check-input" type="checkbox" @change="handleChange($event)" :value="supply.id"  
                         :id="'supply'+supply.id" v-model="supplies2">
                         <!--                                            :value="abbreviation"                   v-model="localState"
 

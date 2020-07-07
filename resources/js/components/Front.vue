@@ -117,33 +117,20 @@ import Tree2 from "./Tree2";
             bus: function (data) {
                 
                 console.log(data)
-
-
-if(data.substring(0,4) == 'true'){
-    console.log(data.substring(10,20) + " true")
-
-
-if( this.selected.supplies.includes(data.substring(10,20)) == false){
-
-    this.selected.supplies.push(data.substring(10,20))
-    console.log(this.selected.supplies)
-}
-
-}else{
-   if(data.substring(0,5) == 'false'){
-
-    console.log(data.substring(11,20) + " false")
-    
-    if( this.selected.supplies.includes(data.substring(11,20))){
-
-    console.log(data.substring(11,20) + " eliminar")
-    //this.selected.supplies.push(id)
-}
-} 
-}
-
-                //this.selected.supplies = data
-               // console.log(this.selected.supplies)
+                if(data.substring(0,4) == 'true'){
+                    console.log(data.substring(10,20) + " true")
+                    if( this.selected.supplies.includes(data.substring(10,20)) == false){
+                        this.selected.supplies.push(data.substring(10,20))
+                        console.log(this.selected.supplies)
+                    }
+                }else{
+                    if(data.substring(0,5) == 'false'){
+                        console.log(data.substring(11,20) + " false")
+                        if( this.selected.supplies.includes(data.substring(11,20))){
+                            console.log(data.substring(11,20) + " eliminar")
+                        }
+                    }    
+                }
             },
             loadSupplies: function () {
                 axios.get('/api/supplies', {

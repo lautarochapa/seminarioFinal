@@ -2089,25 +2089,21 @@ __webpack_require__.r(__webpack_exports__);
       console.log(data);
 
       if (data.substring(0, 4) == 'true') {
-        id = data.substring(10, 20);
-        console.log(id + " true");
+        console.log(data.substring(10, 20) + " true");
 
-        if (this.selected.supplies.includes(id) == false) {
-          this.selected.supplies.push(id);
+        if (this.selected.supplies.includes(data.substring(10, 20)) == false) {
+          this.selected.supplies.push(data.substring(10, 20));
           console.log(this.selected.supplies);
         }
       } else {
         if (data.substring(0, 5) == 'false') {
-          id = data.substring(11, 20);
-          console.log(id + " false");
+          console.log(data.substring(11, 20) + " false");
 
-          if (this.selected.supplies.includes(id)) {
-            console.log(id + " eliminar"); //this.selected.supplies.push(id)
+          if (this.selected.supplies.includes(data.substring(11, 20))) {
+            console.log(data.substring(11, 20) + " eliminar");
           }
         }
-      } //this.selected.supplies = data
-      // console.log(this.selected.supplies)
-
+      }
     },
     loadSupplies: function loadSupplies() {
       var _this = this;
@@ -39180,11 +39176,7 @@ var render = function() {
               }
             ],
             staticClass: "form-check-input",
-            attrs: {
-              type: "checkbox",
-              "unchecked-value": supply.id + "off",
-              id: "supply" + supply.id
-            },
+            attrs: { type: "checkbox", id: "supply" + supply.id },
             domProps: {
               value: supply.id,
               checked: Array.isArray(_vm.supplies2)
