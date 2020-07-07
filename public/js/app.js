@@ -2049,9 +2049,11 @@ __webpack_require__.r(__webpack_exports__);
       products: [],
       loading: true,
       selected: {
-        supplies: [],
         brands: [],
         categories: []
+      },
+      sup: {
+        supplies: []
       }
     };
   },
@@ -2070,6 +2072,12 @@ __webpack_require__.r(__webpack_exports__);
         this.loadBrands();
         this.loadProducts();
         this.loadCategories();
+      },
+      deep: true
+    },
+    sup: {
+      handler: function handler() {
+        console.log(this.sup);
       },
       deep: true
     }
@@ -38926,11 +38934,11 @@ var render = function() {
             _c("tree2", {
               attrs: { "tree-data": _vm.categories },
               model: {
-                value: _vm.selected,
+                value: _vm.sup,
                 callback: function($$v) {
-                  _vm.selected = $$v
+                  _vm.sup = $$v
                 },
-                expression: "selected"
+                expression: "sup"
               }
             }),
             _vm._v(" "),
