@@ -20,7 +20,7 @@ class Category extends Model
     public function allchildren() {
         return $this->children()->with('allchildren')->with(['supplies' => function($query){
             $query->withCount('products');
-        }])->sum('products_count');
+        }])->sum('supplies.products_count');
     }
     public function parent() {
         return $this->belongsTo(Category::class,'padre');
