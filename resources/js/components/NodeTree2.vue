@@ -34,12 +34,28 @@ export default {
                 this.$emit('bus', data)
             },
   },
-        computed: {
+      /*  computed: {
             supplies2: {
                 get() {return this.value},
                 set(supplies2) { this.$emit('bus', supplies2)}
             }
+        },*/
+
+       data: function () {
+            return {
+                    supplies2: [],
+                }
+            },
+        watch: {
+            supplies2: {
+                handler: function () {
+                    { this.$emit('bus', this.supplies2)}
+                },
+                deep: true
+            }
         },
+
+
 
 };
 </script>

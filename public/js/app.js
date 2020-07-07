@@ -2224,14 +2224,26 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('bus', data);
     }
   },
-  computed: {
+
+  /*  computed: {
+        supplies2: {
+            get() {return this.value},
+            set(supplies2) { this.$emit('bus', supplies2)}
+        }
+    },*/
+  data: function data() {
+    return {
+      supplies2: []
+    };
+  },
+  watch: {
     supplies2: {
-      get: function get() {
-        return this.value;
+      handler: function handler() {
+        {
+          this.$emit('bus', this.supplies2);
+        }
       },
-      set: function set(supplies2) {
-        this.$emit('bus', supplies2);
-      }
+      deep: true
     }
   }
 });
