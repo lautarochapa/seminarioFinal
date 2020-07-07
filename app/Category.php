@@ -21,7 +21,7 @@ class Category extends Model
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren')
+        return $this->children()->with('allchildren');
     }
 
 
