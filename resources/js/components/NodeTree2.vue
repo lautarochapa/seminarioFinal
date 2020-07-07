@@ -37,6 +37,16 @@ export default {
                 set(supplies) { this.$emit('input', supplies)}
                 //set(localState) { this.$emit('input', localState)}
             }
+        },
+        watch: {
+            supplies: {
+                handler: function () {
+                  
+                    console.log(this.value)
+                    console.log(this.supplies)
+                },
+                deep: true
+            }
         }
 };
 </script>

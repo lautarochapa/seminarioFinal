@@ -40,10 +40,10 @@
                     <div class="col-lg-4 col-md-6 mb-4" v-for="product in products">
                         <div class="card h-100">
                             <a href="#">
-                               <!-- <img class="card-img-top" src="http://placehold.it/700x400" alt="">
-                                 <img src="{{URL::asset('image/propic.png')}}" alt="profile Pic" height="200" width="200">
-                            --><img :src="'images/'+ product.img + '.jpg'" class="img-responsive" height="200" width="200">
-                            
+                                <img class="card-img-top" src="http://placehold.it/700x400" alt="">
+                                 <!--
+                            <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" height="200" width="200">
+                            -->
                             
                             </a>
                             <div class="card-body">
