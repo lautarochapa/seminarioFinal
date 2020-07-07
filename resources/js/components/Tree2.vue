@@ -1,13 +1,15 @@
 <template>
-  <div id="treeview7" class="treeview">
-    
-    <ul class="list-group">
+    <ul id="myUL">
       <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
 
     </ul>
-
-  </div>
 </template>
+
+
+
+
+
+
 
 <script>
 import NodeTree2 from "./NodeTree2";
