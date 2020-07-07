@@ -12,8 +12,6 @@ class Category extends Model
         return $this->hasManyThrough(Product::class, Supply::class);
     }
 
-    
-
     public function children() {
         return $this->hasMany(Category::class,'padre')->withCount(['products' => function ($query) {
             $query->withFilters();
@@ -31,9 +29,7 @@ class Category extends Model
     public function allchildren2() {
         return $this->allchildren()->sum('products_count');
     }
-
-
-
+    
     public function parent() {
         return $this->belongsTo(Category::class,'padre');
     }
@@ -47,10 +43,3 @@ class Category extends Model
 
 
 }
-/*
-Tutorial::withCount('chapters')
-->with(['chapters' => function($query){
-    $query->withCount('videos');
-}])
-->all();
-*/

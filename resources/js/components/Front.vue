@@ -256,7 +256,7 @@ import Tree2 from "./Tree2";
                         params: _.omit(this.selected, 'categories')
                     })
                     .then((response) => {
-                        this.categories = response.data.categories[0];
+                        this.categories = response.data.categories;
                         this.loading = false;
                     })
                     .catch(function (error) {

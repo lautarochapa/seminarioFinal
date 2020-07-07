@@ -2237,7 +2237,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/api/categories', {
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
-        _this8.categories = response.data.categories[0];
+        _this8.categories = response.data.categories;
         _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
