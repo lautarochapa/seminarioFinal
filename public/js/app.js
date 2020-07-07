@@ -2216,7 +2216,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
-    categoria: [Object, Array]
+    categoria: [Object, Array],
+    value: [Object, Array]
   },
   methods: {
     bus: function bus(data) {
@@ -2226,7 +2227,7 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     supplies2: {
       get: function get() {
-        return this.id;
+        return this.value;
       },
       set: function set(supplies2) {
         this.$emit('bus', supplies2);

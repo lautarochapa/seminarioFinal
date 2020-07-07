@@ -27,7 +27,7 @@ export default {
   name: "categoria",
   props: {
     categoria: [Object, Array],  
-
+    value: [Object, Array],  
   },       
   methods: {
             bus: function (data) {
@@ -36,7 +36,7 @@ export default {
   },
         computed: {
             supplies2: {
-                get() {return this.id},
+                get() {return this.value},
                 set(supplies2) { this.$emit('bus', supplies2)}
             }
         },
