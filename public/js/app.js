@@ -2226,7 +2226,8 @@ __webpack_require__.r(__webpack_exports__);
     handleChange: function handleChange(e) {
       var name = e.target.name;
       console.log(e.srcElement);
-      console.log(name);
+      console.log(e.srcElement.value);
+      console.log(e.target);
     }
   },
 
