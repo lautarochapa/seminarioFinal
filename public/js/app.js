@@ -2064,8 +2064,6 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     selected: {
       handler: function handler() {
-        console.log(this.supplies);
-        console.log(this.selected);
         this.loadSupplies();
         this.loadBrands();
         this.loadProducts();
@@ -2205,6 +2203,22 @@ __webpack_require__.r(__webpack_exports__);
   name: "categoria",
   props: {
     categoria: [Object, Array]
+  },
+  data: function data() {
+    return {
+      supplies: []
+    };
+  },
+  watch: {
+    supplies: {
+      handler: function handler() {
+        this.$emit('bus', {
+          data1: 'somedata2',
+          data2: 'somedata2'
+        });
+      },
+      deep: true
+    }
   },
   mounted: function mounted() {
     this.$emit('bus', {
@@ -38910,14 +38924,7 @@ var render = function() {
             _vm._v(" "),
             _c("tree2", {
               attrs: { "tree-data": _vm.categories },
-              on: { bus: _vm.bus },
-              model: {
-                value: _vm.selected.supplies,
-                callback: function($$v) {
-                  _vm.$set(_vm.selected, "supplies", $$v)
-                },
-                expression: "selected.supplies"
-              }
+              on: { bus: _vm.bus }
             }),
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
@@ -39477,14 +39484,7 @@ var render = function() {
       [
         _c("node-tree2", {
           attrs: { categoria: _vm.treeData },
-          on: { bus: _vm.bus },
-          model: {
-            value: _vm.supplies,
-            callback: function($$v) {
-              _vm.supplies = $$v
-            },
-            expression: "supplies"
-          }
+          on: { bus: _vm.bus }
         })
       ],
       1

@@ -28,7 +28,22 @@ export default {
   props: {
     categoria: [Object, Array],  
 
-  },
+  },  data: function () {
+            return {
+                supplies: [],
+            }
+        },
+
+        watch: {
+            supplies: {
+                handler: function () {
+                    this.$emit('bus', {data1: 'somedata2', data2: 'somedata2'})
+                },
+                deep: true
+            }
+        },
+
+
           mounted() {
             this.$emit('bus', {data1: 'somedata', data2: 'somedata'})
         },

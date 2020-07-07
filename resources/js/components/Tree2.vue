@@ -2,7 +2,7 @@
   <div class="tree">
     
     <ul class="tree-list">
-      <node-tree2 :categoria="treeData" @bus="bus" v-model="supplies"></node-tree2>
+      <node-tree2 :categoria="treeData" @bus="bus" ></node-tree2>
 <!--                        <node-tree2 v-model="localAddress.state" /> -->
 
     </ul>
