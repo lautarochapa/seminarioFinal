@@ -2087,8 +2087,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     bus: function bus(data) {
-      //this.selected.supplies = data
+      this.selected.supplies = data;
       console.log(data);
+      console.log(selected.supplies);
     },
     loadSupplies: function loadSupplies() {
       var _this = this;
