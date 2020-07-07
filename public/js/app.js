@@ -2238,7 +2238,6 @@ __webpack_require__.r(__webpack_exports__);
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
         _this8.categories = response.data.categories;
-        console.log(_this8.categories);
         _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
@@ -2311,6 +2310,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -2331,9 +2335,6 @@ __webpack_require__.r(__webpack_exports__);
     return {
       supplies2: []
     };
-  },
-  mounted: function mounted() {
-    console.log(this.categoria);
   }
 });
 
@@ -2560,9 +2561,6 @@ __webpack_require__.r(__webpack_exports__);
     bus: function bus(data) {
       this.$emit('bus', data);
     }
-  },
-  mounted: function mounted() {
-    console.log(this.treeData);
   }
 });
 
@@ -39467,14 +39465,29 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("li", [
-    _c("span", { staticClass: "caret" }, [
-      _vm._v(
-        _vm._s(_vm.categoria.nombre) +
-          " (" +
-          _vm._s(_vm.categoria.products_count) +
-          ")  "
-      )
-    ]),
+    _vm.categoria.allchildren && _vm.categoria.allchildren.length
+      ? _c("span", { staticClass: "caret" }, [
+          _vm._v(
+            "\n      " +
+              _vm._s(_vm.categoria.nombre) +
+              " (" +
+              _vm._s(_vm.categoria.products_count) +
+              ")  \n  "
+          )
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    !_vm.categoria.allchildren && !_vm.categoria.allchildren.length
+      ? _c("span", [
+          _vm._v(
+            "\n      " +
+              _vm._s(_vm.categoria.nombre) +
+              " (" +
+              _vm._s(_vm.categoria.products_count) +
+              ")  \n  "
+          )
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _vm.categoria.allchildren && _vm.categoria.allchildren.length
       ? _c(
