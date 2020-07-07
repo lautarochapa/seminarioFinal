@@ -2032,6 +2032,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -38758,71 +38764,144 @@ var render = function() {
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Categorias")]),
             _vm._v(" "),
             _vm._l(_vm.categories, function(category, index) {
-              return _c("div", { staticClass: "form-check" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.selected.categories,
-                      expression: "selected.categories"
-                    }
-                  ],
-                  staticClass: "form-check-input",
-                  attrs: { type: "checkbox", id: "category" + index },
-                  domProps: {
-                    value: category.id,
-                    checked: Array.isArray(_vm.selected.categories)
-                      ? _vm._i(_vm.selected.categories, category.id) > -1
-                      : _vm.selected.categories
-                  },
-                  on: {
-                    change: function($event) {
-                      var $$a = _vm.selected.categories,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false
-                      if (Array.isArray($$a)) {
-                        var $$v = category.id,
-                          $$i = _vm._i($$a, $$v)
-                        if ($$el.checked) {
-                          $$i < 0 &&
-                            _vm.$set(
-                              _vm.selected,
-                              "categories",
-                              $$a.concat([$$v])
-                            )
+              return _c(
+                "div",
+                { staticClass: "form-check" },
+                [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.selected.categories,
+                        expression: "selected.categories"
+                      }
+                    ],
+                    staticClass: "form-check-input",
+                    attrs: { type: "checkbox", id: "category" + index },
+                    domProps: {
+                      value: category.id,
+                      checked: Array.isArray(_vm.selected.categories)
+                        ? _vm._i(_vm.selected.categories, category.id) > -1
+                        : _vm.selected.categories
+                    },
+                    on: {
+                      change: function($event) {
+                        var $$a = _vm.selected.categories,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = category.id,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 &&
+                              _vm.$set(
+                                _vm.selected,
+                                "categories",
+                                $$a.concat([$$v])
+                              )
+                          } else {
+                            $$i > -1 &&
+                              _vm.$set(
+                                _vm.selected,
+                                "categories",
+                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                              )
+                          }
                         } else {
-                          $$i > -1 &&
-                            _vm.$set(
-                              _vm.selected,
-                              "categories",
-                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                            )
+                          _vm.$set(_vm.selected, "categories", $$c)
                         }
-                      } else {
-                        _vm.$set(_vm.selected, "categories", $$c)
                       }
                     }
-                  }
-                }),
-                _vm._v(" "),
-                _c(
-                  "label",
-                  {
-                    staticClass: "form-check-label",
-                    attrs: { for: "category" + index }
-                  },
-                  [
-                    _vm._v(
-                      "\n                    " +
-                        _vm._s(category.nombre) +
-                        " (" +
-                        _vm._s(category.products_count) +
-                        ")\n                "
-                    )
-                  ]
-                )
-              ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "label",
+                    {
+                      staticClass: "form-check-label",
+                      attrs: { for: "category" + index }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(category.nombre) +
+                          " (" +
+                          _vm._s(category.products_count) +
+                          ")\n                "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm._l(category.supplies, function(supply, index) {
+                    return _c("div", { staticClass: "form-check" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selected.supply,
+                            expression: "selected.supply"
+                          }
+                        ],
+                        staticClass: "form-check-input",
+                        attrs: { type: "checkbox", id: "category" + index },
+                        domProps: {
+                          value: supply.id,
+                          checked: Array.isArray(_vm.selected.supply)
+                            ? _vm._i(_vm.selected.supply, supply.id) > -1
+                            : _vm.selected.supply
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.selected.supply,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = supply.id,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.selected,
+                                    "supply",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.selected,
+                                    "supply",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.selected, "supply", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-check-label",
+                          attrs: { for: "category" + index }
+                        },
+                        [
+                          _vm._v(
+                            "\n                  --   " +
+                              _vm._s(supply.nombre) +
+                              " (" +
+                              _vm._s(supply.products_count) +
+                              ")\n                "
+                          )
+                        ]
+                      )
+                    ])
+                  })
+                ],
+                2
+              )
             }),
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Insumos")]),
