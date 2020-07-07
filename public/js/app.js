@@ -2024,16 +2024,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       supplies: [],
+      categories: [],
       brands: [],
       products: [],
       loading: true,
       selected: {
         supplies: [],
-        brands: []
+        brands: [],
+        categories: []
       }
     };
   },
@@ -2041,6 +2051,7 @@ __webpack_require__.r(__webpack_exports__);
     this.loadSupplies();
     this.loadBrands();
     this.loadProducts();
+    this.loadCategories();
   },
   watch: {
     selected: {
@@ -2048,6 +2059,7 @@ __webpack_require__.r(__webpack_exports__);
         this.loadSupplies();
         this.loadBrands();
         this.loadProducts();
+        this.loadCategories();
       },
       deep: true
     }
@@ -2070,7 +2082,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/api/products', {
         params: this.selected
       }).then(function (response) {
-        _this2.products = response.data.products[0];
+        _this2.products = response.data.products;
         _this2.loading = false;
       })["catch"](function (error) {
         console.log(error);
@@ -2084,6 +2096,18 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         _this3.brands = response.data.brands;
         _this3.loading = false;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    loadCategories: function loadCategories() {
+      var _this4 = this;
+
+      axios.get('/a', {
+        params: _.omit(this.selected, 'categories')
+      }).then(function (response) {
+        _this4.categories = response.data.categories;
+        _this4.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -38730,6 +38754,76 @@ var render = function() {
           { staticClass: "col-lg-3 mb-4" },
           [
             _c("h1", { staticClass: "mt-4" }, [_vm._v("Filtros")]),
+            _vm._v(" "),
+            _c("h3", { staticClass: "mt-2" }, [_vm._v("Categorias")]),
+            _vm._v(" "),
+            _vm._l(_vm.categories, function(category, index) {
+              return _c("div", { staticClass: "form-check" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selected.categories,
+                      expression: "selected.categories"
+                    }
+                  ],
+                  staticClass: "form-check-input",
+                  attrs: { type: "checkbox", id: "category" + index },
+                  domProps: {
+                    value: category.id,
+                    checked: Array.isArray(_vm.selected.categories)
+                      ? _vm._i(_vm.selected.categories, category.id) > -1
+                      : _vm.selected.categories
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.selected.categories,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = category.id,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 &&
+                            _vm.$set(
+                              _vm.selected,
+                              "categories",
+                              $$a.concat([$$v])
+                            )
+                        } else {
+                          $$i > -1 &&
+                            _vm.$set(
+                              _vm.selected,
+                              "categories",
+                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                            )
+                        }
+                      } else {
+                        _vm.$set(_vm.selected, "categories", $$c)
+                      }
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: "category" + index }
+                  },
+                  [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(category.nombre) +
+                        " (" +
+                        _vm._s(category.products_count) +
+                        ")\n                "
+                    )
+                  ]
+                )
+              ])
+            }),
             _vm._v(" "),
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Insumos")]),
             _vm._v(" "),

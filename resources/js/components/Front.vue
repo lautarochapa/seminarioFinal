@@ -5,6 +5,14 @@
                 <h1 class="mt-4">Filtros</h1>
 
 
+                <h3 class="mt-2">Categorias</h3>
+                <div class="form-check" v-for="(category, index) in categories">
+                    <input class="form-check-input" type="checkbox" :value="category.id" :id="'category'+index" v-model="selected.categories">
+                    <label class="form-check-label" :for="'category' + index">
+                        {{ category.nombre }} ({{ category.products_count }})
+                    </label>
+                </div>
+
                 <h3 class="mt-2">Insumos</h3>
                 <div class="form-check" v-for="(supply, index) in supplies">
                     <input class="form-check-input" type="checkbox" :value="supply.id" :id="'supply'+index" v-model="selected.supplies">
@@ -56,12 +64,14 @@
         data: function () {
             return {
                 supplies: [],
+                categories: [],
                 brands: [],
                 products: [],
                 loading: true,
                 selected: {
                     supplies: [],
-                    brands: []
+                    brands: [],
+                    categories: []
                 }
             }
         },
@@ -69,6 +79,7 @@
             this.loadSupplies();
             this.loadBrands();
             this.loadProducts();
+            this.loadCategories();
         },
         watch: {
             selected: {
@@ -76,6 +87,7 @@
                     this.loadSupplies();
                     this.loadBrands();
                     this.loadProducts();
+                    this.loadCategories();
                 },
                 deep: true
             }
@@ -110,6 +122,18 @@
                     })
                     .then((response) => {
                         this.brands = response.data.brands;
+                        this.loading = false;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            loadCategories: function () {
+                axios.get('/a', {
+                        params: _.omit(this.selected, 'categories')
+                    })
+                    .then((response) => {
+                        this.categories = response.data.categories;
                         this.loading = false;
                     })
                     .catch(function (error) {
