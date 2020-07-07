@@ -79,7 +79,7 @@
                                 </div>
                             </div>
 
-                            <div v-if="products['last_page'] - products['current_page'] < 5 && products['current_page'] > 5">
+                            <div v-if="products['last_page'] - products['current_page'] < 5 && products['current_page'] >  5">
                                 <div v-if="n > products['last_page'] -9">
                                     <a href="#" class="page-link" @click.prevent="getPage(n)">
                                         <span >

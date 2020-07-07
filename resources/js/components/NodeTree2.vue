@@ -1,26 +1,38 @@
 <template>
-  <li class="node-tree">
-    <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
+  <li class="list-group-item node-treeview4" data-nodeid="0" style="color:undefined;background-color:undefined;">
+    <span class="icon expand-icon glyphicon glyphicon-minus"></span>
+    <span class="icon node-icon"></span>{{ categoria.nombre }} ({{ categoria.products_count }})     
   
+        <ul class="list-group">
+
+                
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
+<li class="list-group-item node-treeview4" data-nodeid="0" style="color:undefined;background-color:undefined;">
+      <span class="icon expand-icon glyphicon glyphicon-minus"></span>
                         <input class="form-check-input" type="checkbox" @change="handleChange($event)" :value="supply.id"  
                         :id="'supply'+supply.id" v-model="supplies2">
                         <!--                                            :value="abbreviation"                   v-model="localState"
 
                         -->
                         <label class="form-check-label" :for="'supply' + index">
-                        --   {{ supply.nombre }} ({{ supply.products_count }})
+                        <span class="indent"></span> {{ supply.nombre }} ({{ supply.products_count }})
                         </label>
+    </li>
                     </div>
 
 
+    </ul>
 
-    <ul v-if="categoria.allchildren && categoria.allchildren.length">
-      <categoria v-for="child in categoria.allchildren" :categoria="child" @bus="bus"></categoria>
+    <ul class="list-group" v-if="categoria.allchildren && categoria.allchildren.length">
+     <span class="indent"></span> <categoria v-for="child in categoria.allchildren" :categoria="child" @bus="bus"></categoria>
 
 
     </ul>
   </li>
+
+
+
+
 </template>
 
 <script>

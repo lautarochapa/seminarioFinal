@@ -2331,6 +2331,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -2566,6 +2578,60 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _NodeTree2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NodeTree2 */ "./resources/js/components/NodeTree2.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -39543,97 +39609,128 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "li",
-    { staticClass: "node-tree" },
+    {
+      staticClass: "list-group-item node-treeview4",
+      staticStyle: { color: "undefined", "background-color": "undefined" },
+      attrs: { "data-nodeid": "0" }
+    },
     [
-      _c("span", { staticClass: "label" }, [
-        _vm._v(
-          _vm._s(_vm.categoria.nombre) +
-            " (" +
-            _vm._s(_vm.categoria.products_count) +
-            ")"
-        )
-      ]),
+      _c("span", { staticClass: "icon expand-icon glyphicon glyphicon-minus" }),
       _vm._v(" "),
-      _vm._l(_vm.categoria.supplies, function(supply, index) {
-        return _c("div", { staticClass: "form-check" }, [
-          _c("input", {
-            directives: [
+      _c("span", { staticClass: "icon node-icon" }),
+      _vm._v(
+        _vm._s(_vm.categoria.nombre) +
+          " (" +
+          _vm._s(_vm.categoria.products_count) +
+          ")     \n  \n        "
+      ),
+      _c(
+        "ul",
+        { staticClass: "list-group" },
+        _vm._l(_vm.categoria.supplies, function(supply, index) {
+          return _c("div", { staticClass: "form-check" }, [
+            _c(
+              "li",
               {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.supplies2,
-                expression: "supplies2"
-              }
-            ],
-            staticClass: "form-check-input",
-            attrs: { type: "checkbox", id: "supply" + supply.id },
-            domProps: {
-              value: supply.id,
-              checked: Array.isArray(_vm.supplies2)
-                ? _vm._i(_vm.supplies2, supply.id) > -1
-                : _vm.supplies2
-            },
-            on: {
-              change: [
-                function($event) {
-                  var $$a = _vm.supplies2,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false
-                  if (Array.isArray($$a)) {
-                    var $$v = supply.id,
-                      $$i = _vm._i($$a, $$v)
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
-                    } else {
-                      $$i > -1 &&
-                        (_vm.supplies2 = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)))
-                    }
-                  } else {
-                    _vm.supplies2 = $$c
-                  }
+                staticClass: "list-group-item node-treeview4",
+                staticStyle: {
+                  color: "undefined",
+                  "background-color": "undefined"
                 },
-                function($event) {
-                  return _vm.handleChange($event)
-                }
+                attrs: { "data-nodeid": "0" }
+              },
+              [
+                _c("span", {
+                  staticClass: "icon expand-icon glyphicon glyphicon-minus"
+                }),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.supplies2,
+                      expression: "supplies2"
+                    }
+                  ],
+                  staticClass: "form-check-input",
+                  attrs: { type: "checkbox", id: "supply" + supply.id },
+                  domProps: {
+                    value: supply.id,
+                    checked: Array.isArray(_vm.supplies2)
+                      ? _vm._i(_vm.supplies2, supply.id) > -1
+                      : _vm.supplies2
+                  },
+                  on: {
+                    change: [
+                      function($event) {
+                        var $$a = _vm.supplies2,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = supply.id,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
+                          } else {
+                            $$i > -1 &&
+                              (_vm.supplies2 = $$a
+                                .slice(0, $$i)
+                                .concat($$a.slice($$i + 1)))
+                          }
+                        } else {
+                          _vm.supplies2 = $$c
+                        }
+                      },
+                      function($event) {
+                        return _vm.handleChange($event)
+                      }
+                    ]
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: "supply" + index }
+                  },
+                  [
+                    _c("span", { staticClass: "indent" }),
+                    _vm._v(
+                      " " +
+                        _vm._s(supply.nombre) +
+                        " (" +
+                        _vm._s(supply.products_count) +
+                        ")\n                        "
+                    )
+                  ]
+                )
               ]
-            }
-          }),
-          _vm._v(" "),
-          _c(
-            "label",
-            {
-              staticClass: "form-check-label",
-              attrs: { for: "supply" + index }
-            },
-            [
-              _vm._v(
-                "\n                      --   " +
-                  _vm._s(supply.nombre) +
-                  " (" +
-                  _vm._s(supply.products_count) +
-                  ")\n                      "
-              )
-            ]
-          )
-        ])
-      }),
+            )
+          ])
+        }),
+        0
+      ),
       _vm._v(" "),
       _vm.categoria.allchildren && _vm.categoria.allchildren.length
         ? _c(
             "ul",
-            _vm._l(_vm.categoria.allchildren, function(child) {
-              return _c("categoria", {
-                attrs: { categoria: child },
-                on: { bus: _vm.bus }
+            { staticClass: "list-group" },
+            [
+              _c("span", { staticClass: "indent" }),
+              _vm._v(" "),
+              _vm._l(_vm.categoria.allchildren, function(child) {
+                return _c("categoria", {
+                  attrs: { categoria: child },
+                  on: { bus: _vm.bus }
+                })
               })
-            }),
-            1
+            ],
+            2
           )
         : _vm._e()
-    ],
-    2
+    ]
   )
 }
 var staticRenderFns = []
@@ -39919,10 +40016,10 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "tree" }, [
+  return _c("div", { staticClass: "treeview", attrs: { id: "treeview4" } }, [
     _c(
       "ul",
-      { staticClass: "tree-list" },
+      { staticClass: "list-group" },
       [
         _c("node-tree2", {
           attrs: { categoria: _vm.treeData },
