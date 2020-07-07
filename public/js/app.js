@@ -39216,7 +39216,8 @@ var render = function() {
                         class: { active: _vm.products["current_page"] === n }
                       },
                       [
-                        n - _vm.products["current_page"] < 10
+                        n - _vm.products["current_page"] < 10 &&
+                        n - _vm.products["current_page"] > 0
                           ? _c("div", [
                               _c(
                                 "a",

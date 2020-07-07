@@ -59,7 +59,7 @@
                         <li class="page-item" :class="{ 'active': (products['current_page']=== n) }" v-for="n in products['last_page']">
 
 
-                            <div v-if="n- products['current_page'] < 10">
+                            <div v-if="n- products['current_page'] < 10 && n- products['current_page'] > 0">
                             <a href="#" class="page-link" @click.prevent="getPage(n)">
                                 <span >
                                     {{ n }}
