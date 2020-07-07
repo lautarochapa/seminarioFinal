@@ -11,6 +11,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/treeview.js') }}" defer></script>
     
 
     <!-- Fonts -->
@@ -19,6 +20,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/treeview.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
