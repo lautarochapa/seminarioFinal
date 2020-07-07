@@ -17,7 +17,7 @@
 
 
     <!--<ul class="nested" v-if="categoria.allchildren && categoria.allchildren.length">-->
-    <!-- <span class="indent"></span>--> <categoria v-for="child in categoria.allchildren" :categoria="child" @bus="bus"></categoria>
+    <!-- <span class="indent"></span> <categoria v-for="child in categoria.allchildren" :categoria="child" @bus="bus"></categoria> -->
 
 
    <!-- </ul>-->
