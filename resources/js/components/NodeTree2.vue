@@ -3,7 +3,8 @@
     <span class="label">{{ categoria.nombre }} ({{ categoria.products_count }})</span>      
   
                     <div class="form-check" v-for="(supply, index) in categoria.supplies">
-                        <input class="form-check-input" type="checkbox" :value="this" :id="'supply'+index" v-model="supplies2">
+                        <input class="form-check-input" type="checkbox" :value="supply.id + 'on'" :unchecked-value="supply.id + 'off'" 
+                        :id="'supply'+index" v-model="supplies2">
                         <!--                                            :value="abbreviation"                   v-model="localState"
 
                         -->

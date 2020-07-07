@@ -2214,6 +2214,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "categoria",
   props: {
@@ -39153,11 +39154,15 @@ var render = function() {
               }
             ],
             staticClass: "form-check-input",
-            attrs: { type: "checkbox", id: "supply" + index },
+            attrs: {
+              type: "checkbox",
+              "unchecked-value": supply.id + "off",
+              id: "supply" + index
+            },
             domProps: {
-              value: this,
+              value: supply.id + "on",
               checked: Array.isArray(_vm.supplies2)
-                ? _vm._i(_vm.supplies2, this) > -1
+                ? _vm._i(_vm.supplies2, supply.id + "on") > -1
                 : _vm.supplies2
             },
             on: {
@@ -39166,7 +39171,7 @@ var render = function() {
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false
                 if (Array.isArray($$a)) {
-                  var $$v = this,
+                  var $$v = supply.id + "on",
                     $$i = _vm._i($$a, $$v)
                   if ($$el.checked) {
                     $$i < 0 && (_vm.supplies2 = $$a.concat([$$v]))
