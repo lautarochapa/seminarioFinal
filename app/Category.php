@@ -13,7 +13,7 @@ class Category extends Model
     }
 
     public function children() {
-        return $this->hasMany(Category::class,'padre');
+        return $this->hasMany(Category::class,'padre')->sum('products_count');
     }
     // ->withCount(['products' => function ($query) {$query->withFilters(); }])
 
