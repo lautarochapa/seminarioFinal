@@ -17,11 +17,13 @@ class Category extends Model
             $query->withFilters();
         }])->with(['supplies' => function($query){
             $query->withCount('products');
-        }]);;
+        }]);
     }
 
     public function allchildren() {
-        return $this->children()->with('allchildren');
+        return $this->children()->with('allchildren')->with(['supplies' => function($query){
+            $query->withCount('products');
+        }]);
     }
 
 
