@@ -12,9 +12,9 @@
                       <h3> {{$product->nombre}} </h3>
 
 
-                      <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
+                   <!--   <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
                            height="500" width="500">
-
+-->
                    </div>
     </div>
 </div>
