@@ -39149,7 +39149,7 @@ var render = function() {
               domProps: { value: _vm.selected.brands },
               on: {
                 change: function($event) {
-                  return _vm.handleDatalist2Change(this)
+                  return _vm.handleDatalist2Change($event)
                 },
                 input: function($event) {
                   if ($event.target.composing) {
@@ -39164,11 +39164,15 @@ var render = function() {
               "datalist",
               { attrs: { id: "marcas" } },
               _vm._l(_vm.brands, function(br, index) {
-                return _c("option", { key: br.id }, [
-                  _vm._v(
-                    _vm._s(br.nombre) + " (" + _vm._s(br.products_count) + ")"
-                  )
-                ])
+                return _c(
+                  "option",
+                  { key: br.id, domProps: { value: br.id } },
+                  [
+                    _vm._v(
+                      _vm._s(br.nombre) + " (" + _vm._s(br.products_count) + ")"
+                    )
+                  ]
+                )
               }),
               0
             )
