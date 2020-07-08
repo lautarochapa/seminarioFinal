@@ -32,7 +32,7 @@ class SupplyController extends Controller
 
       $supplies = Supply::with(['category'=> function ($query) {
         $query->with('grandparent');
-    }])->whereIn('id', request()->input('sups');)->get();
+    }])->whereIn('id', request()->input('sups'))->get();
   
     
       return response()->json([
