@@ -2368,6 +2368,7 @@ __webpack_require__.r(__webpack_exports__);
       //  console.log(e.srcElement.value)
       if (this.selected.brands.includes(e.srcElement.value) == false) {
         this.selected.brands.push(e.srcElement.value);
+        e.srcElement.value = '';
       }
     },
     loadCategories: function loadCategories() {
@@ -39169,7 +39170,7 @@ var render = function() {
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
             _c("input", {
-              attrs: { type: "text", list: "marcas", multiple: "multiple" },
+              attrs: { type: "text", list: "marcas" },
               on: {
                 change: function($event) {
                   return _vm.handleDatalist2Change($event)
