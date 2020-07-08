@@ -2336,7 +2336,9 @@ __webpack_require__.r(__webpack_exports__);
       }), 1);
     },
     handleDatalist2Change: function handleDatalist2Change(e) {
-      console.log(e);
+      console.log(e.srcElement);
+      console.log(e.srcElement.value);
+      console.log(e.srcElement.selected);
     },
     loadCategories: function loadCategories() {
       var _this9 = this;
@@ -39137,25 +39139,10 @@ var render = function() {
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
             _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.selected.brands,
-                  expression: "selected.brands"
-                }
-              ],
               attrs: { type: "text", list: "marcas", multiple: "multiple" },
-              domProps: { value: _vm.selected.brands },
               on: {
                 change: function($event) {
                   return _vm.handleDatalist2Change($event)
-                },
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.selected, "brands", $event.target.value)
                 }
               }
             }),

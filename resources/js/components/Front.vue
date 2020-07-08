@@ -26,8 +26,8 @@
 -->
 
                 <h3 class="mt-2">Marcas</h3>
-
-                <input type="text" list="marcas" multiple="multiple" @change="handleDatalist2Change($event)" v-model="selected.brands"/>
+<!-- v-model="selected.brands" -->
+                <input type="text" list="marcas" multiple="multiple" @change="handleDatalist2Change($event)" />
 
             <datalist id="marcas"> 
                 <option v-for="(br, index) in brands"  :key="br.id" :value="br.id">{{ br.nombre }} ({{ br.products_count }})</option>
@@ -355,7 +355,9 @@ import Tree2 from "./Tree2";
 
             },
             handleDatalist2Change : function (e){
-                console.log(e)
+                console.log(e.srcElement)
+                console.log(e.srcElement.value)
+                console.log(e.srcElement.selected)
 
             },
 
