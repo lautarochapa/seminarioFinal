@@ -27,6 +27,9 @@ Vue.component('node-tree2', require('./components/NodeTree2.vue').default);
 Vue.component('tree2', require('./components/Tree2.vue').default);
 
 
+Vue.component('autocomplete-component', require('./components/AutocompleteComponent.vue').default);
+
+
 
 
 const app = new Vue({

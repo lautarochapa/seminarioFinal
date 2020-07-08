@@ -54,6 +54,10 @@
             </div>
             <div class="col-lg-9">
 
+<autocomplete :items="[ 'Apple', 'Banana', 'Orange', 'Mango', 'Pear', 'Peach', 'Grape', 'Tangerine', 'Pineapple']" />
+
+
+
 
                 <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}} </p>
                 <br>
