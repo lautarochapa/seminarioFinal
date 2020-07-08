@@ -7468,7 +7468,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.autocomplete {\n  position: relative;\n  width: 130px;\n}\n.autocomplete-results {\n  padding: 0;\n  margin: 0;\n  border: 1px solid #eeeeee;\n  height: 120px;\n  overflow: auto;\n}\n.autocomplete-result {\n  list-style: none;\n  text-align: left;\n  padding: 4px 2px;\n  cursor: pointer;\n}\n.autocomplete-result:hover {\n  background-color: #4AAE9B;\n  color: white;\n}\n", ""]);
+exports.push([module.i, "\n.autocomplete {\n  position: relative;\n  width: 230px;\n}\n.autocomplete-results {\n  padding: 0;\n  margin: 0;\n  border: 1px solid #eeeeee;\n  height: 120px;\n  overflow: auto;\n}\n.autocomplete-result {\n  list-style: none;\n  text-align: left;\n  padding: 4px 2px;\n  cursor: pointer;\n}\n.autocomplete-result:hover {\n  background-color: #4AAE9B;\n  color: white;\n}\n", ""]);
 
 // exports
 
@@ -39309,11 +39309,11 @@ var render = function() {
             staticClass: "autocomplete-result",
             on: {
               click: function($event) {
-                return _vm.setResult(result)
+                return _vm.setResult(result.nombre)
               }
             }
           },
-          [_vm._v("\n    " + _vm._s(result) + "\n  ")]
+          [_vm._v("\n    " + _vm._s(result.nombre) + "\n  ")]
         )
       }),
       0

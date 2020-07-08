@@ -13,10 +13,10 @@
       <li
     v-for="(result, i) in results"
     :key="i"
-    @click="setResult(result)"
+    @click="setResult(result.nombre)"
     class="autocomplete-result"
   >
-    {{ result }}
+    {{ result.nombre }}
   </li>
     </ul>
   </div>
@@ -58,7 +58,7 @@
 <style>
   .autocomplete {
     position: relative;
-    width: 130px;
+    width: 230px;
   }
 
   .autocomplete-results {
