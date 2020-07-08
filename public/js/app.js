@@ -2335,6 +2335,14 @@ __webpack_require__.r(__webpack_exports__);
         return sup === id;
       }), 1);
     },
+    handleDatalistChange: function handleDatalistChange(e, id) {
+      console.log(e);
+      console.log(id);
+    },
+    handleDatalist2Change: function handleDatalist2Change(e, id) {
+      console.log(e);
+      console.log(id);
+    },
     loadCategories: function loadCategories() {
       var _this9 = this;
 
@@ -39134,7 +39142,12 @@ var render = function() {
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
             _c("input", {
-              attrs: { type: "text", list: "marcas", multiple: "multiple" }
+              attrs: { type: "text", list: "marcas", multiple: "multiple" },
+              on: {
+                change: function($event) {
+                  return _vm.handleDatalist2Change($event, _vm.br.id)
+                }
+              }
             }),
             _vm._v(" "),
             _c(
@@ -39144,7 +39157,11 @@ var render = function() {
                 return _c(
                   "option",
                   {
-                    domProps: { value: br.id },
+                    on: {
+                      change: function($event) {
+                        return _vm.handleDatalistChange($event, br.id)
+                      }
+                    },
                     model: {
                       value: _vm.selected.brands,
                       callback: function($$v) {
