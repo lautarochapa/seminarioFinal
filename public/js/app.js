@@ -2230,8 +2230,8 @@ __webpack_require__.r(__webpack_exports__);
         this.loadCategories();
         this.loadSups();
         this.loadselectedBrands();
-        console.log(selected.brands);
-        console.log(selectedBrands); // console.log(this.selected.supplies)
+        console.log(this.selected.brands);
+        console.log(this.selectedBrands); // console.log(this.selected.supplies)
         // console.log(this.selected.brands)
       },
       deep: true

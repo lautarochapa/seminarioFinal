@@ -258,8 +258,8 @@ import Tree2 from "./Tree2";
                     this.loadCategories();
                     this.loadSups();
                     this.loadselectedBrands();
-                    console.log(selected.brands)
-                    console.log(selectedBrands)
+                    console.log(this.selected.brands)
+                    console.log(this.selectedBrands)
                    // console.log(this.selected.supplies)
                    // console.log(this.selected.brands)
                 },
