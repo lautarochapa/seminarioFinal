@@ -2366,7 +2366,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     handleDatalist2Change: function handleDatalist2Change(e) {
       //  console.log(e.srcElement.value)
-      this.selected.brands.push(e.srcElement.value);
+      if (this.selected.brands.includes(e.srcElement.value) == false) {
+        this.selected.brands.push(e.srcElement.value);
+      }
     },
     loadCategories: function loadCategories() {
       var _this10 = this;

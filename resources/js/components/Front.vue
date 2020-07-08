@@ -383,9 +383,9 @@ import Tree2 from "./Tree2";
             },
             handleDatalist2Change : function (e){
               //  console.log(e.srcElement.value)
-               
+               if(this.selected.brands.includes(e.srcElement.value) == false){
                 this.selected.brands.push(e.srcElement.value)
-
+}
             },
             loadCategories: function () {
                 axios.get('/api/categories', {
