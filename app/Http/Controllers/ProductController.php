@@ -26,6 +26,7 @@ class ProductController extends Controller
 
       public function getAll()
     {
+      
         $products = Product::withFilters()->paginate(21);
 
         return response()->json([
