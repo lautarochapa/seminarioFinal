@@ -409,7 +409,7 @@ import AutocompleteComponent from "./AutocompleteComponent";
         },
         components: {
             Tree2,
-            AutoComplete
+            AutocompleteComponents
         }, 
     }
 </script>
