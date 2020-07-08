@@ -2335,10 +2335,6 @@ __webpack_require__.r(__webpack_exports__);
         return sup === id;
       }), 1);
     },
-    handleDatalistChange: function handleDatalistChange(e, id) {
-      console.log(e);
-      console.log(id);
-    },
     handleDatalist2Change: function handleDatalist2Change(e) {
       console.log(e);
     },
@@ -39141,10 +39137,25 @@ var render = function() {
             _c("h3", { staticClass: "mt-2" }, [_vm._v("Marcas")]),
             _vm._v(" "),
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.selected.brands,
+                  expression: "selected.brands"
+                }
+              ],
               attrs: { type: "text", list: "marcas", multiple: "multiple" },
+              domProps: { value: _vm.selected.brands },
               on: {
                 change: function($event) {
-                  return _vm.handleDatalist2Change($event)
+                  return _vm.handleDatalist2Change(this)
+                },
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.selected, "brands", $event.target.value)
                 }
               }
             }),
@@ -39153,28 +39164,11 @@ var render = function() {
               "datalist",
               { attrs: { id: "marcas" } },
               _vm._l(_vm.brands, function(br, index) {
-                return _c(
-                  "option",
-                  {
-                    on: {
-                      change: function($event) {
-                        return _vm.handleDatalistChange($event, br.id)
-                      }
-                    },
-                    model: {
-                      value: _vm.selected.brands,
-                      callback: function($$v) {
-                        _vm.$set(_vm.selected, "brands", $$v)
-                      },
-                      expression: "selected.brands"
-                    }
-                  },
-                  [
-                    _vm._v(
-                      _vm._s(br.nombre) + " (" + _vm._s(br.products_count) + ")"
-                    )
-                  ]
-                )
+                return _c("option", { key: br.id }, [
+                  _vm._v(
+                    _vm._s(br.nombre) + " (" + _vm._s(br.products_count) + ")"
+                  )
+                ])
               }),
               0
             )

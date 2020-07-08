@@ -27,10 +27,10 @@
 
                 <h3 class="mt-2">Marcas</h3>
 
-                <input type="text" list="marcas" multiple="multiple" @change="handleDatalist2Change($event)"/>
+                <input type="text" list="marcas" multiple="multiple" @change="handleDatalist2Change(this)" v-model="selected.brands"/>
 
             <datalist id="marcas"> 
-                <option v-for="(br, index) in brands" v-model="selected.brands" @change="handleDatalistChange($event, br.id)">{{ br.nombre }} ({{ br.products_count }})</option>
+                <option v-for="(br, index) in brands"  :key="br.id">{{ br.nombre }} ({{ br.products_count }})</option>
                 
 </datalist>
                 <!--<select  name="select" multiple>
@@ -352,11 +352,6 @@ import Tree2 from "./Tree2";
 
                 var checkbox = document.getElementById("supply"+id).checked = false;
                 this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === id), 1)
-
-            },
-            handleDatalistChange : function (e, id){
-                console.log(e)
-                console.log(id)
 
             },
             handleDatalist2Change : function (e){
