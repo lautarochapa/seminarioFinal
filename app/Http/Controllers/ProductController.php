@@ -48,6 +48,18 @@ class ProductController extends Controller
       }
 
 
+      function getProductsNames(){
+
+
+        $products = Product::select('id','nombre')->get();
+        return response()->json([
+
+          'products' => $products
+  
+      ], Response::HTTP_OK);
+      }
+
+
       function getBySupply($id){
 
 

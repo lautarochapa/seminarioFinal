@@ -54,7 +54,7 @@
             </div>
             <div class="col-lg-9">
 
-<autocomplete-component :items="[ 'Apple', 'Banana', 'Orange', 'Mango', 'Pear', 'Peach', 'Grape', 'Tangerine', 'Pineapple']" />
+<autocomplete-component :items="productsNames" />
 
 
 
@@ -244,6 +244,8 @@ import AutocompleteComponent from "./AutocompleteComponent";
                 },
                 sups: [],
                 selectedBrands: [],
+                productsNames: [],
+                productsSelected: [],
                /* address: {
                     street: '',
                     state: '',
@@ -254,6 +256,7 @@ import AutocompleteComponent from "./AutocompleteComponent";
             this.loadProducts();
             this.loadCategories();
             this.loadBrands();
+            this.loadProductsNames();
         },
         watch: {
             selected: {
@@ -301,7 +304,17 @@ import AutocompleteComponent from "./AutocompleteComponent";
                     .catch(function (error) {
                         console.log(error);
                     });
-            },           
+            },
+            loadProductsName: function () {
+                axios.get('/api/productsNames')
+                    .then((response) => {
+                        this.productsNames = response.data.products;
+                        this.loading = false;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },          
             getPage(page){
                 axios.get('/api/products?page='+page, {
                         params: this.selected

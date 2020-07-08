@@ -2287,7 +2287,9 @@ __webpack_require__.r(__webpack_exports__);
         categories: []
       },
       sups: [],
-      selectedBrands: []
+      selectedBrands: [],
+      productsNames: [],
+      productsSelected: []
       /* address: {
            street: '',
            state: '',
@@ -2299,6 +2301,7 @@ __webpack_require__.r(__webpack_exports__);
     this.loadProducts();
     this.loadCategories();
     this.loadBrands();
+    this.loadProductsNames();
   },
   watch: {
     selected: {
@@ -2346,87 +2349,97 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    getPage: function getPage(page) {
+    loadProductsName: function loadProductsName() {
       var _this2 = this;
 
-      axios.get('/api/products?page=' + page, {
-        params: this.selected
-      }).then(function (response) {
-        _this2.products = response.data.products;
+      axios.get('/api/productsNames').then(function (response) {
+        _this2.productsNames = response.data.products;
+        _this2.loading = false;
+      })["catch"](function (error) {
+        console.log(error);
       });
     },
-    getPreviousPage: function getPreviousPage() {
+    getPage: function getPage(page) {
       var _this3 = this;
 
-      axios.get(this.products['prev_page_url'], {
+      axios.get('/api/products?page=' + page, {
         params: this.selected
       }).then(function (response) {
         _this3.products = response.data.products;
       });
     },
-    getNextPage: function getNextPage() {
+    getPreviousPage: function getPreviousPage() {
       var _this4 = this;
 
-      axios.get(this.products['next_page_url'], {
+      axios.get(this.products['prev_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this4.products = response.data.products;
       });
     },
-    getLastPage: function getLastPage() {
+    getNextPage: function getNextPage() {
       var _this5 = this;
 
-      axios.get(this.products['last_page_url'], {
+      axios.get(this.products['next_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this5.products = response.data.products;
       });
     },
-    getFirstPage: function getFirstPage() {
+    getLastPage: function getLastPage() {
       var _this6 = this;
 
-      axios.get(this.products['first_page_url'], {
+      axios.get(this.products['last_page_url'], {
         params: this.selected
       }).then(function (response) {
         _this6.products = response.data.products;
       });
     },
-    loadBrands: function loadBrands() {
+    getFirstPage: function getFirstPage() {
       var _this7 = this;
+
+      axios.get(this.products['first_page_url'], {
+        params: this.selected
+      }).then(function (response) {
+        _this7.products = response.data.products;
+      });
+    },
+    loadBrands: function loadBrands() {
+      var _this8 = this;
 
       axios.get('/api/brands', {
         params: _.omit(this.selected, 'brands')
       }).then(function (response) {
-        _this7.brands = response.data.brands;
-        _this7.loading = false;
+        _this8.brands = response.data.brands;
+        _this8.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     loadSups: function loadSups() {
-      var _this8 = this;
+      var _this9 = this;
 
       axios.get('/api/selectedSupplies', {
         params: {
           sups: this.selected.supplies
         }
       }).then(function (response) {
-        _this8.sups = response.data.supplies;
-        _this8.loading = false;
+        _this9.sups = response.data.supplies;
+        _this9.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     loadselectedBrands: function loadselectedBrands() {
-      var _this9 = this;
+      var _this10 = this;
 
       axios.get('/api/selectedBrands', {
         params: {
           br: this.selected.brands
         }
       }).then(function (response) {
-        _this9.selectedBrands = response.data.brands;
-        _this9.loading = false;
+        _this10.selectedBrands = response.data.brands;
+        _this10.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2450,13 +2463,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     loadCategories: function loadCategories() {
-      var _this10 = this;
+      var _this11 = this;
 
       axios.get('/api/categories', {
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
-        _this10.categories = response.data.categories;
-        _this10.loading = false;
+        _this11.categories = response.data.categories;
+        _this11.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -39407,19 +39420,7 @@ var render = function() {
           { staticClass: "col-lg-9" },
           [
             _c("autocomplete-component", {
-              attrs: {
-                items: [
-                  "Apple",
-                  "Banana",
-                  "Orange",
-                  "Mango",
-                  "Pear",
-                  "Peach",
-                  "Grape",
-                  "Tangerine",
-                  "Pineapple"
-                ]
-              }
+              attrs: { items: _vm.productsNames }
             }),
             _vm._v(" "),
             _c("p", [
