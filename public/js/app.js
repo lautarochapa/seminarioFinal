@@ -39406,7 +39406,7 @@ var render = function() {
           "div",
           { staticClass: "col-lg-9" },
           [
-            _c("autocomplete", {
+            _c("autocomplete-component", {
               attrs: {
                 items: [
                   "Apple",
