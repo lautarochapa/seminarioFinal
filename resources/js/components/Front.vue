@@ -58,12 +58,18 @@
                 <p> Mostrando {{products.from}} a {{products.to}} de {{products.total}} </p>
                 <br>
 
-                <p> Filtrado:</p>
+                <p> Filtrado categorias:</p>
             
             <div v-for="sup in this.sups">
                 <span>{{sup.category.grandparent.grandparent.nombre}}/{{sup.category.grandparent.nombre}}/{{sup.category.nombre}}/{{sup.nombre}}</span> <span @click="eliminarFiltro(sup.id)">x</span>
             </div>
 
+
+                <p> Filtrado marcas:</p>
+            
+            <div v-for="br in this.selectedBrands">
+                <span>{{br.nombre}}</span> <span @click="eliminarFiltroMarca(br.id)">x</span>
+            </div>
 
 
                 
@@ -232,6 +238,7 @@ import Tree2 from "./Tree2";
                     categories: []
                 },
                 sups: [],
+                selectedBrands: [],
                /* address: {
                     street: '',
                     state: '',
@@ -250,6 +257,7 @@ import Tree2 from "./Tree2";
                     this.loadProducts();
                     this.loadCategories();
                     this.loadSups();
+                    this.loadselectedBrands();
                    // console.log(this.selected.supplies)
                    // console.log(this.selected.brands)
                 },
@@ -336,7 +344,7 @@ import Tree2 from "./Tree2";
                     });
             },
             loadSups: function () {
-                axios.get('/api/s', {
+                axios.get('/api/selectedSupplies', {
   params: {
     sups: this.selected.supplies
   },})
@@ -348,16 +356,40 @@ import Tree2 from "./Tree2";
                         console.log(error);
                     });
             },
+loadselectedBrands: function () {
+                axios.get('/api/selectedBrands', {
+  params: {
+    br: this.selected.brands
+  },})
+                    .then((response) => {
+                        this.selectedBrands = response.data.brands;
+                        this.loading = false;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+
+
+
             eliminarFiltro: function(id){
 
                 var checkbox = document.getElementById("supply"+id).checked = false;
                 this.selected.supplies.splice(this.selected.supplies.findIndex(sup => sup === id), 1)
 
             },
+            eliminarFiltroMarca: function(id){
+
+                this.selected.brands.splice(this.selected.brands.findIndex(br => br === id), 1)
+
+            },
             handleDatalist2Change : function (e){
-                console.log(e.srcElement)
                 console.log(e.srcElement.value)
-                console.log(e.srcElement.selected)
+                console.log(e.srcElement.key)
+
+
+                this.selected.brands.push(e.srcElement.value)
 
             },
 

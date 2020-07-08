@@ -2189,6 +2189,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2202,7 +2208,8 @@ __webpack_require__.r(__webpack_exports__);
         brands: [],
         categories: []
       },
-      sups: []
+      sups: [],
+      selectedBrands: []
       /* address: {
            street: '',
            state: '',
@@ -2221,7 +2228,8 @@ __webpack_require__.r(__webpack_exports__);
         this.loadBrands();
         this.loadProducts();
         this.loadCategories();
-        this.loadSups(); // console.log(this.selected.supplies)
+        this.loadSups();
+        this.loadselectedBrands(); // console.log(this.selected.supplies)
         // console.log(this.selected.brands)
       },
       deep: true
@@ -2318,7 +2326,7 @@ __webpack_require__.r(__webpack_exports__);
     loadSups: function loadSups() {
       var _this8 = this;
 
-      axios.get('/api/s', {
+      axios.get('/api/selectedSupplies', {
         params: {
           sups: this.selected.supplies
         }
@@ -2329,25 +2337,44 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    loadselectedBrands: function loadselectedBrands() {
+      var _this9 = this;
+
+      axios.get('/api/selectedBrands', {
+        params: {
+          br: this.selected.brands
+        }
+      }).then(function (response) {
+        _this9.selectedBrands = response.data.brands;
+        _this9.loading = false;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
     eliminarFiltro: function eliminarFiltro(id) {
       var checkbox = document.getElementById("supply" + id).checked = false;
       this.selected.supplies.splice(this.selected.supplies.findIndex(function (sup) {
         return sup === id;
       }), 1);
     },
+    eliminarFiltroMarca: function eliminarFiltroMarca(id) {
+      this.selected.brands.splice(this.selected.brands.findIndex(function (br) {
+        return br === id;
+      }), 1);
+    },
     handleDatalist2Change: function handleDatalist2Change(e) {
-      console.log(e.srcElement);
       console.log(e.srcElement.value);
-      console.log(e.srcElement.selected);
+      console.log(e.srcElement.key);
+      this.selected.brands.push(e.srcElement.value);
     },
     loadCategories: function loadCategories() {
-      var _this9 = this;
+      var _this10 = this;
 
       axios.get('/api/categories', {
         params: _.omit(this.selected, 'categories')
       }).then(function (response) {
-        _this9.categories = response.data.categories;
-        _this9.loading = false;
+        _this10.categories = response.data.categories;
+        _this10.loading = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -39185,7 +39212,7 @@ var render = function() {
             _vm._v(" "),
             _c("br"),
             _vm._v(" "),
-            _c("p", [_vm._v(" Filtrado:")]),
+            _c("p", [_vm._v(" Filtrado categorias:")]),
             _vm._v(" "),
             _vm._l(this.sups, function(sup) {
               return _c("div", [
@@ -39207,6 +39234,26 @@ var render = function() {
                     on: {
                       click: function($event) {
                         return _vm.eliminarFiltro(sup.id)
+                      }
+                    }
+                  },
+                  [_vm._v("x")]
+                )
+              ])
+            }),
+            _vm._v(" "),
+            _c("p", [_vm._v(" Filtrado marcas:")]),
+            _vm._v(" "),
+            _vm._l(this.selectedBrands, function(br) {
+              return _c("div", [
+                _c("span", [_vm._v(_vm._s(br.nombre))]),
+                _vm._v(" "),
+                _c(
+                  "span",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.eliminarFiltroMarca(br.id)
                       }
                     }
                   },

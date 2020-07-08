@@ -30,8 +30,6 @@ Route::get('/marcas','BrandController@getAll');
 
 Route::get('/a','CategoryController@getAll2');
 
-Route::get('/api/s','SupplyController@getAll2');
-
 //Getters con logica
 
 
@@ -71,6 +69,9 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
     Route::get('/api/products','ProductController@getAll');
 
 
+
+    Route::get('/api/selectedSupplies','SupplyController@getSelected');
+    Route::get('/api/selectedBrands','SupplyController@getSelected');
 
     Route::get('/api/supplies','SupplyController@getAll');
     Route::get('/api/brands','BrandController@getAll');

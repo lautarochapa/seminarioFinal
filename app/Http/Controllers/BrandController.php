@@ -20,5 +20,36 @@ class BrandController extends Controller
     
     ], Response::HTTP_OK);
     }
+
+    
+
+    function getSelected(){
+
+      if(request()->input('br')){
+        
+
+      $brands = Brand::whereIn('id', request()->input('br'))->get();
+  
+    
+      return response()->json([
+      
+        'brands' => $brands
+      
+      ], Response::HTTP_OK);
+
+    }else{
+      return response()->json([
+      
+        'brands' => []
+      
+      ], Response::HTTP_OK);
+    }
+
+      }
+
+
+
+
+
 }
 

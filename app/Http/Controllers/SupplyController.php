@@ -25,7 +25,7 @@ class SupplyController extends Controller
 
 
  
-    function getAll2(){
+    function getSelected(){
 
       if(request()->input('sups')){
         
