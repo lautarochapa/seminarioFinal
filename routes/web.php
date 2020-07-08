@@ -65,7 +65,7 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
     Route::get('/utensils', function() { return view('profiles/admin/utensils'); });
 
 
-    Route::get('products/{$id}', 'ProductController@viewProduct');
+    Route::get('products/{id}', 'ProductController@viewProduct');
 
     //vistas
     Route::get('/api/categories','CategoryController@getAllWithSupplies');
