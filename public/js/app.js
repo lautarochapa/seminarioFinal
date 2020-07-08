@@ -1959,7 +1959,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.results = this.items.filter(function (item) {
-        return item.toLowerCase().indexOf(_this.search.toLowerCase()) > -1;
+        return item.nombre.toLowerCase().indexOf(_this.search.toLowerCase()) > -1;
       });
     },
     setResult: function setResult(result) {

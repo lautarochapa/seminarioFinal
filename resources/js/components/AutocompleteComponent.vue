@@ -45,7 +45,7 @@
         this.filterResults();
       },
       filterResults() {
-        this.results = this.items.filter(item => item.toLowerCase().indexOf(this.search.toLowerCase()) > -1);
+        this.results = this.items.filter(item => item.nombre.toLowerCase().indexOf(this.search.toLowerCase()) > -1);
       },
       setResult(result) {
         this.search = result;
