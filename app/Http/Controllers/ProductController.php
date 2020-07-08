@@ -39,12 +39,8 @@ class ProductController extends Controller
       function getOne($id){
 
 
-        $products = Product::find($id);
-        return response()->json([
-
-          'products' => $products
-  
-      ], Response::HTTP_OK);
+        $product = Product::find($id);
+        return view('profiles/admin/products.product', ['product' => $product]);
       }
 
 
