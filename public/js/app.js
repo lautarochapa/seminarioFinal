@@ -2296,9 +2296,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    this.loadProducts();
     this.loadCategories();
     this.loadBrands();
-    this.loadProducts();
   },
   watch: {
     selected: {
@@ -2464,7 +2464,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     Tree2: _Tree2__WEBPACK_IMPORTED_MODULE_0__["default"],
-    AutocompleteComponents: AutocompleteComponents
+    AutocompleteComponent: _AutocompleteComponent__WEBPACK_IMPORTED_MODULE_1__["default"]
   }
 });
 

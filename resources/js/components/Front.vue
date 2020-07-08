@@ -251,9 +251,9 @@ import AutocompleteComponent from "./AutocompleteComponent";
             }
         },
         mounted() {
+            this.loadProducts();
             this.loadCategories();
             this.loadBrands();
-            this.loadProducts();
         },
         watch: {
             selected: {
@@ -409,7 +409,7 @@ import AutocompleteComponent from "./AutocompleteComponent";
         },
         components: {
             Tree2,
-            AutocompleteComponents
+            AutocompleteComponent
         }, 
     }
 </script>
