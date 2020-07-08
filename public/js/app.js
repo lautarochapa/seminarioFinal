@@ -2339,9 +2339,8 @@ __webpack_require__.r(__webpack_exports__);
       console.log(e);
       console.log(id);
     },
-    handleDatalist2Change: function handleDatalist2Change(e, id) {
+    handleDatalist2Change: function handleDatalist2Change(e) {
       console.log(e);
-      console.log(id);
     },
     loadCategories: function loadCategories() {
       var _this9 = this;
@@ -39145,7 +39144,7 @@ var render = function() {
               attrs: { type: "text", list: "marcas", multiple: "multiple" },
               on: {
                 change: function($event) {
-                  return _vm.handleDatalist2Change($event, _vm.br.id)
+                  return _vm.handleDatalist2Change($event)
                 }
               }
             }),
