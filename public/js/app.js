@@ -2044,6 +2044,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Tree2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tree2 */ "./resources/js/components/Tree2.vue");
+/* harmony import */ var _AutocompleteComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AutocompleteComponent */ "./resources/js/components/AutocompleteComponent.vue");
 //
 //
 //
@@ -2271,6 +2272,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2461,10 +2463,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   components: {
-    Tree2: _Tree2__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  ready: function ready() {
-    this.treeViewLoad();
+    Tree2: _Tree2__WEBPACK_IMPORTED_MODULE_0__["default"],
+    AutoComplete: AutoComplete
   }
 });
 

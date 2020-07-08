@@ -227,6 +227,7 @@
 
 <script>
 import Tree2 from "./Tree2";
+import AutocompleteComponent from "./AutocompleteComponent";
 
 
     export default {
@@ -407,11 +408,8 @@ import Tree2 from "./Tree2";
             }
         },
         components: {
-            Tree2
-        }, ready: function()
-  {
-     this.treeViewLoad()
-
-  }
+            Tree2,
+            AutoComplete
+        }, 
     }
 </script>
