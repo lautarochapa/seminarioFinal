@@ -40,7 +40,7 @@ class ProductController extends Controller
 
 
         $product = Product::find($id);
-        return view('profiles/admin/products.product', ['product' => $product]);
+        return view('profiles/admin/product', ['product' => $product]);
       }
 
 
