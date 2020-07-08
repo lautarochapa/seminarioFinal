@@ -48,7 +48,7 @@ return [
             //'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', 'sql303.epizy.com'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'epiz_26210375_XXX'),
+            'database' => env('DB_DATABASE', 'epiz_26210375_comidacocinacontrol'),
             'username' => env('DB_USERNAME', 'epiz_26210375'),
             'password' => env('DB_PASSWORD', 'GdE5Cwj604pMaU'),
             'unix_socket' => env('DB_SOCKET', ''),
