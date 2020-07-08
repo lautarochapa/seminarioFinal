@@ -258,6 +258,8 @@ import Tree2 from "./Tree2";
                     this.loadCategories();
                     this.loadSups();
                     this.loadselectedBrands();
+                    console.log(selected.brands)
+                    console.log(selectedBrands)
                    // console.log(this.selected.supplies)
                    // console.log(this.selected.brands)
                 },
@@ -266,7 +268,6 @@ import Tree2 from "./Tree2";
         },
         methods: {
             bus: function (data) {
-                
                 //console.log(data)
                 if(data.substring(0,4) == 'true'){
                     //console.log(data.substring(10,20) + " true")
@@ -345,9 +346,9 @@ import Tree2 from "./Tree2";
             },
             loadSups: function () {
                 axios.get('/api/selectedSupplies', {
-  params: {
-    sups: this.selected.supplies
-  },})
+                params: {
+                    sups: this.selected.supplies
+                },})
                     .then((response) => {
                         this.sups = response.data.supplies;
                         this.loading = false;
@@ -356,11 +357,11 @@ import Tree2 from "./Tree2";
                         console.log(error);
                     });
             },
-loadselectedBrands: function () {
+            loadselectedBrands: function () {
                 axios.get('/api/selectedBrands', {
-  params: {
-    br: this.selected.brands
-  },})
+                params: {
+                    br: this.selected.brands
+                },})
                     .then((response) => {
                         this.selectedBrands = response.data.brands;
                         this.loading = false;
@@ -369,10 +370,6 @@ loadselectedBrands: function () {
                         console.log(error);
                     });
             },
-
-
-
-
             eliminarFiltro: function(id){
 
                 var checkbox = document.getElementById("supply"+id).checked = false;
@@ -385,17 +382,11 @@ loadselectedBrands: function () {
 
             },
             handleDatalist2Change : function (e){
-                console.log(e.srcElement.value)
-                console.log(e.srcElement.key)
-
-
+              //  console.log(e.srcElement.value)
+               
                 this.selected.brands.push(e.srcElement.value)
 
             },
-
-
-
-
             loadCategories: function () {
                 axios.get('/api/categories', {
                         params: _.omit(this.selected, 'categories')
@@ -409,8 +400,6 @@ loadselectedBrands: function () {
                         console.log(error);
                     });
             }
-
-
         },
         components: {
             Tree2

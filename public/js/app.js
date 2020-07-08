@@ -2229,7 +2229,9 @@ __webpack_require__.r(__webpack_exports__);
         this.loadProducts();
         this.loadCategories();
         this.loadSups();
-        this.loadselectedBrands(); // console.log(this.selected.supplies)
+        this.loadselectedBrands();
+        console.log(selected.brands);
+        console.log(selectedBrands); // console.log(this.selected.supplies)
         // console.log(this.selected.brands)
       },
       deep: true
@@ -2363,8 +2365,7 @@ __webpack_require__.r(__webpack_exports__);
       }), 1);
     },
     handleDatalist2Change: function handleDatalist2Change(e) {
-      console.log(e.srcElement.value);
-      console.log(e.srcElement.key);
+      //  console.log(e.srcElement.value)
       this.selected.brands.push(e.srcElement.value);
     },
     loadCategories: function loadCategories() {
