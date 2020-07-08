@@ -39736,25 +39736,21 @@ var render = function() {
               _vm._l(_vm.products.data, function(product) {
                 return _c("div", { staticClass: "col-lg-4 col-md-6 mb-4" }, [
                   _c("div", { staticClass: "card h-100" }, [
-                    _c(
-                      "a",
-                      { attrs: { href: "api/products/{" + product.id + "}" } },
-                      [
-                        _c("img", {
-                          staticClass: "img-responsive",
-                          attrs: {
-                            src: "images/" + product.img + ".jpg",
-                            height: "200",
-                            width: "200"
-                          },
-                          on: {
-                            error: function($event) {
-                              $event.target.src = "http://placehold.it/700x400"
-                            }
+                    _c("a", { attrs: { href: "products/" + product.id } }, [
+                      _c("img", {
+                        staticClass: "img-responsive",
+                        attrs: {
+                          src: "images/" + product.img + ".jpg",
+                          height: "200",
+                          width: "200"
+                        },
+                        on: {
+                          error: function($event) {
+                            $event.target.src = "http://placehold.it/700x400"
                           }
-                        })
-                      ]
-                    ),
+                        }
+                      })
+                    ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "card-body" }, [
                       _c("h4", { staticClass: "card-title" }, [

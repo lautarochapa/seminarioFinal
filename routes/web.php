@@ -64,6 +64,9 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
     Route::get('/products', function() { return view('profiles/admin/products'); });
     Route::get('/utensils', function() { return view('profiles/admin/utensils'); });
 
+
+    Route::get('products/{$id}', 'ProductController@viewProduct');
+
     //vistas
     Route::get('/api/categories','CategoryController@getAllWithSupplies');
     Route::get('/api/products','ProductController@getAll');
@@ -78,6 +81,7 @@ Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
     Route::get('/api/brands','BrandController@getAll');
     Route::get('/api/products/bySupply/{id}','ProductController@getBySupply');
     Route::get('/api/products/{id}','ProductController@getOne');
+
 
     Route::get('/api/utensils','UtensilController@getAll');
 });

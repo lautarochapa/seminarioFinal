@@ -36,9 +36,9 @@ class ProductController extends Controller
     }
 
 
-      function getOne($id){
-
-
+   
+      public function viewProduct($id)
+      {
         $product = Product::find($id);
         return view('profiles/admin/product', ['product' => $product]);
       }
@@ -55,6 +55,9 @@ class ProductController extends Controller
       ], Response::HTTP_OK);
       }
 
+
+
+      
 
       function getBySupply($id){
 
