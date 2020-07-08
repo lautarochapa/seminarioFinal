@@ -2349,7 +2349,7 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    loadProductsName: function loadProductsName() {
+    loadProductsNames: function loadProductsNames() {
       var _this2 = this;
 
       axios.get('/api/productsNames').then(function (response) {

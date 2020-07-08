@@ -305,7 +305,7 @@ import AutocompleteComponent from "./AutocompleteComponent";
                         console.log(error);
                     });
             },
-            loadProductsName: function () {
+            loadProductsNames: function () {
                 axios.get('/api/productsNames')
                     .then((response) => {
                         this.productsNames = response.data.products;
