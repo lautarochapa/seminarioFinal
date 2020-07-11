@@ -2,9 +2,16 @@
 <div>
         <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
          <header>
-            <a class="logo" href="/"><img :src="'images/logo/1.svg'" alt="logo"></a>
-            <a class="logo" href="/"><img :src="'images/logo/2.svg'" alt="logo"></a>
-            <a class="logo" href="/"><img :src="'images/logo/3.svg'" alt="logo"></a>
+            <a class="logo" :href="url('/')"><img :src="'images/logo/2.svg'" alt="logo" height="2em"></a>
+            
+            <form action="#" method="GET" role="search" style="left: 35px;    max-width: 600px;padding: 8px 1px;    overflow: auto;    height: 56px;    position: relative;z-index: 910;">
+                <input type="text" style="padding: 7px 60px 9px 15px;background-color: #fff;z-index: 915;border: 0 rgba(0,0,0,.2);font-size: 16px; width: 100%;    margin: 0;   font-family: inherit;" aria-label="Ingresá lo que quieras encontrar" name="as_word" placeholder="Buscar productos, recetas y más…" maxlength="120" autofocus="" tabindex="2">
+                <button type="submit" style="cursor: pointer;height: 39px;width: 46px;right: 1px;z-index: 920;position: absolute; padding: 0;  background: 0 0; border: none;font-size: 22px;color: #666;line-height: 1em;" tabindex="3">
+                    <div role="img" aria-label="Buscar" style="cursor: pointer;font-size: 22px;content: '\EA27';vertical-align: top; font-family: navigation;    color: #666;    line-height: 1em;"></div>
+                </button>
+            </form>
+            
+            
             <nav>
                 <ul class="nav__links">
                     <li><a href="#">Services</a></li>
@@ -12,7 +19,39 @@
                     <li><a href="#">About</a></li>
                 </ul>
             </nav>
-            <a class="cta" href="#">Contact</a>
+           <!-- <a class="cta" href="#">Contact</a> -->
+
+
+                        @guest
+                                <a class="cta" :href="route('login')">{{ __('Iniciar Sesion') }}</a>
+                            @if (Route::has('register'))
+                                    <a class="cta" :href="route('register')">{{ __('Registrarse') }}</a>
+                            @endif
+                        @else
+
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="cta dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ Auth::user()->name }}
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" :href="route('logout')"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Cerrar Sesion') }}
+                                    </a>
+
+                                    <form id="logout-form" :action="route('logout')" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        @endguest
+
+
+
+
+
             <p class="menu cta">Menu</p>
         </header>
         <div id="mobile__menu" class="overlay">
@@ -26,9 +65,23 @@
 
 </div>
 </template>
-<!--
-<script type="text/javascript" src="mobile.js"></script>
--->
+
+<script>
+const doc = document;
+const menuOpen = doc.querySelector(".menu");
+const menuClose = doc.querySelector(".close");
+const overlay = doc.querySelector(".overlay");
+
+menuOpen.addEventListener("click", () => {
+  overlay.classList.add("overlay--active");
+});
+
+menuClose.addEventListener("click", () => {
+  overlay.classList.remove("overlay--active");
+});
+
+</script>
+
 <style>
 
 * {
