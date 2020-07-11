@@ -3181,7 +3181,15 @@ var render = function() {
     _vm._v(" "),
     _c("header", [
       _c("a", { staticClass: "logo", attrs: { href: "/" } }, [
-        _c("img", { attrs: { src: "images/logo.svg", alt: "logo" } })
+        _c("img", { attrs: { src: "images/logo/1.svg", alt: "logo" } })
+      ]),
+      _vm._v(" "),
+      _c("a", { staticClass: "logo", attrs: { href: "/" } }, [
+        _c("img", { attrs: { src: "images/logo/2.svg", alt: "logo" } })
+      ]),
+      _vm._v(" "),
+      _c("a", { staticClass: "logo", attrs: { href: "/" } }, [
+        _c("img", { attrs: { src: "images/logo/3.svg", alt: "logo" } })
       ]),
       _vm._v(" "),
       _vm._m(0),
