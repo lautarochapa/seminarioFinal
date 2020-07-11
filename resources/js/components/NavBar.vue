@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div>
         <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
          <header>
             <a class="logo" href="/"><img :src="'images/logo.svg'" alt="logo"></a>
@@ -39,7 +39,7 @@ header {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 30px 10%;
+  padding: 5px 15%;
   background-color: #24252a;
 }
 
