@@ -2,9 +2,9 @@
 <div>
         <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
          <header>
-            <a class="logo" href="/"><img :src="'images/logo/1.svg'" alt="logo"></a>
-            <a class="logo" href="/"><img :src="'images/logo/2.svg'" alt="logo"></a>
-            <a class="logo" href="/"><img :src="'images/logo/3.svg'" alt="logo"></a>
+            <a class="logo" href="/"><img :src="'images/logo/1final.svg'" alt="logo"></a>
+            <a class="logo" href="/"><img :src="'images/logo/2final.svg'" alt="logo"></a>
+            <a class="logo" href="/"><img :src="'images/logo/3final.svg'" alt="logo"></a>
             <nav>
                 <ul class="nav__links">
                     <li><a href="#">Services</a></li>
