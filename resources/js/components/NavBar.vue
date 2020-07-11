@@ -68,9 +68,9 @@
 
 <script>
 const doc = document;
-const menuOpen = doc.querySelector(".menu");
-const menuClose = doc.querySelector(".close");
-const overlay = doc.querySelector(".overlay");
+const menuOpen = document.getElementsByClassName("menu");
+const menuClose = document.getElementsByClassName("close");
+const overlay = document.getElementsByClassName("overlay");
 
 menuOpen.addEventListener("click", () => {
   overlay.classList.add("overlay--active");

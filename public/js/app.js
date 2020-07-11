@@ -749,9 +749,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 var doc = document;
-var menuOpen = doc.querySelector(".menu");
-var menuClose = doc.querySelector(".close");
-var overlay = doc.querySelector(".overlay");
+var menuOpen = document.getElementsByClassName("menu");
+var menuClose = document.getElementsByClassName("close");
+var overlay = document.getElementsByClassName("overlay");
 menuOpen.addEventListener("click", function () {
   overlay.classList.add("overlay--active");
 });
