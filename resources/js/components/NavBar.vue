@@ -1,10 +1,8 @@
-@extends('layouts.app')
-
-@section('nav')
+<template>
 <div class="container">
         <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
          <header>
-            <a class="logo" href="/"><img :src="'images/logo.svg' alt="logo"></a>
+            <a class="logo" href="/"><img :src="'images/logo.svg'" alt="logo"></a>
             <nav>
                 <ul class="nav__links">
                     <li><a href="#">Services</a></li>
@@ -25,7 +23,10 @@
         </div>
 
 </div>
+</template>
+<!--
 <script type="text/javascript" src="mobile.js"></script>
+-->
 <style>
 
 * {
@@ -159,6 +160,3 @@ header {
 
 
 </style>
-
-
-@endsection

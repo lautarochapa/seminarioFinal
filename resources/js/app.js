@@ -3,6 +3,11 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+
+//NAVBAR
+Vue.component('navbar', require('./components/NavBar.vue').default);
+
+
 //categorias
 Vue.component('node-tree', require('./components/NodeTree.vue').default);
 Vue.component('tree', require('./components/Tree.vue').default);

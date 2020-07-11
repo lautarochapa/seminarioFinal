@@ -143,7 +143,7 @@
 
 -->
         <nav>
-            @yield('nav')
+            <navbar></navbar>
         </nav>
 
         <main class="py-5">
