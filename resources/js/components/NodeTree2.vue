@@ -57,7 +57,6 @@ export default {
                 }
             },
         mounted() {
-                console.log("treviewingggggggggggg111")
                 var toggler = document.getElementsByClassName("caret");
                 var i;
 

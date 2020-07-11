@@ -32,6 +32,13 @@ Vue.component('autocomplete-component', require('./components/AutocompleteCompon
 
 
 
+
+
+Vue.component('productCard', require('./components/ProductCard.vue').default);
+
+
+
+
 const app = new Vue({
     el: '#app',
 });

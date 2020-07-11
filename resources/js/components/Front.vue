@@ -150,23 +150,23 @@
                 <div class="row mt-4">
 
                     <div class="col-lg-4 col-md-6 mb-4" v-for="product in products.data">
-                        <div class="card h-100">
-                            <a :href="'products/'+ product.id ">
-                               <!-- <img class="card-img-top" src="http://placehold.it/700x400" alt=""> -->
-                                 
-                            <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
-                           @error="$event.target.src='http://placehold.it/700x400'" height="200" width="200">
-                            
 
-                            </a>
-                            <div class="card-body">
-                                <h4 class="card-title">
-                                    <a href="#">{{ product.nombre }}</a>
-                                </h4>
-                               <!-- <h5>$ {{ product.price }}</h5>
-                                <p class="card-text">{{ product.description }}</p> -->
-                            </div>
-                        </div>
+                        <productCard :prod="product"></productCard>
+
+                        <!--  <div class="card h-100">
+                                <a :href="'products/'+ product.id ">
+                                    
+                                <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
+                            @error="$event.target.src='http://placehold.it/700x400'" height="200" width="200">
+                                
+
+                                </a>
+                                <div class="card-body">
+                                    <h4 class="card-title">
+                                        <a href="#">{{ product.nombre }}</a>
+                                    </h4>
+                                </div>
+                            </div>-->
                     </div>
                 </div>
 
@@ -228,6 +228,7 @@
 <script>
 import Tree2 from "./Tree2";
 import AutocompleteComponent from "./AutocompleteComponent";
+import productCard from "./ProductCard";
 
 
     export default {
@@ -422,7 +423,8 @@ import AutocompleteComponent from "./AutocompleteComponent";
         },
         components: {
             Tree2,
-            AutocompleteComponent
+            AutocompleteComponent,
+            productCard
         }, 
     }
 </script>

@@ -1,0 +1,128 @@
+<template>
+    <div class="card">
+        <div class="head">
+            <div class="likes">
+             <!--  <ion class="ion-md-heart"></ion>--->
+                <p>MARCA</p>
+            </div>
+            <div class="join"></div>
+
+        </div>
+        <div class="product">
+            <img :src="'images/'+ prod.img + '.jpg'" @error="$event.target.src='http://placehold.it/700x400'" height="190">   
+        </div>
+        <div class="text">
+            <div class="title">
+                <h3>{{prod.nombre}}</h3>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="action">
+                <button>Ver</button>
+            </div>
+            <div class="action">
+                <button>Editar</button>
+            </div>
+        </div>
+    </div>    
+
+
+</template>
+
+<style scoped>
+*{
+    padding: 0;
+    margin:0;
+    box-shadow: border-box;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+
+    border: none;
+    outline: none;
+    padding: 10px 15px;
+    color: #fff;
+    border-radius: 5px;
+
+}
+
+.container{
+    height: 100vh;
+    width: 100vw;
+    background: #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.container .card{
+    background: #fff;
+    display: inline-block;
+    padding: 30px;
+    width: 300px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+
+}
+
+.container .card .head .likes,
+.container .card .head{
+    display: flex;
+    widows: 100%;
+    justify-content: space-between;
+    /*-webkit-flex-direction: rox;
+    flex-direction: row;*/
+
+}
+.container .card .head .likes{
+    justify-content: flex-start;
+    color: #ccc;
+
+}
+
+.container .card .product{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0px;
+
+}
+
+.container .card .text{
+    text-align: center;
+}
+
+.container .card .text h3{
+    margin: 15px 0px;
+}
+
+.container .card .text p{
+    color: rgba(0,0,0,0.7)
+}
+
+.container .card .footer .action button{
+    background-color: #00e781;
+
+}
+.container .card .footer{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+</style>
+
+
+<script>
+export default {
+  name: "productCard",
+  props: {
+    prod: [Object, Array]
+  }
+};
+</script>
