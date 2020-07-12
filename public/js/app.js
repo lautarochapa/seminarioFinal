@@ -2731,6 +2731,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "productCard",
   props: {
@@ -7627,7 +7633,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n*[data-v-1a457ff8]{\n    padding: 0;\n    margin:0;\n    box-shadow: border-box;\n}\nbody[data-v-1a457ff8]{\n    font-family: Arial, Helvetica, sans-serif;\n}\nbutton[data-v-1a457ff8] {\n\n    border: none;\n    outline: none;\n    padding: 10px 15px;\n    color: #fff;\n    border-radius: 5px;\n}\n.container[data-v-1a457ff8]{\n    height: 100vh;\n    width: 100vw;\n    background: #ccc;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n.container .card[data-v-1a457ff8]{\n    background: #fff;\n    display: inline-block;\n    padding: 30px;\n    width: 300px;\n    border-radius: 15px;\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n}\n.container .card .head .likes[data-v-1a457ff8],\n.container .card .head[data-v-1a457ff8]{\n    display: flex;\n    widows: 100%;\n    justify-content: space-between;\n    /*-webkit-flex-direction: rox;\n    flex-direction: row;*/\n}\n.container .card .head .likes[data-v-1a457ff8]{\n    justify-content: flex-start;\n    color: #ccc;\n}\n.container .card .product[data-v-1a457ff8]{\n    display:flex;\n    justify-content: center;\n    align-items: center;\n    margin: 30px 0px;\n}\n.container .card .text[data-v-1a457ff8]{\n    text-align: center;\n}\n.container .card .text h3[data-v-1a457ff8]{\n    margin: 15px 0px;\n}\n.container .card .text p[data-v-1a457ff8]{\n    color: rgba(0,0,0,0.7)\n}\n.container .card .footer .action button[data-v-1a457ff8]{\n    background-color: #00e781;\n}\n.container .card .footer[data-v-1a457ff8]{\n    display: flex;\n    justify-content: space-between;\n    margin-top: 30px;\n}\n\n", ""]);
+exports.push([module.i, "\n*[data-v-1a457ff8]{\n    padding: 0;\n    margin:0;\n    box-shadow: border-box;\n}\nbody[data-v-1a457ff8]{\n    font-family: Arial, Helvetica, sans-serif;\n}\nbutton[data-v-1a457ff8] {\n\n    border: none;\n    outline: none;\n    padding: 10px 15px;\n    color: #fff;\n    border-radius: 5px;\n}\n.container[data-v-1a457ff8]{\n    height: 100vh;\n    width: 100vw;\n    background: #ccc;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n.container .card[data-v-1a457ff8]{\n    background: #fff;\n    display: inline-block;\n    padding: 8%;    \n    height: 100%;\n    /*width: 300px;*/\n    border-radius: 15px;\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n    padding-bottom: 28%;\n}\n.container .card .head .likes[data-v-1a457ff8],\n.container .card .head[data-v-1a457ff8]{\n    display: flex;\n    widows: 100%;\n    justify-content: space-between;\n    /*-webkit-flex-direction: rox;\n    flex-direction: row;*/\n}\n.container .card .head .likes[data-v-1a457ff8]{\n    justify-content: flex-start;\n    color: #ccc;\n}\n.container .card .product[data-v-1a457ff8]{\n    display:flex;\n    justify-content: center;\n    align-items: center;\n    margin: 30px 0px;\n}\n.container .card .text[data-v-1a457ff8]{\n    text-align: center;\n}\n.container .card .text h3[data-v-1a457ff8]{\n    margin: 15px 0px;\n}\n.container .card .text p[data-v-1a457ff8]{\n    color: rgba(0,0,0,0.7)\n}\n.container .card .footer .action button[data-v-1a457ff8]{\n    background-color: #04ac85;\n}\n.container .card .footer[data-v-1a457ff8]{\n    display: flex;\n        bottom: 5%;\n            position: absolute;\n    justify-content: space-between;\n    margin-top: 30px;\n}\n.container .card .footer .action[data-v-1a457ff8]{\n    padding: 5%;\n}\n", ""]);
 
 // exports
 
@@ -40179,9 +40185,11 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "text" }, [
-      _c("div", { staticClass: "title" }, [
-        _c("h3", [_vm._v(_vm._s(_vm.prod.nombre))])
-      ])
+      _c(
+        "div",
+        { staticClass: "title", staticStyle: { "font-size": "1.3rem" } },
+        [_c("h3", [_vm._v(_vm._s(_vm.prod.nombre))])]
+      )
     ]),
     _vm._v(" "),
     _vm._m(1)
