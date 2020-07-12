@@ -37,7 +37,9 @@ body {
 </style>
 
 <body>
-    <div id="app">
+    <div id="app" style="display: flex;
+    flex-direction: column;
+    min-height: 100vh;">
 
 
         <header>
@@ -130,14 +132,14 @@ body {
                     </div>
                 </div>
 
-        <main class="py-5">
+        <main class="py-5" style="flex: 1;">
             @yield('content')
         </main>
 
 
  
         <footer style="background-color: #24252a; color: #edf0f1; padding: 5px 15%;position: absolute; width: 100%; bottom: 0;">
-            <div class="row">
+            <div class="row" style="margin: 5% auto 5% auto">
                 <div class="col-md-4">
                     Imagenes de https://www.pexels.com/
                     ver atribuciones
@@ -145,10 +147,11 @@ body {
                     ver atribuciones
                 </div>
                 <div class="col-md-4">
-                    Desarrollado por:
-                    Lautaro Chiappero
+                    <img :src="'images/logo/1.svg'" alt="logo" height="40em">
                 </div>
                 <div class="col-md-4">
+                Desarrollado por:
+                    Lautaro Chiappero
                     Contacto:
                     mail: comidacocinacontrol@gmail.com
                 </div>
