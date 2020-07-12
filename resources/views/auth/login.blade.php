@@ -9,7 +9,7 @@
                 <div cass="row" style="text-align:center;">
                     <h1>Iniciar Sesion</h1>
                     <p>¿Nuevo en ComidaCocinaControl? 
-                                    <a class="btn btn-link" style="color:rgba(4,172,133, 1);" href="{{ route('#') }}">
+                                    <a class="btn btn-link" style="color:rgba(4,172,133, 1);" href="{{ route('register') }}">
                                         {{ __('Registrate') }}
                                     </a></p>
                 </div>
