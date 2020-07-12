@@ -136,9 +136,8 @@ body {
 
 
 
-        <div class="footer">
+        <div class="footerDiv">
             <div class="row">
-                <div> 
                 <div class="col-md-4">
                     Imagenes de https://www.pexels.com/
                     ver atribuciones
