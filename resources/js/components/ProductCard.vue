@@ -12,7 +12,7 @@
             <img :src="'images/'+ prod.img + '.jpg'" @error="$event.target.src='http://placehold.it/700x400'" height="190">   
         </div>
         <div class="text">
-            <div class="title">
+            <div class="title" style="font-size: 1.3rem;">
                 <h3>{{prod.nombre}}</h3>
             </div>
         </div>
@@ -63,10 +63,12 @@ button {
 .container .card{
     background: #fff;
     display: inline-block;
-    padding: 30px;
-    width: 300px;
+    padding: 8%;    
+    height: 100%;
+    /*width: 300px;*/
     border-radius: 15px;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    padding-bottom: 28%;
 
 }
 
@@ -106,15 +108,19 @@ button {
 }
 
 .container .card .footer .action button{
-    background-color: #00e781;
+    background-color: #04ac85;
 
 }
 .container .card .footer{
     display: flex;
+        bottom: 5%;
+            position: absolute;
     justify-content: space-between;
     margin-top: 30px;
 }
-
+.container .card .footer .action{
+    padding: 5%;
+}
 </style>
 
 

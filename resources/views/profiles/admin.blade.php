@@ -35,7 +35,7 @@
                     <a href="{{ url('/products') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Productos') }}</button></a>
                     <a href="{{ url('/utensils') }}" ><button type="button" class="btn btn-primary">{{ __('Panel Utensillos') }}</button></a>
 
-                    <main class="py-4">
+                    <main class="container">
                         @yield('content2')
                     </main>
 

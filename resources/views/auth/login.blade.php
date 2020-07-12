@@ -67,13 +67,13 @@
 
                     <div class="col-md-6 align-items-center align-self-center">
 
-                    <div class="form-group row">
+                    <div class="form-group row" style="margin: 5% auto 5% auto">
                             <div class="col-md-12" style="text-align:center;">
                               <a href="{{url('/redirect')}}" class="cta">Continuar con Google</a>
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div class="form-group row" style="margin: 5% auto 5% auto">
                             <div class="col-md-12" style="text-align:center;">
                               <a href="{{url('/redirect')}}" class="cta">Continuar con Facebook</a>
                             </div>
