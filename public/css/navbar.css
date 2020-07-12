@@ -12,6 +12,10 @@
     padding: 5px 15%;
     background-color: #24252a;
   }
+
+
+
+
   
   .logo {
     margin-right: auto;
@@ -133,15 +137,4 @@
     }
   }
   
-  /* Footer */
-  footer {
-    position: fixed;
-    padding: 5px 15%;
-    align-items: center;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    background-color: #24252a;
-    color: #edf0f1;
-    text-align: center;
-  }
+  

@@ -135,8 +135,8 @@ body {
         </main>
 
 
-
-        <footer>
+ 
+        <footer style="background-color: #24252a; color: #edf0f1; padding: 5px 15%;bottom: 0;">
             <div class="row">
                 <div class="col-md-4">
                     Imagenes de https://www.pexels.com/
