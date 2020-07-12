@@ -10,6 +10,7 @@
     <title>{{ config('app.name', 'CocinaComidaControl') }}</title>
 
     <!-- Scripts -->
+    <script src="{{ asset('js/loader.js') }}" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
     <!--<script src="{{ asset('js/navbar.js') }}" defer></script>-->
 
@@ -22,6 +23,7 @@
    <!-- <link href="{{ asset('css/treeview.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet"> 
     <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
+    <link href="{{ asset('css/loader.css') }}" rel="stylesheet"> 
 
 
    <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -36,7 +38,23 @@ body {
    }
 </style>
 
+
 <body>
+
+
+
+<div class="loader">
+    <!--<img src="loading.gif" alt="Loading..." />-->
+	<p id="texto"> Cargando... </p>
+	<video autoplay muted loop id="myVideo">
+		<source id="src" src="" type="video/mp4">
+	</video>
+	
+</div>
+
+
+
+
     <div id="app" style="display: flex;
     flex-direction: column;
     min-height: 100vh;">

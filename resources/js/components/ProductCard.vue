@@ -18,10 +18,10 @@
         </div>
         <div class="footer">
             <div class="action">
-                <button>Ver</button>
+                <button :href="'products/'+ product.id ">Ver</button>
             </div>
             <div class="action">
-                <button>Editar</button>
+                <button :href="'products/'+ product.id ">Editar</button>
             </div>
         </div>
     </div>    
@@ -91,7 +91,7 @@ button {
     display:flex;
     justify-content: center;
     align-items: center;
-    margin: 30px 0px;
+    margin: 15% 0px;
 
 }
 
