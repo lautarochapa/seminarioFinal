@@ -6,8 +6,8 @@
         <div class="col-md-12">
             <form method="POST" action="{{ route('login') }}">
                 @csrf
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="row grid-divider">
+                    <div class="col-md-6 align-items-center align-self-center">
 
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
@@ -58,7 +58,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 align-items-center align-self-center">
 
                         <div class="form-group">
                             <div class="col-md-8 col-md-offset-4">

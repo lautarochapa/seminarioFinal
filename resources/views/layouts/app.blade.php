@@ -21,6 +21,7 @@
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
    <!-- <link href="{{ asset('css/treeview.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet"> 
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
 
 
    <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
