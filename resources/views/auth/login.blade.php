@@ -6,6 +6,7 @@
         <div class="col-md-12">
             <form method="POST" action="{{ route('login') }}">
                 @csrf
+                <div class="row">
                     <div class="col-md-6">
 
                         <div class="form-group row">
@@ -65,7 +66,7 @@
                             </div>
                         </div>
                     </div>
-
+                </div>
             </form>
         </div>
     </div>
