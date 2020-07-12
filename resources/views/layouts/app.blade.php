@@ -136,7 +136,7 @@ body {
 
 
 
-        <div class="footerDiv">
+        <footer>
             <div class="row">
                 <div class="col-md-4">
                     Imagenes de https://www.pexels.com/
@@ -153,7 +153,7 @@ body {
                     mail: comidacocinacontrol@gmail.com
                 </div>
             </div>
-        </div>
+        </footer>
     </div>
 </body>
 </html>
