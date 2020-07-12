@@ -136,6 +136,8 @@
   /* Footer */
   .footer {
     position: fixed;
+    padding: 5px 15%;
+    align-items: center;
     left: 0;
     bottom: 0;
     width: 100%;

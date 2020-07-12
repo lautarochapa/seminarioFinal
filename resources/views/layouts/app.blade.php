@@ -22,7 +22,6 @@
    <!-- <link href="{{ asset('css/treeview.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet"> 
     <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet"> 
 
 
    <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -30,7 +29,7 @@
 </head>
 <style>
 body {
-    background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url('{{asset('images/background/1.jpg')}}');
+   /* background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url('{{asset('images/background/1.jpg')}}'); */
 
    /* background: url('{{asset('images/background/1.jpg')}}') no-repeat 0 50%;*/
     background-color: #cccccc;
@@ -139,6 +138,7 @@ body {
 
         <div class="footer">
             <div class="row">
+                <div> 
                 <div class="col-md-4">
                     Imagenes de https://www.pexels.com/
                     ver atribuciones
