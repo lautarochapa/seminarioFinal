@@ -133,4 +133,13 @@
     }
   }
   
-  
+  /* Footer */
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #24252a;
+    color: #edf0f1;
+    text-align: center;
+  }
