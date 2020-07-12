@@ -124,9 +124,9 @@
 
 
         <header>
-                    <a class="logo" href="{{ url('/') }}"><img :src="'images/logo/2.svg'" alt="logo" height="2em"></a>
+                    <a class="logo" href="{{ url('/') }}"><img :src="'images/logo/2.svg'" alt="logo" height="40em"></a>
                     
-                    <form action="#" method="GET" role="search" style="left: 35px;    max-width: 600px;padding: 8px 1px;    overflow: auto;    height: 56px;    position: relative;z-index: 910;">
+                    <form action="#" method="GET" role="search" style="left: 35px;    max-width: 600px;padding: 8px 1px; height: 56px;    position: relative;z-index: 910;">
                         <input type="text" style="padding: 7px 60px 9px 15px;background-color: #fff;z-index: 915;border: 0 rgba(0,0,0,.2);font-size: 16px; width: 100%;    margin: 0;   font-family: inherit;" aria-label="Ingresá lo que quieras encontrar" name="as_word" placeholder="Buscar productos, recetas y más…" maxlength="120" autofocus="" tabindex="2">
                         <button type="submit" style="cursor: pointer;height: 39px;width: 46px;right: 1px;z-index: 920;position: absolute; padding: 0;  background: 0 0; border: none;font-size: 22px;color: #666;line-height: 1em;" tabindex="3">
                             <div role="img" aria-label="Buscar" style="cursor: pointer;font-size: 22px;content: '\EA27';vertical-align: top; font-family: navigation;    color: #666;    line-height: 1em;"></div>
@@ -144,10 +144,10 @@
                             </ul>
                         </nav>
 
-                            <a class="cta" href="{{ route('login') }}">{{ __('Iniciar Sesion') }}</a>
-                        @if (Route::has('register'))
+                            <a class="cta" href="{{ route('login') }}">{{ __('Ingresar') }}</a>
+                      <!--  @if (Route::has('register'))
                             <a class="cta" href="{{ route('register') }}">{{ __('Registrarse') }}</a>
-                        @endif
+                        @endif -->
                     @else
                         <nav>
                             <ul class="nav__links">
