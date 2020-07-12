@@ -136,6 +136,39 @@ body {
         </main>
 
 
+
+    <div class="footer">
+        <div class="row">
+            <div class="col-md-4">
+                Imagenes de https://www.pexels.com/
+                ver atribuciones
+                Iconos de https://www.flaticon.es/
+                ver atribuciones
+            </div>
+            <div class="col-md-4">
+                Desarrollado por:
+                Lautaro Chiappero
+            </div>
+            <div class="col-md-4">
+                Contacto:
+                mail: comidacocinacontrol@gmail.com
+            </div>
+        </div>
+    </div>
+
+    <style>
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #24252a;
+  color: #edf0f1;
+  text-align: center;
+}
+</style>
+
+
         <p>Footer aca </p>
     </div>
 </body>
