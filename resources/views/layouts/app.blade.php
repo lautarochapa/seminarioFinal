@@ -30,7 +30,7 @@
 </head>
 <style>
 body {
-    background: url('{{asset('uploads/'.$ourService->imageOne)}}') no-repeat 0 50%;
+    background: url('{{asset('images/background/1.jpg')}}') no-repeat 0 50%;
     background-color: #cccccc;
    }
 </style>
