@@ -30,7 +30,9 @@
 </head>
 <style>
 body {
-    background: url('{{asset('images/background/1.jpg')}}') no-repeat 0 50%;
+    background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url('{{asset('images/background/1.jpg')}}');
+
+   /* background: url('{{asset('images/background/1.jpg')}}') no-repeat 0 50%;*/
     background-color: #cccccc;
    }
 </style>
