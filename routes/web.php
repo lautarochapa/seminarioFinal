@@ -122,3 +122,7 @@ Route::group(['middleware' => 'App\Http\Middleware\NutricionistaMiddleware'], fu
 
 
 
+
+Route::get('/vue/{vue_capture?}', function () {
+    return view('vue.index');
+   })->where('vue_capture', '[\/\w\.-]*');

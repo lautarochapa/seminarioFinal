@@ -147,6 +147,8 @@
         </nav>
 
         <main class="py-5">
+
+        <router-view></router-view>
             @yield('content')
         </main>
 
