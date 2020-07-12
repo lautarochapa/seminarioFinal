@@ -6,9 +6,12 @@
         <div class="col-md-12">
             <form method="POST" action="{{ route('login') }}">
                 @csrf
-                <div cass="row">
+                <div cass="row" style="text-align:center;">
                     <h1>Iniciar Sesion</h1>
-                    <p>¿Nuevo en ComidaCocinaControl? Registrate</p>
+                    <p>¿Nuevo en ComidaCocinaControl? 
+                                    <a class="btn btn-link" style="color:rgba(4,172,133, 1);" href="{{ route('#') }}">
+                                        {{ __('Registrate') }}
+                                    </a></p>
                 </div>
                 <div class="row grid-divider">
                     <div class="col-md-6 align-items-center align-self-center">
@@ -50,12 +53,12 @@
                         </div>
 
                         <div class="form-group row mb-0">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="cta">
                                     {{ __('Iniciar Sesion') }}
                                 </button>
 
                                 @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
+                                    <a class="btn btn-link" style="color:rgba(4,172,133, 1);" href="{{ route('password.request') }}">
                                         {{ __('¿Olvidaste tu contraseña?') }}
                                     </a>
                                 @endif
@@ -64,9 +67,15 @@
 
                     <div class="col-md-6 align-items-center align-self-center">
 
-                        <div class="form-group">
-                            <div class="col-md-8 col-md-offset-4">
-                              <a href="{{url('/redirect')}}" class="btn btn-primary">Login with Google</a>
+                    <div class="form-group row">
+                            <div class="col-md-12" style="text-align:center;">
+                              <a href="{{url('/redirect')}}" class="cta">Iniciar Sesion con Google</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-12" style="text-align:center;">
+                              <a href="{{url('/redirect')}}" class="cta">Iniciar Sesion con Facebook</a>
                             </div>
                         </div>
                     </div>

@@ -140,16 +140,16 @@ body {
  
         <footer style="background-color: #24252a; color: #edf0f1; padding: 5px 15%;position: absolute; width: 100%; bottom: 0;">
             <div class="row" style="margin: 5% auto 5% auto">
-                <div class="col-md-4">
+                <div class="col-md-4 align-self-center" style="text-align:center;">
                     Imagenes de https://www.pexels.com/
                     ver atribuciones
                     Iconos de https://www.flaticon.es/
                     ver atribuciones
                 </div>
-                <div class="col-md-4">
-                    <img :src="'images/logo/1.svg'" alt="logo" height="40em">
+                <div class="col-md-4 align-self-center" style="text-align:center;">
+                    <img :src="'images/logo/1.svg'" alt="logo" height="120em">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 align-self-center" style="text-align:center;">
                 Desarrollado por:
                     Lautaro Chiappero
                     Contacto:
