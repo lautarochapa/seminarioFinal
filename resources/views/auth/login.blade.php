@@ -69,13 +69,13 @@
 
                     <div class="form-group row">
                             <div class="col-md-12" style="text-align:center;">
-                              <a href="{{url('/redirect')}}" class="cta">Iniciar Sesion con Google</a>
+                              <a href="{{url('/redirect')}}" class="cta">Continuar con Google</a>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-md-12" style="text-align:center;">
-                              <a href="{{url('/redirect')}}" class="cta">Iniciar Sesion con Facebook</a>
+                              <a href="{{url('/redirect')}}" class="cta">Continuar con Facebook</a>
                             </div>
                         </div>
                     </div>

@@ -138,7 +138,7 @@ body {
 
 
  
-        <footer style="background-color: #24252a; color: #edf0f1; padding: 5px 15%;position: absolute; width: 100%; bottom: 0;">
+        <footer style="background-color: #24252a; color: #edf0f1; padding: 5px 15%;width: 100%; bottom: 0;">
             <div class="row" style="margin: 5% auto 5% auto">
                 <div class="col-md-4 align-self-center" style="text-align:center;">
                     Imagenes de https://www.pexels.com/

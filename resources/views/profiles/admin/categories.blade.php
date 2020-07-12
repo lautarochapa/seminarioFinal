@@ -4,7 +4,7 @@
 
 <!--<script src="{{ asset('js/categories.js') }}" defer></script>
 -->
-<div class="container">
+<div style="padding: 5px 15%;">
     <div class="row justify-content-center">
 
                    <p> Categorias</p>

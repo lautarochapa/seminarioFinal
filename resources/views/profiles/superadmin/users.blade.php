@@ -3,7 +3,7 @@
 @section('content2')
 
 
-<div class="container">
+<div style="padding: 5px 15%;">
     <div class="row justify-content-center">
 
                    <p> Usuarios</p>
