@@ -116,8 +116,14 @@
         </nav>
 
 -->
-        <nav>
-            <div>
+
+
+
+
+
+
+
+        <header>
                     <a class="logo" href="{{ url('/') }}"><img :src="'images/logo/2.svg'" alt="logo" height="2em"></a>
                     
                     <form action="#" method="GET" role="search" style="left: 35px;    max-width: 600px;padding: 8px 1px;    overflow: auto;    height: 56px;    position: relative;z-index: 910;">
@@ -131,15 +137,14 @@
 
                 <!-- <a class="cta" href="#">Contact</a> -->
                     @guest
-                       <!-- <nav>
+                        <nav>
                             <ul class="nav__links">
                                 <li><a href="#">Aplicacion</a></li>
                                 <li><a href="#">Proyecto</a></li>
                             </ul>
                         </nav>
--->
 
-                        <a class="cta" href="{{ route('login') }}">{{ __('Iniciar Sesion') }}</a>
+                            <a class="cta" href="{{ route('login') }}">{{ __('Iniciar Sesion') }}</a>
                         @if (Route::has('register'))
                             <a class="cta" href="{{ route('register') }}">{{ __('Registrarse') }}</a>
                         @endif
@@ -209,9 +214,6 @@
                         <a href="#">About</a>
                     </div>
                 </div>
-
-            </div>
-        </nav>
 
         <main class="py-5">
             @yield('content')
