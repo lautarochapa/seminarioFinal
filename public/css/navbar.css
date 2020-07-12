@@ -40,13 +40,13 @@
   }
   
   .nav__links li a:hover {
-    color: #0088a9;
+    color: #04ac85;
   }
   
   .cta {
     margin-left: 20px;
     padding: 9px 25px;
-    background-color: rgba(0, 136, 169, 1);
+    background-color: rgba(4,172,133, 1);
     border: none;
     border-radius: 50px;
     cursor: pointer;
@@ -54,8 +54,14 @@
   }
   
   .cta:hover {
-    background-color: rgba(0, 136, 169, 0.8);
+    background-color: rgba(4,172,133, 0.8);
   }
+
+  
+
+  
+
+
   
   /* Mobile Nav */
   
