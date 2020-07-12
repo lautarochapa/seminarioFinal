@@ -39931,7 +39931,10 @@ var render = function() {
               _vm._l(_vm.products.data, function(product) {
                 return _c(
                   "div",
-                  { staticClass: "col-lg-4 col-md-6 mb-4" },
+                  {
+                    staticClass: "col-lg-4 col-md-6 mb-4",
+                    staticStyle: { padding: "1%" }
+                  },
                   [_c("productCard", { attrs: { prod: product } })],
                   1
                 )
