@@ -76,7 +76,7 @@ button {
 .container .card:hover {
     background: rgba(4,172,133, 0.2);
 
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.6);
 }
 
 .container .card .head .likes,
@@ -101,12 +101,16 @@ button {
     /*margin: 15% 0px;*/
 
 }
+.container .card .product img{
+    mix-blend-mode: multiply;
+
+}
 
 .container .card .text{
     text-align: center;
 }
 
-.container .card .text h3{
+.container .card .text h2{
     margin: 15px 0px;
 }
 
@@ -134,6 +138,7 @@ button {
 
    /* padding: 5%; */
    transform: translateX(-150%);
+    transition: 0.5s;
 }
 
 .container .card:hover .footer .action{
@@ -141,6 +146,10 @@ button {
    /* padding: 5%; */
    transform: translateX(0%);
 }
+
+
+
+    
 
 </style>
 
