@@ -8,7 +8,7 @@
     }
     .grid-divider>[class*='col-']:nth-child(n+2):before {
         content: "";
-        border-left: 1px solid #DDD;
+        border-left: 1px solid #24252a;
         position: absolute;
         top: 0;
         bottom: 0;
@@ -16,4 +16,65 @@
     .col-padding {
         padding: 0 15px;
     }
+}
+
+
+/*Form */
+
+.login-form{
+    font-size: 16px;
+    width: 50%;
+    position: relative;
+    height: 50px;
+    overflow: hidden; 
+}
+
+.login-form input{
+    width: 100%;
+    height: 100%;
+    color: #24252a;
+    padding-top: 20px;
+    border: none;
+    outline: none;
+}
+
+.login-form label {
+    position: absolute;
+    bottom: 0px;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    border-bottom: 1px solid #24252a  
+}
+
+.login-form label::after {
+    content: "";
+    position: absolute;
+    left: 0px;
+    bottom: -1px;
+    height: 100%;
+    width: 100%;
+    border-bottom: 3px solid #04ac85;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.login-input-span{
+    position:absolute;
+    bottom:5px;
+    left:0px;
+    transition: all 0.3s ease;
+}
+
+
+.login-form input:focus + .login-input-label .login-input-span, 
+.login-form input:valid + .login-input-label .login-input-span{
+    transform: translateY(-150%);
+    font-size: 14px;
+    color: #04ac85;
+}
+.login-form input:focus + .login-input-label::after, 
+.login-form input:valid + .login-input-label::after{
+    transform: translateX(0%)
 }

@@ -16,24 +16,29 @@
                 <div class="row grid-divider">
                     <div class="col-md-6 align-items-center align-self-center">
 
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail') }}</label>
+                        <div class="login-form form-group row">
                             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
+                            <label for="email" class="login-input-label">
+                                <span class="login-input-span" >
+                                    {{ __('E-Mail') }}
+                                </span>
+                            </label>
+                            
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                         </div>
-
-
                        
 
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Contraseña') }}</label>
-
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                        <div class="login-form form-group row">
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                            <label for="password" class="login-input-label">
+                                <span class="login-input-span">
+                                    {{ __('Contraseña') }}
+                                </span>
+                            </label>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -41,6 +46,9 @@
                                     </span>
                                 @enderror
                         </div>
+
+
+
 
                         <div class="form-group row">
                                 <div class="form-check">
