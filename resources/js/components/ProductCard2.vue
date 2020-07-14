@@ -53,12 +53,13 @@
     transition: 0.5s ease-in-out;
     
 }
-/*
+
 .containerProd .card:hover:before{
+    clip-path: circle(300px at 30% 45%);
 
-    clip-path: circle(300px at 80% -20%);
+   /* clip-path: circle(300px at 80% -20%);*/
 
-}*/
+}
 
 /* marca de agua
 .containerProd .card:after{
