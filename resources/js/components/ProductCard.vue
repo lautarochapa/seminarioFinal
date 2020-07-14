@@ -13,8 +13,8 @@
         </div>
         <div class="text">
             <!---->
-            <div class="title" style="font-size: 1.3rem;" >
-                <h2 class="tituloProd">{{prod.nombre}}</h2>
+            <div class="title"  >
+                <h2 class="tituloProd" style="font-size: 1.3rem;">{{prod.nombre}}</h2>
             </div>
         </div>
         <div class="footer">

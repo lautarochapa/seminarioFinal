@@ -40525,15 +40525,13 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "text" }, [
-      _c(
-        "div",
-        { staticClass: "title", staticStyle: { "font-size": "1.3rem" } },
-        [
-          _c("h2", { staticClass: "tituloProd" }, [
-            _vm._v(_vm._s(_vm.prod.nombre))
-          ])
-        ]
-      )
+      _c("div", { staticClass: "title" }, [
+        _c(
+          "h2",
+          { staticClass: "tituloProd", staticStyle: { "font-size": "1.3rem" } },
+          [_vm._v(_vm._s(_vm.prod.nombre))]
+        )
+      ])
     ]),
     _vm._v(" "),
     _vm._m(1)
