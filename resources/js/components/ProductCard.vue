@@ -12,8 +12,8 @@
             <img :src="'images/'+ prod.img + '.jpg'" @error="$event.target.src='http://placehold.it/700x400'" height="190">   
         </div>
         <div class="text">
-            <!--style="font-size: 1.3rem;"-->
-            <div class="title" >
+            <!---->
+            <div class="title" style="font-size: 1.3rem;" >
                 <h2 class="tituloProd">{{prod.nombre}}</h2>
             </div>
         </div>
@@ -90,7 +90,7 @@ button {
     height: 100%;
     background: rgba(4,172,133, 0.1);
     clip-path: circle(150px at 80% -40%);
-    transition: 0.5s ease-in-out;
+    transition: 0.8s ease-in-out;
 }
 
 
