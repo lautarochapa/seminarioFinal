@@ -7,9 +7,9 @@
         <div class="contentBx">
                 <h2 style="font-size: 1.3rem;">{{prod.nombre}}</h2>
 
-                <div class="size">
+               <!-- <div class="size">
                     <h3>MARCA</h3>
-                </div>
+                </div> -->
                 <a href="'products/'+ prod.id " class="cta">Ver</a>
 
 
@@ -29,12 +29,13 @@
 
 .containerProd{
     position: relative;
+    height: 45vh;
 }
 
 .containerProd .card{
     position: relative;
-    width: 320px;
-    height: 450px;
+    /*width: 320px;*/
+    height: 100%;
     background: white;
     border-radius: 20px;
     overflow: hidden;
@@ -47,7 +48,7 @@
     left:0;
     width: 100%;
     height: 100%;
-    background: #04ac85;
+    background: rgba(4,172,133, 0.2); ;
     clip-path: circle(150px at 80% 20%);
     transition: 0.5s ease-in-out;
     
@@ -76,7 +77,7 @@
 .containerProd .card .imgBox{
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-10%);
     z-index: 99;
     width:100%;
     height: 220px;
@@ -92,17 +93,17 @@
 
 .containerProd .card .imgBx img{
     position: absolute;
-    top:50%;
-    left:50;
+    top:35%;
+    left:50%;
     transform: translate(-50%,-50%);
-    width:270px;
+    mix-blend-mode: multiply;
 }
 
 .containerProd .card .contentBx{
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 100px;
+    height: 35%;
     text-align: center;
     transition: 1s;
     z-index: 10;

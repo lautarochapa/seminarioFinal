@@ -27,11 +27,6 @@
 </template>
 
 <style scoped>
-*{
-    padding: 0;
-    margin:0;
-    box-shadow: border-box;
-}
 
 body{
     font-family: Arial, Helvetica, sans-serif;
