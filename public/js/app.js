@@ -2759,6 +2759,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "productCard",
   props: {
@@ -7848,7 +7870,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\nbody[data-v-1a457ff8]{\n    font-family: Arial, Helvetica, sans-serif;\n}\nbutton[data-v-1a457ff8] {\n\n    border: none;\n    outline: none;\n    padding: 10px 15px;\n    color: #fff;\n    border-radius: 5px;\n}\n.container[data-v-1a457ff8]{\n    height: 100vh;\n    width: 100vw;\n    background: #ccc;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n.container .card[data-v-1a457ff8]{\n    background: #fff;\n    display: inline-block;\n    padding: 8%;    \n    height: 100%;\n    /*width: 300px;*/\n    border-radius: 15px;\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n    padding-bottom: 28%;\n}\n.container .card .head .likes[data-v-1a457ff8],\n.container .card .head[data-v-1a457ff8]{\n    display: flex;\n    widows: 100%;\n    justify-content: space-between;\n    /*-webkit-flex-direction: rox;\n    flex-direction: row;*/\n}\n.container .card .head .likes[data-v-1a457ff8]{\n    justify-content: flex-start;\n    color: #ccc;\n}\n.container .card .product[data-v-1a457ff8]{\n    display:flex;\n    justify-content: center;\n    align-items: center;\n    /*margin: 15% 0px;*/\n}\n.container .card .text[data-v-1a457ff8]{\n    text-align: center;\n}\n.container .card .text h3[data-v-1a457ff8]{\n    margin: 15px 0px;\n}\n.container .card .text p[data-v-1a457ff8]{\n    color: rgba(0,0,0,0.7)\n}\n.container .card .footer .action button[data-v-1a457ff8]{\n    background-color: #04ac85;\n}\n.container .card .footer[data-v-1a457ff8]{\n    display: flex;\n    bottom: 5%;\n    position: absolute;\n    justify-content: space-between;\n    margin-top: 30px;\n}\n\n\n   /* \n.container .card .footer .action{\npadding: 5%; \n}\n*/\n", ""]);
+exports.push([module.i, "\nbody[data-v-1a457ff8]{\n    font-family: Arial, Helvetica, sans-serif;\n}\n.tituloProd[data-v-1a457ff8]{\n    font-weight: 600;\n    letter-spacing: 1px;\n    color: #24252a;\n}\nbutton[data-v-1a457ff8] {\n\n    border: none;\n    outline: none;\n    padding: 10px 15px;\n    color: #fff;\n    border-radius: 5px;\n}\n.container[data-v-1a457ff8]{\n    height: 100vh;\n    width: 100vw;\n    background: #ccc;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n.container .card[data-v-1a457ff8]{\n    background: #fff;\n    display: inline-block;\n    padding: 8%;    \n    height: 100%;\n    /*width: 300px;*/\n    border-radius: 15px;\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n    padding-bottom: 28%;\n    overflow: hidden;\n}\n.container .card[data-v-1a457ff8]:hover {\n    background: rgba(4,172,133, 0.2);\n\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.4);\n}\n.container .card .head .likes[data-v-1a457ff8],\n.container .card .head[data-v-1a457ff8]{\n    display: flex;\n    widows: 100%;\n    justify-content: space-between;\n    /*-webkit-flex-direction: rox;\n    flex-direction: row;*/\n}\n.container .card .head .likes[data-v-1a457ff8]{\n    justify-content: flex-start;\n    color: #ccc;\n}\n.container .card .product[data-v-1a457ff8]{\n    display:flex;\n    justify-content: center;\n    align-items: center;\n    /*margin: 15% 0px;*/\n}\n.container .card .text[data-v-1a457ff8]{\n    text-align: center;\n}\n.container .card .text h3[data-v-1a457ff8]{\n    margin: 15px 0px;\n}\n.container .card .text p[data-v-1a457ff8]{\n    color: rgba(0,0,0,0.7)\n}\n.container .card .footer .action button[data-v-1a457ff8]{\n    background-color: #04ac85;\n}\n.container .card .footer[data-v-1a457ff8]{\n    display: flex;\n    bottom: 5%;\n    position: absolute;\n    justify-content: space-between;\n    margin-top: 30px;\n}\n.container .card .footer .action[data-v-1a457ff8]{\n\n   /* padding: 5%; */\n   transform: translateX(-150%);\n}\n.container .card:hover .footer .action[data-v-1a457ff8]{\n\n   /* padding: 5%; */\n   transform: translateX(0%);\n}\n\n", ""]);
 
 // exports
 
@@ -7867,7 +7889,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.containerProd[data-v-68e269de]{\n    position: relative;\n    height: 50vh;\n}\n.containerProd .card[data-v-68e269de]{\n    position: relative;\n    /*width: 320px;*/\n    height: 100%; border-radius: 15px;\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n    background: #fff;\n    background: white;\n    border-radius: 20px;\n    overflow: hidden;\n}\n.containerProd .card[data-v-68e269de]:before{\n    content: '';\n    position: absolute;\n    top:0;\n    left:0;\n    width: 100%;\n    height: 100%;\n    background: rgba(4,172,133, 0.1); ;\n    clip-path: circle(150px at 80% 20%);\n    transition: 0.5s ease-in-out;\n}\n.containerProd .card[data-v-68e269de]:hover:before{\n    clip-path: circle(400px at 30% 45%);\n\n   /* clip-path: circle(300px at 80% -20%);*/\n}\n\n/* marca de agua\n.containerProd .card:after{\n    content: 'Nike';\n    position: absolute;\n    top: 30%;\n    left: -20%;\n    font-size:12em;\n    font-weight: 800;\n    font-style: italic;\n    color: rgba(255,255,255,0.04)\n\n}\n*/\n.containerProd .card .imgBox[data-v-68e269de]{\n    position: absolute;\n    top: 50%;\n    transform: translateY(-10%);\n    z-index: 99;\n    width:100%;\n    height: 220px;\n    transition: 0.5s;\n}\n.containerProd .card:hover .imgBx img[data-v-68e269de]{\n    /* hasta 25 no se va.. */\n    top: 30%;\n    transition-delay: 0.1s;\n  /*  transform: translateY(0%); */\n}\n.containerProd .card .imgBx img[data-v-68e269de]{\n    position: absolute;\n    top:35%;\n    left:50%;\n    transform: translate(-50%,-50%);\n    mix-blend-mode: multiply;\n    transition: 0.5s;\n}\n.containerProd .card .contentBx[data-v-68e269de]{\n    position: absolute;\n    bottom: 0;\n    width: 100%;\n    height: 35%;\n    text-align: center;\n    transition: 1s;\n    z-index: 10;\n}\n.containerProd .card:hover .contentBx[data-v-68e269de]{\n    transition-delay: 0.2s;\n    height: 210px;\n}\n.containerProd .card .contentBx h2[data-v-68e269de]{\n    position: relative;\n    font-weight: 600;\n    letter-spacing: 1px;\n    color:#24252a;\n    margin: 3%;\n}\n.containerProd .card .contentBx .size[data-v-68e269de]{\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    padding: 8px 20px;\n    transition: 0.5s;\n    opacity: 0;\n    visibility: hidden;\n}\n.containerProd .card:hover .contentBx .size[data-v-68e269de]{\n    transition-delay: 0.3s;\n    opacity: 1;\n    visibility: visible;\n}\n.containerProd .card .contetnBx .size h3[data-v-68e269de]{\n    color: #24252a;\n    font-weight: 300;\n    font-size: 14px;\n    text-transform: uppercase;\n    letter-spacing: 2px;\n    margin-right:10px;\n}\n.containerProd .card .contentBx a[data-v-68e269de]{\n    display: inline-block;\n    padding: 10px 20px;\n    margin-top: 10px;\n    font-weight: 600;\n    opacity: 0;\n    transform: translateY(50px);\n    transition: 0.5s\n}\n.containerProd .card:hover .contentBx a[data-v-68e269de]{\n    opacity: 1;\n    transform: translateY(0px);\n    transition-delay: 0.3s\n}\n\n\n\n\n", ""]);
+exports.push([module.i, "\n.containerProd[data-v-68e269de]{\n    position: relative;\n    height: 50vh;\n}\n.containerProd .card[data-v-68e269de]{\n    position: relative;\n    /*width: 320px;*/\n    height: 100%; border-radius: 15px;\n    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);\n    background: #fff;\n    background: white;\n    border-radius: 20px;\n    overflow: hidden;\n}\n.containerProd .card[data-v-68e269de]:before{\n    content: '';\n    position: absolute;\n    top:0;\n    left:0;\n    width: 100%;\n    height: 100%;\n    background: rgba(4,172,133, 0.1); \n    clip-path: circle(150px at 80% 20%);\n    transition: 0.5s ease-in-out;\n}\n.containerProd .card[data-v-68e269de]:hover:before{\n    clip-path: circle(400px at 30% 45%);\n\n   /* clip-path: circle(300px at 80% -20%);*/\n}\n\n/* marca de agua\n.containerProd .card:after{\n    content: 'Nike';\n    position: absolute;\n    top: 30%;\n    left: -20%;\n    font-size:12em;\n    font-weight: 800;\n    font-style: italic;\n    color: rgba(255,255,255,0.04)\n\n}\n*/\n.containerProd .card .imgBox[data-v-68e269de]{\n    position: absolute;\n    top: 50%;\n    transform: translateY(-10%);\n    z-index: 99;\n    width:100%;\n    height: 220px;\n    transition: 0.5s;\n}\n.containerProd .card:hover .imgBx img[data-v-68e269de]{\n    /* hasta 25 no se va.. */\n    top: 30%;\n    transition-delay: 0.1s;\n  /*  transform: translateY(0%); */\n}\n.containerProd .card .imgBx img[data-v-68e269de]{\n    position: absolute;\n    top:35%;\n    left:50%;\n    transform: translate(-50%,-50%);\n    mix-blend-mode: multiply;\n    transition: 0.5s;\n}\n.containerProd .card .contentBx[data-v-68e269de]{\n    position: absolute;\n    bottom: 0;\n    width: 100%;\n    height: 35%;\n    text-align: center;\n    transition: 1s;\n    z-index: 10;\n}\n.containerProd .card:hover .contentBx[data-v-68e269de]{\n    transition-delay: 0.2s;\n    height: 210px;\n}\n.containerProd .card .contentBx h2[data-v-68e269de]{\n    position: relative;\n    font-weight: 600;\n    letter-spacing: 1px;\n    color:#24252a;\n    margin: 3%;\n}\n.containerProd .card .contentBx .size[data-v-68e269de]{\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    padding: 8px 20px;\n    transition: 0.5s;\n    opacity: 0;\n    visibility: hidden;\n}\n.containerProd .card:hover .contentBx .size[data-v-68e269de]{\n    transition-delay: 0.3s;\n    opacity: 1;\n    visibility: visible;\n}\n.containerProd .card .contetnBx .size h3[data-v-68e269de]{\n    color: #24252a;\n    font-weight: 300;\n    font-size: 14px;\n    text-transform: uppercase;\n    letter-spacing: 2px;\n    margin-right:10px;\n}\n.containerProd .card .contentBx a[data-v-68e269de]{\n    display: inline-block;\n    padding: 10px 20px;\n    margin-top: 10px;\n    font-weight: 600;\n    opacity: 0;\n    transform: translateY(50px);\n    transition: 0.5s\n}\n.containerProd .card:hover .contentBx a[data-v-68e269de]{\n    opacity: 1;\n    transform: translateY(0px);\n    transition-delay: 0.3s\n}\n\n\n\n\n", ""]);
 
 // exports
 
@@ -40466,11 +40488,11 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "text" }, [
-      _c(
-        "div",
-        { staticClass: "title", staticStyle: { "font-size": "1.3rem" } },
-        [_c("h3", [_vm._v(_vm._s(_vm.prod.nombre))])]
-      )
+      _c("div", { staticClass: "title" }, [
+        _c("h2", { staticClass: "tituloProd" }, [
+          _vm._v(_vm._s(_vm.prod.nombre))
+        ])
+      ])
     ]),
     _vm._v(" "),
     _vm._m(1)

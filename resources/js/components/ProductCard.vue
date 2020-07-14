@@ -12,8 +12,9 @@
             <img :src="'images/'+ prod.img + '.jpg'" @error="$event.target.src='http://placehold.it/700x400'" height="190">   
         </div>
         <div class="text">
-            <div class="title" style="font-size: 1.3rem;">
-                <h3>{{prod.nombre}}</h3>
+            <!--style="font-size: 1.3rem;"-->
+            <div class="title" >
+                <h2 class="tituloProd">{{prod.nombre}}</h2>
             </div>
         </div>
         <div class="footer">
@@ -30,6 +31,14 @@
 
 body{
     font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.tituloProd{
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #24252a;
+
 }
 
 button {
@@ -61,7 +70,13 @@ button {
     border-radius: 15px;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
     padding-bottom: 28%;
+    overflow: hidden;
+}
 
+.container .card:hover {
+    background: rgba(4,172,133, 0.2);
+
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
 }
 
 .container .card .head .likes,
@@ -115,11 +130,18 @@ button {
 }
 
 
-   /* 
 .container .card .footer .action{
-padding: 5%; 
+
+   /* padding: 5%; */
+   transform: translateX(-150%);
 }
-*/
+
+.container .card:hover .footer .action{
+
+   /* padding: 5%; */
+   transform: translateX(0%);
+}
+
 </style>
 
 
