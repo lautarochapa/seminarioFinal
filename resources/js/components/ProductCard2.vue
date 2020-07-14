@@ -10,10 +10,7 @@
                <!-- <div class="size">
                     <h3>MARCA</h3>
                 </div> -->
-                <a href="'products/'+ prod.id " class="cta">Ver</a>
-
-
-
+                <a :href="'products/'+ prod.id " class="cta">Ver</a>
 
         </div>
 
@@ -29,13 +26,15 @@
 
 .containerProd{
     position: relative;
-    height: 45vh;
+    height: 50vh;
 }
 
 .containerProd .card{
     position: relative;
     /*width: 320px;*/
-    height: 100%;
+    height: 100%; border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    background: #fff;
     background: white;
     border-radius: 20px;
     overflow: hidden;
@@ -55,7 +54,7 @@
 }
 
 .containerProd .card:hover:before{
-    clip-path: circle(300px at 30% 45%);
+    clip-path: circle(400px at 30% 45%);
 
    /* clip-path: circle(300px at 80% -20%);*/
 
@@ -121,6 +120,7 @@
     font-weight: 600;
     letter-spacing: 1px;
     color:#24252a;
+    margin: 3%;
 }
 
 .containerProd .card .contentBx .size{
