@@ -40197,13 +40197,13 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "footer" }, [
       _c("div", { staticClass: "action" }, [
-        _c("button", { attrs: { href: "products/" + _vm.product.id } }, [
+        _c("button", { attrs: { href: "products/" + _vm.prod.id } }, [
           _vm._v("Ver")
         ])
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "action" }, [
-        _c("button", { attrs: { href: "products/" + _vm.product.id } }, [
+        _c("button", { attrs: { href: "products/" + _vm.prod.id } }, [
           _vm._v("Editar")
         ])
       ])

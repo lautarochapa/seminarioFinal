@@ -28,7 +28,7 @@
 
 
                             
-                        @error('email')
+                                @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -46,7 +46,7 @@
 
 
 
-                        @error('password')
+                                @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -63,18 +63,20 @@
                                         {{ __('Recordarme') }}
                                     </label>
                                 </div>
-                        </div>
 
-                        <div class="form-group row mb-0">
-                                <button type="submit" class="cta">
-                                    {{ __('Iniciar Sesion') }}
-                                </button>
+
 
                                 @if (Route::has('password.request'))
                                     <a class="btn btn-link" style="color:rgba(4,172,133, 1);" href="{{ route('password.request') }}">
                                         {{ __('¿Olvidaste tu contraseña?') }}
                                     </a>
                                 @endif
+                        </div>
+
+                        <div class="form-group row mb-0">
+                                <button type="submit" class="cta">
+                                    {{ __('Iniciar Sesion') }}
+                                </button>
                         </div>
                     </div>
 
