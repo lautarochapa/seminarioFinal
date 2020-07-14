@@ -86,9 +86,9 @@
 
 }
 
-.containerProd .card:hover .imgBx{
+.containerProd .card:hover .imgBx img{
     top: 25%;
-    transform: translateY(0%);
+  /*  transform: translateY(0%); */
 }
 
 .containerProd .card .imgBx img{
