@@ -87,7 +87,7 @@
 }
 
 .containerProd .card:hover .imgBx{
-    top: 0%;
+    top: 25%;
     transform: translateY(0%);
 }
 
@@ -151,12 +151,8 @@
 .containerProd .card .contentBx a{
     display: inline-block;
     padding: 10px 20px;
-    background: #04ac85;
-    border-radius: 4px;
     margin-top: 10px;
-    text-decoration: none;
     font-weight: 600;
-    color: #cccccc70;
     opacity: 0;
     transform: translateY(50px);
     transition: 0.5s
@@ -164,7 +160,7 @@
 .containerProd .card:hover .contentBx a{
     opacity: 1;
     transform: translateY(0px);
-    transition-delay: 0.5s
+    transition-delay: 0.3s
 }
 
 

@@ -83,7 +83,7 @@ button {
     display:flex;
     justify-content: center;
     align-items: center;
-    margin: 15% 0px;
+    /*margin: 15% 0px;*/
 
 }
 
@@ -105,14 +105,21 @@ button {
 }
 .container .card .footer{
     display: flex;
-        bottom: 5%;
-            position: absolute;
+    bottom: 5%;
+    position: absolute;
     justify-content: space-between;
     margin-top: 30px;
+
+
+
 }
+
+
+   /* 
 .container .card .footer .action{
-    padding: 5%;
+padding: 5%; 
 }
+*/
 </style>
 
 
