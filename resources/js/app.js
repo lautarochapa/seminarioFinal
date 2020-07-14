@@ -26,6 +26,7 @@ Vue.component('tree2', require('./components/Tree2.vue').default);
 Vue.component('autocomplete-component', require('./components/AutocompleteComponent.vue').default);
 
 Vue.component('productCard', require('./components/ProductCard.vue').default);
+Vue.component('productCard2', require('./components/ProductCard2.vue').default);
 
 
 const app = new Vue({

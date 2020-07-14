@@ -168,6 +168,26 @@
                                 </div>
                             </div>-->
                     </div>
+
+                    <div class="col-lg-4 col-md-6 mb-4" style="padding: 1%;" v-for="product in products.data">
+
+                        <productCard2 :prod="product"></productCard2>
+
+                        <!--  <div class="card h-100">
+                                <a :href="'products/'+ product.id ">
+                                    
+                                <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
+                            @error="$event.target.src='http://placehold.it/700x400'" height="200" width="200">
+                                
+
+                                </a>
+                                <div class="card-body">
+                                    <h4 class="card-title">
+                                        <a href="#">{{ product.nombre }}</a>
+                                    </h4>
+                                </div>
+                            </div>-->
+                    </div>
                 </div>
 
 
@@ -229,6 +249,7 @@
 import Tree2 from "./Tree2";
 import AutocompleteComponent from "./AutocompleteComponent";
 import productCard from "./ProductCard";
+import productCard2 from "./ProductCard2";
 
 
     export default {
@@ -424,7 +445,8 @@ import productCard from "./ProductCard";
         components: {
             Tree2,
             AutocompleteComponent,
-            productCard
+            productCard,
+            productCard2
         }, 
     }
 </script>

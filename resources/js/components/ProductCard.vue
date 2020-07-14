@@ -18,10 +18,7 @@
         </div>
         <div class="footer">
             <div class="action">
-                <button :href="'products/'+ prod.id ">Ver</button>
-            </div>
-            <div class="action">
-                <button :href="'products/'+ prod.id ">Editar</button>
+                <a href="'products/'+ prod.id " class="cta">Ver</a>
             </div>
         </div>
     </div>    
