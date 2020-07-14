@@ -13,7 +13,7 @@
     width: 100%;
     height: 100%;
     color: #24252a;
-    padding-top: 20px;
+    padding-top: 8%;
     border: none;
     outline: none;
 }
@@ -25,7 +25,7 @@
     height: 100%;
     width: 100%;
     pointer-events: none;
-    border-bottom: 1px solid #24252a  
+    border-bottom: 1px solid #24252a;
     background-color: #cccccc70;
 }
 
@@ -55,6 +55,8 @@
     font-size: 14px;
     color: #04ac85;
 }
+
+
 .login-form input:focus + .login-input-label::after, 
 .login-form input:valid + .login-input-label::after{
     transform: translateX(0%)

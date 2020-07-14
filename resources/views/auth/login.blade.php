@@ -18,19 +18,21 @@
                     <div class="col-md-6 align-items-center align-self-center">
 
                         <div class="login-form form-group row">
-                            <input id="email" type="text" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                             <label for="email" class="login-input-label">
                                 <span class="login-input-span" >
                                     {{ __('E-Mail') }}
                                 </span>
                             </label>
+                        </div>
+
+
                             
-                                @error('email')
+                        @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                        </div>
                        
 
                         <div class="login-form form-group row">
@@ -40,13 +42,15 @@
                                     {{ __('Contraseña') }}
                                 </span>
                             </label>
+                        </div>
 
-                                @error('password')
+
+
+                        @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                        </div>
 
 
 
