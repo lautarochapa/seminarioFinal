@@ -48,17 +48,17 @@
     left:0;
     width: 100%;
     height: 100%;
-    background: rgba(4,172,133, 0.2); ;
+    background: rgba(4,172,133, 0.1); ;
     clip-path: circle(150px at 80% 20%);
     transition: 0.5s ease-in-out;
     
 }
-
+/*
 .containerProd .card:hover:before{
 
     clip-path: circle(300px at 80% -20%);
 
-}
+}*/
 
 /* marca de agua
 .containerProd .card:after{
