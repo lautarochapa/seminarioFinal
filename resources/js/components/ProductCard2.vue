@@ -87,7 +87,9 @@
 }
 
 .containerProd .card:hover .imgBx img{
-    top: 25%;
+    /* hasta 25 no se va.. */
+    top: 30%;
+    transition-delay: 0.1s;
   /*  transform: translateY(0%); */
 }
 
@@ -97,6 +99,7 @@
     left:50%;
     transform: translate(-50%,-50%);
     mix-blend-mode: multiply;
+    transition: 0.5s;
 }
 
 .containerProd .card .contentBx{
@@ -111,7 +114,7 @@
 
 
 .containerProd .card:hover .contentBx{
-
+    transition-delay: 0.2s;
     height: 210px;
 }
 
