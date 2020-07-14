@@ -3,9 +3,9 @@
 
 .login-form{
     font-size: 16px;
-    width: 50%;
+    width: 100%;
     position: relative;
-    height: 50px;
+    height: 25%;
     overflow: hidden; 
 }
 
@@ -20,12 +20,13 @@
 
 .login-form label {
     position: absolute;
-    bottom: 0px;
+   /* bottom: 0px;*/
     left: 0%;
     height: 100%;
     width: 100%;
     pointer-events: none;
     border-bottom: 1px solid #24252a  
+    background-color: #cccccc70;
 }
 
 .login-form label::after {
