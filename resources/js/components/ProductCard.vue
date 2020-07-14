@@ -35,7 +35,7 @@ body{
 
 
 .tituloProd{
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 1px;
     color: #24252a;
 
@@ -74,8 +74,8 @@ button {
 }
 
 .container .card:hover {
-    background: rgba(4,172,133, 0.2);
-
+/*    background: rgba(4,172,133, 0.2);
+*/
     box-shadow: 2px 2px 10px rgba(0,0,0,0.6);
 }
 
