@@ -22,7 +22,7 @@
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
    <!-- <link href="{{ asset('css/treeview.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet"> 
-    <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
+    
     <link href="{{ asset('css/loader.css') }}" rel="stylesheet"> 
 
 
