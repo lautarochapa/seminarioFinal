@@ -93,6 +93,10 @@ button {
     color: #ccc;
 
 }
+.container .card:hover .head .likes{
+    color: #24252a;
+
+}
 
 .container .card .product{
     display:flex;
