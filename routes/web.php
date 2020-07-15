@@ -18,6 +18,12 @@ Route::get('/', function () {
 });
 
 
+
+/* Implementacion Pipelines */
+
+Route::get('/productos_index','ProductController@index');
+
+
 //Getters
 
 Route::get('/categorias','CategoryController@getAll');

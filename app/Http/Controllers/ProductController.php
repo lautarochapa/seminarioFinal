@@ -73,4 +73,18 @@ class ProductController extends Controller
 
 
 
+
+/*  16/07 implementacion de pipelines */
+
+Public function index(){
+  $products = roduct::all();
+
+  return view('products.index', compact('products'));
+}
+
+
+
+
+
+
 }
