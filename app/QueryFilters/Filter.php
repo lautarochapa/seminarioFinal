@@ -1,6 +1,6 @@
 <?php
 
-namespace App\QueryFilter;
+namespace App\QueryFilters;
 
 abstract class Filter
 {
