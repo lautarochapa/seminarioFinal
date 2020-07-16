@@ -8,7 +8,7 @@ class Supply{
 
     public function handle($request, Closure $next){
 
-        if(! $request()->has('supply')){
+        if(! request()->has('supply')){
             return $next($request);
         }
         $builder = $next($request);
