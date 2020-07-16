@@ -9,7 +9,7 @@ class Supply extends Filter
 {
 
     protected function applyFilter($builder){
-        return $builder->where('supply_id', $this->filterName()); 
+        return $builder->where('supply_id', request($this->filterName())); 
     }
 
 }
