@@ -1,6 +1,7 @@
 <?php
 
 namespace App\QueryFilters;
+use App\QueryFilters\Filter;
 
 use Closure;
 
