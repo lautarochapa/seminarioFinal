@@ -2,6 +2,7 @@
 
 namespace App\QueryFilters;
 
+use Closure;
 abstract class Filter
 {
 
