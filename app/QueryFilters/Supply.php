@@ -4,18 +4,11 @@ namespace App\QueryFilters;
 
 use Closure;
 
-class Supply{
+class Supply extends Filter
+{
 
-    public function handle($request, Closure $next){
-
-        if(! request()->has('supply')){
-            return $next($request);
-        }
-        $builder = $next($request);
-
-        return $builder->where('supply_id', request('supply')); 
-        
-        
+    protected function applyFilter($builder){
+        return $builder->where('supply_id', $this->filterName()); 
     }
 
 }

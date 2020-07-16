@@ -4,18 +4,11 @@ namespace App\QueryFilters;
 
 use Closure;
 
-class Sort{
+class Sort extends Filter
+{
 
-    public function handle($request, Closure $next){
-
-        if(! request()->has('sort')){
-            return $next($request);
-        }
-        $builder = $next($request);
-
-        return $builder->orderBy('nombre', request('sort')); 
-        
-        
+    protected function applyFilter($builder){
+        return $builder->orderBy('nombre', request($this->filterName())); 
     }
 
 }
