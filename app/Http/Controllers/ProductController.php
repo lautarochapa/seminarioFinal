@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use Symfony\Component\HttpFoundation\Response;
 
+
+use Illuminate\Pipeline\Pipeline;
+
 class ProductController extends Controller
 {
 
@@ -77,7 +80,17 @@ class ProductController extends Controller
 /*  16/07 implementacion de pipelines */
 
 Public function index(){
-  $products = Product::all();
+
+  $products = app(Pipeline::class)
+    ->send(Product::query())
+    ->through([
+      \App\QueryFilters\Supply::class,
+      \App\QueryFilters\Sort::class,
+    ])
+    ->thenReturn()
+    ->get();
+
+
 
   return view('products.index', compact('products'));
 }
