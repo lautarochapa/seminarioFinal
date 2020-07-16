@@ -3,6 +3,8 @@
 namespace App\QueryFilters;
 
 use Closure;
+use Illuminate\Support;
+
 abstract class Filter
 {
 
