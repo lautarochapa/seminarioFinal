@@ -495,6 +495,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
     );
 
     public static $classMap = array (
+        'App\\Address' => __DIR__ . '/../..' . '/app/Address.php',
         'App\\Agenda' => __DIR__ . '/../..' . '/app/Agenda.php',
         'App\\Brand' => __DIR__ . '/../..' . '/app/Brand.php',
         'App\\Category' => __DIR__ . '/../..' . '/app/Category.php',
@@ -519,6 +520,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'App\\Http\\Controllers\\GroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/GroupController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\LiistController' => __DIR__ . '/../..' . '/app/Http/Controllers/LiistController.php',
+        'App\\Http\\Controllers\\MarketController' => __DIR__ . '/../..' . '/app/Http/Controllers/MarketController.php',
         'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\PropertyController' => __DIR__ . '/../..' . '/app/Http/Controllers/PropertyController.php',
@@ -544,6 +546,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Liist' => __DIR__ . '/../..' . '/app/Liist.php',
+        'App\\Market' => __DIR__ . '/../..' . '/app/Market.php',
         'App\\Nutritionist' => __DIR__ . '/../..' . '/app/Nutritionist.php',
         'App\\Product' => __DIR__ . '/../..' . '/app/Product.php',
         'App\\ProductRecord' => __DIR__ . '/../..' . '/app/ProductRecord.php',
@@ -554,6 +557,10 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\Providers\\SocialGoogleAccountService' => __DIR__ . '/../..' . '/app/Providers/SocialGoogleAccountService.php',
+        'App\\QueryFilters\\Filter' => __DIR__ . '/../..' . '/app/QueryFilters/Filter.php',
+        'App\\QueryFilters\\Sort' => __DIR__ . '/../..' . '/app/QueryFilters/Sort.php',
+        'App\\QueryFilters\\Supply' => __DIR__ . '/../..' . '/app/QueryFilters/Supply.php',
         'App\\Recipe' => __DIR__ . '/../..' . '/app/Recipe.php',
         'App\\RecipeRecord' => __DIR__ . '/../..' . '/app/RecipeRecord.php',
         'App\\SocialGoogleAccount' => __DIR__ . '/../..' . '/app/SocialGoogleAccount.php',
@@ -4902,6 +4909,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
         'UserSeeder' => __DIR__ . '/../..' . '/database/seeds/UserSeeder.php',
         'UtensilSeeder' => __DIR__ . '/../..' . '/database/seeds/UtensilSeeder.php',
+        'UtensilsSeeder' => __DIR__ . '/../..' . '/database/seeds/UtensilsSeeder.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'Webmozart\\Assert\\Mixin' => __DIR__ . '/..' . '/webmozart/assert/src/Mixin.php',

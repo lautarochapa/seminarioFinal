@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Address' => $baseDir . '/app/Address.php',
     'App\\Agenda' => $baseDir . '/app/Agenda.php',
     'App\\Brand' => $baseDir . '/app/Brand.php',
     'App\\Category' => $baseDir . '/app/Category.php',
@@ -30,6 +31,7 @@ return array(
     'App\\Http\\Controllers\\GroupController' => $baseDir . '/app/Http/Controllers/GroupController.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Http\\Controllers\\LiistController' => $baseDir . '/app/Http/Controllers/LiistController.php',
+    'App\\Http\\Controllers\\MarketController' => $baseDir . '/app/Http/Controllers/MarketController.php',
     'App\\Http\\Controllers\\ProductController' => $baseDir . '/app/Http/Controllers/ProductController.php',
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',
     'App\\Http\\Controllers\\PropertyController' => $baseDir . '/app/Http/Controllers/PropertyController.php',
@@ -55,6 +57,7 @@ return array(
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Liist' => $baseDir . '/app/Liist.php',
+    'App\\Market' => $baseDir . '/app/Market.php',
     'App\\Nutritionist' => $baseDir . '/app/Nutritionist.php',
     'App\\Product' => $baseDir . '/app/Product.php',
     'App\\ProductRecord' => $baseDir . '/app/ProductRecord.php',
@@ -65,6 +68,10 @@ return array(
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',
     'App\\Providers\\EventServiceProvider' => $baseDir . '/app/Providers/EventServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
+    'App\\Providers\\SocialGoogleAccountService' => $baseDir . '/app/Providers/SocialGoogleAccountService.php',
+    'App\\QueryFilters\\Filter' => $baseDir . '/app/QueryFilters/Filter.php',
+    'App\\QueryFilters\\Sort' => $baseDir . '/app/QueryFilters/Sort.php',
+    'App\\QueryFilters\\Supply' => $baseDir . '/app/QueryFilters/Supply.php',
     'App\\Recipe' => $baseDir . '/app/Recipe.php',
     'App\\RecipeRecord' => $baseDir . '/app/RecipeRecord.php',
     'App\\SocialGoogleAccount' => $baseDir . '/app/SocialGoogleAccount.php',
@@ -4413,6 +4420,7 @@ return array(
     'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => $vendorDir . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
     'UserSeeder' => $baseDir . '/database/seeds/UserSeeder.php',
     'UtensilSeeder' => $baseDir . '/database/seeds/UtensilSeeder.php',
+    'UtensilsSeeder' => $baseDir . '/database/seeds/UtensilsSeeder.php',
     'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     'Webmozart\\Assert\\Assert' => $vendorDir . '/webmozart/assert/src/Assert.php',
     'Webmozart\\Assert\\Mixin' => $vendorDir . '/webmozart/assert/src/Mixin.php',

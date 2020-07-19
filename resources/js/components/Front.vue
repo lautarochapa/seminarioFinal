@@ -169,25 +169,6 @@
                             </div>-->
                     </div>
 
-                    <div class="col-lg-4 col-md-6 mb-4" style="padding: 1%;" v-for="product in products.data">
-
-                        <productCard2 :prod="product"></productCard2>
-
-                        <!--  <div class="card h-100">
-                                <a :href="'products/'+ product.id ">
-                                    
-                                <img :src="'images/'+ product.img + '.jpg'" class="img-responsive" 
-                            @error="$event.target.src='http://placehold.it/700x400'" height="200" width="200">
-                                
-
-                                </a>
-                                <div class="card-body">
-                                    <h4 class="card-title">
-                                        <a href="#">{{ product.nombre }}</a>
-                                    </h4>
-                                </div>
-                            </div>-->
-                    </div>
                 </div>
 
 

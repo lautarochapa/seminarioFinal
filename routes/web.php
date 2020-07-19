@@ -18,6 +18,9 @@ Route::get('/', function () {
 });
 
 
+Route::get('/map','AddressController@index');
+
+
 
 /* Implementacion Pipelines */
 
