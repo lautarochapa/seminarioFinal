@@ -18,7 +18,8 @@ Route::get('/', function () {
 });
 
 
-Route::get('/map','AddressController@index');
+Route::get('/map2','AddressController@index');
+Route::get('/map', function() { return view('map'); });
 
 
 
