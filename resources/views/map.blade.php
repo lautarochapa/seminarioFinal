@@ -12,7 +12,7 @@
 @section('content')
 <div>
 
-    <<div id="mapid" height="180px"></div>
+    <div id="mapid" height="180px"></div>
 </div>
 
 @endsection
