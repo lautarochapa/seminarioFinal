@@ -160,7 +160,7 @@ body {
             <div class="row" style="margin: 5% auto 5% auto">
                 <div class="col-md-4 align-self-center" style="text-align:center;">
                     Imagenes de https://www.pexels.com/
-                    ver atribuciones
+                    <br>
                     Iconos de https://www.flaticon.es/
                     ver atribuciones
                 </div>
