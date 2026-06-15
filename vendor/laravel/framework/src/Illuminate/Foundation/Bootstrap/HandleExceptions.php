@@ -38,7 +38,7 @@ class HandleExceptions
 
         $this->app = $app;
 
-        error_reporting(-1);
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
         set_error_handler([$this, 'handleError']);
 
