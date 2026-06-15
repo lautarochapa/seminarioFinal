@@ -170,4 +170,19 @@ class Product extends Model
     {
         return $this->hasMany(SupermarketProduct::class);
     }
+
+    public function scrapedCandidates()
+    {
+        return $this->hasMany(ScrapedProductCandidate::class, 'suggested_product_id');
+    }
+
+    public function matchCandidates()
+    {
+        return $this->hasMany(ProductMatchCandidate::class);
+    }
+
+    public function priceRefreshRequests()
+    {
+        return $this->hasMany(PriceRefreshRequest::class);
+    }
 }

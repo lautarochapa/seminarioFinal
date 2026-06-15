@@ -208,6 +208,21 @@ class User extends Authenticatable
         return $this->hasMany(ProductReport::class, 'resolved_by');
     }
 
+    public function scrapingJobs()
+    {
+        return $this->hasMany(ScrapingJob::class, 'requested_by');
+    }
+
+    public function reviewedScrapedProductCandidates()
+    {
+        return $this->hasMany(ScrapedProductCandidate::class, 'reviewed_by');
+    }
+
+    public function priceRefreshRequests()
+    {
+        return $this->hasMany(PriceRefreshRequest::class);
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();

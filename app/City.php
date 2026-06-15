@@ -29,4 +29,9 @@ class City extends Model
     {
         return $this->hasMany(FamilyGroup::class);
     }
+
+    public function scrapingSources()
+    {
+        return $this->hasMany(ScrapingSource::class);
+    }
 }
