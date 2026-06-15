@@ -131,6 +131,66 @@ class User extends Authenticatable
         return $this->hasMany(FamilyGroupInvitation::class, 'invited_user_id');
     }
 
+    public function userProfile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function bodyMeasurements()
+    {
+        return $this->hasMany(BodyMeasurement::class);
+    }
+
+    public function objectives()
+    {
+        return $this->belongsToMany(Objective::class, 'user_objectives')
+            ->withPivot(['priority', 'target_value', 'target_unit', 'target_date', 'is_active', 'notes'])
+            ->withTimestamps();
+    }
+
+    public function userObjectives()
+    {
+        return $this->hasMany(UserObjective::class);
+    }
+
+    public function dietaryRestrictions()
+    {
+        return $this->belongsToMany(DietaryRestriction::class, 'user_dietary_restrictions')
+            ->withPivot(['notes', 'created_at']);
+    }
+
+    public function healthConditions()
+    {
+        return $this->belongsToMany(HealthCondition::class, 'user_health_conditions')
+            ->withPivot(['notes', 'created_at']);
+    }
+
+    public function allergies()
+    {
+        return $this->belongsToMany(Allergy::class, 'user_allergies')
+            ->withPivot(['severity', 'notes', 'created_at']);
+    }
+
+    public function nutritionTarget()
+    {
+        return $this->hasOne(UserNutritionTarget::class);
+    }
+
+    public function prioritySetting()
+    {
+        return $this->hasOne(UserPrioritySetting::class);
+    }
+
+    public function professionalLinks()
+    {
+        return $this->hasMany(ProfessionalUserLink::class);
+    }
+
+    public function linkedUsersAsProfessional()
+    {
+        return $this->hasMany(ProfessionalUserLink::class, 'professional_user_id');
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
