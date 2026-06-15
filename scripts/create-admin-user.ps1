@@ -33,6 +33,14 @@ Illuminate\Support\Facades\DB::table('users')->updateOrInsert(
         'updated_at' => now(),
     ]
 );
+`$userId = Illuminate\Support\Facades\DB::table('users')->where('email', '$Email')->value('id');
+`$roleId = Illuminate\Support\Facades\DB::table('roles')->where('code', 'super_admin')->value('id');
+if (`$userId && `$roleId) {
+    Illuminate\Support\Facades\DB::table('user_roles')->updateOrInsert(
+        ['user_id' => `$userId, 'role_id' => `$roleId],
+        ['created_at' => now()]
+    );
+}
 echo 'Usuario listo: $Email'.PHP_EOL;
 "@
 
