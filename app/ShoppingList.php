@@ -20,4 +20,5 @@ class ShoppingList extends Model
     public function items() { return $this->hasMany(ShoppingListItem::class); }
     public function sessions() { return $this->hasMany(ShoppingSession::class); }
     public function purchases() { return $this->hasMany(Purchase::class); }
+    public function budgetMovements() { return $this->hasMany(BudgetMovement::class, 'related_shopping_list_id'); }
 }

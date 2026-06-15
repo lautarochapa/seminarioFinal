@@ -131,4 +131,9 @@ class FamilyGroup extends Model
     {
         return $this->hasMany(ProductPreference::class);
     }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
 }

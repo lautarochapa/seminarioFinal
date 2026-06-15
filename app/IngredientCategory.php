@@ -30,4 +30,9 @@ class IngredientCategory extends Model
     {
         return $this->hasMany(Ingredient::class, 'category_id');
     }
+
+    public function budgetCategories()
+    {
+        return $this->hasMany(BudgetCategory::class);
+    }
 }
