@@ -54,4 +54,19 @@ class SupermarketBranch extends Model
     {
         return $this->hasMany(BranchProductAvailability::class);
     }
+
+    public function shoppingLists()
+    {
+        return $this->hasMany(ShoppingList::class, 'selected_supermarket_branch_id');
+    }
+
+    public function shoppingSessions()
+    {
+        return $this->hasMany(ShoppingSession::class);
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }

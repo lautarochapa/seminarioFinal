@@ -274,6 +274,26 @@ class User extends Authenticatable
         return $this->hasMany(MealConsumptionLog::class);
     }
 
+    public function createdShoppingLists()
+    {
+        return $this->hasMany(ShoppingList::class, 'created_by');
+    }
+
+    public function shoppingSessions()
+    {
+        return $this->hasMany(ShoppingSession::class);
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    public function productPreferences()
+    {
+        return $this->hasMany(ProductPreference::class);
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();

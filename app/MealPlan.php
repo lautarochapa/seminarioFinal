@@ -42,4 +42,9 @@ class MealPlan extends Model
     {
         return $this->hasMany(MealPlanIncompatibility::class);
     }
+
+    public function shoppingLists()
+    {
+        return $this->hasMany(ShoppingList::class);
+    }
 }

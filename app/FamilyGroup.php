@@ -111,4 +111,24 @@ class FamilyGroup extends Model
     {
         return $this->hasMany(MealPlanSuggestion::class);
     }
+
+    public function shoppingLists()
+    {
+        return $this->hasMany(ShoppingList::class);
+    }
+
+    public function shoppingSessions()
+    {
+        return $this->hasMany(ShoppingSession::class);
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    public function productPreferences()
+    {
+        return $this->hasMany(ProductPreference::class);
+    }
 }

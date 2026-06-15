@@ -205,4 +205,19 @@ class Product extends Model
     {
         return $this->hasMany(StockAlert::class);
     }
+
+    public function shoppingListItems()
+    {
+        return $this->hasMany(ShoppingListItem::class);
+    }
+
+    public function purchaseItems()
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function preferences()
+    {
+        return $this->hasMany(ProductPreference::class);
+    }
 }
