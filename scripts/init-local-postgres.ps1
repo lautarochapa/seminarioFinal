@@ -1,6 +1,7 @@
 param(
     [string] $Database = "cccontrol",
     [string] $Username = "postgres",
+    [string] $Password = "1234",
     [string] $HostName = "127.0.0.1",
     [int] $Port = 5432,
     [string] $PostgresBin = "C:\Program Files\PostgreSQL\18\bin"
@@ -18,6 +19,8 @@ if (-not (Test-Path $createdb)) {
 if (-not (Test-Path $psql)) {
     throw "No se encontro psql.exe en $PostgresBin"
 }
+
+$env:PGPASSWORD = $Password
 
 $exists = & $psql -h $HostName -p $Port -U $Username -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$Database'"
 
