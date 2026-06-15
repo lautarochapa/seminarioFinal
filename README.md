@@ -71,3 +71,20 @@ http://127.0.0.1:8000
 - `system_jobs`: procesos automaticos del sistema.
 
 Los roles y permisos se cargan de forma idempotente desde `SecuritySeeder` y tambien desde la migration `2026_06_15_000015_seed_actor_roles.php`.
+
+## Taxonomias de ingredientes
+
+Las categorias y taxonomias de soporte de ingredientes quedan versionadas en:
+
+```text
+database/data/ingredient_categories.json
+database/data/ingredient_supporting_taxonomies.json
+```
+
+Se cargan con:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\migrate-ingredient-taxonomies.ps1
+```
+
+El script agrega las columnas necesarias a `ingredient_categories` y carga categorias, `food_tags` y `allergies` de forma idempotente.

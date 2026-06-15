@@ -1,0 +1,389 @@
+{
+  "food_tags": [
+    {
+      "code": "FRESCO",
+      "name": "Fresco",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Fresco.",
+      "status": "active"
+    },
+    {
+      "code": "SECO",
+      "name": "Seco",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Seco.",
+      "status": "active"
+    },
+    {
+      "code": "DESHIDRATADO",
+      "name": "Deshidratado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Deshidratado.",
+      "status": "active"
+    },
+    {
+      "code": "CONGELADO",
+      "name": "Congelado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Congelado.",
+      "status": "active"
+    },
+    {
+      "code": "EN_CONSERVA",
+      "name": "En conserva",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: En conserva.",
+      "status": "active"
+    },
+    {
+      "code": "ENLATADO",
+      "name": "Enlatado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Enlatado.",
+      "status": "active"
+    },
+    {
+      "code": "COCIDO",
+      "name": "Cocido",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Cocido.",
+      "status": "active"
+    },
+    {
+      "code": "PRECOCIDO",
+      "name": "Precocido",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Precocido.",
+      "status": "active"
+    },
+    {
+      "code": "CRUDO",
+      "name": "Crudo",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Crudo.",
+      "status": "active"
+    },
+    {
+      "code": "AHUMADO",
+      "name": "Ahumado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Ahumado.",
+      "status": "active"
+    },
+    {
+      "code": "SALADO",
+      "name": "Salado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Salado.",
+      "status": "active"
+    },
+    {
+      "code": "FERMENTADO",
+      "name": "Fermentado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Fermentado.",
+      "status": "active"
+    },
+    {
+      "code": "ENCURTIDO",
+      "name": "Encurtido",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Encurtido.",
+      "status": "active"
+    },
+    {
+      "code": "EN_POLVO",
+      "name": "En polvo",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: En polvo.",
+      "status": "active"
+    },
+    {
+      "code": "PASTA",
+      "name": "Pasta o concentrado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Pasta o concentrado.",
+      "status": "active"
+    },
+    {
+      "code": "LIQUIDO",
+      "name": "Líquido",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Líquido.",
+      "status": "active"
+    },
+    {
+      "code": "INSTANTANEO",
+      "name": "Instantáneo",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Instantáneo.",
+      "status": "active"
+    },
+    {
+      "code": "REBOZADO",
+      "name": "Rebozado",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Rebozado.",
+      "status": "active"
+    },
+    {
+      "code": "LISTO_PARA_CONSUMIR",
+      "name": "Listo para consumir",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Listo para consumir.",
+      "status": "active"
+    },
+    {
+      "code": "LISTO_PARA_COCINAR",
+      "name": "Listo para cocinar",
+      "type": "INGREDIENT_FORM",
+      "description": "Forma o estado del ingrediente: Listo para cocinar.",
+      "status": "active"
+    },
+    {
+      "code": "VEGANO",
+      "name": "Vegano",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Vegano.",
+      "status": "active"
+    },
+    {
+      "code": "VEGETARIANO",
+      "name": "Vegetariano",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Vegetariano.",
+      "status": "active"
+    },
+    {
+      "code": "SIN_TACC",
+      "name": "Sin TACC",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Sin TACC.",
+      "status": "active"
+    },
+    {
+      "code": "CONTIENE_GLUTEN",
+      "name": "Contiene gluten",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Contiene gluten.",
+      "status": "active"
+    },
+    {
+      "code": "SIN_LACTOSA",
+      "name": "Sin lactosa",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Sin lactosa.",
+      "status": "active"
+    },
+    {
+      "code": "CONTIENE_LACTOSA",
+      "name": "Contiene lactosa",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Contiene lactosa.",
+      "status": "active"
+    },
+    {
+      "code": "APTO_DIABETES",
+      "name": "Apto diabetes",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Apto diabetes.",
+      "status": "active"
+    },
+    {
+      "code": "NO_RECOMENDADO_DIABETES",
+      "name": "No recomendado para diabetes",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: No recomendado para diabetes.",
+      "status": "active"
+    },
+    {
+      "code": "BAJO_SODIO",
+      "name": "Bajo sodio",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Bajo sodio.",
+      "status": "active"
+    },
+    {
+      "code": "ALTO_SODIO",
+      "name": "Alto sodio",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Alto sodio.",
+      "status": "active"
+    },
+    {
+      "code": "BAJO_AZUCAR",
+      "name": "Bajo azúcar",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Bajo azúcar.",
+      "status": "active"
+    },
+    {
+      "code": "ALTO_AZUCAR",
+      "name": "Alto azúcar",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Alto azúcar.",
+      "status": "active"
+    },
+    {
+      "code": "BAJO_COLESTEROL",
+      "name": "Bajo colesterol",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Bajo colesterol.",
+      "status": "active"
+    },
+    {
+      "code": "ALTO_COLESTEROL",
+      "name": "Alto colesterol",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Alto colesterol.",
+      "status": "active"
+    },
+    {
+      "code": "ALTO_PROTEINA",
+      "name": "Alto en proteína",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Alto en proteína.",
+      "status": "active"
+    },
+    {
+      "code": "BAJO_CALORIAS",
+      "name": "Bajo en calorías",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Bajo en calorías.",
+      "status": "active"
+    },
+    {
+      "code": "ALTO_CALORIAS",
+      "name": "Alto en calorías",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Alto en calorías.",
+      "status": "active"
+    },
+    {
+      "code": "APTO_HIPERTENSION",
+      "name": "Apto hipertensión",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Apto hipertensión.",
+      "status": "active"
+    },
+    {
+      "code": "NO_RECOMENDADO_HIPERTENSION",
+      "name": "No recomendado para hipertensión",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: No recomendado para hipertensión.",
+      "status": "active"
+    },
+    {
+      "code": "APTO_CELIACOS",
+      "name": "Apto celíacos",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: Apto celíacos.",
+      "status": "active"
+    },
+    {
+      "code": "NO_APTO_CELIACOS",
+      "name": "No apto celíacos",
+      "type": "DIETARY_NUTRITIONAL",
+      "description": "Etiqueta dietaria o nutricional: No apto celíacos.",
+      "status": "active"
+    }
+  ],
+  "allergies": [
+    {
+      "code": "GLUTEN",
+      "name": "Gluten",
+      "description": "Alérgeno alimentario: Gluten.",
+      "status": "active"
+    },
+    {
+      "code": "TRIGO",
+      "name": "Trigo",
+      "description": "Alérgeno alimentario: Trigo.",
+      "status": "active"
+    },
+    {
+      "code": "LECHE",
+      "name": "Leche",
+      "description": "Alérgeno alimentario: Leche.",
+      "status": "active"
+    },
+    {
+      "code": "LACTOSA",
+      "name": "Lactosa",
+      "description": "Alérgeno alimentario: Lactosa.",
+      "status": "active"
+    },
+    {
+      "code": "HUEVO",
+      "name": "Huevo",
+      "description": "Alérgeno alimentario: Huevo.",
+      "status": "active"
+    },
+    {
+      "code": "MANI",
+      "name": "Maní",
+      "description": "Alérgeno alimentario: Maní.",
+      "status": "active"
+    },
+    {
+      "code": "FRUTOS_SECOS",
+      "name": "Frutos secos",
+      "description": "Alérgeno alimentario: Frutos secos.",
+      "status": "active"
+    },
+    {
+      "code": "SOJA",
+      "name": "Soja",
+      "description": "Alérgeno alimentario: Soja.",
+      "status": "active"
+    },
+    {
+      "code": "PESCADO",
+      "name": "Pescado",
+      "description": "Alérgeno alimentario: Pescado.",
+      "status": "active"
+    },
+    {
+      "code": "MARISCOS",
+      "name": "Mariscos",
+      "description": "Alérgeno alimentario: Mariscos.",
+      "status": "active"
+    },
+    {
+      "code": "SESAMO",
+      "name": "Sésamo",
+      "description": "Alérgeno alimentario: Sésamo.",
+      "status": "active"
+    },
+    {
+      "code": "MOSTAZA",
+      "name": "Mostaza",
+      "description": "Alérgeno alimentario: Mostaza.",
+      "status": "active"
+    },
+    {
+      "code": "APIO",
+      "name": "Apio",
+      "description": "Alérgeno alimentario: Apio.",
+      "status": "active"
+    },
+    {
+      "code": "SULFITOS",
+      "name": "Sulfitos",
+      "description": "Alérgeno alimentario: Sulfitos.",
+      "status": "active"
+    },
+    {
+      "code": "LUPINES",
+      "name": "Lupines",
+      "description": "Alérgeno alimentario: Lupines.",
+      "status": "active"
+    },
+    {
+      "code": "MOLUSCOS",
+      "name": "Moluscos",
+      "description": "Alérgeno alimentario: Moluscos.",
+      "status": "active"
+    }
+  ]
+}

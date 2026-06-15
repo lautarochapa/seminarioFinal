@@ -1,0 +1,4570 @@
+[
+  {
+    "code": "VERDURAS_HORTALIZAS",
+    "name": "Verduras, hortalizas, hongos y algas",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Verduras, hortalizas, hongos y algas.",
+    "sort_order": 1000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_HOJAS",
+    "name": "Hojas",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Hojas.",
+    "sort_order": 1100,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_HOJAS_VERDES",
+    "name": "Hojas verdes suaves",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_HOJAS",
+    "description": "Ejemplos de ingredientes: Lechuga, espinaca, mantecosa, criolla, capuchina.",
+    "sort_order": 1101,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_HOJAS_INTENSAS",
+    "name": "Hojas intensas o amargas",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_HOJAS",
+    "description": "Ejemplos de ingredientes: Acelga, rúcula, berro, kale, radicheta, escarola, endivia.",
+    "sort_order": 1102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_CRUCIFERAS",
+    "name": "Crucíferas",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Crucíferas.",
+    "sort_order": 1200,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_CRUCIFERAS",
+    "name": "Coles y similares",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_CRUCIFERAS",
+    "description": "Ejemplos de ingredientes: Brócoli, coliflor, repollo, repollitos de Bruselas, kale, pak choi.",
+    "sort_order": 1201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_HORTALIZAS_DE_FRUTO",
+    "name": "Hortalizas de fruto",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Hortalizas de fruto.",
+    "sort_order": 1300,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_SOLANACEAS",
+    "name": "Solanáceas",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_HORTALIZAS_DE_FRUTO",
+    "description": "Ejemplos de ingredientes: Tomate, morrón, berenjena, ají, chile.",
+    "sort_order": 1301,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_CUCURBITACEAS",
+    "name": "Cucurbitáceas",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_HORTALIZAS_DE_FRUTO",
+    "description": "Ejemplos de ingredientes: Zapallo, calabaza, zucchini, pepino, zapallito, cayote.",
+    "sort_order": 1302,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_RAICES",
+    "name": "Raíces",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Raíces.",
+    "sort_order": 1400,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_RAICES",
+    "name": "Raíces comestibles",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_RAICES",
+    "description": "Ejemplos de ingredientes: Zanahoria, remolacha, nabo, rabanito, chirivía.",
+    "sort_order": 1401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_TUBERCULOS",
+    "name": "Tubérculos",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Tubérculos.",
+    "sort_order": 1500,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_TUBERCULOS",
+    "name": "Tubérculos feculentos",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_TUBERCULOS",
+    "description": "Ejemplos de ingredientes: Papa, batata, mandioca, ñame, topinambur.",
+    "sort_order": 1501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_BULBOS",
+    "name": "Bulbos",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Bulbos.",
+    "sort_order": 1600,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_BULBOS",
+    "name": "Bulbos y aromáticos frescos",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_BULBOS",
+    "description": "Ejemplos de ingredientes: Cebolla, ajo, puerro, echalote, cebolla de verdeo.",
+    "sort_order": 1601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_TALLOS",
+    "name": "Tallos",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Tallos.",
+    "sort_order": 1700,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_TALLOS",
+    "name": "Tallos comestibles",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_TALLOS",
+    "description": "Ejemplos de ingredientes: Apio, espárrago, hinojo, palmito, cardo.",
+    "sort_order": 1701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_BROTES",
+    "name": "Brotes",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Brotes.",
+    "sort_order": 1800,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_BROTES",
+    "name": "Brotes y germinados",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_BROTES",
+    "description": "Ejemplos de ingredientes: Brotes de soja, brotes de alfalfa, germinados de lenteja.",
+    "sort_order": 1801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_LEGUMBRES_FRESCAS",
+    "name": "Legumbres frescas",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Legumbres frescas.",
+    "sort_order": 1900,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_LEGUMBRES_FRESCAS",
+    "name": "Vainas frescas",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_LEGUMBRES_FRESCAS",
+    "description": "Ejemplos de ingredientes: Chauchas, arvejas frescas, habas frescas.",
+    "sort_order": 1901,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS",
+    "name": "Frutas",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Frutas.",
+    "sort_order": 2000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_FLORES",
+    "name": "Flores",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Flores.",
+    "sort_order": 2000,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_FLORES",
+    "name": "Flores comestibles",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_FLORES",
+    "description": "Ejemplos de ingredientes: Alcaucil, flor de zapallo, capuchina, lavanda culinaria.",
+    "sort_order": 2001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_HONGOS",
+    "name": "Hongos",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Hongos.",
+    "sort_order": 2100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_CITRICAS",
+    "name": "Cítricas",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Cítricas.",
+    "sort_order": 2100,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_HONGOS_FRESCOS",
+    "name": "Hongos frescos",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_HONGOS",
+    "description": "Ejemplos de ingredientes: Champiñón, portobello, gírgola, shiitake, hongo de París.",
+    "sort_order": 2101,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_CITRICAS",
+    "name": "Cítricos",
+    "parent_code": "CAT_FRUTAS_CITRICAS",
+    "description": "Ejemplos de ingredientes: Naranja, mandarina, limón, lima, pomelo.",
+    "sort_order": 2101,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_HONGOS_SECOS",
+    "name": "Hongos secos",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_HONGOS",
+    "description": "Ejemplos de ingredientes: Hongo de pino, shiitake seco, porcini seco.",
+    "sort_order": 2102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_ALGAS",
+    "name": "Algas",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Algas.",
+    "sort_order": 2200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_PEPITA",
+    "name": "Pepita",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Pepita.",
+    "sort_order": 2200,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_ALGAS",
+    "name": "Algas comestibles",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_ALGAS",
+    "description": "Ejemplos de ingredientes: Nori, wakame, kombu, hijiki, cochayuyo.",
+    "sort_order": 2201,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_PEPITA",
+    "name": "Frutas de pepita",
+    "parent_code": "CAT_FRUTAS_PEPITA",
+    "description": "Ejemplos de ingredientes: Manzana, pera, membrillo.",
+    "sort_order": 2201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_MIXTOS",
+    "name": "Mixtos",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Mixtos.",
+    "sort_order": 2300,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_CAROZO",
+    "name": "Carozo",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Carozo.",
+    "sort_order": 2300,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_MIXTAS",
+    "name": "Mix de verduras",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_MIXTOS",
+    "description": "Ejemplos de ingredientes: Jardinera, mix sopa, mix wok, verduras mixtas.",
+    "sort_order": 2301,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_CAROZO",
+    "name": "Frutas de carozo",
+    "parent_code": "CAT_FRUTAS_CAROZO",
+    "description": "Ejemplos de ingredientes: Durazno, damasco, ciruela, cereza, pelón.",
+    "sort_order": 2301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_VERDURAS_HORTALIZAS_OTRAS_VERDURAS",
+    "name": "Otras verduras",
+    "parent_code": "VERDURAS_HORTALIZAS",
+    "description": "Subcategoría de Verduras, hortalizas, hongos y algas: Otras verduras.",
+    "sort_order": 2400,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_TROPICALES",
+    "name": "Tropicales",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Tropicales.",
+    "sort_order": 2400,
+    "is_active": true
+  },
+  {
+    "code": "VERDURAS_OTRAS",
+    "name": "Otras hortalizas",
+    "parent_code": "CAT_VERDURAS_HORTALIZAS_OTRAS_VERDURAS",
+    "description": "Ejemplos de ingredientes: Choclo baby, brotes varios, vegetales regionales.",
+    "sort_order": 2401,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_TROPICALES",
+    "name": "Tropicales y subtropicales",
+    "parent_code": "CAT_FRUTAS_TROPICALES",
+    "description": "Ejemplos de ingredientes: Banana, mango, ananá, papaya, maracuyá, guayaba.",
+    "sort_order": 2401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_FRUTOS_ROJOS",
+    "name": "Frutos rojos",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Frutos rojos.",
+    "sort_order": 2500,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_ROJAS",
+    "name": "Berries",
+    "parent_code": "CAT_FRUTAS_FRUTOS_ROJOS",
+    "description": "Ejemplos de ingredientes: Frutilla, arándano, frambuesa, mora, grosella.",
+    "sort_order": 2501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_UVAS",
+    "name": "Uvas",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Uvas.",
+    "sort_order": 2600,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_UVAS",
+    "name": "Uvas y similares",
+    "parent_code": "CAT_FRUTAS_UVAS",
+    "description": "Ejemplos de ingredientes: Uva blanca, uva negra, uva rosada.",
+    "sort_order": 2601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_MELONES",
+    "name": "Melones",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Melones.",
+    "sort_order": 2700,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_MELONES",
+    "name": "Melones y sandías",
+    "parent_code": "CAT_FRUTAS_MELONES",
+    "description": "Ejemplos de ingredientes: Melón, sandía.",
+    "sort_order": 2701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_FRUTAS_GRASAS",
+    "name": "Frutas grasas",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Frutas grasas.",
+    "sort_order": 2800,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_GRASAS",
+    "name": "Ricas en grasa",
+    "parent_code": "CAT_FRUTAS_FRUTAS_GRASAS",
+    "description": "Ejemplos de ingredientes: Palta, coco, aceituna.",
+    "sort_order": 2801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_FRUTAS_DESECADAS",
+    "name": "Frutas desecadas",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Frutas desecadas.",
+    "sort_order": 2900,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_DESECADAS",
+    "name": "Deshidratadas",
+    "parent_code": "CAT_FRUTAS_FRUTAS_DESECADAS",
+    "description": "Ejemplos de ingredientes: Pasas de uva, dátiles, ciruelas pasas, damascos secos, higos secos.",
+    "sort_order": 2901,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_GRANOS",
+    "name": "Cereales, granos y pseudocereales",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Cereales, granos y pseudocereales.",
+    "sort_order": 3000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_FRUTAS_EN_CONSERVA",
+    "name": "Frutas en conserva",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Frutas en conserva.",
+    "sort_order": 3000,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_CONSERVA",
+    "name": "En almíbar o conserva",
+    "parent_code": "CAT_FRUTAS_FRUTAS_EN_CONSERVA",
+    "description": "Ejemplos de ingredientes: Durazno en almíbar, ananá en lata, cóctel de frutas.",
+    "sort_order": 3001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_PULPAS_Y_PURES",
+    "name": "Pulpas y purés",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Pulpas y purés.",
+    "sort_order": 3100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_ARROZ",
+    "name": "Arroz",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Arroz.",
+    "sort_order": 3100,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_PULPAS",
+    "name": "Pulpa de fruta",
+    "parent_code": "CAT_FRUTAS_PULPAS_Y_PURES",
+    "description": "Ejemplos de ingredientes: Pulpa de mango, puré de manzana, pulpa de frutilla.",
+    "sort_order": 3101,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_ARROZ",
+    "name": "Arroz y variedades",
+    "parent_code": "CAT_CEREALES_GRANOS_ARROZ",
+    "description": "Ejemplos de ingredientes: Arroz blanco, integral, yamaní, basmati, jazmín, carnaroli.",
+    "sort_order": 3101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_FRUTAS_CONGELADAS",
+    "name": "Frutas congeladas",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Frutas congeladas.",
+    "sort_order": 3200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_TRIGO",
+    "name": "Trigo",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Trigo.",
+    "sort_order": 3200,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_CONGELADAS",
+    "name": "Congeladas",
+    "parent_code": "CAT_FRUTAS_FRUTAS_CONGELADAS",
+    "description": "Ejemplos de ingredientes: Frutos rojos congelados, banana congelada, mango congelado.",
+    "sort_order": 3201,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_TRIGO",
+    "name": "Grano y derivados simples",
+    "parent_code": "CAT_CEREALES_GRANOS_TRIGO",
+    "description": "Ejemplos de ingredientes: Trigo burgol, trigo candeal, grano de trigo.",
+    "sort_order": 3201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTAS_OTRAS_FRUTAS",
+    "name": "Otras frutas",
+    "parent_code": "FRUTAS",
+    "description": "Subcategoría de Frutas: Otras frutas.",
+    "sort_order": 3300,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_MAIZ",
+    "name": "Maíz",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Maíz.",
+    "sort_order": 3300,
+    "is_active": true
+  },
+  {
+    "code": "FRUTAS_OTRAS",
+    "name": "Frutas regionales o poco comunes",
+    "parent_code": "CAT_FRUTAS_OTRAS_FRUTAS",
+    "description": "Ejemplos de ingredientes: Caqui, granada, higo fresco, tuna, pitaya.",
+    "sort_order": 3301,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_MAIZ",
+    "name": "Maíz y derivados simples",
+    "parent_code": "CAT_CEREALES_GRANOS_MAIZ",
+    "description": "Ejemplos de ingredientes: Maíz pisingallo, maíz partido, choclo seco, polenta.",
+    "sort_order": 3301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_AVENA",
+    "name": "Avena",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Avena.",
+    "sort_order": 3400,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_AVENA",
+    "name": "Avena y derivados",
+    "parent_code": "CAT_CEREALES_GRANOS_AVENA",
+    "description": "Ejemplos de ingredientes: Avena arrollada, instantánea, salvado de avena.",
+    "sort_order": 3401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_CEBADA_Y_CENTENO",
+    "name": "Cebada y centeno",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Cebada y centeno.",
+    "sort_order": 3500,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_CEBADA_CENTENO",
+    "name": "Granos con gluten",
+    "parent_code": "CAT_CEREALES_GRANOS_CEBADA_Y_CENTENO",
+    "description": "Ejemplos de ingredientes: Cebada perlada, centeno en grano.",
+    "sort_order": 3501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_CEREALES_SIN_GLUTEN",
+    "name": "Cereales sin gluten",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Cereales sin gluten.",
+    "sort_order": 3600,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_SIN_GLUTEN",
+    "name": "Granos naturalmente sin gluten",
+    "parent_code": "CAT_CEREALES_GRANOS_CEREALES_SIN_GLUTEN",
+    "description": "Ejemplos de ingredientes: Mijo, sorgo, teff.",
+    "sort_order": 3601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_PSEUDOCEREALES",
+    "name": "Pseudocereales",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Pseudocereales.",
+    "sort_order": 3700,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_PSEUDOCEREALES",
+    "name": "Pseudocereales",
+    "parent_code": "CAT_CEREALES_GRANOS_PSEUDOCEREALES",
+    "description": "Ejemplos de ingredientes: Quinoa, amaranto, trigo sarraceno.",
+    "sort_order": 3701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_SEMOLAS_Y_GRANOS_PROCESADOS",
+    "name": "Sémolas y granos procesados",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Sémolas y granos procesados.",
+    "sort_order": 3800,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_SEMOLAS",
+    "name": "Procesados secos",
+    "parent_code": "CAT_CEREALES_GRANOS_SEMOLAS_Y_GRANOS_PROCESADOS",
+    "description": "Ejemplos de ingredientes: Sémola, cous cous, bulgur.",
+    "sort_order": 3801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_SALVADOS_Y_GERMEN",
+    "name": "Salvados y germen",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Salvados y germen.",
+    "sort_order": 3900,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_SALVADOS",
+    "name": "Partes del grano",
+    "parent_code": "CAT_CEREALES_GRANOS_SALVADOS_Y_GERMEN",
+    "description": "Ejemplos de ingredientes: Salvado de trigo, salvado de avena, germen de trigo.",
+    "sort_order": 3901,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_PREMEZCLAS",
+    "name": "Harinas, almidones, féculas y premezclas",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Harinas, almidones, féculas y premezclas.",
+    "sort_order": 4000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_COPOS",
+    "name": "Copos",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Copos.",
+    "sort_order": 4000,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_COPOS",
+    "name": "Copos y hojuelas",
+    "parent_code": "CAT_CEREALES_GRANOS_COPOS",
+    "description": "Ejemplos de ingredientes: Copos de maíz, copos de arroz, copos de avena.",
+    "sort_order": 4001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_INFLADOS",
+    "name": "Inflados",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Inflados.",
+    "sort_order": 4100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_CON_GLUTEN",
+    "name": "Harinas con gluten",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas con gluten.",
+    "sort_order": 4100,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_INFLADOS",
+    "name": "Granos inflados",
+    "parent_code": "CAT_CEREALES_GRANOS_INFLADOS",
+    "description": "Ejemplos de ingredientes: Arroz inflado, quinoa inflada, maíz inflado.",
+    "sort_order": 4101,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_TRIGO",
+    "name": "Harina de trigo",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_CON_GLUTEN",
+    "description": "Ejemplos de ingredientes: Harina 000, 0000, leudante, integral, panadera.",
+    "sort_order": 4101,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_OTROS_GLUTEN",
+    "name": "Otros cereales con gluten",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_CON_GLUTEN",
+    "description": "Ejemplos de ingredientes: Harina de centeno, cebada, espelta.",
+    "sort_order": 4102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_GRANOLAS_Y_MEZCLAS",
+    "name": "Granolas y mezclas",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Granolas y mezclas.",
+    "sort_order": 4200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_SIN_GLUTEN",
+    "name": "Harinas sin gluten",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas sin gluten.",
+    "sort_order": 4200,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_GRANOLAS",
+    "name": "Mezclas de cereales",
+    "parent_code": "CAT_CEREALES_GRANOS_GRANOLAS_Y_MEZCLAS",
+    "description": "Ejemplos de ingredientes: Granola, muesli, mix de cereales.",
+    "sort_order": 4201,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_ARROZ",
+    "name": "Arroz",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_SIN_GLUTEN",
+    "description": "Ejemplos de ingredientes: Harina de arroz blanco, harina de arroz integral.",
+    "sort_order": 4201,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_MAIZ",
+    "name": "Maíz",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_SIN_GLUTEN",
+    "description": "Ejemplos de ingredientes: Harina de maíz, polenta fina, masa harina.",
+    "sort_order": 4202,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CEREALES_GRANOS_OTROS_CEREALES",
+    "name": "Otros cereales",
+    "parent_code": "CEREALES_GRANOS",
+    "description": "Subcategoría de Cereales, granos y pseudocereales: Otros cereales.",
+    "sort_order": 4300,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_AVENA",
+    "name": "Harinas de avena",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas de avena.",
+    "sort_order": 4300,
+    "is_active": true
+  },
+  {
+    "code": "CEREALES_OTROS",
+    "name": "Otros granos",
+    "parent_code": "CAT_CEREALES_GRANOS_OTROS_CEREALES",
+    "description": "Ejemplos de ingredientes: Fonio, espelta, farro.",
+    "sort_order": 4301,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_AVENA",
+    "name": "Avena",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_AVENA",
+    "description": "Ejemplos de ingredientes: Harina de avena.",
+    "sort_order": 4301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_LEGUMBRES",
+    "name": "Harinas de legumbres",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas de legumbres.",
+    "sort_order": 4400,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_LEGUMBRES",
+    "name": "Legumbres molidas",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_LEGUMBRES",
+    "description": "Ejemplos de ingredientes: Harina de garbanzo, arveja, lenteja, soja.",
+    "sort_order": 4401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_FRUTOS_SECOS",
+    "name": "Harinas de frutos secos",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas de frutos secos.",
+    "sort_order": 4500,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_FRUTOS_SECOS",
+    "name": "Frutos secos molidos",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_FRUTOS_SECOS",
+    "description": "Ejemplos de ingredientes: Harina de almendra, nuez, castaña.",
+    "sort_order": 4501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_SEMILLAS",
+    "name": "Harinas de semillas",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas de semillas.",
+    "sort_order": 4600,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_SEMILLAS",
+    "name": "Semillas molidas",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_DE_SEMILLAS",
+    "description": "Ejemplos de ingredientes: Harina de lino, chía, girasol.",
+    "sort_order": 4601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_HARINAS_ESPECIALES",
+    "name": "Harinas especiales",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Harinas especiales.",
+    "sort_order": 4700,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_COCO",
+    "name": "Coco",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_HARINAS_ESPECIALES",
+    "description": "Ejemplos de ingredientes: Harina de coco.",
+    "sort_order": 4701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_FECULAS_Y_ALMIDONES",
+    "name": "Féculas y almidones",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Féculas y almidones.",
+    "sort_order": 4800,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_FECULAS",
+    "name": "Almidones",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_FECULAS_Y_ALMIDONES",
+    "description": "Ejemplos de ingredientes: Fécula de maíz, papa, mandioca, almidón de arroz.",
+    "sort_order": 4801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_REBOZADORES",
+    "name": "Rebozadores",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Rebozadores.",
+    "sort_order": 4900,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_REBOZADORES",
+    "name": "Rebozadores secos",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_REBOZADORES",
+    "description": "Ejemplos de ingredientes: Pan rallado, panko, rebozador sin TACC.",
+    "sort_order": 4901,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_MASAS",
+    "name": "Panificados, masas y galletas",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Panificados, masas y galletas.",
+    "sort_order": 5000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_PREMEZCLAS",
+    "name": "Premezclas",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Premezclas.",
+    "sort_order": 5000,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_PREMEZCLAS_PAN",
+    "name": "Panificados",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_PREMEZCLAS",
+    "description": "Ejemplos de ingredientes: Premezcla para pan, pizza, focaccia.",
+    "sort_order": 5001,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_PREMEZCLAS_REPOSTERIA",
+    "name": "Repostería",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_PREMEZCLAS",
+    "description": "Ejemplos de ingredientes: Premezcla para torta, bizcochuelo, brownies.",
+    "sort_order": 5002,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_PREMEZCLAS_SIN_TACC",
+    "name": "Sin TACC",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_PREMEZCLAS",
+    "description": "Ejemplos de ingredientes: Premezcla universal sin gluten, premezcla para pizza sin TACC.",
+    "sort_order": 5003,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_MEZCLAS_INSTANTANEAS",
+    "name": "Mezclas instantáneas",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Mezclas instantáneas.",
+    "sort_order": 5100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_PANES",
+    "name": "Panes",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Panes.",
+    "sort_order": 5100,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_MEZCLAS_INSTANTANEAS",
+    "name": "Secas listas",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_MEZCLAS_INSTANTANEAS",
+    "description": "Ejemplos de ingredientes: Mezcla para panqueques, waffles, ñoquis instantáneos.",
+    "sort_order": 5101,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_PANES_BLANCOS",
+    "name": "Panes blancos",
+    "parent_code": "CAT_PANIFICADOS_MASAS_PANES",
+    "description": "Ejemplos de ingredientes: Pan francés, pan lactal blanco, baguette.",
+    "sort_order": 5101,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_PANES_INTEGRALES",
+    "name": "Integrales y con semillas",
+    "parent_code": "CAT_PANIFICADOS_MASAS_PANES",
+    "description": "Ejemplos de ingredientes: Pan integral, pan multicereal, pan con semillas.",
+    "sort_order": 5102,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_PANES_ESPECIALES",
+    "name": "Especiales",
+    "parent_code": "CAT_PANIFICADOS_MASAS_PANES",
+    "description": "Ejemplos de ingredientes: Pan árabe, pan pita, pan de campo, pan sin gluten.",
+    "sort_order": 5103,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HARINAS_PREMEZCLAS_OTRAS_HARINAS",
+    "name": "Otras harinas",
+    "parent_code": "HARINAS_PREMEZCLAS",
+    "description": "Subcategoría de Harinas, almidones, féculas y premezclas: Otras harinas.",
+    "sort_order": 5200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_TORTILLAS_Y_WRAPS",
+    "name": "Tortillas y wraps",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Tortillas y wraps.",
+    "sort_order": 5200,
+    "is_active": true
+  },
+  {
+    "code": "HARINAS_OTRAS",
+    "name": "Especiales",
+    "parent_code": "CAT_HARINAS_PREMEZCLAS_OTRAS_HARINAS",
+    "description": "Ejemplos de ingredientes: Harina de banana verde, harina de algarroba.",
+    "sort_order": 5201,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_TORTILLAS",
+    "name": "Planos",
+    "parent_code": "CAT_PANIFICADOS_MASAS_TORTILLAS_Y_WRAPS",
+    "description": "Ejemplos de ingredientes: Tortilla de trigo, tortilla de maíz, wrap.",
+    "sort_order": 5201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_MASAS",
+    "name": "Masas",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Masas.",
+    "sort_order": 5300,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_MASAS_TAPAS",
+    "name": "Tapas",
+    "parent_code": "CAT_PANIFICADOS_MASAS_MASAS",
+    "description": "Ejemplos de ingredientes: Tapa de empanada, pascualina, tarta.",
+    "sort_order": 5301,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_MASAS_HOJALDRE",
+    "name": "Hojaldre y similares",
+    "parent_code": "CAT_PANIFICADOS_MASAS_MASAS",
+    "description": "Ejemplos de ingredientes: Masa de hojaldre, masa filo.",
+    "sort_order": 5302,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_PREPIZZAS",
+    "name": "Bases de pizza",
+    "parent_code": "CAT_PANIFICADOS_MASAS_MASAS",
+    "description": "Ejemplos de ingredientes: Prepizza, base de pizza, pizzeta.",
+    "sort_order": 5303,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_GALLETAS",
+    "name": "Galletas",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Galletas.",
+    "sort_order": 5400,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_GALLETAS_SALADAS",
+    "name": "Saladas",
+    "parent_code": "CAT_PANIFICADOS_MASAS_GALLETAS",
+    "description": "Ejemplos de ingredientes: Galletas de agua, crackers, grisines.",
+    "sort_order": 5401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_GALLETITAS",
+    "name": "Galletitas",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Galletitas.",
+    "sort_order": 5500,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_GALLETITAS_DULCES",
+    "name": "Dulces simples",
+    "parent_code": "CAT_PANIFICADOS_MASAS_GALLETITAS",
+    "description": "Ejemplos de ingredientes: Vainillas, galletitas de vainilla, galletitas de chocolate.",
+    "sort_order": 5501,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_GALLETITAS_RELLENAS",
+    "name": "Rellenas",
+    "parent_code": "CAT_PANIFICADOS_MASAS_GALLETITAS",
+    "description": "Ejemplos de ingredientes: Galletitas rellenas, chocolinas, oreo genérica.",
+    "sort_order": 5502,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_SECOS",
+    "name": "Secos",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Secos.",
+    "sort_order": 5600,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_TOSTADAS",
+    "name": "Tostadas y bizcochos",
+    "parent_code": "CAT_PANIFICADOS_MASAS_SECOS",
+    "description": "Ejemplos de ingredientes: Tostadas, biscotes, bizcochos secos.",
+    "sort_order": 5601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PANIFICADOS_MASAS_OTROS_PANIFICADOS",
+    "name": "Otros panificados",
+    "parent_code": "PANIFICADOS_MASAS",
+    "description": "Subcategoría de Panificados, masas y galletas: Otros panificados.",
+    "sort_order": 5700,
+    "is_active": true
+  },
+  {
+    "code": "PANIFICADOS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_PANIFICADOS_MASAS_OTROS_PANIFICADOS",
+    "description": "Ejemplos de ingredientes: Medialunas, facturas, panes dulces.",
+    "sort_order": 5701,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS",
+    "name": "Pastas y fideos",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Pastas y fideos.",
+    "sort_order": 6000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_PASTAS_SECAS",
+    "name": "Pastas secas",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Pastas secas.",
+    "sort_order": 6100,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_SECAS_LARGAS",
+    "name": "Largas",
+    "parent_code": "CAT_PASTAS_PASTAS_SECAS",
+    "description": "Ejemplos de ingredientes: Spaghetti, tallarines, linguini, fettuccine.",
+    "sort_order": 6101,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_SECAS_CORTAS",
+    "name": "Cortas",
+    "parent_code": "CAT_PASTAS_PASTAS_SECAS",
+    "description": "Ejemplos de ingredientes: Mostacholes, tirabuzones, penne, coditos.",
+    "sort_order": 6102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_PASTAS_INTEGRALES",
+    "name": "Pastas integrales",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Pastas integrales.",
+    "sort_order": 6200,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_INTEGRALES",
+    "name": "Integrales",
+    "parent_code": "CAT_PASTAS_PASTAS_INTEGRALES",
+    "description": "Ejemplos de ingredientes: Fideos integrales, spaghetti integral.",
+    "sort_order": 6201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_PASTAS_FRESCAS",
+    "name": "Pastas frescas",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Pastas frescas.",
+    "sort_order": 6300,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_FRESCAS",
+    "name": "No rellenas",
+    "parent_code": "CAT_PASTAS_PASTAS_FRESCAS",
+    "description": "Ejemplos de ingredientes: Tallarines frescos, ñoquis, malfatti.",
+    "sort_order": 6301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_PASTAS_RELLENAS",
+    "name": "Pastas rellenas",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Pastas rellenas.",
+    "sort_order": 6400,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_RELLENAS",
+    "name": "Rellenas",
+    "parent_code": "CAT_PASTAS_PASTAS_RELLENAS",
+    "description": "Ejemplos de ingredientes: Ravioles, sorrentinos, capeletti.",
+    "sort_order": 6401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_LAMINAS",
+    "name": "Láminas",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Láminas.",
+    "sort_order": 6500,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_LASAGNA_CANELONES",
+    "name": "Horno",
+    "parent_code": "CAT_PASTAS_LAMINAS",
+    "description": "Ejemplos de ingredientes: Masa de lasaña, canelones.",
+    "sort_order": 6501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_PASTAS_SIN_GLUTEN",
+    "name": "Pastas sin gluten",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Pastas sin gluten.",
+    "sort_order": 6600,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_SIN_TACC",
+    "name": "Sin TACC",
+    "parent_code": "CAT_PASTAS_PASTAS_SIN_GLUTEN",
+    "description": "Ejemplos de ingredientes: Pasta de arroz, pasta de maíz, pasta sin gluten.",
+    "sort_order": 6601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_PASTAS_DE_LEGUMBRES",
+    "name": "Pastas de legumbres",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Pastas de legumbres.",
+    "sort_order": 6700,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_LEGUMBRES",
+    "name": "Alta proteína",
+    "parent_code": "CAT_PASTAS_PASTAS_DE_LEGUMBRES",
+    "description": "Ejemplos de ingredientes: Pasta de lentejas, garbanzo, arveja.",
+    "sort_order": 6701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_FIDEOS_ORIENTALES",
+    "name": "Fideos orientales",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Fideos orientales.",
+    "sort_order": 6800,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_ORIENTALES_ARROZ",
+    "name": "Arroz",
+    "parent_code": "CAT_PASTAS_FIDEOS_ORIENTALES",
+    "description": "Ejemplos de ingredientes: Fideos de arroz, vermicelli.",
+    "sort_order": 6801,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_ORIENTALES_SOJA",
+    "name": "Soja o mung",
+    "parent_code": "CAT_PASTAS_FIDEOS_ORIENTALES",
+    "description": "Ejemplos de ingredientes: Fideos de soja, fideos celofán.",
+    "sort_order": 6802,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_INSTANTANEAS",
+    "name": "Instantáneas",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Instantáneas.",
+    "sort_order": 6900,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_INSTANTANEAS",
+    "name": "Ramen y similares",
+    "parent_code": "CAT_PASTAS_INSTANTANEAS",
+    "description": "Ejemplos de ingredientes: Ramen, fideos instantáneos.",
+    "sort_order": 6901,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES",
+    "name": "Legumbres y derivados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Legumbres y derivados.",
+    "sort_order": 7000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PASTAS_OTRAS_PASTAS",
+    "name": "Otras pastas",
+    "parent_code": "PASTAS",
+    "description": "Subcategoría de Pastas y fideos: Otras pastas.",
+    "sort_order": 7000,
+    "is_active": true
+  },
+  {
+    "code": "PASTAS_OTRAS",
+    "name": "Especiales",
+    "parent_code": "CAT_PASTAS_OTRAS_PASTAS",
+    "description": "Ejemplos de ingredientes: Pasta konjac, shirataki.",
+    "sort_order": 7001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_LENTEJAS",
+    "name": "Lentejas",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Lentejas.",
+    "sort_order": 7100,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_LENTEJAS",
+    "name": "Secas",
+    "parent_code": "CAT_LEGUMBRES_LENTEJAS",
+    "description": "Ejemplos de ingredientes: Lenteja común, turca, beluga.",
+    "sort_order": 7101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_GARBANZOS",
+    "name": "Garbanzos",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Garbanzos.",
+    "sort_order": 7200,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_GARBANZOS",
+    "name": "Secos",
+    "parent_code": "CAT_LEGUMBRES_GARBANZOS",
+    "description": "Ejemplos de ingredientes: Garbanzo común, garbanzo kabuli.",
+    "sort_order": 7201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_POROTOS",
+    "name": "Porotos",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Porotos.",
+    "sort_order": 7300,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_POROTOS",
+    "name": "Secos",
+    "parent_code": "CAT_LEGUMBRES_POROTOS",
+    "description": "Ejemplos de ingredientes: Poroto negro, colorado, alubia, mung, aduki.",
+    "sort_order": 7301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_ARVEJAS",
+    "name": "Arvejas",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Arvejas.",
+    "sort_order": 7400,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_ARVEJAS_SECAS",
+    "name": "Secas",
+    "parent_code": "CAT_LEGUMBRES_ARVEJAS",
+    "description": "Ejemplos de ingredientes: Arveja partida, arveja seca.",
+    "sort_order": 7401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_HABAS",
+    "name": "Habas",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Habas.",
+    "sort_order": 7500,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_HABAS_SECAS",
+    "name": "Secas",
+    "parent_code": "CAT_LEGUMBRES_HABAS",
+    "description": "Ejemplos de ingredientes: Haba seca.",
+    "sort_order": 7501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_SOJA",
+    "name": "Soja",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Soja.",
+    "sort_order": 7600,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_SOJA",
+    "name": "Grano",
+    "parent_code": "CAT_LEGUMBRES_SOJA",
+    "description": "Ejemplos de ingredientes: Soja amarilla, soja negra.",
+    "sort_order": 7601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_CONSERVAS",
+    "name": "Conservas",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Conservas.",
+    "sort_order": 7700,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_CONSERVA",
+    "name": "Cocidas o en lata",
+    "parent_code": "CAT_LEGUMBRES_CONSERVAS",
+    "description": "Ejemplos de ingredientes: Garbanzos en lata, lentejas cocidas, porotos en conserva.",
+    "sort_order": 7701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_COCIDAS",
+    "name": "Cocidas",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Cocidas.",
+    "sort_order": 7800,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_COCIDAS",
+    "name": "Cocidas caseras",
+    "parent_code": "CAT_LEGUMBRES_COCIDAS",
+    "description": "Ejemplos de ingredientes: Garbanzo cocido, lenteja cocida, poroto cocido.",
+    "sort_order": 7801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_DERIVADOS_SOJA",
+    "name": "Derivados soja",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Derivados soja.",
+    "sort_order": 7900,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_DERIVADOS_TOFU",
+    "name": "Tofu",
+    "parent_code": "CAT_LEGUMBRES_DERIVADOS_SOJA",
+    "description": "Ejemplos de ingredientes: Tofu firme, blando, sedoso.",
+    "sort_order": 7901,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_DERIVADOS_TEMPEH",
+    "name": "Tempeh",
+    "parent_code": "CAT_LEGUMBRES_DERIVADOS_SOJA",
+    "description": "Ejemplos de ingredientes: Tempeh natural, tempeh marinado.",
+    "sort_order": 7902,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_DERIVADOS_SOJA_TEXTURIZADA",
+    "name": "Texturizados",
+    "parent_code": "CAT_LEGUMBRES_DERIVADOS_SOJA",
+    "description": "Ejemplos de ingredientes: Soja texturizada fina, gruesa.",
+    "sort_order": 7903,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_SEMILLAS",
+    "name": "Frutos secos, semillas y derivados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Frutos secos, semillas y derivados.",
+    "sort_order": 8000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_UNTABLES",
+    "name": "Untables",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Untables.",
+    "sort_order": 8000,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_UNTABLES",
+    "name": "Pastas de legumbres",
+    "parent_code": "CAT_LEGUMBRES_UNTABLES",
+    "description": "Ejemplos de ingredientes: Hummus, pasta de porotos, dip de lentejas.",
+    "sort_order": 8001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LEGUMBRES_OTRAS_LEGUMBRES",
+    "name": "Otras legumbres",
+    "parent_code": "LEGUMBRES",
+    "description": "Subcategoría de Legumbres y derivados: Otras legumbres.",
+    "sort_order": 8100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTOS_SECOS_SEMILLAS_FRUTOS_SECOS",
+    "name": "Frutos secos",
+    "parent_code": "FRUTOS_SECOS_SEMILLAS",
+    "description": "Subcategoría de Frutos secos, semillas y derivados: Frutos secos.",
+    "sort_order": 8100,
+    "is_active": true
+  },
+  {
+    "code": "LEGUMBRES_OTRAS",
+    "name": "Regionales",
+    "parent_code": "CAT_LEGUMBRES_OTRAS_LEGUMBRES",
+    "description": "Ejemplos de ingredientes: Lupines, tarwi.",
+    "sort_order": 8101,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_NUECES",
+    "name": "Nueces",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_FRUTOS_SECOS",
+    "description": "Ejemplos de ingredientes: Nuez común, pecán, macadamia.",
+    "sort_order": 8101,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_ALMENDRAS",
+    "name": "Almendras",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_FRUTOS_SECOS",
+    "description": "Ejemplos de ingredientes: Almendra entera, laminada, pelada.",
+    "sort_order": 8102,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_AVELLANAS",
+    "name": "Avellanas",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_FRUTOS_SECOS",
+    "description": "Ejemplos de ingredientes: Avellana.",
+    "sort_order": 8103,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_CASTANAS",
+    "name": "Castañas",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_FRUTOS_SECOS",
+    "description": "Ejemplos de ingredientes: Castaña de cajú, castaña de Pará.",
+    "sort_order": 8104,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_PISTACHOS",
+    "name": "Pistachos",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_FRUTOS_SECOS",
+    "description": "Ejemplos de ingredientes: Pistacho.",
+    "sort_order": 8105,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTOS_SECOS_SEMILLAS_MANI",
+    "name": "Maní",
+    "parent_code": "FRUTOS_SECOS_SEMILLAS",
+    "description": "Subcategoría de Frutos secos, semillas y derivados: Maní.",
+    "sort_order": 8200,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_MANI",
+    "name": "Maní",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_MANI",
+    "description": "Ejemplos de ingredientes: Maní tostado, maní crudo.",
+    "sort_order": 8201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTOS_SECOS_SEMILLAS_SEMILLAS",
+    "name": "Semillas",
+    "parent_code": "FRUTOS_SECOS_SEMILLAS",
+    "description": "Subcategoría de Frutos secos, semillas y derivados: Semillas.",
+    "sort_order": 8300,
+    "is_active": true
+  },
+  {
+    "code": "SEMILLAS_CHIA_LINO",
+    "name": "Gelificantes naturales",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_SEMILLAS",
+    "description": "Ejemplos de ingredientes: Chía, lino, lino molido.",
+    "sort_order": 8301,
+    "is_active": true
+  },
+  {
+    "code": "SEMILLAS_SESAMO",
+    "name": "Sésamo",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_SEMILLAS",
+    "description": "Ejemplos de ingredientes: Sésamo blanco, negro, integral.",
+    "sort_order": 8302,
+    "is_active": true
+  },
+  {
+    "code": "SEMILLAS_GIRASOL_CALABAZA",
+    "name": "Oleaginosas",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_SEMILLAS",
+    "description": "Ejemplos de ingredientes: Girasol, zapallo/calabaza.",
+    "sort_order": 8303,
+    "is_active": true
+  },
+  {
+    "code": "SEMILLAS_AMAPOLA",
+    "name": "Pequeñas",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_SEMILLAS",
+    "description": "Ejemplos de ingredientes: Amapola.",
+    "sort_order": 8304,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTOS_SECOS_SEMILLAS_PASTAS",
+    "name": "Pastas",
+    "parent_code": "FRUTOS_SECOS_SEMILLAS",
+    "description": "Subcategoría de Frutos secos, semillas y derivados: Pastas.",
+    "sort_order": 8400,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_PASTAS",
+    "name": "Mantecas y cremas",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_PASTAS",
+    "description": "Ejemplos de ingredientes: Manteca de maní, pasta de almendra, crema de cajú.",
+    "sort_order": 8401,
+    "is_active": true
+  },
+  {
+    "code": "SEMILLAS_TAHINI",
+    "name": "Sésamo",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_PASTAS",
+    "description": "Ejemplos de ingredientes: Tahini.",
+    "sort_order": 8402,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTOS_SECOS_SEMILLAS_MIX",
+    "name": "Mix",
+    "parent_code": "FRUTOS_SECOS_SEMILLAS",
+    "description": "Subcategoría de Frutos secos, semillas y derivados: Mix.",
+    "sort_order": 8500,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_MIX",
+    "name": "Mezclas",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_MIX",
+    "description": "Ejemplos de ingredientes: Mix frutos secos, mix trail.",
+    "sort_order": 8501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FRUTOS_SECOS_SEMILLAS_OTROS",
+    "name": "Otros",
+    "parent_code": "FRUTOS_SECOS_SEMILLAS",
+    "description": "Subcategoría de Frutos secos, semillas y derivados: Otros.",
+    "sort_order": 8600,
+    "is_active": true
+  },
+  {
+    "code": "FRUTOS_SECOS_OTROS",
+    "name": "Especiales",
+    "parent_code": "CAT_FRUTOS_SECOS_SEMILLAS_OTROS",
+    "description": "Ejemplos de ingredientes: Piñones, nuez de Brasil.",
+    "sort_order": 8601,
+    "is_active": true
+  },
+  {
+    "code": "CARNES",
+    "name": "Carnes",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Carnes.",
+    "sort_order": 9000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_VACUNA",
+    "name": "Vacuna",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Vacuna.",
+    "sort_order": 9100,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_VACUNA_MAGRA",
+    "name": "Cortes magros",
+    "parent_code": "CAT_CARNES_VACUNA",
+    "description": "Ejemplos de ingredientes: Nalga, cuadrada, peceto, bola de lomo.",
+    "sort_order": 9101,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_VACUNA_GRASA",
+    "name": "Cortes grasos",
+    "parent_code": "CAT_CARNES_VACUNA",
+    "description": "Ejemplos de ingredientes: Asado, vacío, entraña, falda.",
+    "sort_order": 9102,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_VACUNA_PICADA",
+    "name": "Picada",
+    "parent_code": "CAT_CARNES_VACUNA",
+    "description": "Ejemplos de ingredientes: Carne picada común, especial.",
+    "sort_order": 9103,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_CERDO",
+    "name": "Cerdo",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Cerdo.",
+    "sort_order": 9200,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_CERDO_MAGRO",
+    "name": "Cortes magros",
+    "parent_code": "CAT_CARNES_CERDO",
+    "description": "Ejemplos de ingredientes: Solomillo, carré, bondiola magra.",
+    "sort_order": 9201,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_CERDO_GRASO",
+    "name": "Cortes grasos",
+    "parent_code": "CAT_CARNES_CERDO",
+    "description": "Ejemplos de ingredientes: Pechito, panceta fresca, bondiola.",
+    "sort_order": 9202,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_OVINA_CAPRINA",
+    "name": "Ovina/caprina",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Ovina/caprina.",
+    "sort_order": 9300,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_CORDERO_CABRA",
+    "name": "Cordero y cabra",
+    "parent_code": "CAT_CARNES_OVINA_CAPRINA",
+    "description": "Ejemplos de ingredientes: Cordero, chivito, cabrito.",
+    "sort_order": 9301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_AVES",
+    "name": "Aves",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Aves.",
+    "sort_order": 9400,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_POLLO",
+    "name": "Pollo",
+    "parent_code": "CAT_CARNES_AVES",
+    "description": "Ejemplos de ingredientes: Pechuga, pata muslo, ala, pollo entero.",
+    "sort_order": 9401,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_PAVO",
+    "name": "Pavo",
+    "parent_code": "CAT_CARNES_AVES",
+    "description": "Ejemplos de ingredientes: Pechuga de pavo, pavo entero.",
+    "sort_order": 9402,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_OTRAS_AVES",
+    "name": "Otras aves",
+    "parent_code": "CAT_CARNES_AVES",
+    "description": "Ejemplos de ingredientes: Pato, codorniz, gallina.",
+    "sort_order": 9403,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_VISCERAS_Y_ACHURAS",
+    "name": "Vísceras y achuras",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Vísceras y achuras.",
+    "sort_order": 9500,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_VISCERAS",
+    "name": "Menudencias",
+    "parent_code": "CAT_CARNES_VISCERAS_Y_ACHURAS",
+    "description": "Ejemplos de ingredientes: Hígado, corazón, riñón, mondongo, molleja.",
+    "sort_order": 9501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_CAZA",
+    "name": "Caza",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Caza.",
+    "sort_order": 9600,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_CAZA",
+    "name": "Carnes especiales",
+    "parent_code": "CAT_CARNES_CAZA",
+    "description": "Ejemplos de ingredientes: Ciervo, jabalí, conejo.",
+    "sort_order": 9601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_SEMIELABORADAS",
+    "name": "Semielaboradas",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Semielaboradas.",
+    "sort_order": 9700,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_REBOZADAS",
+    "name": "Rebozadas",
+    "parent_code": "CAT_CARNES_SEMIELABORADAS",
+    "description": "Ejemplos de ingredientes: Milanesa de carne, milanesa de pollo.",
+    "sort_order": 9701,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_HAMBURGUESAS",
+    "name": "Medallones",
+    "parent_code": "CAT_CARNES_SEMIELABORADAS",
+    "description": "Ejemplos de ingredientes: Hamburguesa vacuna, hamburguesa de pollo.",
+    "sort_order": 9702,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CARNES_OTRAS_CARNES",
+    "name": "Otras carnes",
+    "parent_code": "CARNES",
+    "description": "Subcategoría de Carnes: Otras carnes.",
+    "sort_order": 9800,
+    "is_active": true
+  },
+  {
+    "code": "CARNES_OTRAS",
+    "name": "Otros",
+    "parent_code": "CAT_CARNES_OTRAS_CARNES",
+    "description": "Ejemplos de ingredientes: Carne regional o especial.",
+    "sort_order": 9801,
+    "is_active": true
+  },
+  {
+    "code": "FIAMBRES_EMBUTIDOS",
+    "name": "Fiambres, embutidos y chacinados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Fiambres, embutidos y chacinados.",
+    "sort_order": 10000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_FIAMBRES",
+    "name": "Fiambres",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Fiambres.",
+    "sort_order": 10100,
+    "is_active": true
+  },
+  {
+    "code": "FIAMBRES_JAMONES",
+    "name": "Jamones",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_FIAMBRES",
+    "description": "Ejemplos de ingredientes: Jamón cocido, crudo, natural.",
+    "sort_order": 10101,
+    "is_active": true
+  },
+  {
+    "code": "FIAMBRES_AVES",
+    "name": "Aves",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_FIAMBRES",
+    "description": "Ejemplos de ingredientes: Pechuga de pavo, fiambre de pollo.",
+    "sort_order": 10102,
+    "is_active": true
+  },
+  {
+    "code": "FIAMBRES_MORTADELA",
+    "name": "Otros fiambres",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_FIAMBRES",
+    "description": "Ejemplos de ingredientes: Mortadela, paleta, lomito.",
+    "sort_order": 10103,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS",
+    "name": "Embutidos",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Embutidos.",
+    "sort_order": 10200,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_CHORIZOS",
+    "name": "Chorizos",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS",
+    "description": "Ejemplos de ingredientes: Chorizo fresco, colorado, parrillero.",
+    "sort_order": 10201,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_MORCILLAS",
+    "name": "Morcillas",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS",
+    "description": "Ejemplos de ingredientes: Morcilla común, bombón.",
+    "sort_order": 10202,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS_SECOS",
+    "name": "Embutidos secos",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Embutidos secos.",
+    "sort_order": 10300,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_SALAMES",
+    "name": "Secos",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS_SECOS",
+    "description": "Ejemplos de ingredientes: Salame, salamín, longaniza.",
+    "sort_order": 10301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS_COCIDOS",
+    "name": "Embutidos cocidos",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Embutidos cocidos.",
+    "sort_order": 10400,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_SALCHICHAS",
+    "name": "Salchichas",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_EMBUTIDOS_COCIDOS",
+    "description": "Ejemplos de ingredientes: Salchicha tipo Viena, parrillera.",
+    "sort_order": 10401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_CURADOS",
+    "name": "Curados",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Curados.",
+    "sort_order": 10500,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_PANCETA",
+    "name": "Panceta y bacon",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_CURADOS",
+    "description": "Ejemplos de ingredientes: Panceta, bacon.",
+    "sort_order": 10501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_UNTABLES",
+    "name": "Untables",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Untables.",
+    "sort_order": 10600,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_PATES",
+    "name": "Patés",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_UNTABLES",
+    "description": "Ejemplos de ingredientes: Paté de hígado, pasta de jamón.",
+    "sort_order": 10601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_FIAMBRES_EMBUTIDOS_OTROS",
+    "name": "Otros",
+    "parent_code": "FIAMBRES_EMBUTIDOS",
+    "description": "Subcategoría de Fiambres, embutidos y chacinados: Otros.",
+    "sort_order": 10700,
+    "is_active": true
+  },
+  {
+    "code": "EMBUTIDOS_OTROS",
+    "name": "Otros chacinados",
+    "parent_code": "CAT_FIAMBRES_EMBUTIDOS_OTROS",
+    "description": "Ejemplos de ingredientes: Sobrasada, bondiola curada.",
+    "sort_order": 10701,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_MARISCOS",
+    "name": "Pescados y mariscos",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Pescados y mariscos.",
+    "sort_order": 11000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PESCADOS_MARISCOS_PESCADOS",
+    "name": "Pescados",
+    "parent_code": "PESCADOS_MARISCOS",
+    "description": "Subcategoría de Pescados y mariscos: Pescados.",
+    "sort_order": 11100,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_BLANCO",
+    "name": "Blancos/magros",
+    "parent_code": "CAT_PESCADOS_MARISCOS_PESCADOS",
+    "description": "Ejemplos de ingredientes: Merluza, lenguado, abadejo, brótola.",
+    "sort_order": 11101,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_GRASOS",
+    "name": "Grasos/azules",
+    "parent_code": "CAT_PESCADOS_MARISCOS_PESCADOS",
+    "description": "Ejemplos de ingredientes: Salmón, sardina, caballa, trucha.",
+    "sort_order": 11102,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_RIO",
+    "name": "Río/lago",
+    "parent_code": "CAT_PESCADOS_MARISCOS_PESCADOS",
+    "description": "Ejemplos de ingredientes: Pejerrey, pacú, dorado, trucha.",
+    "sort_order": 11103,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PESCADOS_MARISCOS_MARISCOS",
+    "name": "Mariscos",
+    "parent_code": "PESCADOS_MARISCOS",
+    "description": "Subcategoría de Pescados y mariscos: Mariscos.",
+    "sort_order": 11200,
+    "is_active": true
+  },
+  {
+    "code": "MARISCOS_CRUSTACEOS",
+    "name": "Crustáceos",
+    "parent_code": "CAT_PESCADOS_MARISCOS_MARISCOS",
+    "description": "Ejemplos de ingredientes: Langostino, camarón, cangrejo.",
+    "sort_order": 11201,
+    "is_active": true
+  },
+  {
+    "code": "MARISCOS_MOLUSCOS",
+    "name": "Moluscos",
+    "parent_code": "CAT_PESCADOS_MARISCOS_MARISCOS",
+    "description": "Ejemplos de ingredientes: Mejillón, almeja, vieira, ostra.",
+    "sort_order": 11202,
+    "is_active": true
+  },
+  {
+    "code": "MARISCOS_CEFALOPODOS",
+    "name": "Cefalópodos",
+    "parent_code": "CAT_PESCADOS_MARISCOS_MARISCOS",
+    "description": "Ejemplos de ingredientes: Calamar, pulpo, sepia.",
+    "sort_order": 11203,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PESCADOS_MARISCOS_CONSERVAS",
+    "name": "Conservas",
+    "parent_code": "PESCADOS_MARISCOS",
+    "description": "Subcategoría de Pescados y mariscos: Conservas.",
+    "sort_order": 11300,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_CONSERVA",
+    "name": "Enlatados",
+    "parent_code": "CAT_PESCADOS_MARISCOS_CONSERVAS",
+    "description": "Ejemplos de ingredientes: Atún, sardina, caballa, anchoas.",
+    "sort_order": 11301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PESCADOS_MARISCOS_AHUMADOS_SALADOS",
+    "name": "Ahumados/salados",
+    "parent_code": "PESCADOS_MARISCOS",
+    "description": "Subcategoría de Pescados y mariscos: Ahumados/salados.",
+    "sort_order": 11400,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_AHUMADOS",
+    "name": "Conservación",
+    "parent_code": "CAT_PESCADOS_MARISCOS_AHUMADOS_SALADOS",
+    "description": "Ejemplos de ingredientes: Salmón ahumado, bacalao salado, arenque.",
+    "sort_order": 11401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PESCADOS_MARISCOS_PROCESADOS",
+    "name": "Procesados",
+    "parent_code": "PESCADOS_MARISCOS",
+    "description": "Subcategoría de Pescados y mariscos: Procesados.",
+    "sort_order": 11500,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_PROCESADOS",
+    "name": "Derivados",
+    "parent_code": "CAT_PESCADOS_MARISCOS_PROCESADOS",
+    "description": "Ejemplos de ingredientes: Surimi, bastones de pescado.",
+    "sort_order": 11501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PESCADOS_MARISCOS_OTROS",
+    "name": "Otros",
+    "parent_code": "PESCADOS_MARISCOS",
+    "description": "Subcategoría de Pescados y mariscos: Otros.",
+    "sort_order": 11600,
+    "is_active": true
+  },
+  {
+    "code": "PESCADOS_OTROS",
+    "name": "Especiales",
+    "parent_code": "CAT_PESCADOS_MARISCOS_OTROS",
+    "description": "Ejemplos de ingredientes: Huevas, caviar.",
+    "sort_order": 11601,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS",
+    "name": "Huevos y derivados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Huevos y derivados.",
+    "sort_order": 12000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HUEVOS_HUEVOS_FRESCOS",
+    "name": "Huevos frescos",
+    "parent_code": "HUEVOS",
+    "description": "Subcategoría de Huevos y derivados: Huevos frescos.",
+    "sort_order": 12100,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_GALLINA",
+    "name": "Gallina",
+    "parent_code": "CAT_HUEVOS_HUEVOS_FRESCOS",
+    "description": "Ejemplos de ingredientes: Huevo de gallina.",
+    "sort_order": 12101,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_OTRAS_AVES",
+    "name": "Otras aves",
+    "parent_code": "CAT_HUEVOS_HUEVOS_FRESCOS",
+    "description": "Ejemplos de ingredientes: Huevo de codorniz, pato.",
+    "sort_order": 12102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HUEVOS_PARTES",
+    "name": "Partes",
+    "parent_code": "HUEVOS",
+    "description": "Subcategoría de Huevos y derivados: Partes.",
+    "sort_order": 12200,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_CLARAS",
+    "name": "Claras",
+    "parent_code": "CAT_HUEVOS_PARTES",
+    "description": "Ejemplos de ingredientes: Clara de huevo.",
+    "sort_order": 12201,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_YEMAS",
+    "name": "Yemas",
+    "parent_code": "CAT_HUEVOS_PARTES",
+    "description": "Ejemplos de ingredientes: Yema de huevo.",
+    "sort_order": 12202,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HUEVOS_PROCESADOS",
+    "name": "Procesados",
+    "parent_code": "HUEVOS",
+    "description": "Subcategoría de Huevos y derivados: Procesados.",
+    "sort_order": 12300,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_LIQUIDOS",
+    "name": "Líquidos",
+    "parent_code": "CAT_HUEVOS_PROCESADOS",
+    "description": "Ejemplos de ingredientes: Huevo líquido pasteurizado, claras líquidas.",
+    "sort_order": 12301,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_POLVO",
+    "name": "En polvo",
+    "parent_code": "CAT_HUEVOS_PROCESADOS",
+    "description": "Ejemplos de ingredientes: Huevo en polvo, clara en polvo.",
+    "sort_order": 12302,
+    "is_active": true
+  },
+  {
+    "code": "CAT_HUEVOS_SUSTITUTOS",
+    "name": "Sustitutos",
+    "parent_code": "HUEVOS",
+    "description": "Subcategoría de Huevos y derivados: Sustitutos.",
+    "sort_order": 12400,
+    "is_active": true
+  },
+  {
+    "code": "HUEVOS_SUSTITUTOS",
+    "name": "Veganos o funcionales",
+    "parent_code": "CAT_HUEVOS_SUSTITUTOS",
+    "description": "Ejemplos de ingredientes: Sustituto de huevo, mezcla vegetal para huevo.",
+    "sort_order": 12401,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS",
+    "name": "Lácteos y derivados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Lácteos y derivados.",
+    "sort_order": 13000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_LECHES",
+    "name": "Leches",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Leches.",
+    "sort_order": 13100,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_LECHE_FLUIDA",
+    "name": "Fluida",
+    "parent_code": "CAT_LACTEOS_LECHES",
+    "description": "Ejemplos de ingredientes: Leche entera, descremada, parcialmente descremada.",
+    "sort_order": 13101,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_LECHE_SIN_LACTOSA",
+    "name": "Sin lactosa",
+    "parent_code": "CAT_LACTEOS_LECHES",
+    "description": "Ejemplos de ingredientes: Leche deslactosada.",
+    "sort_order": 13102,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_LECHE_POLVO",
+    "name": "En polvo",
+    "parent_code": "CAT_LACTEOS_LECHES",
+    "description": "Ejemplos de ingredientes: Leche en polvo entera, descremada.",
+    "sort_order": 13103,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_LECHE_CONDENSADA",
+    "name": "Concentradas",
+    "parent_code": "CAT_LACTEOS_LECHES",
+    "description": "Ejemplos de ingredientes: Leche condensada, evaporada.",
+    "sort_order": 13104,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_YOGURES",
+    "name": "Yogures",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Yogures.",
+    "sort_order": 13200,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_YOGUR_NATURAL",
+    "name": "Naturales",
+    "parent_code": "CAT_LACTEOS_YOGURES",
+    "description": "Ejemplos de ingredientes: Yogur natural, griego, sin azúcar.",
+    "sort_order": 13201,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_YOGUR_SABORIZADO",
+    "name": "Saborizados",
+    "parent_code": "CAT_LACTEOS_YOGURES",
+    "description": "Ejemplos de ingredientes: Yogur de vainilla, frutilla, bebible.",
+    "sort_order": 13202,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_FERMENTADOS",
+    "name": "Fermentados",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Fermentados.",
+    "sort_order": 13300,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_KEFIR",
+    "name": "Kéfir",
+    "parent_code": "CAT_LACTEOS_FERMENTADOS",
+    "description": "Ejemplos de ingredientes: Kéfir de leche.",
+    "sort_order": 13301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_QUESOS",
+    "name": "Quesos",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Quesos.",
+    "sort_order": 13400,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_QUESOS_FRESCOS",
+    "name": "Frescos",
+    "parent_code": "CAT_LACTEOS_QUESOS",
+    "description": "Ejemplos de ingredientes: Ricota, queso blanco, cottage.",
+    "sort_order": 13401,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_QUESOS_BLANDOS",
+    "name": "Blandos",
+    "parent_code": "CAT_LACTEOS_QUESOS",
+    "description": "Ejemplos de ingredientes: Cremoso, mozzarella, brie, camembert.",
+    "sort_order": 13402,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_QUESOS_SEMIDUROS",
+    "name": "Semiduros",
+    "parent_code": "CAT_LACTEOS_QUESOS",
+    "description": "Ejemplos de ingredientes: Pategrás, tybo, gouda.",
+    "sort_order": 13403,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_QUESOS_DUROS",
+    "name": "Duros",
+    "parent_code": "CAT_LACTEOS_QUESOS",
+    "description": "Ejemplos de ingredientes: Parmesano, reggianito, sardo.",
+    "sort_order": 13404,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_QUESOS_AZULES",
+    "name": "Azules",
+    "parent_code": "CAT_LACTEOS_QUESOS",
+    "description": "Ejemplos de ingredientes: Roquefort, gorgonzola.",
+    "sort_order": 13405,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_QUESOS_UNTABLES",
+    "name": "Untables/procesados",
+    "parent_code": "CAT_LACTEOS_QUESOS",
+    "description": "Ejemplos de ingredientes: Queso crema, queso fundido, cheddar untable.",
+    "sort_order": 13406,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_CREMAS",
+    "name": "Cremas",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Cremas.",
+    "sort_order": 13500,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_CREMA",
+    "name": "Crema/nata",
+    "parent_code": "CAT_LACTEOS_CREMAS",
+    "description": "Ejemplos de ingredientes: Crema de leche, crema doble.",
+    "sort_order": 13501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_GRASAS_LACTEAS",
+    "name": "Grasas lácteas",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Grasas lácteas.",
+    "sort_order": 13600,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_MANTECA",
+    "name": "Manteca",
+    "parent_code": "CAT_LACTEOS_GRASAS_LACTEAS",
+    "description": "Ejemplos de ingredientes: Manteca, manteca clarificada, ghee.",
+    "sort_order": 13601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_SUERO",
+    "name": "Suero",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Suero.",
+    "sort_order": 13700,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_SUERO",
+    "name": "Suero lácteo",
+    "parent_code": "CAT_LACTEOS_SUERO",
+    "description": "Ejemplos de ingredientes: Suero de leche, buttermilk.",
+    "sort_order": 13701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_LACTEOS_OTROS_LACTEOS",
+    "name": "Otros lácteos",
+    "parent_code": "LACTEOS",
+    "description": "Subcategoría de Lácteos y derivados: Otros lácteos.",
+    "sort_order": 13800,
+    "is_active": true
+  },
+  {
+    "code": "LACTEOS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_LACTEOS_OTROS_LACTEOS",
+    "description": "Ejemplos de ingredientes: Cuajada, requesón.",
+    "sort_order": 13801,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_LIQUIDOS",
+    "name": "Bebidas, líquidos y bases culinarias",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Bebidas, líquidos y bases culinarias.",
+    "sort_order": 14000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_AGUA",
+    "name": "Agua",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Agua.",
+    "sort_order": 14100,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_AGUA",
+    "name": "Agua",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_AGUA",
+    "description": "Ejemplos de ingredientes: Agua, agua mineral, soda.",
+    "sort_order": 14101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_CALDOS_Y_FONDOS",
+    "name": "Caldos y fondos",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Caldos y fondos.",
+    "sort_order": 14200,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_CALDOS",
+    "name": "Líquidos base",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_CALDOS_Y_FONDOS",
+    "description": "Ejemplos de ingredientes: Caldo de verdura, pollo, carne, pescado.",
+    "sort_order": 14201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_FONDOS",
+    "name": "Fondos",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Fondos.",
+    "sort_order": 14300,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_FONDOS",
+    "name": "Concentrados caseros",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_FONDOS",
+    "description": "Ejemplos de ingredientes: Fondo oscuro, fondo claro, fumet.",
+    "sort_order": 14301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_BEBIDAS_VEGETALES",
+    "name": "Bebidas vegetales",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Bebidas vegetales.",
+    "sort_order": 14400,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_VEGETALES",
+    "name": "Sustitutos de leche",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_BEBIDAS_VEGETALES",
+    "description": "Ejemplos de ingredientes: Bebida de almendra, soja, avena, arroz, coco.",
+    "sort_order": 14401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_JUGOS",
+    "name": "Jugos",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Jugos.",
+    "sort_order": 14500,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_JUGOS",
+    "name": "Jugos y zumos",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_JUGOS",
+    "description": "Ejemplos de ingredientes: Jugo de naranja, limón, manzana.",
+    "sort_order": 14501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_PULPAS_LIQUIDAS",
+    "name": "Pulpas líquidas",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Pulpas líquidas.",
+    "sort_order": 14600,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_PULPAS",
+    "name": "Bases",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_PULPAS_LIQUIDAS",
+    "description": "Ejemplos de ingredientes: Pulpa líquida de fruta.",
+    "sort_order": 14601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_INFUSIONES",
+    "name": "Infusiones",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Infusiones.",
+    "sort_order": 14700,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_INFUSIONES",
+    "name": "Té y tisanas",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_INFUSIONES",
+    "description": "Ejemplos de ingredientes: Té negro, verde, manzanilla, mate cocido.",
+    "sort_order": 14701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_CAFE",
+    "name": "Café",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Café.",
+    "sort_order": 14800,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_CAFE",
+    "name": "Café y derivados",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_CAFE",
+    "description": "Ejemplos de ingredientes: Café molido, instantáneo, espresso.",
+    "sort_order": 14801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_BEBIDAS_CACAO",
+    "name": "Bebidas cacao",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Bebidas cacao.",
+    "sort_order": 14900,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_CACAO",
+    "name": "Bases dulces",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_BEBIDAS_CACAO",
+    "description": "Ejemplos de ingredientes: Cacao bebible, chocolatada.",
+    "sort_order": 14901,
+    "is_active": true
+  },
+  {
+    "code": "ACEITES_GRASAS",
+    "name": "Aceites, grasas y untables grasos",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Aceites, grasas y untables grasos.",
+    "sort_order": 15000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_GASEOSAS",
+    "name": "Gaseosas",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Gaseosas.",
+    "sort_order": 15000,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_GASEOSAS",
+    "name": "Uso culinario eventual",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_GASEOSAS",
+    "description": "Ejemplos de ingredientes: Cola, ginger ale, tónica.",
+    "sort_order": 15001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_ALCOHOL_CULINARIO",
+    "name": "Alcohol culinario",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Alcohol culinario.",
+    "sort_order": 15100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ACEITES_GRASAS_ACEITES_VEGETALES",
+    "name": "Aceites vegetales",
+    "parent_code": "ACEITES_GRASAS",
+    "description": "Subcategoría de Aceites, grasas y untables grasos: Aceites vegetales.",
+    "sort_order": 15100,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_ALCOHOL_COCINA",
+    "name": "Para cocinar",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_ALCOHOL_CULINARIO",
+    "description": "Ejemplos de ingredientes: Vino blanco, tinto, cerveza, coñac, ron, licor.",
+    "sort_order": 15101,
+    "is_active": true
+  },
+  {
+    "code": "ACEITES_OLIVA",
+    "name": "Oliva",
+    "parent_code": "CAT_ACEITES_GRASAS_ACEITES_VEGETALES",
+    "description": "Ejemplos de ingredientes: Aceite de oliva, extra virgen.",
+    "sort_order": 15101,
+    "is_active": true
+  },
+  {
+    "code": "ACEITES_SEMILLAS_COMUNES",
+    "name": "Semillas comunes",
+    "parent_code": "CAT_ACEITES_GRASAS_ACEITES_VEGETALES",
+    "description": "Ejemplos de ingredientes: Girasol, maíz, soja, canola.",
+    "sort_order": 15102,
+    "is_active": true
+  },
+  {
+    "code": "ACEITES_ESPECIALES",
+    "name": "Especiales",
+    "parent_code": "CAT_ACEITES_GRASAS_ACEITES_VEGETALES",
+    "description": "Ejemplos de ingredientes: Sésamo, maní, nuez, palta, uva.",
+    "sort_order": 15103,
+    "is_active": true
+  },
+  {
+    "code": "CAT_BEBIDAS_LIQUIDOS_OTRAS_BEBIDAS",
+    "name": "Otras bebidas",
+    "parent_code": "BEBIDAS_LIQUIDOS",
+    "description": "Subcategoría de Bebidas, líquidos y bases culinarias: Otras bebidas.",
+    "sort_order": 15200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ACEITES_GRASAS_ACEITES_TROPICALES",
+    "name": "Aceites tropicales",
+    "parent_code": "ACEITES_GRASAS",
+    "description": "Subcategoría de Aceites, grasas y untables grasos: Aceites tropicales.",
+    "sort_order": 15200,
+    "is_active": true
+  },
+  {
+    "code": "BEBIDAS_OTRAS",
+    "name": "Especiales",
+    "parent_code": "CAT_BEBIDAS_LIQUIDOS_OTRAS_BEBIDAS",
+    "description": "Ejemplos de ingredientes: Kombucha, bebidas fermentadas.",
+    "sort_order": 15201,
+    "is_active": true
+  },
+  {
+    "code": "ACEITES_COCO_PALMA",
+    "name": "Sólidos o semisólidos",
+    "parent_code": "CAT_ACEITES_GRASAS_ACEITES_TROPICALES",
+    "description": "Ejemplos de ingredientes: Aceite de coco, palma.",
+    "sort_order": 15201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ACEITES_GRASAS_GRASAS_ANIMALES",
+    "name": "Grasas animales",
+    "parent_code": "ACEITES_GRASAS",
+    "description": "Subcategoría de Aceites, grasas y untables grasos: Grasas animales.",
+    "sort_order": 15300,
+    "is_active": true
+  },
+  {
+    "code": "GRASAS_ANIMALES",
+    "name": "Animales",
+    "parent_code": "CAT_ACEITES_GRASAS_GRASAS_ANIMALES",
+    "description": "Ejemplos de ingredientes: Grasa vacuna, grasa de cerdo, grasa de pato.",
+    "sort_order": 15301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ACEITES_GRASAS_GRASAS_VEGETALES",
+    "name": "Grasas vegetales",
+    "parent_code": "ACEITES_GRASAS",
+    "description": "Subcategoría de Aceites, grasas y untables grasos: Grasas vegetales.",
+    "sort_order": 15400,
+    "is_active": true
+  },
+  {
+    "code": "GRASAS_MARGARINAS",
+    "name": "Margarinas",
+    "parent_code": "CAT_ACEITES_GRASAS_GRASAS_VEGETALES",
+    "description": "Ejemplos de ingredientes: Margarina, margarina light.",
+    "sort_order": 15401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ACEITES_GRASAS_UNTABLES_GRASOS",
+    "name": "Untables grasos",
+    "parent_code": "ACEITES_GRASAS",
+    "description": "Subcategoría de Aceites, grasas y untables grasos: Untables grasos.",
+    "sort_order": 15500,
+    "is_active": true
+  },
+  {
+    "code": "GRASAS_UNTABLES",
+    "name": "Cremosos",
+    "parent_code": "CAT_ACEITES_GRASAS_UNTABLES_GRASOS",
+    "description": "Ejemplos de ingredientes: Crema vegetal, untable vegetal.",
+    "sort_order": 15501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ACEITES_GRASAS_OTROS_ACEITES",
+    "name": "Otros aceites",
+    "parent_code": "ACEITES_GRASAS",
+    "description": "Subcategoría de Aceites, grasas y untables grasos: Otros aceites.",
+    "sort_order": 15600,
+    "is_active": true
+  },
+  {
+    "code": "ACEITES_OTROS",
+    "name": "Especiales",
+    "parent_code": "CAT_ACEITES_GRASAS_OTROS_ACEITES",
+    "description": "Ejemplos de ingredientes: Aceites saborizados.",
+    "sort_order": 15601,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_ESPECIAS",
+    "name": "Condimentos, hierbas y especias",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Condimentos, hierbas y especias.",
+    "sort_order": 16000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_SALES",
+    "name": "Sales",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Sales.",
+    "sort_order": 16100,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_SALES",
+    "name": "Sal y variantes",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_SALES",
+    "description": "Ejemplos de ingredientes: Sal fina, gruesa, marina, rosada.",
+    "sort_order": 16101,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_SUSTITUTOS_SAL",
+    "name": "Sustitutos",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_SALES",
+    "description": "Ejemplos de ingredientes: Sal baja en sodio, sustituto de sal.",
+    "sort_order": 16102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_PIMIENTAS",
+    "name": "Pimientas",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Pimientas.",
+    "sort_order": 16200,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_PIMIENTAS",
+    "name": "Pimientas",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_PIMIENTAS",
+    "description": "Ejemplos de ingredientes: Negra, blanca, verde, rosa, cayena.",
+    "sort_order": 16201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_HIERBAS",
+    "name": "Hierbas",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Hierbas.",
+    "sort_order": 16300,
+    "is_active": true
+  },
+  {
+    "code": "HIERBAS_FRESCAS",
+    "name": "Frescas",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_HIERBAS",
+    "description": "Ejemplos de ingredientes: Perejil, cilantro, albahaca, menta, romero, tomillo.",
+    "sort_order": 16301,
+    "is_active": true
+  },
+  {
+    "code": "HIERBAS_SECAS",
+    "name": "Secas",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_HIERBAS",
+    "description": "Ejemplos de ingredientes: Orégano, laurel, tomillo seco, romero seco.",
+    "sort_order": 16302,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_ESPECIAS",
+    "name": "Especias",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Especias.",
+    "sort_order": 16400,
+    "is_active": true
+  },
+  {
+    "code": "ESPECIAS_DULCES",
+    "name": "Perfil dulce",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_ESPECIAS",
+    "description": "Ejemplos de ingredientes: Canela, clavo, nuez moscada, cardamomo.",
+    "sort_order": 16401,
+    "is_active": true
+  },
+  {
+    "code": "ESPECIAS_SALADAS",
+    "name": "Perfil salado",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_ESPECIAS",
+    "description": "Ejemplos de ingredientes: Comino, cúrcuma, pimentón, curry en polvo.",
+    "sort_order": 16402,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_SEMILLAS_ESPECIA",
+    "name": "Semillas especia",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Semillas especia.",
+    "sort_order": 16500,
+    "is_active": true
+  },
+  {
+    "code": "ESPECIAS_SEMILLAS",
+    "name": "Aromáticas",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_SEMILLAS_ESPECIA",
+    "description": "Ejemplos de ingredientes: Coriandro, hinojo, mostaza, anís.",
+    "sort_order": 16501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_PICANTES",
+    "name": "Picantes",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Picantes.",
+    "sort_order": 16600,
+    "is_active": true
+  },
+  {
+    "code": "ESPECIAS_PICANTES",
+    "name": "Secos o molidos",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_PICANTES",
+    "description": "Ejemplos de ingredientes: Ají molido, chile, merkén, peperoncino.",
+    "sort_order": 16601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_MEZCLAS",
+    "name": "Mezclas",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Mezclas.",
+    "sort_order": 16700,
+    "is_active": true
+  },
+  {
+    "code": "ESPECIAS_MEZCLAS",
+    "name": "Mixes",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_MEZCLAS",
+    "description": "Ejemplos de ingredientes: Provenzal, chimichurri seco, ras el hanout, garam masala.",
+    "sort_order": 16701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_CONDIMENTOS_EN_POLVO",
+    "name": "Condimentos en polvo",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Condimentos en polvo.",
+    "sort_order": 16800,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_POLVO",
+    "name": "Saborizantes",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_CONDIMENTOS_EN_POLVO",
+    "description": "Ejemplos de ingredientes: Ajo en polvo, cebolla en polvo, caldo en polvo.",
+    "sort_order": 16801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_UMAMI",
+    "name": "Umami",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Umami.",
+    "sort_order": 16900,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_UMAMI",
+    "name": "Potenciadores",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_UMAMI",
+    "description": "Ejemplos de ingredientes: Levadura nutricional, glutamato, hongos en polvo.",
+    "sort_order": 16901,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_ADEREZOS",
+    "name": "Salsas, aderezos, vinagres y fermentados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Salsas, aderezos, vinagres y fermentados.",
+    "sort_order": 17000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONDIMENTOS_ESPECIAS_OTROS_CONDIMENTOS",
+    "name": "Otros condimentos",
+    "parent_code": "CONDIMENTOS_ESPECIAS",
+    "description": "Subcategoría de Condimentos, hierbas y especias: Otros condimentos.",
+    "sort_order": 17000,
+    "is_active": true
+  },
+  {
+    "code": "CONDIMENTOS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_CONDIMENTOS_ESPECIAS_OTROS_CONDIMENTOS",
+    "description": "Ejemplos de ingredientes: Condimentos regionales.",
+    "sort_order": 17001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_VINAGRES",
+    "name": "Vinagres",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Vinagres.",
+    "sort_order": 17100,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_VINAGRES",
+    "name": "Ácidos",
+    "parent_code": "CAT_SALSAS_ADEREZOS_VINAGRES",
+    "description": "Ejemplos de ingredientes: Vinagre blanco, manzana, vino, arroz, aceto.",
+    "sort_order": 17101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_SALSAS_DE_TOMATE",
+    "name": "Salsas de tomate",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Salsas de tomate.",
+    "sort_order": 17200,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_TOMATE",
+    "name": "Salsas base",
+    "parent_code": "CAT_SALSAS_ADEREZOS_SALSAS_DE_TOMATE",
+    "description": "Ejemplos de ingredientes: Salsa de tomate, passata, puré de tomate.",
+    "sort_order": 17201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_CONCENTRADOS",
+    "name": "Concentrados",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Concentrados.",
+    "sort_order": 17300,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_EXTRACTOS_TOMATE",
+    "name": "Tomate",
+    "parent_code": "CAT_SALSAS_ADEREZOS_CONCENTRADOS",
+    "description": "Ejemplos de ingredientes: Extracto de tomate, concentrado de tomate.",
+    "sort_order": 17301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_ADEREZOS",
+    "name": "Aderezos",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Aderezos.",
+    "sort_order": 17400,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_ADEREZOS_CLASICOS",
+    "name": "Clásicos",
+    "parent_code": "CAT_SALSAS_ADEREZOS_ADEREZOS",
+    "description": "Ejemplos de ingredientes: Mayonesa, ketchup, mostaza, salsa golf.",
+    "sort_order": 17401,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_ENSALADA",
+    "name": "Ensaladas",
+    "parent_code": "CAT_SALSAS_ADEREZOS_ADEREZOS",
+    "description": "Ejemplos de ingredientes: Caesar, ranch, vinagreta lista.",
+    "sort_order": 17402,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_SALSAS_ASIATICAS",
+    "name": "Salsas asiáticas",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Salsas asiáticas.",
+    "sort_order": 17500,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_SOJA_ASIATICAS",
+    "name": "Fermentadas/saladas",
+    "parent_code": "CAT_SALSAS_ADEREZOS_SALSAS_ASIATICAS",
+    "description": "Ejemplos de ingredientes: Salsa de soja, teriyaki, hoisin, ostras, pescado.",
+    "sort_order": 17501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_PICANTES",
+    "name": "Picantes",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Picantes.",
+    "sort_order": 17600,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_PICANTES",
+    "name": "Líquidas o pastas",
+    "parent_code": "CAT_SALSAS_ADEREZOS_PICANTES",
+    "description": "Ejemplos de ingredientes: Tabasco, sriracha, salsa picante.",
+    "sort_order": 17601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_PESTOS",
+    "name": "Pestos",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Pestos.",
+    "sort_order": 17700,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_PESTOS",
+    "name": "Hierbas/frutos secos",
+    "parent_code": "CAT_SALSAS_ADEREZOS_PESTOS",
+    "description": "Ejemplos de ingredientes: Pesto genovés, pesto rojo.",
+    "sort_order": 17701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_PASTAS_CONDIMENTARIAS",
+    "name": "Pastas condimentarias",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Pastas condimentarias.",
+    "sort_order": 17800,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_PASTAS_CONDIMENTO",
+    "name": "Concentradas",
+    "parent_code": "CAT_SALSAS_ADEREZOS_PASTAS_CONDIMENTARIAS",
+    "description": "Ejemplos de ingredientes: Miso, pasta de curry, harissa.",
+    "sort_order": 17801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_AGRIDULCES",
+    "name": "Agridulces",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Agridulces.",
+    "sort_order": 17900,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_CHUTNEYS_RELISH",
+    "name": "Conservas condimentadas",
+    "parent_code": "CAT_SALSAS_ADEREZOS_AGRIDULCES",
+    "description": "Ejemplos de ingredientes: Chutney, relish.",
+    "sort_order": 17901,
+    "is_active": true
+  },
+  {
+    "code": "ENDULZANTES_REPOSTERIA",
+    "name": "Endulzantes, dulces, cacao y repostería",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Endulzantes, dulces, cacao y repostería.",
+    "sort_order": 18000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_ENCURTIDOS",
+    "name": "Encurtidos",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Encurtidos.",
+    "sort_order": 18000,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_PICKLES",
+    "name": "Pickles",
+    "parent_code": "CAT_SALSAS_ADEREZOS_ENCURTIDOS",
+    "description": "Ejemplos de ingredientes: Pepinillos, cebollitas, pickles mixtos.",
+    "sort_order": 18001,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_ACEITUNAS",
+    "name": "Aceitunas",
+    "parent_code": "CAT_SALSAS_ADEREZOS_ENCURTIDOS",
+    "description": "Ejemplos de ingredientes: Aceituna verde, negra, descarozada.",
+    "sort_order": 18002,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_FERMENTADOS",
+    "name": "Fermentados",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Fermentados.",
+    "sort_order": 18100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_AZUCARES",
+    "name": "Azúcares",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Azúcares.",
+    "sort_order": 18100,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_FERMENTADOS",
+    "name": "Vegetales fermentados",
+    "parent_code": "CAT_SALSAS_ADEREZOS_FERMENTADOS",
+    "description": "Ejemplos de ingredientes: Chucrut, kimchi.",
+    "sort_order": 18101,
+    "is_active": true
+  },
+  {
+    "code": "ENDULZANTES_AZUCARES",
+    "name": "Azúcar y variantes",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_AZUCARES",
+    "description": "Ejemplos de ingredientes: Azúcar blanca, rubia, negra, impalpable.",
+    "sort_order": 18101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SALSAS_ADEREZOS_OTRAS_SALSAS",
+    "name": "Otras salsas",
+    "parent_code": "SALSAS_ADEREZOS",
+    "description": "Subcategoría de Salsas, aderezos, vinagres y fermentados: Otras salsas.",
+    "sort_order": 18200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_MIELES",
+    "name": "Mieles",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Mieles.",
+    "sort_order": 18200,
+    "is_active": true
+  },
+  {
+    "code": "SALSAS_OTRAS",
+    "name": "Otras",
+    "parent_code": "CAT_SALSAS_ADEREZOS_OTRAS_SALSAS",
+    "description": "Ejemplos de ingredientes: Salsa barbacoa, salsa criolla lista.",
+    "sort_order": 18201,
+    "is_active": true
+  },
+  {
+    "code": "ENDULZANTES_MIELES",
+    "name": "Miel y similares",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_MIELES",
+    "description": "Ejemplos de ingredientes: Miel, miel de caña.",
+    "sort_order": 18201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_JARABES",
+    "name": "Jarabes",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Jarabes.",
+    "sort_order": 18300,
+    "is_active": true
+  },
+  {
+    "code": "ENDULZANTES_JARABES",
+    "name": "Jarabes y siropes",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_JARABES",
+    "description": "Ejemplos de ingredientes: Jarabe de maíz, maple, agave, glucosa.",
+    "sort_order": 18301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_MELAZAS",
+    "name": "Melazas",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Melazas.",
+    "sort_order": 18400,
+    "is_active": true
+  },
+  {
+    "code": "ENDULZANTES_MELAZAS",
+    "name": "Melazas",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_MELAZAS",
+    "description": "Ejemplos de ingredientes: Melaza, chancaca, panela.",
+    "sort_order": 18401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_EDULCORANTES",
+    "name": "Edulcorantes",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Edulcorantes.",
+    "sort_order": 18500,
+    "is_active": true
+  },
+  {
+    "code": "ENDULZANTES_EDULCORANTES",
+    "name": "Calóricos/no calóricos",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_EDULCORANTES",
+    "description": "Ejemplos de ingredientes: Stevia, sucralosa, eritritol, xilitol.",
+    "sort_order": 18501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_DULCES",
+    "name": "Dulces",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Dulces.",
+    "sort_order": 18600,
+    "is_active": true
+  },
+  {
+    "code": "DULCES_MERMELADAS",
+    "name": "Mermeladas",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_DULCES",
+    "description": "Ejemplos de ingredientes: Mermelada de frutilla, durazno, frutos rojos.",
+    "sort_order": 18601,
+    "is_active": true
+  },
+  {
+    "code": "DULCES_DULCE_LECHE",
+    "name": "Dulce de leche",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_DULCES",
+    "description": "Ejemplos de ingredientes: Dulce de leche común, repostero.",
+    "sort_order": 18602,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_DULCES_SOLIDOS",
+    "name": "Dulces sólidos",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Dulces sólidos.",
+    "sort_order": 18700,
+    "is_active": true
+  },
+  {
+    "code": "DULCES_MEMBRILLO_BATATA",
+    "name": "Dulces regionales",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_DULCES_SOLIDOS",
+    "description": "Ejemplos de ingredientes: Dulce de membrillo, batata.",
+    "sort_order": 18701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_CACAO",
+    "name": "Cacao",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Cacao.",
+    "sort_order": 18800,
+    "is_active": true
+  },
+  {
+    "code": "CACAO_CACAO_POLVO",
+    "name": "Polvo",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_CACAO",
+    "description": "Ejemplos de ingredientes: Cacao amargo, cocoa.",
+    "sort_order": 18801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_CHOCOLATE",
+    "name": "Chocolate",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Chocolate.",
+    "sort_order": 18900,
+    "is_active": true
+  },
+  {
+    "code": "CACAO_CHOCOLATES",
+    "name": "Tabletas/chips",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_CHOCOLATE",
+    "description": "Ejemplos de ingredientes: Chocolate cobertura, chips, chocolate amargo.",
+    "sort_order": 18901,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_AUXILIARES",
+    "name": "Aditivos y auxiliares culinarios",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Aditivos y auxiliares culinarios.",
+    "sort_order": 19000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_ESENCIAS",
+    "name": "Esencias",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Esencias.",
+    "sort_order": 19000,
+    "is_active": true
+  },
+  {
+    "code": "REPOSTERIA_ESENCIAS",
+    "name": "Aromas",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_ESENCIAS",
+    "description": "Ejemplos de ingredientes: Esencia de vainilla, almendra, limón.",
+    "sort_order": 19001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_COBERTURAS",
+    "name": "Coberturas",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Coberturas.",
+    "sort_order": 19100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_LEUDANTES",
+    "name": "Leudantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Leudantes.",
+    "sort_order": 19100,
+    "is_active": true
+  },
+  {
+    "code": "REPOSTERIA_COBERTURAS",
+    "name": "Decoración",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_COBERTURAS",
+    "description": "Ejemplos de ingredientes: Glasé, baño de repostería, granas.",
+    "sort_order": 19101,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_LEVADURAS",
+    "name": "Levaduras",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_LEUDANTES",
+    "description": "Ejemplos de ingredientes: Levadura fresca, seca, instantánea, masa madre seca.",
+    "sort_order": 19101,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_POLVO_LEUDANTE",
+    "name": "Químicos",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_LEUDANTES",
+    "description": "Ejemplos de ingredientes: Polvo de hornear, bicarbonato, cremor tártaro.",
+    "sort_order": 19102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_FRUTAS_REPOSTERIA",
+    "name": "Frutas repostería",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Frutas repostería.",
+    "sort_order": 19200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_GELIFICANTES",
+    "name": "Gelificantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Gelificantes.",
+    "sort_order": 19200,
+    "is_active": true
+  },
+  {
+    "code": "REPOSTERIA_FRUTAS_ABRILLANTADAS",
+    "name": "Confitadas",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_FRUTAS_REPOSTERIA",
+    "description": "Ejemplos de ingredientes: Fruta abrillantada, cerezas al marrasquino.",
+    "sort_order": 19201,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_GELIFICANTES",
+    "name": "Gelificantes",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_GELIFICANTES",
+    "description": "Ejemplos de ingredientes: Gelatina, agar agar, pectina.",
+    "sort_order": 19201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_POSTRES_SECOS",
+    "name": "Postres secos",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Postres secos.",
+    "sort_order": 19300,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_ESPESANTES",
+    "name": "Espesantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Espesantes.",
+    "sort_order": 19300,
+    "is_active": true
+  },
+  {
+    "code": "REPOSTERIA_GELATINAS_POSTRES",
+    "name": "Polvos",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_POSTRES_SECOS",
+    "description": "Ejemplos de ingredientes: Gelatina, flan en polvo, postre instantáneo.",
+    "sort_order": 19301,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_ESPESANTES",
+    "name": "Gomas y fibras",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_ESPESANTES",
+    "description": "Ejemplos de ingredientes: Goma xantana, guar, carragenina.",
+    "sort_order": 19301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ENDULZANTES_REPOSTERIA_OTROS_REPOSTERIA",
+    "name": "Otros repostería",
+    "parent_code": "ENDULZANTES_REPOSTERIA",
+    "description": "Subcategoría de Endulzantes, dulces, cacao y repostería: Otros repostería.",
+    "sort_order": 19400,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_EMULSIFICANTES",
+    "name": "Emulsificantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Emulsificantes.",
+    "sort_order": 19400,
+    "is_active": true
+  },
+  {
+    "code": "REPOSTERIA_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_ENDULZANTES_REPOSTERIA_OTROS_REPOSTERIA",
+    "description": "Ejemplos de ingredientes: Mazapán, pasta de maní dulce.",
+    "sort_order": 19401,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_EMULSIFICANTES",
+    "name": "Textura",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_EMULSIFICANTES",
+    "description": "Ejemplos de ingredientes: Lecitina de soja, mono y diglicéridos.",
+    "sort_order": 19401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_ESTABILIZANTES",
+    "name": "Estabilizantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Estabilizantes.",
+    "sort_order": 19500,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_ESTABILIZANTES",
+    "name": "Textura",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_ESTABILIZANTES",
+    "description": "Ejemplos de ingredientes: Estabilizantes para helado, estabilizantes vegetales.",
+    "sort_order": 19501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_CONSERVANTES",
+    "name": "Conservantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Conservantes.",
+    "sort_order": 19600,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_CONSERVANTES",
+    "name": "Conservación",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_CONSERVANTES",
+    "description": "Ejemplos de ingredientes: Benzoato, sorbato, conservantes culinarios.",
+    "sort_order": 19601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_REGULADORES_DE_ACIDEZ",
+    "name": "Reguladores de acidez",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Reguladores de acidez.",
+    "sort_order": 19700,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_ACIDEZ",
+    "name": "Ácidos/sales",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_REGULADORES_DE_ACIDEZ",
+    "description": "Ejemplos de ingredientes: Ácido cítrico, ácido ascórbico.",
+    "sort_order": 19701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_COLORANTES",
+    "name": "Colorantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Colorantes.",
+    "sort_order": 19800,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_COLORANTES",
+    "name": "Naturales/artificiales",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_COLORANTES",
+    "description": "Ejemplos de ingredientes: Colorante vegetal, caramelo, cúrcuma colorante.",
+    "sort_order": 19801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_AROMATIZANTES",
+    "name": "Aromatizantes",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Aromatizantes.",
+    "sort_order": 19900,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_AROMAS",
+    "name": "Aromas",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_AROMATIZANTES",
+    "description": "Ejemplos de ingredientes: Aroma artificial, esencia concentrada.",
+    "sort_order": 19901,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_DESPENSA",
+    "name": "Conservas y alimentos de despensa",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Conservas y alimentos de despensa.",
+    "sort_order": 20000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_CULTIVOS",
+    "name": "Cultivos",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Cultivos.",
+    "sort_order": 20000,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_CULTIVOS",
+    "name": "Fermentos",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_CULTIVOS",
+    "description": "Ejemplos de ingredientes: Cultivo para yogur, kéfir, fermento láctico.",
+    "sort_order": 20001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_ENZIMAS",
+    "name": "Enzimas",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Enzimas.",
+    "sort_order": 20100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_TOMATES_EN_CONSERVA",
+    "name": "Tomates en conserva",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Tomates en conserva.",
+    "sort_order": 20100,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_CUAJO",
+    "name": "Cuajo",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_ENZIMAS",
+    "description": "Ejemplos de ingredientes: Cuajo animal, microbiano, vegetal.",
+    "sort_order": 20101,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_TOMATE",
+    "name": "Tomate procesado",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_TOMATES_EN_CONSERVA",
+    "description": "Ejemplos de ingredientes: Tomate perita en lata, triturado, cubeteado.",
+    "sort_order": 20101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_ADITIVOS_AUXILIARES_OTROS_AUXILIARES",
+    "name": "Otros auxiliares",
+    "parent_code": "ADITIVOS_AUXILIARES",
+    "description": "Subcategoría de Aditivos y auxiliares culinarios: Otros auxiliares.",
+    "sort_order": 20200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_VERDURAS_EN_CONSERVA",
+    "name": "Verduras en conserva",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Verduras en conserva.",
+    "sort_order": 20200,
+    "is_active": true
+  },
+  {
+    "code": "ADITIVOS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_ADITIVOS_AUXILIARES_OTROS_AUXILIARES",
+    "description": "Ejemplos de ingredientes: Antiespumantes, antiaglutinantes.",
+    "sort_order": 20201,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_VERDURAS",
+    "name": "Vegetales",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_VERDURAS_EN_CONSERVA",
+    "description": "Ejemplos de ingredientes: Arvejas en lata, choclo en lata, jardinera.",
+    "sort_order": 20201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_LEGUMBRES_EN_CONSERVA",
+    "name": "Legumbres en conserva",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Legumbres en conserva.",
+    "sort_order": 20300,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_LEGUMBRES",
+    "name": "Legumbres listas",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_LEGUMBRES_EN_CONSERVA",
+    "description": "Ejemplos de ingredientes: Garbanzos, lentejas, porotos en lata.",
+    "sort_order": 20301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_FRUTAS_EN_CONSERVA",
+    "name": "Frutas en conserva",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Frutas en conserva.",
+    "sort_order": 20400,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_FRUTAS",
+    "name": "Frutas listas",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_FRUTAS_EN_CONSERVA",
+    "description": "Ejemplos de ingredientes: Duraznos, ananá, peras en almíbar.",
+    "sort_order": 20401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_PESCADO_EN_CONSERVA",
+    "name": "Pescado en conserva",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Pescado en conserva.",
+    "sort_order": 20500,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_PESCADO",
+    "name": "Pescados",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_PESCADO_EN_CONSERVA",
+    "description": "Ejemplos de ingredientes: Atún, sardinas, caballa.",
+    "sort_order": 20501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_UNTABLES_DE_DESPENSA",
+    "name": "Untables de despensa",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Untables de despensa.",
+    "sort_order": 20600,
+    "is_active": true
+  },
+  {
+    "code": "CONSERVAS_PATÉS_UNTABLES",
+    "name": "Patés/pastas",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_UNTABLES_DE_DESPENSA",
+    "description": "Ejemplos de ingredientes: Paté, pasta de aceitunas, pasta de berenjena.",
+    "sort_order": 20601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_SOPAS_Y_CREMAS",
+    "name": "Sopas y cremas",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Sopas y cremas.",
+    "sort_order": 20700,
+    "is_active": true
+  },
+  {
+    "code": "DESPENSA_SOPAS_CREMAS",
+    "name": "Instantáneas",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_SOPAS_Y_CREMAS",
+    "description": "Ejemplos de ingredientes: Sopa instantánea, crema de verduras en polvo.",
+    "sort_order": 20701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_PURES_INSTANTANEOS",
+    "name": "Purés instantáneos",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Purés instantáneos.",
+    "sort_order": 20800,
+    "is_active": true
+  },
+  {
+    "code": "DESPENSA_PURES_INSTANTANEOS",
+    "name": "Secos",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_PURES_INSTANTANEOS",
+    "description": "Ejemplos de ingredientes: Puré de papa instantáneo.",
+    "sort_order": 20801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_CALDOS_SECOS",
+    "name": "Caldos secos",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Caldos secos.",
+    "sort_order": 20900,
+    "is_active": true
+  },
+  {
+    "code": "DESPENSA_CALDOS_CUBOS",
+    "name": "Cubos/polvos",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_CALDOS_SECOS",
+    "description": "Ejemplos de ingredientes: Cubito de caldo, caldo granulado.",
+    "sort_order": 20901,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_SEMIELABORADOS",
+    "name": "Congelados y semielaborados",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Congelados y semielaborados.",
+    "sort_order": 21000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_SALSAS_LISTAS",
+    "name": "Salsas listas",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Salsas listas.",
+    "sort_order": 21000,
+    "is_active": true
+  },
+  {
+    "code": "DESPENSA_SALSAS_LISTAS",
+    "name": "Envasadas",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_SALSAS_LISTAS",
+    "description": "Ejemplos de ingredientes: Salsa blanca lista, boloñesa lista, salsa fileto.",
+    "sort_order": 21001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_COMIDAS_LISTAS",
+    "name": "Comidas listas",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Comidas listas.",
+    "sort_order": 21100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_VERDURAS_CONGELADAS",
+    "name": "Verduras congeladas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Verduras congeladas.",
+    "sort_order": 21100,
+    "is_active": true
+  },
+  {
+    "code": "DESPENSA_COMIDAS_LISTAS",
+    "name": "Base alimentaria",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_COMIDAS_LISTAS",
+    "description": "Ejemplos de ingredientes: Guiso en lata, arroz listo, legumbres listas.",
+    "sort_order": 21101,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_VERDURAS",
+    "name": "Simples o mixtas",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_VERDURAS_CONGELADAS",
+    "description": "Ejemplos de ingredientes: Espinaca congelada, brócoli congelado, mix primavera.",
+    "sort_order": 21101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONSERVAS_DESPENSA_OTROS_DE_DESPENSA",
+    "name": "Otros de despensa",
+    "parent_code": "CONSERVAS_DESPENSA",
+    "description": "Subcategoría de Conservas y alimentos de despensa: Otros de despensa.",
+    "sort_order": 21200,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_FRUTAS_CONGELADAS",
+    "name": "Frutas congeladas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Frutas congeladas.",
+    "sort_order": 21200,
+    "is_active": true
+  },
+  {
+    "code": "DESPENSA_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_CONSERVAS_DESPENSA_OTROS_DE_DESPENSA",
+    "description": "Ejemplos de ingredientes: Alimentos secos listos para usar.",
+    "sort_order": 21201,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_FRUTAS",
+    "name": "Frutas",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_FRUTAS_CONGELADAS",
+    "description": "Ejemplos de ingredientes: Frutilla congelada, frutos rojos congelados.",
+    "sort_order": 21201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_PAPAS_CONGELADAS",
+    "name": "Papas congeladas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Papas congeladas.",
+    "sort_order": 21300,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_PAPAS",
+    "name": "Prefritas o listas",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_PAPAS_CONGELADAS",
+    "description": "Ejemplos de ingredientes: Papas bastón congeladas, papas noisette.",
+    "sort_order": 21301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_CARNES_CONGELADAS",
+    "name": "Carnes congeladas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Carnes congeladas.",
+    "sort_order": 21400,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_CARNES",
+    "name": "Crudas o listas",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_CARNES_CONGELADAS",
+    "description": "Ejemplos de ingredientes: Hamburguesa congelada, milanesa congelada.",
+    "sort_order": 21401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_PESCADOS_CONGELADOS",
+    "name": "Pescados congelados",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Pescados congelados.",
+    "sort_order": 21500,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_PESCADOS",
+    "name": "Crudos o rebozados",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_PESCADOS_CONGELADOS",
+    "description": "Ejemplos de ingredientes: Filet congelado, bastones de pescado.",
+    "sort_order": 21501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_PASTAS_CONGELADAS",
+    "name": "Pastas congeladas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Pastas congeladas.",
+    "sort_order": 21600,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_PASTAS",
+    "name": "Listas",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_PASTAS_CONGELADAS",
+    "description": "Ejemplos de ingredientes: Ravioles congelados, ñoquis congelados.",
+    "sort_order": 21601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_PIZZAS_Y_MASAS",
+    "name": "Pizzas y masas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Pizzas y masas.",
+    "sort_order": 21700,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_PIZZAS",
+    "name": "Listas o base",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_PIZZAS_Y_MASAS",
+    "description": "Ejemplos de ingredientes: Pizza congelada, prepizza congelada.",
+    "sort_order": 21701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_EMPANADAS_TARTAS",
+    "name": "Empanadas/tartas",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Empanadas/tartas.",
+    "sort_order": 21800,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_EMPANADAS_TARTAS",
+    "name": "Listas",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_EMPANADAS_TARTAS",
+    "description": "Ejemplos de ingredientes: Empanadas congeladas, tarta congelada.",
+    "sort_order": 21801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_VEGETARIANOS_VEGANOS",
+    "name": "Vegetarianos/veganos",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Vegetarianos/veganos.",
+    "sort_order": 21900,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_VEGETARIANOS",
+    "name": "Listos",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_VEGETARIANOS_VEGANOS",
+    "description": "Ejemplos de ingredientes: Medallón vegetal, nuggets vegetales.",
+    "sort_order": 21901,
+    "is_active": true
+  },
+  {
+    "code": "SNACKS_GOLOSINAS",
+    "name": "Snacks, golosinas y productos usados como ingrediente",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Snacks, golosinas y productos usados como ingrediente.",
+    "sort_order": 22000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_CONGELADOS_SEMIELABORADOS_OTROS_CONGELADOS",
+    "name": "Otros congelados",
+    "parent_code": "CONGELADOS_SEMIELABORADOS",
+    "description": "Subcategoría de Congelados y semielaborados: Otros congelados.",
+    "sort_order": 22000,
+    "is_active": true
+  },
+  {
+    "code": "CONGELADOS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_CONGELADOS_SEMIELABORADOS_OTROS_CONGELADOS",
+    "description": "Ejemplos de ingredientes: Croquetas, bocaditos, alimentos regionales.",
+    "sort_order": 22001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SNACKS_GOLOSINAS_SNACKS_SALADOS",
+    "name": "Snacks salados",
+    "parent_code": "SNACKS_GOLOSINAS",
+    "description": "Subcategoría de Snacks, golosinas y productos usados como ingrediente: Snacks salados.",
+    "sort_order": 22100,
+    "is_active": true
+  },
+  {
+    "code": "SNACKS_PAPAS_CHIPS",
+    "name": "Papas y chips",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_SNACKS_SALADOS",
+    "description": "Ejemplos de ingredientes: Papas fritas, batatas chips.",
+    "sort_order": 22101,
+    "is_active": true
+  },
+  {
+    "code": "SNACKS_NACHOS",
+    "name": "Maíz/tortilla",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_SNACKS_SALADOS",
+    "description": "Ejemplos de ingredientes: Nachos, tortillas chips.",
+    "sort_order": 22102,
+    "is_active": true
+  },
+  {
+    "code": "SNACKS_PALITOS",
+    "name": "Palitos y similares",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_SNACKS_SALADOS",
+    "description": "Ejemplos de ingredientes: Palitos salados, chizitos.",
+    "sort_order": 22103,
+    "is_active": true
+  },
+  {
+    "code": "SNACKS_CRACKERS_SABORIZADAS",
+    "name": "Galletas saborizadas",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_SNACKS_SALADOS",
+    "description": "Ejemplos de ingredientes: Crackers sabor queso, sabor jamón.",
+    "sort_order": 22104,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SNACKS_GOLOSINAS_GOLOSINAS",
+    "name": "Golosinas",
+    "parent_code": "SNACKS_GOLOSINAS",
+    "description": "Subcategoría de Snacks, golosinas y productos usados como ingrediente: Golosinas.",
+    "sort_order": 22200,
+    "is_active": true
+  },
+  {
+    "code": "GOLOSINAS_CARAMELOS",
+    "name": "Caramelos",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_GOLOSINAS",
+    "description": "Ejemplos de ingredientes: Caramelos duros, blandos.",
+    "sort_order": 22201,
+    "is_active": true
+  },
+  {
+    "code": "GOLOSINAS_GOMITAS",
+    "name": "Gomitas",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_GOLOSINAS",
+    "description": "Ejemplos de ingredientes: Gomitas, confites.",
+    "sort_order": 22202,
+    "is_active": true
+  },
+  {
+    "code": "GOLOSINAS_MARSHMALLOWS",
+    "name": "Malvaviscos",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_GOLOSINAS",
+    "description": "Ejemplos de ingredientes: Marshmallows.",
+    "sort_order": 22203,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SNACKS_GOLOSINAS_BARRAS",
+    "name": "Barras",
+    "parent_code": "SNACKS_GOLOSINAS",
+    "description": "Subcategoría de Snacks, golosinas y productos usados como ingrediente: Barras.",
+    "sort_order": 22300,
+    "is_active": true
+  },
+  {
+    "code": "GOLOSINAS_BARRAS",
+    "name": "Cereales/chocolate",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_BARRAS",
+    "description": "Ejemplos de ingredientes: Barra de cereal, barra proteica, barra chocolate.",
+    "sort_order": 22301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SNACKS_GOLOSINAS_CONFITES",
+    "name": "Confites",
+    "parent_code": "SNACKS_GOLOSINAS",
+    "description": "Subcategoría de Snacks, golosinas y productos usados como ingrediente: Confites.",
+    "sort_order": 22400,
+    "is_active": true
+  },
+  {
+    "code": "GOLOSINAS_CONFITES",
+    "name": "Chocolates/confites",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_CONFITES",
+    "description": "Ejemplos de ingredientes: Confites de chocolate, lentejas de chocolate.",
+    "sort_order": 22401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SNACKS_GOLOSINAS_OTROS_SNACKS",
+    "name": "Otros snacks",
+    "parent_code": "SNACKS_GOLOSINAS",
+    "description": "Subcategoría de Snacks, golosinas y productos usados como ingrediente: Otros snacks.",
+    "sort_order": 22500,
+    "is_active": true
+  },
+  {
+    "code": "SNACKS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_SNACKS_GOLOSINAS_OTROS_SNACKS",
+    "description": "Ejemplos de ingredientes: Popcorn saborizado, snacks regionales.",
+    "sort_order": 22501,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALTERNATIVAS",
+    "name": "Proteínas alternativas y alimentos vegetarianos/veganos",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Proteínas alternativas y alimentos vegetarianos/veganos.",
+    "sort_order": 23000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PROTEINAS_ALTERNATIVAS_SOJA",
+    "name": "Soja",
+    "parent_code": "PROTEINAS_ALTERNATIVAS",
+    "description": "Subcategoría de Proteínas alternativas y alimentos vegetarianos/veganos: Soja.",
+    "sort_order": 23100,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_TOFU",
+    "name": "Tofu",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_SOJA",
+    "description": "Ejemplos de ingredientes: Tofu firme, sedoso, ahumado.",
+    "sort_order": 23101,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_TEMPEH",
+    "name": "Tempeh",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_SOJA",
+    "description": "Ejemplos de ingredientes: Tempeh natural, marinado.",
+    "sort_order": 23102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PROTEINAS_ALTERNATIVAS_GLUTEN",
+    "name": "Gluten",
+    "parent_code": "PROTEINAS_ALTERNATIVAS",
+    "description": "Subcategoría de Proteínas alternativas y alimentos vegetarianos/veganos: Gluten.",
+    "sort_order": 23200,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_SEITAN",
+    "name": "Seitán",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_GLUTEN",
+    "description": "Ejemplos de ingredientes: Seitán, gluten cocido.",
+    "sort_order": 23201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PROTEINAS_ALTERNATIVAS_TEXTURIZADOS",
+    "name": "Texturizados",
+    "parent_code": "PROTEINAS_ALTERNATIVAS",
+    "description": "Subcategoría de Proteínas alternativas y alimentos vegetarianos/veganos: Texturizados.",
+    "sort_order": 23300,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_SOJA_TEXTURIZADA",
+    "name": "Soja",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_TEXTURIZADOS",
+    "description": "Ejemplos de ingredientes: Soja texturizada fina, gruesa.",
+    "sort_order": 23301,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_PVT",
+    "name": "Proteína vegetal",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_TEXTURIZADOS",
+    "description": "Ejemplos de ingredientes: Proteína vegetal texturizada.",
+    "sort_order": 23302,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PROTEINAS_ALTERNATIVAS_SEMIELABORADOS",
+    "name": "Semielaborados",
+    "parent_code": "PROTEINAS_ALTERNATIVAS",
+    "description": "Subcategoría de Proteínas alternativas y alimentos vegetarianos/veganos: Semielaborados.",
+    "sort_order": 23400,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_MEDALLONES",
+    "name": "Medallones",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_SEMIELABORADOS",
+    "description": "Ejemplos de ingredientes: Hamburguesa vegetal, medallón de lenteja.",
+    "sort_order": 23401,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_NUGGETS",
+    "name": "Rebozados",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_SEMIELABORADOS",
+    "description": "Ejemplos de ingredientes: Nuggets vegetales, milanesas de soja.",
+    "sort_order": 23402,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PROTEINAS_ALTERNATIVAS_SUSTITUTOS_LACTEOS",
+    "name": "Sustitutos lácteos",
+    "parent_code": "PROTEINAS_ALTERNATIVAS",
+    "description": "Subcategoría de Proteínas alternativas y alimentos vegetarianos/veganos: Sustitutos lácteos.",
+    "sort_order": 23500,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_QUESOS_VEGANOS",
+    "name": "Quesos vegetales",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_SUSTITUTOS_LACTEOS",
+    "description": "Ejemplos de ingredientes: Queso vegano, mozzarella vegetal.",
+    "sort_order": 23501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PROTEINAS_ALTERNATIVAS_OTROS",
+    "name": "Otros",
+    "parent_code": "PROTEINAS_ALTERNATIVAS",
+    "description": "Subcategoría de Proteínas alternativas y alimentos vegetarianos/veganos: Otros.",
+    "sort_order": 23600,
+    "is_active": true
+  },
+  {
+    "code": "PROTEINAS_ALT_OTROS",
+    "name": "Especiales",
+    "parent_code": "CAT_PROTEINAS_ALTERNATIVAS_OTROS",
+    "description": "Ejemplos de ingredientes: Heura, proteínas vegetales regionales.",
+    "sort_order": 23601,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS",
+    "name": "Suplementos y nutrición deportiva",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Suplementos y nutrición deportiva.",
+    "sort_order": 24000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_PROTEINAS",
+    "name": "Proteínas",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Proteínas.",
+    "sort_order": 24100,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_PROTEINA_WHEY",
+    "name": "Lácteas",
+    "parent_code": "CAT_SUPLEMENTOS_PROTEINAS",
+    "description": "Ejemplos de ingredientes: Whey protein, aislado de suero, caseína.",
+    "sort_order": 24101,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_PROTEINA_VEGETAL",
+    "name": "Vegetales",
+    "parent_code": "CAT_SUPLEMENTOS_PROTEINAS",
+    "description": "Ejemplos de ingredientes: Proteína de arveja, soja, arroz.",
+    "sort_order": 24102,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_RENDIMIENTO",
+    "name": "Rendimiento",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Rendimiento.",
+    "sort_order": 24200,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_CREATINA",
+    "name": "Creatina",
+    "parent_code": "CAT_SUPLEMENTOS_RENDIMIENTO",
+    "description": "Ejemplos de ingredientes: Creatina monohidratada.",
+    "sort_order": 24201,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_AMINOACIDOS",
+    "name": "Aminoácidos",
+    "parent_code": "CAT_SUPLEMENTOS_RENDIMIENTO",
+    "description": "Ejemplos de ingredientes: BCAA, EAA, glutamina.",
+    "sort_order": 24202,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_ENERGIA",
+    "name": "Energía",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Energía.",
+    "sort_order": 24300,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_CARBOHIDRATOS",
+    "name": "Carbohidratos",
+    "parent_code": "CAT_SUPLEMENTOS_ENERGIA",
+    "description": "Ejemplos de ingredientes: Maltodextrina, dextrosa, gel deportivo.",
+    "sort_order": 24301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_HIDRATACION",
+    "name": "Hidratación",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Hidratación.",
+    "sort_order": 24400,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_ELECTROLITOS",
+    "name": "Sales/electrolitos",
+    "parent_code": "CAT_SUPLEMENTOS_HIDRATACION",
+    "description": "Ejemplos de ingredientes: Electrolitos, sales de hidratación.",
+    "sort_order": 24401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_FIBRA",
+    "name": "Fibra",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Fibra.",
+    "sort_order": 24500,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_FIBRA",
+    "name": "Suplementos de fibra",
+    "parent_code": "CAT_SUPLEMENTOS_FIBRA",
+    "description": "Ejemplos de ingredientes: Psyllium, inulina, fibra soluble.",
+    "sort_order": 24501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_VITAMINAS",
+    "name": "Vitaminas",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Vitaminas.",
+    "sort_order": 24600,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_VITAMINAS",
+    "name": "Vitaminas",
+    "parent_code": "CAT_SUPLEMENTOS_VITAMINAS",
+    "description": "Ejemplos de ingredientes: Vitamina C, D, complejo B.",
+    "sort_order": 24601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_MINERALES",
+    "name": "Minerales",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Minerales.",
+    "sort_order": 24700,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_MINERALES",
+    "name": "Minerales",
+    "parent_code": "CAT_SUPLEMENTOS_MINERALES",
+    "description": "Ejemplos de ingredientes: Magnesio, zinc, hierro, calcio.",
+    "sort_order": 24701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_GRASAS_FUNCIONALES",
+    "name": "Grasas funcionales",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Grasas funcionales.",
+    "sort_order": 24800,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_OMEGA",
+    "name": "Omega",
+    "parent_code": "CAT_SUPLEMENTOS_GRASAS_FUNCIONALES",
+    "description": "Ejemplos de ingredientes: Omega 3, aceite de pescado cápsulas.",
+    "sort_order": 24801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_PROTEINAS_FUNCIONALES",
+    "name": "Proteínas funcionales",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Proteínas funcionales.",
+    "sort_order": 24900,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_COLAGENO",
+    "name": "Colágeno",
+    "parent_code": "CAT_SUPLEMENTOS_PROTEINAS_FUNCIONALES",
+    "description": "Ejemplos de ingredientes: Colágeno hidrolizado.",
+    "sort_order": 24901,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_BASE",
+    "name": "Preparaciones base y subrecetas",
+    "parent_code": null,
+    "description": "Categoría raíz para ingredientes de tipo: Preparaciones base y subrecetas.",
+    "sort_order": 25000,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_REEMPLAZOS",
+    "name": "Reemplazos",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Reemplazos.",
+    "sort_order": 25000,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_REEMPLAZOS_COMIDA",
+    "name": "Meal replacement",
+    "parent_code": "CAT_SUPLEMENTOS_REEMPLAZOS",
+    "description": "Ejemplos de ingredientes: Batido reemplazo de comida.",
+    "sort_order": 25001,
+    "is_active": true
+  },
+  {
+    "code": "CAT_SUPLEMENTOS_OTROS_SUPLEMENTOS",
+    "name": "Otros suplementos",
+    "parent_code": "SUPLEMENTOS",
+    "description": "Subcategoría de Suplementos y nutrición deportiva: Otros suplementos.",
+    "sort_order": 25100,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_BASES_LIQUIDAS",
+    "name": "Bases líquidas",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Bases líquidas.",
+    "sort_order": 25100,
+    "is_active": true
+  },
+  {
+    "code": "SUPLEMENTOS_OTROS",
+    "name": "Otros",
+    "parent_code": "CAT_SUPLEMENTOS_OTROS_SUPLEMENTOS",
+    "description": "Ejemplos de ingredientes: Pre-entreno, recuperadores.",
+    "sort_order": 25101,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_CALDOS",
+    "name": "Caldos caseros",
+    "parent_code": "CAT_PREPARACIONES_BASE_BASES_LIQUIDAS",
+    "description": "Ejemplos de ingredientes: Caldo casero de pollo, verdura, carne.",
+    "sort_order": 25101,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_SALSAS_BASE",
+    "name": "Salsas base",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Salsas base.",
+    "sort_order": 25200,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_SALSAS_BASE",
+    "name": "Salsas madre",
+    "parent_code": "CAT_PREPARACIONES_BASE_SALSAS_BASE",
+    "description": "Ejemplos de ingredientes: Salsa blanca, bechamel, salsa roja base.",
+    "sort_order": 25201,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_MASAS_BASE",
+    "name": "Masas base",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Masas base.",
+    "sort_order": 25300,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_MASAS_BASE",
+    "name": "Masas caseras",
+    "parent_code": "CAT_PREPARACIONES_BASE_MASAS_BASE",
+    "description": "Ejemplos de ingredientes: Masa de pizza, masa de tarta, masa de pan.",
+    "sort_order": 25301,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_RELLENOS",
+    "name": "Rellenos",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Rellenos.",
+    "sort_order": 25400,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_RELLENOS",
+    "name": "Preparaciones intermedias",
+    "parent_code": "CAT_PREPARACIONES_BASE_RELLENOS",
+    "description": "Ejemplos de ingredientes: Relleno de empanada, relleno de tarta.",
+    "sort_order": 25401,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_PURES",
+    "name": "Purés",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Purés.",
+    "sort_order": 25500,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_PURES",
+    "name": "Bases cocidas",
+    "parent_code": "CAT_PREPARACIONES_BASE_PURES",
+    "description": "Ejemplos de ingredientes: Puré de papa, puré de calabaza.",
+    "sort_order": 25501,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_MARINADAS",
+    "name": "Marinadas",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Marinadas.",
+    "sort_order": 25600,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_MARINADAS",
+    "name": "Adobos",
+    "parent_code": "CAT_PREPARACIONES_BASE_MARINADAS",
+    "description": "Ejemplos de ingredientes: Marinada de pollo, adobo criollo.",
+    "sort_order": 25601,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_BASES_DE_LEGUMBRES",
+    "name": "Bases de legumbres",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Bases de legumbres.",
+    "sort_order": 25700,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_LEGUMBRES",
+    "name": "Cocidas/procesadas",
+    "parent_code": "CAT_PREPARACIONES_BASE_BASES_DE_LEGUMBRES",
+    "description": "Ejemplos de ingredientes: Pasta de garbanzos, lentejas cocidas condimentadas.",
+    "sort_order": 25701,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_BASES_DE_CEREALES",
+    "name": "Bases de cereales",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Bases de cereales.",
+    "sort_order": 25800,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_CEREALES",
+    "name": "Cocidos",
+    "parent_code": "CAT_PREPARACIONES_BASE_BASES_DE_CEREALES",
+    "description": "Ejemplos de ingredientes: Arroz cocido, quinoa cocida, polenta cocida.",
+    "sort_order": 25801,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_PROTEINAS_PREPARADAS",
+    "name": "Proteínas preparadas",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Proteínas preparadas.",
+    "sort_order": 25900,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_PROTEINAS",
+    "name": "Cocidas",
+    "parent_code": "CAT_PREPARACIONES_BASE_PROTEINAS_PREPARADAS",
+    "description": "Ejemplos de ingredientes: Pollo hervido, carne desmechada, pescado cocido.",
+    "sort_order": 25901,
+    "is_active": true
+  },
+  {
+    "code": "CAT_PREPARACIONES_BASE_OTRAS_PREPARACIONES",
+    "name": "Otras preparaciones",
+    "parent_code": "PREPARACIONES_BASE",
+    "description": "Subcategoría de Preparaciones base y subrecetas: Otras preparaciones.",
+    "sort_order": 26000,
+    "is_active": true
+  },
+  {
+    "code": "PREPARACIONES_OTRAS",
+    "name": "Subrecetas",
+    "parent_code": "CAT_PREPARACIONES_BASE_OTRAS_PREPARACIONES",
+    "description": "Ejemplos de ingredientes: Cualquier preparación intermedia reutilizable.",
+    "sort_order": 26001,
+    "is_active": true
+  }
+]

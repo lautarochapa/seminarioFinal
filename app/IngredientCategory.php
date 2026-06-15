@@ -10,10 +10,17 @@ class IngredientCategory extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'code',
         'name',
         'parent_id',
         'description',
+        'sort_order',
+        'is_active',
         'status',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function parent()
