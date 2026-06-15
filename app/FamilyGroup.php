@@ -86,4 +86,14 @@ class FamilyGroup extends Model
     {
         return $this->hasMany(StockWasteLog::class);
     }
+
+    public function recipeCostSnapshots()
+    {
+        return $this->hasMany(RecipeCostSnapshot::class);
+    }
+
+    public function recipeCookLogs()
+    {
+        return $this->hasMany(RecipeCookLog::class);
+    }
 }

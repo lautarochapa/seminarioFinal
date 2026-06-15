@@ -228,6 +228,32 @@ class User extends Authenticatable
         return $this->hasMany(StockMovement::class, 'created_by');
     }
 
+    public function ownedRecipes()
+    {
+        return $this->hasMany(Recipe::class, 'owner_user_id');
+    }
+
+    public function recipeFavorites()
+    {
+        return $this->hasMany(RecipeFavorite::class);
+    }
+
+    public function favoriteRecipes()
+    {
+        return $this->belongsToMany(Recipe::class, 'recipe_favorites')
+            ->withPivot(['created_at']);
+    }
+
+    public function recipeCookLogs()
+    {
+        return $this->hasMany(RecipeCookLog::class);
+    }
+
+    public function reviewedImportedRecipeCandidates()
+    {
+        return $this->hasMany(ImportedRecipeCandidate::class, 'reviewed_by');
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
