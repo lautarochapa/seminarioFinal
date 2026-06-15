@@ -136,3 +136,22 @@ Route::group(['middleware' => 'App\Http\Middleware\NutricionistaMiddleware'], fu
 Route::get('/vue/{vue_capture?}', function () {
     return view('vue.index');
    })->where('vue_capture', '[\/\w\.-]*');
+
+Route::prefix('api/v1/auth')->middleware(['trace_id'])->group(function () {
+    Route::post('register', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'register'])
+        ->middleware('throttle:60,1');
+    Route::post('login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'login'])
+        ->middleware('throttle:10,1');
+    Route::post('google', [\App\Http\Controllers\Api\V1\Auth\GoogleAuthController::class, 'authenticate'])
+        ->middleware('throttle:10,1');
+    Route::post('forgot-password', [\App\Http\Controllers\Api\V1\Auth\PasswordController::class, 'forgotPassword'])
+        ->middleware('throttle:5,1');
+    Route::post('reset-password', [\App\Http\Controllers\Api\V1\Auth\PasswordController::class, 'resetPassword'])
+        ->middleware('throttle:60,1');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('logout', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'logout']);
+        Route::get('me', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'me']);
+        Route::patch('me', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'updateProfile']);
+    });
+});
