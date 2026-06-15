@@ -136,4 +136,19 @@ class FamilyGroup extends Model
     {
         return $this->hasMany(Budget::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function reportSnapshots()
+    {
+        return $this->hasMany(ReportSnapshot::class);
+    }
+
+    public function reportExports()
+    {
+        return $this->hasMany(ReportExport::class);
+    }
 }

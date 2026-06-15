@@ -304,6 +304,46 @@ class User extends Authenticatable
         return $this->hasMany(SupplementLog::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function notificationPreferences()
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
+    public function reportSnapshots()
+    {
+        return $this->hasMany(ReportSnapshot::class);
+    }
+
+    public function reportExports()
+    {
+        return $this->hasMany(ReportExport::class);
+    }
+
+    public function createdThesisDocuments()
+    {
+        return $this->hasMany(ThesisDocument::class, 'created_by');
+    }
+
+    public function updatedThesisDocuments()
+    {
+        return $this->hasMany(ThesisDocument::class, 'updated_by');
+    }
+
+    public function thesisComments()
+    {
+        return $this->hasMany(ThesisComment::class);
+    }
+
+    public function demoScenarios()
+    {
+        return $this->hasMany(DemoScenario::class, 'demo_user_id');
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
