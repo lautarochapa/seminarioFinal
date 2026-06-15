@@ -129,4 +129,14 @@ class Recipe extends Model
     {
         return $this->hasMany(RecipeSubstitution::class);
     }
+
+    public function mealPlanItems()
+    {
+        return $this->hasMany(MealPlanItem::class);
+    }
+
+    public function mealPlanSuggestions()
+    {
+        return $this->hasMany(MealPlanSuggestion::class);
+    }
 }

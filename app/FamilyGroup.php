@@ -96,4 +96,19 @@ class FamilyGroup extends Model
     {
         return $this->hasMany(RecipeCookLog::class);
     }
+
+    public function mealPlans()
+    {
+        return $this->hasMany(MealPlan::class);
+    }
+
+    public function mealPlanPreferences()
+    {
+        return $this->hasMany(MealPlanPreference::class);
+    }
+
+    public function mealPlanSuggestions()
+    {
+        return $this->hasMany(MealPlanSuggestion::class);
+    }
 }

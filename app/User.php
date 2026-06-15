@@ -254,6 +254,26 @@ class User extends Authenticatable
         return $this->hasMany(ImportedRecipeCandidate::class, 'reviewed_by');
     }
 
+    public function createdMealPlans()
+    {
+        return $this->hasMany(MealPlan::class, 'created_by');
+    }
+
+    public function mealPlanItemPortions()
+    {
+        return $this->hasMany(MealPlanItemPortion::class);
+    }
+
+    public function mealPlanPreferences()
+    {
+        return $this->hasMany(MealPlanPreference::class);
+    }
+
+    public function mealConsumptionLogs()
+    {
+        return $this->hasMany(MealConsumptionLog::class);
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
