@@ -104,6 +104,33 @@ class User extends Authenticatable
         return $this->hasMany(LoginLog::class);
     }
 
+    public function ownedFamilyGroups()
+    {
+        return $this->hasMany(FamilyGroup::class, 'owner_user_id');
+    }
+
+    public function familyGroupMemberships()
+    {
+        return $this->hasMany(FamilyGroupMember::class);
+    }
+
+    public function familyGroups()
+    {
+        return $this->belongsToMany(FamilyGroup::class, 'family_group_members')
+            ->withPivot(['role_in_group', 'status', 'joined_at'])
+            ->withTimestamps();
+    }
+
+    public function sentFamilyGroupInvitations()
+    {
+        return $this->hasMany(FamilyGroupInvitation::class, 'invited_by');
+    }
+
+    public function receivedFamilyGroupInvitations()
+    {
+        return $this->hasMany(FamilyGroupInvitation::class, 'invited_user_id');
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
