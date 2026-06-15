@@ -64,5 +64,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified'  => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'trace_id'  => \App\Http\Middleware\Api\TraceId::class,
+        'permission' => \App\Http\Middleware\Api\RequirePermission::class,
     ];
 }

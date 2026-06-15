@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Exceptions\Auth\AuthException;
+use App\Exceptions\Rbac\RbacException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -45,6 +46,16 @@ class Handler extends ExceptionHandler
         $traceId = $request->attributes->get('trace_id', (string) Str::uuid());
 
         if ($exception instanceof AuthException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RbacException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),

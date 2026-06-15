@@ -155,3 +155,53 @@ Route::prefix('api/v1/auth')->middleware(['trace_id'])->group(function () {
         Route::patch('me', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'updateProfile']);
     });
 });
+
+Route::prefix('api/v1/admin')->middleware(['trace_id', 'auth'])->group(function () {
+    // Users
+    Route::get('users', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'index'])
+        ->middleware('permission:security.users.read');
+    Route::get('users/{id}/audit', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::get('users/{id}', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'show'])
+        ->middleware('permission:security.users.read');
+    Route::post('users', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'store'])
+        ->middleware('permission:security.users.write');
+    Route::patch('users/{id}/restore', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'restore'])
+        ->middleware('permission:security.users.write');
+    Route::patch('users/{id}', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'update'])
+        ->middleware('permission:security.users.write');
+    Route::delete('users/{id}', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'destroy'])
+        ->middleware('permission:security.users.write');
+
+    // User-role assignments
+    Route::post('users/{userId}/roles', [\App\Http\Controllers\Api\V1\Admin\UserRoleController::class, 'store'])
+        ->middleware('permission:security.users.write');
+    Route::delete('users/{userId}/roles/{roleId}', [\App\Http\Controllers\Api\V1\Admin\UserRoleController::class, 'destroy'])
+        ->middleware('permission:security.users.write');
+
+    // Roles
+    Route::get('roles', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'index'])
+        ->middleware('permission:security.roles.read');
+    Route::get('roles/{id}/audit', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::get('roles/{id}', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'show'])
+        ->middleware('permission:security.roles.read');
+    Route::post('roles', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'store'])
+        ->middleware('permission:security.roles.write');
+    Route::patch('roles/{id}/restore', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'restore'])
+        ->middleware('permission:security.roles.write');
+    Route::patch('roles/{id}', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'update'])
+        ->middleware('permission:security.roles.write');
+    Route::delete('roles/{id}', [\App\Http\Controllers\Api\V1\Admin\RoleAdminController::class, 'destroy'])
+        ->middleware('permission:security.roles.write');
+
+    // Role-permission assignments
+    Route::post('roles/{roleId}/permissions', [\App\Http\Controllers\Api\V1\Admin\RolePermissionController::class, 'store'])
+        ->middleware('permission:security.roles.write');
+    Route::delete('roles/{roleId}/permissions/{permissionId}', [\App\Http\Controllers\Api\V1\Admin\RolePermissionController::class, 'destroy'])
+        ->middleware('permission:security.roles.write');
+
+    // Permissions
+    Route::get('permissions', [\App\Http\Controllers\Api\V1\Admin\PermissionAdminController::class, 'index'])
+        ->middleware('permission:security.permissions.read');
+});

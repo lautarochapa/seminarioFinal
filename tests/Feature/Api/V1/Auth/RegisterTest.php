@@ -110,7 +110,7 @@ class RegisterTest extends TestCase
 
         $traceId = $response->json('trace_id');
         $this->assertNotNull($traceId);
-        $this->assertMatchesRegularExpression(
+        $this->assertRegExp(
             '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
             $traceId
         );
