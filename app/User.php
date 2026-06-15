@@ -223,6 +223,11 @@ class User extends Authenticatable
         return $this->hasMany(PriceRefreshRequest::class);
     }
 
+    public function createdStockMovements()
+    {
+        return $this->hasMany(StockMovement::class, 'created_by');
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();

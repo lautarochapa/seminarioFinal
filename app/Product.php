@@ -185,4 +185,24 @@ class Product extends Model
     {
         return $this->hasMany(PriceRefreshRequest::class);
     }
+
+    public function stockItems()
+    {
+        return $this->hasMany(StockItem::class);
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function stockMinimumRules()
+    {
+        return $this->hasMany(StockMinimumRule::class);
+    }
+
+    public function stockAlerts()
+    {
+        return $this->hasMany(StockAlert::class);
+    }
 }

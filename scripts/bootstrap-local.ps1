@@ -19,6 +19,7 @@ $root = Split-Path -Parent $PSScriptRoot
 & (Join-Path $PSScriptRoot "migrate-product-catalog.ps1")
 & (Join-Path $PSScriptRoot "migrate-supermarkets.ps1")
 & (Join-Path $PSScriptRoot "migrate-scraping.ps1")
+& (Join-Path $PSScriptRoot "migrate-stock.ps1")
 & (Join-Path $PSScriptRoot "create-admin-user.ps1")
 
 Write-Host "Setup local terminado. Ejecuta .\start-app.ps1 para levantar la app."

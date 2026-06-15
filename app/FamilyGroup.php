@@ -56,4 +56,34 @@ class FamilyGroup extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function stockLocations()
+    {
+        return $this->hasMany(StockLocation::class);
+    }
+
+    public function stockItems()
+    {
+        return $this->hasMany(StockItem::class);
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function stockMinimumRules()
+    {
+        return $this->hasMany(StockMinimumRule::class);
+    }
+
+    public function stockAlerts()
+    {
+        return $this->hasMany(StockAlert::class);
+    }
+
+    public function stockWasteLogs()
+    {
+        return $this->hasMany(StockWasteLog::class);
+    }
 }
