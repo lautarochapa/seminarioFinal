@@ -70,4 +70,9 @@ class Ingredient extends Model
         return $this->belongsToMany(FoodTag::class, 'ingredient_tags')
             ->withPivot(['created_at']);
     }
+
+    public function userSupplements()
+    {
+        return $this->hasMany(UserSupplement::class);
+    }
 }

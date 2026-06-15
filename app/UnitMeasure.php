@@ -33,4 +33,14 @@ class UnitMeasure extends Model
     {
         return $this->hasMany(UnitConversion::class, 'to_unit_id');
     }
+
+    public function userSupplementDoses()
+    {
+        return $this->hasMany(UserSupplement::class, 'dose_unit_id');
+    }
+
+    public function supplementLogDoses()
+    {
+        return $this->hasMany(SupplementLog::class, 'dose_unit_id');
+    }
 }

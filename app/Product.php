@@ -220,4 +220,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductPreference::class);
     }
+
+    public function userSupplements()
+    {
+        return $this->hasMany(UserSupplement::class);
+    }
 }

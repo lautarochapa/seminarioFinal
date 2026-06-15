@@ -294,6 +294,16 @@ class User extends Authenticatable
         return $this->hasMany(ProductPreference::class);
     }
 
+    public function supplements()
+    {
+        return $this->hasMany(UserSupplement::class);
+    }
+
+    public function supplementLogs()
+    {
+        return $this->hasMany(SupplementLog::class);
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
