@@ -165,4 +165,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductReport::class);
     }
+
+    public function supermarketProducts()
+    {
+        return $this->hasMany(SupermarketProduct::class);
+    }
 }

@@ -51,4 +51,9 @@ class FamilyGroup extends Model
     {
         return $this->hasOne(FamilyGroupPreference::class);
     }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 }

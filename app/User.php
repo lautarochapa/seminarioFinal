@@ -191,6 +191,23 @@ class User extends Authenticatable
         return $this->hasMany(ProfessionalUserLink::class, 'professional_user_id');
     }
 
+    public function paymentMethods()
+    {
+        return $this->belongsToMany(PaymentMethod::class, 'user_payment_methods')
+            ->withPivot(['alias', 'status'])
+            ->withTimestamps();
+    }
+
+    public function productReports()
+    {
+        return $this->hasMany(ProductReport::class);
+    }
+
+    public function resolvedProductReports()
+    {
+        return $this->hasMany(ProductReport::class, 'resolved_by');
+    }
+
     public function hasRole($code)
     {
         return $this->roles()->where('code', $code)->exists();
