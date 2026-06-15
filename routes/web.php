@@ -204,4 +204,16 @@ Route::prefix('api/v1/admin')->middleware(['trace_id', 'auth'])->group(function 
     // Permissions
     Route::get('permissions', [\App\Http\Controllers\Api\V1\Admin\PermissionAdminController::class, 'index'])
         ->middleware('permission:security.permissions.read');
+
+    // Audit logs
+    Route::get('audit-logs', [\App\Http\Controllers\Api\V1\Admin\AuditLogController::class, 'index'])
+        ->middleware('permission:audit.read');
+
+    // Login logs
+    Route::get('login-logs', [\App\Http\Controllers\Api\V1\Admin\LoginLogController::class, 'index'])
+        ->middleware('permission:audit.read');
+
+    // Generic resource audit (must be after specific routes)
+    Route::get('{resource}/{id}/audit', [\App\Http\Controllers\Api\V1\Admin\AuditLogController::class, 'forResource'])
+        ->middleware('permission:audit.read');
 });

@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Hash;
 class UserAdminService
 {
     private $userRepo;
+    private $auditService;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct(UserRepository $userRepo, AuditAdminService $auditService)
     {
-        $this->userRepo = $userRepo;
+        $this->userRepo     = $userRepo;
+        $this->auditService = $auditService;
     }
 
     public function list(array $filters): LengthAwarePaginator
@@ -139,12 +141,6 @@ class UserAdminService
     {
         $this->userRepo->findWithTrashedOrFail($id);
 
-        $perPage = min((int) ($filters['per_page'] ?? 20), 100);
-        $perPage = max($perPage, 1);
-
-        return AuditLog::where('entity_name', 'users')
-            ->where('entity_id', $id)
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        return $this->auditService->forEntity('users', $id, $filters);
     }
 }

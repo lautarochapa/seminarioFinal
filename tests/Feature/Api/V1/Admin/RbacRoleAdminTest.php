@@ -249,7 +249,7 @@ class RbacRoleAdminTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'data' => [['id', 'action', 'entity_name', 'entity_id', 'created_at']],
+                'data' => [['id', 'action', 'resource', 'resource_id', 'created_at']],
                 'meta',
                 'trace_id',
             ]);

@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\DB;
 class RoleAdminService
 {
     private $roleRepo;
+    private $auditService;
 
-    public function __construct(RoleRepository $roleRepo)
+    public function __construct(RoleRepository $roleRepo, AuditAdminService $auditService)
     {
-        $this->roleRepo = $roleRepo;
+        $this->roleRepo     = $roleRepo;
+        $this->auditService = $auditService;
     }
 
     public function list(array $filters): LengthAwarePaginator
@@ -139,12 +141,6 @@ class RoleAdminService
     {
         $this->roleRepo->findOrFail($id);
 
-        $perPage = min((int) ($filters['per_page'] ?? 20), 100);
-        $perPage = max($perPage, 1);
-
-        return AuditLog::where('entity_name', 'roles')
-            ->where('entity_id', $id)
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        return $this->auditService->forEntity('roles', $id, $filters);
     }
 }
