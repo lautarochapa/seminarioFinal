@@ -382,6 +382,58 @@
                     </table>
                 </div>
             </article>
+
+            <article class="panel">
+                <h2>Consentimientos</h2>
+                <p class="muted" style="margin-bottom:16px">Desde aca podes aceptar o revocar permisos de privacidad, uso de datos sensibles y acceso profesional. Cada cambio guarda su fecha de aceptacion o revocacion.</p>
+
+                <form class="profile-form" data-consents-form>
+                    <div class="alert" data-consents-message style="display:none"></div>
+
+                    <div class="checkbox-grid">
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="health_data_consent" value="1">
+                            <span>Uso de datos de salud</span>
+                        </label>
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="privacy_consent" value="1">
+                            <span>Politica de privacidad</span>
+                        </label>
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="professional_access_consent" value="1">
+                            <span>Acceso profesional</span>
+                        </label>
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="medical_disclaimer_accepted" value="1">
+                            <span>Aviso profesional</span>
+                        </label>
+                        <label class="checkbox-card">
+                            <input type="checkbox" name="terms_accepted" value="1">
+                            <span>Terminos de uso</span>
+                        </label>
+                    </div>
+
+                    <div style="margin-top:18px">
+                        <button type="submit" class="btn-main">Guardar consentimientos</button>
+                    </div>
+                </form>
+
+                <div style="overflow:auto;margin-top:18px">
+                    <table class="web-table">
+                        <thead>
+                            <tr>
+                                <th>Consentimiento</th>
+                                <th>Estado</th>
+                                <th>Aceptado</th>
+                                <th>Revocado</th>
+                            </tr>
+                        </thead>
+                        <tbody data-consents-body>
+                            <tr><td colspan="4" class="muted">Cargando consentimientos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
             </div>
 
             <aside class="aside-panel">
@@ -391,8 +443,9 @@
                 <div class="table-line"><span class="muted">Mediciones</span><strong>CRUD /users/me/body-measurements</strong></div>
                 <div class="table-line"><span class="muted">Objetivos</span><strong>CRUD /users/me/objectives</strong></div>
                 <div class="table-line"><span class="muted">Restricciones</span><strong>Catalogos + POST/DELETE /users/me/*</strong></div>
+                <div class="table-line"><span class="muted">Consentimientos</span><strong>GET/PATCH /users/me/consents</strong></div>
                 <div class="table-line"><span class="muted">Catalogo</span><strong>GET /catalog/objectives</strong></div>
-                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, administrar objetivos, restricciones y mediciones, y guardar la configuracion de prioridades.</p>
+                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, administrar objetivos, restricciones, mediciones y consentimientos, y guardar la configuracion de prioridades.</p>
             </aside>
         </section>
     @elseif($screenKey === 'family-group')

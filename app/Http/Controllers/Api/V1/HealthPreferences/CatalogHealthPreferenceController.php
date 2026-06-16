@@ -17,12 +17,12 @@ class CatalogHealthPreferenceController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request, $type)
+    public function index(Request $request, $healthPreferenceType)
     {
         $traceId = $request->attributes->get('trace_id');
 
         return response()->json([
-            'data' => CatalogHealthPreferenceResource::collection($this->service->catalog(HealthPreferenceTypes::get($type))),
+            'data' => CatalogHealthPreferenceResource::collection($this->service->catalog(HealthPreferenceTypes::get($healthPreferenceType))),
             'trace_id' => $traceId,
         ])->header('X-Trace-Id', $traceId);
     }
