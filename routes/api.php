@@ -333,6 +333,10 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::delete('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
 
+    Route::post('recipes/{id}/ingredients', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'store']);
+    Route::patch('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'update']);
+    Route::delete('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'destroy']);
+
     Route::get('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'index']);
     Route::post('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'store']);
     Route::get('recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'show']);
