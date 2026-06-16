@@ -352,6 +352,8 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::patch('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'update']);
     Route::delete('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'destroy']);
 
+    Route::get('recipes/search', [\App\Http\Controllers\Api\V1\RecipeSearch\RecipeSearchController::class, '__invoke']);
+
     Route::get('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'index']);
     Route::post('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'store']);
     Route::get('recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'show']);
