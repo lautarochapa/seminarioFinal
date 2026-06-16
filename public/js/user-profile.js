@@ -3,7 +3,7 @@
 
     var state = {
         objectivesCatalog: [],
-        selectedObjectiveIds: [],
+        userObjectives: [],
         measurements: [],
         editingMeasurementId: null,
     };
@@ -98,6 +98,16 @@
         return window.CCApi.request('/catalog/objectives')
             .then(function (response) {
                 state.objectivesCatalog = response.data || [];
+                renderObjectiveCatalog();
+            });
+    }
+
+    function loadUserObjectives(form) {
+        return window.CCApi.request('/users/me/objectives')
+            .then(function (response) {
+                state.userObjectives = response.data || [];
+                renderUserObjectives(form, state.userObjectives);
+                updateObjectivesSummary();
             });
     }
 
@@ -124,10 +134,6 @@
     }
 
     function fillProfile(form, profile) {
-        state.selectedObjectiveIds = (profile.objectives || []).map(function (objective) {
-            return Number(objective.id);
-        });
-
         setValue(form, 'name', profile.name);
         setValue(form, 'lastname', profile.lastname);
         setValue(form, 'email', profile.email);
@@ -145,7 +151,6 @@
         setCheckbox(form, 'preferences.uses_app_for_budget', profile.preferences && profile.preferences.uses_app_for_budget);
         setCheckbox(form, 'preferences.uses_app_for_organization', profile.preferences && profile.preferences.uses_app_for_organization);
 
-        renderObjectives(form);
         updateProfileSummary();
     }
 
@@ -172,23 +177,47 @@
         }
     }
 
-    function renderObjectives(form) {
-        var container = qs('[data-objectives-list]', form);
-        if (!container) {
+    function renderObjectiveCatalog() {
+        var select = qs('[name="objective_id"]', document);
+        if (!select) {
             return;
         }
 
         if (!state.objectivesCatalog.length) {
-            container.innerHTML = '<div class="muted">No hay objetivos disponibles.</div>';
+            select.innerHTML = '<option value="">No hay objetivos disponibles</option>';
             return;
         }
 
-        container.innerHTML = state.objectivesCatalog.map(function (objective) {
-            var checked = state.selectedObjectiveIds.indexOf(Number(objective.id)) !== -1 ? ' checked' : '';
-            return '<label class="objective-item">' +
-                '<input type="checkbox" value="' + objective.id + '" data-objective-checkbox' + checked + '>' +
-                '<span><strong>' + escapeHtml(objective.name) + '</strong><br><span class="muted">' + escapeHtml(objective.code || '') + '</span></span>' +
-                '</label>';
+        var current = select.value;
+        select.innerHTML = '<option value="">Seleccionar objetivo</option>' + state.objectivesCatalog.map(function (objective) {
+            return '<option value="' + objective.id + '">' + escapeHtml(objective.name) + '</option>';
+        }).join('');
+        select.value = current;
+    }
+
+    function renderUserObjectives(form, items) {
+        var body = qs('[data-user-objectives-body]');
+        if (!body) {
+            return;
+        }
+
+        if (!items.length) {
+            body.innerHTML = '<tr><td colspan="5" class="muted">Todavia no hay objetivos asignados.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = items.map(function (item) {
+            var target = item.target_value !== null
+                ? text(item.target_value) + (item.target_unit ? ' ' + item.target_unit : '')
+                : '-';
+            return '<tr>' +
+                '<td><strong>' + escapeHtml(item.objective ? item.objective.name : '-') + '</strong><br><span class="muted">' + escapeHtml(item.objective ? item.objective.code : '-') + '</span></td>' +
+                '<td>' + escapeHtml(text(item.priority)) + '</td>' +
+                '<td>' + escapeHtml(target) + '</td>' +
+                '<td>' + escapeHtml(text(item.target_date)) + '</td>' +
+                '<td><button type="button" class="btn-main btn-sm" data-user-objective-edit="' + item.id + '">Editar</button> ' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-user-objective-delete="' + item.id + '">Eliminar</button></td>' +
+                '</tr>';
         }).join('');
     }
 
@@ -214,14 +243,22 @@
             activity_level: normalizeString(valueOf(form, 'activity_level')),
             meals_per_day: parseNumber(valueOf(form, 'meals_per_day')),
             notes: normalizeString(valueOf(form, 'notes')),
-            objective_ids: qsa('[data-objective-checkbox]:checked', form).map(function (input) {
-                return Number(input.value);
-            }),
             preferences: {
                 uses_app_for_health: checked(form, 'preferences.uses_app_for_health'),
                 uses_app_for_budget: checked(form, 'preferences.uses_app_for_budget'),
                 uses_app_for_organization: checked(form, 'preferences.uses_app_for_organization'),
             },
+        };
+    }
+
+    function userObjectivePayload(form) {
+        return {
+            objective_id: parseNumber(valueOf(form, 'objective_id')),
+            priority: parseNumber(valueOf(form, 'priority')),
+            target_value: parseNumber(valueOf(form, 'target_value')),
+            target_unit: normalizeString(valueOf(form, 'target_unit')),
+            target_date: normalizeString(valueOf(form, 'target_date')),
+            notes: normalizeString(valueOf(form, 'notes')),
         };
     }
 
@@ -258,16 +295,18 @@
     }
 
     function updateProfileSummary() {
-        var objectivesCount = state.selectedObjectiveIds.length;
         var preferencesCount = qsa('[data-user-profile-form] input[type="checkbox"]:checked').length;
-        var objectivesNode = qs('[data-profile-objectives-count]');
         var preferencesNode = qs('[data-profile-preferences-count]');
 
-        if (objectivesNode) {
-            objectivesNode.textContent = String(objectivesCount);
-        }
         if (preferencesNode) {
             preferencesNode.textContent = String(preferencesCount);
+        }
+    }
+
+    function updateObjectivesSummary() {
+        var objectivesNode = qs('[data-profile-objectives-count]');
+        if (objectivesNode) {
+            objectivesNode.textContent = String(state.userObjectives.length);
         }
     }
 
@@ -327,13 +366,6 @@
 
     function bindProfileForm(form) {
         form.addEventListener('change', function (event) {
-            if (event.target.matches('[data-objective-checkbox]')) {
-                state.selectedObjectiveIds = qsa('[data-objective-checkbox]:checked', form).map(function (input) {
-                    return Number(input.value);
-                });
-                updateProfileSummary();
-            }
-
             if (event.target.matches('input[type="checkbox"]')) {
                 updateProfileSummary();
             }
@@ -356,6 +388,80 @@
                 setLoading(form, false);
             });
         });
+    }
+
+    function bindUserObjectives(form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            clearFeedback(form, '[data-user-objective-error]', '[data-user-objective-message]');
+            setLoading(form, true);
+
+            var assignmentId = valueOf(form, 'assignment_id');
+            var endpoint = '/users/me/objectives' + (assignmentId ? '/' + assignmentId : '');
+            var method = assignmentId ? 'PATCH' : 'POST';
+
+            window.CCApi.request(endpoint, {
+                method: method,
+                body: userObjectivePayload(form),
+            }).then(function () {
+                showMessage(form, '[data-user-objective-message]', 'success', assignmentId ? 'Objetivo actualizado correctamente.' : 'Objetivo agregado correctamente.');
+                resetUserObjectiveForm(form);
+                return loadUserObjectives(form);
+            }).catch(function (error) {
+                showErrors(form, error, '[data-user-objective-error', '[data-user-objective-message]');
+            }).finally(function () {
+                setLoading(form, false);
+            });
+        });
+
+        var reset = qs('[data-user-objective-reset]', form);
+        if (reset) {
+            reset.addEventListener('click', function () {
+                resetUserObjectiveForm(form);
+                clearFeedback(form, '[data-user-objective-error]', '[data-user-objective-message]');
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            var editId = event.target.getAttribute('data-user-objective-edit');
+            var deleteId = event.target.getAttribute('data-user-objective-delete');
+
+            if (editId) {
+                var assignment = state.userObjectives.find(function (item) {
+                    return String(item.id) === String(editId);
+                });
+                if (!assignment) {
+                    return;
+                }
+
+                setValue(form, 'assignment_id', assignment.id);
+                setValue(form, 'objective_id', assignment.objective ? assignment.objective.id : '');
+                setValue(form, 'priority', assignment.priority);
+                setValue(form, 'target_value', assignment.target_value);
+                setValue(form, 'target_unit', assignment.target_unit);
+                setValue(form, 'target_date', assignment.target_date);
+                setValue(form, 'notes', assignment.notes);
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            if (deleteId) {
+                window.CCApi.request('/users/me/objectives/' + deleteId, { method: 'DELETE' })
+                    .then(function () {
+                        showMessage(form, '[data-user-objective-message]', 'success', 'Objetivo eliminado correctamente.');
+                        resetUserObjectiveForm(form);
+                        return loadUserObjectives(form);
+                    })
+                    .catch(function (error) {
+                        showErrors(form, error, '[data-user-objective-error', '[data-user-objective-message]');
+                    });
+            }
+        });
+    }
+
+    function resetUserObjectiveForm(form) {
+        form.reset();
+        setValue(form, 'assignment_id', '');
+        renderObjectiveCatalog();
     }
 
     function bindPriorityForm(form) {
@@ -450,20 +556,23 @@
     document.addEventListener('DOMContentLoaded', function () {
         var profileForm = qs('[data-user-profile-form]');
         var priorityForm = qs('[data-priority-settings-form]');
+        var objectivesForm = qs('[data-user-objective-form]');
         var measurementForm = qs('[data-body-measurement-form]');
 
-        if (!profileForm || !priorityForm || !measurementForm || !window.CCApi) {
+        if (!profileForm || !priorityForm || !objectivesForm || !measurementForm || !window.CCApi) {
             return;
         }
 
         bindProfileForm(profileForm);
         bindPriorityForm(priorityForm);
+        bindUserObjectives(objectivesForm);
         bindMeasurementForm(measurementForm);
 
         Promise.all([
             loadObjectivesCatalog(),
             loadProfile(profileForm),
             loadPrioritySettings(priorityForm),
+            loadUserObjectives(objectivesForm),
             loadMeasurements(measurementForm),
         ]).catch(function () {
             showMessage(profileForm, '[data-profile-message]', 'warning', 'No se pudo cargar toda la informacion del perfil desde la API.');

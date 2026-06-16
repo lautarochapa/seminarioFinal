@@ -116,6 +116,56 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'objectives')
+        <section data-admin-objectives>
+            <div class="alert" data-objectives-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-objectives-search placeholder="Buscar por codigo o nombre">
+                        <label class="muted" style="display:flex;gap:6px;align-items:center;margin:0">
+                            <input type="checkbox" data-objectives-deleted> incluir eliminados
+                        </label>
+                        <button type="button" class="btn-ghost" data-objectives-refresh>Actualizar</button>
+                        <span class="chip" data-objectives-count>0 objetivos</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-objectives-body>
+                                <tr><td colspan="5" class="muted">Cargando objetivos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-objective-form-title>Nuevo objetivo</h2>
+                    <form class="rbac-form" data-objective-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="bajar_peso" required>
+                        <input class="form-control" name="name" type="text" placeholder="Nombre" required>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar objetivo</button>
+                            <button type="button" class="btn-ghost" data-objective-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>

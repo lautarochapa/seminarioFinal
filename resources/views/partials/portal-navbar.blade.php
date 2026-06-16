@@ -23,6 +23,7 @@
                 ['Dashboard admin', '/admin-web', 'web.admin.dashboard'],
                 ['Usuarios', '/admin-web/users', 'web.admin.users'],
                 ['Roles y permisos', '/admin-web/roles-permissions', 'web.admin.roles-permissions'],
+                ['Objetivos', '/admin-web/objectives', 'web.admin.objectives'],
                 ['Ingredientes', '/admin-web/ingredients', 'web.admin.ingredients'],
                 ['Categorias ingredientes', '/admin-web/ingredient-categories', 'web.admin.ingredient-categories'],
                 ['Nutrientes', '/admin-web/nutrients', 'web.admin.nutrients'],

@@ -134,13 +134,6 @@
                         </div>
 
                         <div style="margin-top:12px">
-                            <label>Objetivos activos</label>
-                            <div class="objective-list" data-objectives-list>
-                                <div class="muted">Cargando objetivos...</div>
-                            </div>
-                        </div>
-
-                        <div style="margin-top:12px">
                             <label for="profile-notes">Notas</label>
                             <textarea id="profile-notes" class="form-control" name="notes" rows="4" placeholder="Observaciones, contexto o notas personales"></textarea>
                             <span class="invalid-feedback" data-profile-error="notes" role="alert"></span>
@@ -190,6 +183,79 @@
                     </div>
                 </article>
             </div>
+
+            <article class="panel">
+                <h2>Objetivos personales</h2>
+                <div class="profile-grid">
+                    <div>
+                        <form class="profile-form" data-user-objective-form>
+                            <div class="alert" data-user-objective-message style="display:none"></div>
+                            <input type="hidden" name="assignment_id">
+
+                            <label for="objective-select">Objetivo</label>
+                            <select id="objective-select" class="form-control" name="objective_id" required>
+                                <option value="">Cargando objetivos...</option>
+                            </select>
+                            <span class="invalid-feedback" data-user-objective-error="objective_id" role="alert"></span>
+
+                            <div class="row" style="margin-top:10px">
+                                <div class="col-md-4">
+                                    <label for="objective-priority">Prioridad</label>
+                                    <input id="objective-priority" class="form-control" name="priority" type="number" min="1" step="1">
+                                    <span class="invalid-feedback" data-user-objective-error="priority" role="alert"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="objective-target-value">Valor objetivo</label>
+                                    <input id="objective-target-value" class="form-control" name="target_value" type="number" step="0.1">
+                                    <span class="invalid-feedback" data-user-objective-error="target_value" role="alert"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="objective-target-unit">Unidad</label>
+                                    <input id="objective-target-unit" class="form-control" name="target_unit" type="text" placeholder="kg, %, mg, $">
+                                    <span class="invalid-feedback" data-user-objective-error="target_unit" role="alert"></span>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-top:10px">
+                                <div class="col-md-6">
+                                    <label for="objective-target-date">Fecha objetivo</label>
+                                    <input id="objective-target-date" class="form-control" name="target_date" type="date">
+                                    <span class="invalid-feedback" data-user-objective-error="target_date" role="alert"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="objective-notes">Notas</label>
+                                    <input id="objective-notes" class="form-control" name="notes" type="text" placeholder="Contexto del objetivo">
+                                    <span class="invalid-feedback" data-user-objective-error="notes" role="alert"></span>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+                                <button type="submit" class="btn-main">Guardar objetivo</button>
+                                <button type="button" class="btn-secondary-web" data-user-objective-reset>Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Objetivo</th>
+                                        <th>Prioridad</th>
+                                        <th>Meta</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-user-objectives-body>
+                                    <tr><td colspan="5" class="muted">Cargando objetivos...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
 
             <article class="panel">
                 <h2>Mediciones personales</h2>
@@ -269,8 +335,9 @@
                 <div class="table-line"><span class="muted">Perfil</span><strong>GET/PATCH /users/me/profile</strong></div>
                 <div class="table-line"><span class="muted">Prioridades</span><strong>GET/PATCH /users/me/priority-settings</strong></div>
                 <div class="table-line"><span class="muted">Mediciones</span><strong>CRUD /users/me/body-measurements</strong></div>
+                <div class="table-line"><span class="muted">Objetivos</span><strong>CRUD /users/me/objectives</strong></div>
                 <div class="table-line"><span class="muted">Catalogo</span><strong>GET /catalog/objectives</strong></div>
-                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, sincronizar objetivos y guardar la configuracion de prioridades.</p>
+                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, administrar objetivos, registrar mediciones y guardar la configuracion de prioridades.</p>
             </aside>
         </section>
     @elseif($screenKey === 'family-group')

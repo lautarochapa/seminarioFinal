@@ -10,6 +10,7 @@ use App\ImportedRecipeCandidate;
 use App\Ingredient;
 use App\IngredientCategory;
 use App\Nutrient;
+use App\Objective;
 use App\Permission;
 use App\Product;
 use App\ProductBarcode;
@@ -67,6 +68,7 @@ class AdminWebScreenController extends Controller
             'ingredients' => Ingredient::count(),
             'ingredient_categories' => IngredientCategory::count(),
             'nutrients' => Nutrient::count(),
+            'objectives' => Objective::count(),
             'units' => UnitMeasure::count(),
             'conversions' => UnitConversion::count(),
             'products' => Product::count(),
@@ -98,6 +100,7 @@ class AdminWebScreenController extends Controller
             'dashboard' => ['title' => 'Dashboard admin', 'module' => 'Reportes admin', 'description' => 'Pendientes, scraping, validaciones, errores.', 'primary' => 'Ver pendientes', 'secondary' => 'Revisar errores', 'metrics' => ['scraping_jobs', 'scraped_products', 'scraping_alerts', 'scraping_errors'], 'panels' => ['Pendientes', 'Scraping', 'Validaciones', 'Errores']],
             'users' => ['title' => 'Usuarios', 'module' => 'Usuarios, roles', 'description' => 'ABM usuarios.', 'primary' => 'Nuevo usuario', 'secondary' => 'Exportar', 'metrics' => ['users', 'roles'], 'panels' => ['Listado', 'Roles asignados', 'Estado', 'Actividad']],
             'roles-permissions' => ['title' => 'Roles y permisos', 'module' => 'Seguridad', 'description' => 'Gestion de permisos.', 'primary' => 'Nuevo rol', 'secondary' => 'Editar permisos', 'metrics' => ['roles', 'permissions'], 'panels' => ['Roles', 'Permisos', 'Matriz', 'Auditoria']],
+            'objectives' => ['title' => 'Objetivos', 'module' => 'Perfil y salud', 'description' => 'ABM de objetivos configurables para usuarios.', 'primary' => 'Nuevo objetivo', 'secondary' => 'Ver catalogo', 'metrics' => ['objectives'], 'panels' => ['Catalogo', 'Estado', 'Descripciones', 'Uso']],
             'ingredients' => ['title' => 'Ingredientes', 'module' => 'Catalogo', 'description' => 'ABM ingredientes.', 'primary' => 'Nuevo ingrediente', 'secondary' => 'Importar', 'metrics' => ['ingredients', 'ingredient_categories'], 'panels' => ['Listado', 'Categoria', 'Nutricion', 'Tags']],
             'ingredient-categories' => ['title' => 'Categorias ingredientes', 'module' => 'Catalogo', 'description' => 'ABM jerarquico.', 'primary' => 'Nueva categoria', 'secondary' => 'Reordenar', 'metrics' => ['ingredient_categories'], 'panels' => ['Arbol', 'Raices', 'Subcategorias', 'Estado']],
             'nutrients' => ['title' => 'Nutrientes', 'module' => 'Nutricion', 'description' => 'ABM nutrientes y valores.', 'primary' => 'Nuevo nutriente', 'secondary' => 'Valores', 'metrics' => ['nutrients'], 'panels' => ['Nutrientes', 'Unidades', 'Valores por ingrediente', 'Valores por producto']],

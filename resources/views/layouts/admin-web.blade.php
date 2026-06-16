@@ -9,6 +9,7 @@
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <script src="{{ asset('js/admin-rbac.js') }}?v={{ filemtime(public_path('js/admin-rbac.js')) }}" defer></script>
     <script src="{{ asset('js/admin-audit.js') }}?v={{ file_exists(public_path('js/admin-audit.js')) ? filemtime(public_path('js/admin-audit.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-objectives.js') }}?v={{ file_exists(public_path('js/admin-objectives.js')) ? filemtime(public_path('js/admin-objectives.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
