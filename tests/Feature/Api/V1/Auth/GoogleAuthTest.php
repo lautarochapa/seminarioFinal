@@ -122,15 +122,19 @@ class GoogleAuthTest extends TestCase
             ->assertJsonPath('error.code', 'AUTH_GOOGLE_ACCOUNT_CONFLICT');
     }
 
-    public function test_google_no_expone_tokens()
+    public function test_google_no_expone_tokens_oauth()
     {
         $this->mockSocialiteUser('google_005', 'safe@gmail.com');
 
         $response = $this->postJson('/api/v1/auth/google', ['token' => 'valid_token']);
 
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data' => ['id', 'email'], 'token' => ['access_token', 'token_type'], 'trace_id']);
+
         $content = $response->getContent();
-        $this->assertStringNotContainsString('access_token', $content);
         $this->assertStringNotContainsString('refresh_token', $content);
+        $this->assertStringNotContainsString('provider_token', $content);
+        $this->assertStringNotContainsString('client_secret', $content);
     }
 
     public function test_trace_id_presente()

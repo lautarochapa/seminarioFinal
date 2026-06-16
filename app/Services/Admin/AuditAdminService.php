@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Exceptions\Rbac\RbacException;
+use App\Ingredient;
 use App\Permission;
 use App\Repositories\Admin\AuditLogRepository;
 use App\Role;
@@ -16,6 +17,7 @@ class AuditAdminService
         'users'       => User::class,
         'roles'       => Role::class,
         'permissions' => Permission::class,
+        'ingredients' => Ingredient::class,
     ];
 
     private $auditRepo;
@@ -45,8 +47,11 @@ class AuditAdminService
             throw new ModelNotFoundException("Tipo de recurso no permitido: {$resource}");
         }
 
-        if ($resource === 'users') {
+        if ($resource === 'users' || $resource === 'ingredients') {
             $entity = User::withTrashed()->find($id);
+            if ($resource === 'ingredients') {
+                $entity = Ingredient::withTrashed()->find($id);
+            }
         } else {
             $modelClass = self::ALLOWED_RESOURCES[$resource];
             $entity     = $modelClass::find($id);
