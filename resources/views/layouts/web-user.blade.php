@@ -9,6 +9,7 @@
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-profile.js') }}?v={{ file_exists(public_path('js/user-profile.js')) ? filemtime(public_path('js/user-profile.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -52,11 +53,17 @@
         .family-form .form-control { margin-bottom:9px; }
         .btn-sm { padding:6px 11px; font-size:12px; }
         .chip.danger { background:#f7e7e7; color:#b33a3a; }
+        .profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+        .profile-form .form-control, .profile-form textarea, .profile-form select { margin-bottom:9px; }
+        .checkbox-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:10px; }
+        .checkbox-card { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fafdfb; display:flex; gap:8px; align-items:flex-start; }
+        .objective-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:10px; }
+        .objective-item { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; display:flex; gap:8px; align-items:flex-start; }
         @media (max-width: 960px) {
             .content { padding:14px; }
             .hero, .topbar { display:block; }
             .actions { justify-content:flex-start; margin-top:14px; }
-            .metric-row, .workspace, .panel-grid, .family-layout { grid-template-columns:1fr; }
+            .metric-row, .workspace, .panel-grid, .family-layout, .profile-grid, .checkbox-grid, .objective-list { grid-template-columns:1fr; }
         }
     </style>
 </head>

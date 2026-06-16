@@ -26,48 +26,123 @@
 
     @if($screenKey === 'profile-objectives')
         <section class="workspace">
-            <div class="panel-grid">
-                <article class="panel" style="grid-column: 1 / -1;">
-                    <h2>Perfil basico</h2>
-                    <form data-profile-api>
-                        <div class="alert" data-api-message style="display:none"></div>
+            <div class="profile-grid">
+                <article class="panel">
+                    <h2>Mi perfil</h2>
+                    <form class="profile-form" data-user-profile-form>
+                        <div class="alert" data-profile-message style="display:none"></div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="profile-name">Nombre</label>
                                 <input id="profile-name" class="form-control" name="name" type="text" autocomplete="given-name">
-                                <span class="invalid-feedback" data-field-error="name" role="alert"></span>
+                                <span class="invalid-feedback" data-profile-error="name" role="alert"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="profile-lastname">Apellido</label>
                                 <input id="profile-lastname" class="form-control" name="lastname" type="text" autocomplete="family-name">
-                                <span class="invalid-feedback" data-field-error="lastname" role="alert"></span>
+                                <span class="invalid-feedback" data-profile-error="lastname" role="alert"></span>
                             </div>
                         </div>
 
-                        <div class="row" style="margin-top:14px">
-                            <div class="col-md-6">
-                                <label for="profile-username">Usuario</label>
-                                <input id="profile-username" class="form-control" name="username" type="text" autocomplete="username">
-                                <span class="invalid-feedback" data-field-error="username" role="alert"></span>
-                            </div>
+                        <div class="row" style="margin-top:10px">
                             <div class="col-md-6">
                                 <label for="profile-email">Email</label>
                                 <input id="profile-email" class="form-control" name="email" type="email" disabled>
                             </div>
-                        </div>
-
-                        <div class="row" style="margin-top:14px">
                             <div class="col-md-6">
                                 <label for="profile-phone">Telefono</label>
                                 <input id="profile-phone" class="form-control" name="phone" type="text" autocomplete="tel">
-                                <span class="invalid-feedback" data-field-error="phone" role="alert"></span>
+                                <span class="invalid-feedback" data-profile-error="phone" role="alert"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:10px">
+                            <div class="col-md-6">
+                                <label for="profile-birth-date">Fecha de nacimiento</label>
+                                <input id="profile-birth-date" class="form-control" name="birth_date" type="date">
+                                <span class="invalid-feedback" data-profile-error="birth_date" role="alert"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="profile-avatar">Avatar URL</label>
-                                <input id="profile-avatar" class="form-control" name="avatar_url" type="url">
-                                <span class="invalid-feedback" data-field-error="avatar_url" role="alert"></span>
+                                <label for="profile-gender">Genero</label>
+                                <select id="profile-gender" class="form-control" name="gender">
+                                    <option value="">Sin especificar</option>
+                                    <option value="male">Masculino</option>
+                                    <option value="female">Femenino</option>
+                                    <option value="other">Otro</option>
+                                    <option value="prefer_not_to_say">Prefiero no decirlo</option>
+                                </select>
+                                <span class="invalid-feedback" data-profile-error="gender" role="alert"></span>
                             </div>
+                        </div>
+
+                        <div class="row" style="margin-top:10px">
+                            <div class="col-md-4">
+                                <label for="profile-height">Altura (cm)</label>
+                                <input id="profile-height" class="form-control" name="height_cm" type="number" min="0" step="0.1">
+                                <span class="invalid-feedback" data-profile-error="height_cm" role="alert"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="profile-current-weight">Peso actual (kg)</label>
+                                <input id="profile-current-weight" class="form-control" name="current_weight_kg" type="number" min="0" step="0.1">
+                                <span class="invalid-feedback" data-profile-error="current_weight_kg" role="alert"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="profile-target-weight">Peso objetivo (kg)</label>
+                                <input id="profile-target-weight" class="form-control" name="target_weight_kg" type="number" min="0" step="0.1">
+                                <span class="invalid-feedback" data-profile-error="target_weight_kg" role="alert"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:10px">
+                            <div class="col-md-6">
+                                <label for="profile-activity-level">Nivel de actividad</label>
+                                <select id="profile-activity-level" class="form-control" name="activity_level">
+                                    <option value="">Sin especificar</option>
+                                    <option value="sedentary">Sedentario</option>
+                                    <option value="light">Ligero</option>
+                                    <option value="moderate">Moderado</option>
+                                    <option value="active">Activo</option>
+                                    <option value="very_active">Muy activo</option>
+                                </select>
+                                <span class="invalid-feedback" data-profile-error="activity_level" role="alert"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profile-meals-per-day">Comidas por dia</label>
+                                <input id="profile-meals-per-day" class="form-control" name="meals_per_day" type="number" min="1" step="1">
+                                <span class="invalid-feedback" data-profile-error="meals_per_day" role="alert"></span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:10px">
+                            <label>Para que usas la app</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="preferences.uses_app_for_health" value="1">
+                                    <span>Salud y habitos</span>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="preferences.uses_app_for_budget" value="1">
+                                    <span>Presupuesto</span>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="preferences.uses_app_for_organization" value="1">
+                                    <span>Organizacion del hogar</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:12px">
+                            <label>Objetivos activos</label>
+                            <div class="objective-list" data-objectives-list>
+                                <div class="muted">Cargando objetivos...</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:12px">
+                            <label for="profile-notes">Notas</label>
+                            <textarea id="profile-notes" class="form-control" name="notes" rows="4" placeholder="Observaciones, contexto o notas personales"></textarea>
+                            <span class="invalid-feedback" data-profile-error="notes" role="alert"></span>
                         </div>
 
                         <div style="margin-top:18px">
@@ -75,13 +150,52 @@
                         </div>
                     </form>
                 </article>
+
+                <article class="panel">
+                    <h2>Prioridades</h2>
+                    <form class="profile-form" data-priority-settings-form>
+                        <div class="alert" data-priority-message style="display:none"></div>
+
+                        <label for="priority-health">Peso salud</label>
+                        <input id="priority-health" class="form-control" name="health_weight" type="number" min="0" step="0.1">
+                        <span class="invalid-feedback" data-priority-error="health_weight" role="alert"></span>
+
+                        <label for="priority-budget">Peso economia</label>
+                        <input id="priority-budget" class="form-control" name="budget_weight" type="number" min="0" step="0.1">
+                        <span class="invalid-feedback" data-priority-error="budget_weight" role="alert"></span>
+
+                        <label for="priority-time">Peso tiempo</label>
+                        <input id="priority-time" class="form-control" name="time_weight" type="number" min="0" step="0.1">
+                        <span class="invalid-feedback" data-priority-error="time_weight" role="alert"></span>
+
+                        <label for="priority-stock">Peso uso de stock</label>
+                        <input id="priority-stock" class="form-control" name="stock_usage_weight" type="number" min="0" step="0.1">
+                        <span class="invalid-feedback" data-priority-error="stock_usage_weight" role="alert"></span>
+
+                        <label for="priority-mode">Modo preferido</label>
+                        <input id="priority-mode" class="form-control" name="preferred_mode" type="text" placeholder="balanceado, ahorro, rapido...">
+                        <span class="invalid-feedback" data-priority-error="preferred_mode" role="alert"></span>
+
+                        <div style="margin-top:18px">
+                            <button type="submit" class="btn-main">Guardar prioridades</button>
+                        </div>
+                    </form>
+
+                    <div style="margin-top:18px">
+                        <h2 style="margin-bottom:10px">Resumen actual</h2>
+                        <div class="table-line"><span class="muted">Objetivos elegidos</span><strong data-profile-objectives-count>0</strong></div>
+                        <div class="table-line"><span class="muted">Preferencias activas</span><strong data-profile-preferences-count>0</strong></div>
+                        <div class="table-line"><span class="muted">Modo preferido</span><strong data-priority-mode-summary>-</strong></div>
+                    </div>
+                </article>
             </div>
 
             <aside class="aside-panel">
                 <h2>Sesion API</h2>
-                <div class="table-line"><span class="muted">Endpoint lectura</span><strong>GET /auth/me</strong></div>
-                <div class="table-line"><span class="muted">Endpoint edicion</span><strong>PATCH /auth/me</strong></div>
-                <p class="muted" style="margin-top:14px">Esta pantalla usa el token guardado al iniciar sesion para consultar y actualizar datos basicos.</p>
+                <div class="table-line"><span class="muted">Perfil</span><strong>GET/PATCH /users/me/profile</strong></div>
+                <div class="table-line"><span class="muted">Prioridades</span><strong>GET/PATCH /users/me/priority-settings</strong></div>
+                <div class="table-line"><span class="muted">Catalogo</span><strong>GET /catalog/objectives</strong></div>
+                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, sincronizar objetivos y guardar la configuracion de prioridades.</p>
             </aside>
         </section>
     @elseif($screenKey === 'family-group')
