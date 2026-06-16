@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Exceptions\Auth\AuthException;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
+use App\Exceptions\Objectives\ObjectivesException;
 use App\Exceptions\Rbac\RbacException;
 use App\Exceptions\BodyMeasurement\BodyMeasurementException;
 use App\Exceptions\UserProfile\UserProfileException;
@@ -69,6 +70,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof FamilyGroupException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof ObjectivesException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
