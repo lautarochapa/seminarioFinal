@@ -24,7 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return redirect()->route('app.dashboard');
+        return redirect()->route('web.dashboard');
 
         // User role
         $role = Auth::user()->nivel_acceso; 
