@@ -299,6 +299,7 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('family-groups/{id}/stock/summary', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'summary']);
     Route::get('family-groups/{id}/stock/value', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'value']);
+    Route::post('family-groups/{id}/stock/scan', [\App\Http\Controllers\Api\V1\StockScan\StockScanController::class, 'store']);
     Route::get('family-groups/{id}/stock', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'index']);
     Route::post('family-groups/{id}/stock', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'store']);
     Route::patch('family-groups/{id}/stock/{stockItemId}', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'update']);
