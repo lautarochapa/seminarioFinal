@@ -60,6 +60,21 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 
     Route::get('units', [\App\Http\Controllers\Api\V1\Units\UnitCatalogController::class, 'index']);
 
+    Route::get('admin/ingredient-equivalences', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/ingredient-equivalences', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredient-equivalences/{id}/audit', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/ingredient-equivalences/{id}/restore', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredient-equivalences/{id}', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/ingredient-equivalences/{id}', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/ingredient-equivalences/{id}', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'store'])

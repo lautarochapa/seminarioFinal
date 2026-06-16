@@ -139,6 +139,9 @@ class IngredientRepository
     {
         return $ingredient->equivalencesFrom()
             ->with(['targetIngredient.category', 'targetIngredient.baseUnit'])
+            ->whereHas('targetIngredient', function ($query) {
+                $query->where('status', 'active');
+            })
             ->where('status', 'active')
             ->orderBy('id')
             ->get();

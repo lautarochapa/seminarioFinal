@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Exceptions\Rbac\RbacException;
 use App\Ingredient;
+use App\IngredientEquivalence;
 use App\Nutrient;
 use App\Permission;
 use App\Repositories\Admin\AuditLogRepository;
@@ -26,11 +27,14 @@ class AuditAdminService
         'unit_measures' => UnitMeasure::class,
         'unit-conversions' => UnitConversion::class,
         'unit_conversions' => UnitConversion::class,
+        'ingredient-equivalences' => IngredientEquivalence::class,
+        'ingredient_equivalences' => IngredientEquivalence::class,
     ];
 
     const ENTITY_NAMES = [
         'units' => 'unit_measures',
         'unit-conversions' => 'unit_conversions',
+        'ingredient-equivalences' => 'ingredient_equivalences',
     ];
 
     private $auditRepo;
