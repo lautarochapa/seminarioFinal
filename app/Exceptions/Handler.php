@@ -9,6 +9,7 @@ use App\Exceptions\IngredientCategories\IngredientCategoryException;
 use App\Exceptions\RecipeCategories\RecipeCategoryException;
 use App\Exceptions\RecipeTags\RecipeTagException;
 use App\Exceptions\RecipeIngredients\RecipeIngredientException;
+use App\Exceptions\RecipeCost\RecipeCostException;
 use App\Exceptions\RecipeNutrition\RecipeNutritionException;
 use App\Exceptions\RecipeSteps\RecipeStepException;
 use App\Exceptions\Recipes\RecipeException;
@@ -152,6 +153,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof RecipeIngredientException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeCostException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
