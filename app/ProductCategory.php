@@ -26,6 +26,14 @@ class ProductCategory extends Model
         return $this->hasMany(ProductCategory::class, 'parent_id');
     }
 
+    public function activeChildren()
+    {
+        return $this->hasMany(ProductCategory::class, 'parent_id')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->with('activeChildren');
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class, 'category_id');

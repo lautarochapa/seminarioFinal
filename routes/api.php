@@ -28,6 +28,98 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 });
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+    Route::get('admin/units', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/units', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/units/{id}/audit', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/units/{id}/restore', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/units/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/units/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/units/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('admin/unit-conversions', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/unit-conversions', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/unit-conversions/{id}/audit', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/unit-conversions/{id}/restore', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/unit-conversions/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/unit-conversions/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/unit-conversions/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('units', [\App\Http\Controllers\Api\V1\Units\UnitCatalogController::class, 'index']);
+
+    Route::get('admin/brands', [\App\Http\Controllers\Api\V1\Brands\AdminBrandController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/brands', [\App\Http\Controllers\Api\V1\Brands\AdminBrandController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/brands/{id}/restore', [\App\Http\Controllers\Api\V1\Brands\AdminBrandController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/brands/{id}', [\App\Http\Controllers\Api\V1\Brands\AdminBrandController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/brands/{id}', [\App\Http\Controllers\Api\V1\Brands\AdminBrandController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/brands/{id}', [\App\Http\Controllers\Api\V1\Brands\AdminBrandController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('brands', [\App\Http\Controllers\Api\V1\Brands\BrandCatalogController::class, 'index']);
+
+    Route::get('admin/product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/product-categories/{id}/restore', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/product-categories/{id}', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/product-categories/{id}', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/product-categories/{id}', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryCatalogController::class, 'index']);
+
+    Route::get('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/food-tags/{id}/restore', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/food-tags/{id}', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/food-tags/{id}', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/food-tags/{id}', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('food-tags', [\App\Http\Controllers\Api\V1\FoodTags\FoodTagCatalogController::class, 'index']);
+
+    Route::get('admin/ingredient-equivalences', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/ingredient-equivalences', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredient-equivalences/{id}/audit', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/ingredient-equivalences/{id}/restore', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredient-equivalences/{id}', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/ingredient-equivalences/{id}', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/ingredient-equivalences/{id}', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'store'])

@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Resources\Api\V1\ProductCategories;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ProductCategoryResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'parent_id' => $this->parent_id,
+            'status' => $this->status,
+            'children_count' => $this->when(isset($this->children_count), $this->children_count),
+            'products_count' => $this->when(isset($this->products_count), $this->products_count),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted_at' => $this->deleted_at,
+        ];
+    }
+}

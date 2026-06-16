@@ -4,9 +4,13 @@ namespace App\Services\Admin;
 
 use App\Exceptions\Rbac\RbacException;
 use App\Ingredient;
+use App\IngredientEquivalence;
+use App\Nutrient;
 use App\Permission;
 use App\Repositories\Admin\AuditLogRepository;
 use App\Role;
+use App\UnitConversion;
+use App\UnitMeasure;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,6 +22,19 @@ class AuditAdminService
         'roles'       => Role::class,
         'permissions' => Permission::class,
         'ingredients' => Ingredient::class,
+        'nutrients' => Nutrient::class,
+        'units' => UnitMeasure::class,
+        'unit_measures' => UnitMeasure::class,
+        'unit-conversions' => UnitConversion::class,
+        'unit_conversions' => UnitConversion::class,
+        'ingredient-equivalences' => IngredientEquivalence::class,
+        'ingredient_equivalences' => IngredientEquivalence::class,
+    ];
+
+    const ENTITY_NAMES = [
+        'units' => 'unit_measures',
+        'unit-conversions' => 'unit_conversions',
+        'ingredient-equivalences' => 'ingredient_equivalences',
     ];
 
     private $auditRepo;
@@ -61,6 +78,8 @@ class AuditAdminService
             throw new ModelNotFoundException();
         }
 
-        return $this->forEntity($resource, (int) $id, $filters);
+        $entityName = self::ENTITY_NAMES[$resource] ?? $resource;
+
+        return $this->forEntity($entityName, (int) $id, $filters);
     }
 }
