@@ -258,6 +258,60 @@
             </article>
 
             <article class="panel">
+                <h2>Restricciones, alergias y condiciones</h2>
+                <div class="profile-grid">
+                    <div>
+                        <div class="audit-tabs" role="tablist" aria-label="Preferencias de salud">
+                            <button type="button" class="audit-tab active" data-user-health-tab="dietary-restrictions">Restricciones</button>
+                            <button type="button" class="audit-tab" data-user-health-tab="health-conditions">Condiciones</button>
+                            <button type="button" class="audit-tab" data-user-health-tab="allergies">Alergias</button>
+                        </div>
+
+                        <form class="profile-form" data-user-health-form>
+                            <div class="alert" data-user-health-message style="display:none"></div>
+                            <label for="user-health-item">Item del catalogo</label>
+                            <select id="user-health-item" class="form-control" name="item_id" required>
+                                <option value="">Cargando catalogo...</option>
+                            </select>
+                            <span class="invalid-feedback" data-user-health-error="item_id" role="alert"></span>
+
+                            <div data-user-health-severity-wrap style="display:none">
+                                <label for="user-health-severity">Severidad</label>
+                                <input id="user-health-severity" class="form-control" name="severity" type="text" placeholder="leve, moderada, alta">
+                                <span class="invalid-feedback" data-user-health-error="severity" role="alert"></span>
+                            </div>
+
+                            <label for="user-health-notes">Notas</label>
+                            <input id="user-health-notes" class="form-control" name="notes" type="text" placeholder="Observaciones relevantes">
+                            <span class="invalid-feedback" data-user-health-error="notes" role="alert"></span>
+
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+                                <button type="submit" class="btn-main">Agregar seleccion</button>
+                                <button type="button" class="btn-secondary-web" data-user-health-reset>Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Detalle</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-user-health-body>
+                                    <tr><td colspan="3" class="muted">Cargando seleccion actual...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="panel">
                 <h2>Mediciones personales</h2>
                 <form class="profile-form" data-body-measurement-form>
                     <div class="alert" data-measurement-message style="display:none"></div>
@@ -336,8 +390,9 @@
                 <div class="table-line"><span class="muted">Prioridades</span><strong>GET/PATCH /users/me/priority-settings</strong></div>
                 <div class="table-line"><span class="muted">Mediciones</span><strong>CRUD /users/me/body-measurements</strong></div>
                 <div class="table-line"><span class="muted">Objetivos</span><strong>CRUD /users/me/objectives</strong></div>
+                <div class="table-line"><span class="muted">Restricciones</span><strong>Catalogos + POST/DELETE /users/me/*</strong></div>
                 <div class="table-line"><span class="muted">Catalogo</span><strong>GET /catalog/objectives</strong></div>
-                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, administrar objetivos, registrar mediciones y guardar la configuracion de prioridades.</p>
+                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, administrar objetivos, restricciones y mediciones, y guardar la configuracion de prioridades.</p>
             </aside>
         </section>
     @elseif($screenKey === 'family-group')

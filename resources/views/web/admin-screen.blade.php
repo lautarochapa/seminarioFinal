@@ -166,6 +166,62 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'health-preferences')
+        <section data-admin-health-preferences>
+            <div class="alert" data-health-preferences-message style="display:none"></div>
+            <div class="audit-tabs" role="tablist" aria-label="Catalogos de salud">
+                <button type="button" class="audit-tab active" data-health-tab="dietary-restrictions">Restricciones alimentarias</button>
+                <button type="button" class="audit-tab" data-health-tab="health-conditions">Condiciones de salud</button>
+                <button type="button" class="audit-tab" data-health-tab="allergies">Alergias</button>
+            </div>
+
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-health-search placeholder="Buscar por codigo o nombre">
+                        <label class="muted" style="display:flex;gap:6px;align-items:center;margin:0">
+                            <input type="checkbox" data-health-deleted> incluir eliminados
+                        </label>
+                        <button type="button" class="btn-ghost" data-health-refresh>Actualizar</button>
+                        <span class="chip" data-health-count>0 items</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-health-body>
+                                <tr><td colspan="5" class="muted">Cargando catalogo...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-health-form-title>Nuevo item</h2>
+                    <form class="rbac-form" data-health-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="sin_gluten" required>
+                        <input class="form-control" name="name" type="text" placeholder="Nombre" required>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar item</button>
+                            <button type="button" class="btn-ghost" data-health-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>
