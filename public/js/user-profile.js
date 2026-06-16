@@ -4,6 +4,7 @@
     var state = {
         objectivesCatalog: [],
         userObjectives: [],
+        consents: {},
         healthCatalogs: {
             'dietary-restrictions': [],
             'health-conditions': [],
@@ -29,6 +30,19 @@
 
     function text(value) {
         return value === null || value === undefined || value === '' ? '-' : String(value);
+    }
+
+    function formatDateTime(value) {
+        if (!value) {
+            return '-';
+        }
+
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+
+        return date.toLocaleString('es-AR');
     }
 
     function showMessage(form, hook, type, message) {
@@ -161,6 +175,16 @@
             });
     }
 
+    function loadConsents(form) {
+        return window.CCApi.request('/users/me/consents')
+            .then(function (response) {
+                var data = response.data || {};
+                state.consents = data.consents || {};
+                fillConsents(form, state.consents);
+                renderConsents(state.consents);
+            });
+    }
+
     function fillProfile(form, profile) {
         setValue(form, 'name', profile.name);
         setValue(form, 'lastname', profile.lastname);
@@ -189,6 +213,13 @@
         setValue(form, 'stock_usage_weight', settings.stock_usage_weight);
         setValue(form, 'preferred_mode', settings.preferred_mode);
         updatePrioritySummary(settings.preferred_mode);
+    }
+
+    function fillConsents(form, consents) {
+        Object.keys(consentMeta()).forEach(function (key) {
+            var consent = consents[key] || {};
+            setCheckbox(form, key, consent.accepted);
+        });
     }
 
     function setValue(form, name, value) {
@@ -368,6 +399,16 @@
         };
     }
 
+    function consentsPayload(form) {
+        return {
+            health_data_consent: checked(form, 'health_data_consent'),
+            privacy_consent: checked(form, 'privacy_consent'),
+            professional_access_consent: checked(form, 'professional_access_consent'),
+            medical_disclaimer_accepted: checked(form, 'medical_disclaimer_accepted'),
+            terms_accepted: checked(form, 'terms_accepted'),
+        };
+    }
+
     function valueOf(form, name) {
         var input = qs('[name="' + name + '"]', form);
         return input ? input.value : '';
@@ -427,6 +468,49 @@
                 '<button type="button" class="btn-secondary-web btn-sm" data-measurement-delete="' + item.id + '">Eliminar</button></td>' +
                 '</tr>';
         }).join('');
+    }
+
+    function renderConsents(consents) {
+        var body = qs('[data-consents-body]');
+        var meta = consentMeta();
+        if (!body) {
+            return;
+        }
+
+        body.innerHTML = Object.keys(meta).map(function (key) {
+            var consent = consents[key] || {};
+            return '<tr>' +
+                '<td><strong>' + escapeHtml(meta[key].title) + '</strong><br><span class="muted">' + escapeHtml(meta[key].description) + '</span></td>' +
+                '<td>' + escapeHtml(consent.accepted ? 'Aceptado' : 'Pendiente o revocado') + '</td>' +
+                '<td>' + escapeHtml(formatDateTime(consent.accepted_at)) + '</td>' +
+                '<td>' + escapeHtml(formatDateTime(consent.revoked_at)) + '</td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function consentMeta() {
+        return {
+            health_data_consent: {
+                title: 'Uso de datos de salud',
+                description: 'Tratamiento de datos sensibles para perfil, mediciones y configuracion alimentaria.',
+            },
+            privacy_consent: {
+                title: 'Politica de privacidad',
+                description: 'Aceptacion de politicas de tratamiento y resguardo de informacion personal.',
+            },
+            professional_access_consent: {
+                title: 'Acceso profesional',
+                description: 'Permite compartir informacion con profesionales autorizados por el usuario.',
+            },
+            medical_disclaimer_accepted: {
+                title: 'Aviso profesional',
+                description: 'Confirma que la app no reemplaza seguimiento medico o nutricional.',
+            },
+            terms_accepted: {
+                title: 'Terminos de uso',
+                description: 'Aceptacion de las condiciones generales de uso de la plataforma.',
+            },
+        };
     }
 
     function fillMeasurementForm(form, item) {
@@ -694,14 +778,38 @@
         });
     }
 
+    function bindConsentsForm(form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            clearFeedback(form, '[data-consents-error]', '[data-consents-message]');
+            setLoading(form, true);
+
+            window.CCApi.request('/users/me/consents', {
+                method: 'PATCH',
+                body: consentsPayload(form),
+            }).then(function (payload) {
+                var data = payload.data || {};
+                state.consents = data.consents || {};
+                fillConsents(form, state.consents);
+                renderConsents(state.consents);
+                showMessage(form, '[data-consents-message]', 'success', 'Consentimientos actualizados correctamente.');
+            }).catch(function (error) {
+                showErrors(form, error, '[data-consents-error', '[data-consents-message]');
+            }).finally(function () {
+                setLoading(form, false);
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         var profileForm = qs('[data-user-profile-form]');
         var priorityForm = qs('[data-priority-settings-form]');
         var objectivesForm = qs('[data-user-objective-form]');
         var userHealthForm = qs('[data-user-health-form]');
         var measurementForm = qs('[data-body-measurement-form]');
+        var consentsForm = qs('[data-consents-form]');
 
-        if (!profileForm || !priorityForm || !objectivesForm || !userHealthForm || !measurementForm || !window.CCApi) {
+        if (!profileForm || !priorityForm || !objectivesForm || !userHealthForm || !measurementForm || !consentsForm || !window.CCApi) {
             return;
         }
 
@@ -710,6 +818,7 @@
         bindUserObjectives(objectivesForm);
         bindUserHealth(userHealthForm);
         bindMeasurementForm(measurementForm);
+        bindConsentsForm(consentsForm);
 
         Promise.all([
             loadObjectivesCatalog(),
@@ -723,6 +832,7 @@
             loadUserHealth('health-conditions', userHealthForm),
             loadUserHealth('allergies', userHealthForm),
             loadMeasurements(measurementForm),
+            loadConsents(consentsForm),
         ]).then(function () {
             renderUserHealth(userHealthForm);
         }).catch(function () {
