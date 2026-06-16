@@ -117,6 +117,20 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::patch('admin/product-reports/{id}/resolve', [\App\Http\Controllers\Api\V1\ProductReports\AdminProductReportController::class, 'resolve'])
         ->middleware('permission:catalog.manage');
 
+    // Ciudades - administración y catálogo
+    Route::get('admin/cities', [\App\Http\Controllers\Api\V1\Cities\AdminCityController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/cities', [\App\Http\Controllers\Api\V1\Cities\AdminCityController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/cities/{id}/restore', [\App\Http\Controllers\Api\V1\Cities\AdminCityController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/cities/{id}', [\App\Http\Controllers\Api\V1\Cities\AdminCityController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/cities/{id}', [\App\Http\Controllers\Api\V1\Cities\AdminCityController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('cities', [\App\Http\Controllers\Api\V1\Cities\CityCatalogController::class, 'index']);
+
     Route::get('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'store'])
