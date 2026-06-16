@@ -322,6 +322,17 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagCatalogController::class, 'index']);
 
+    Route::get('admin/recipes', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/recipes', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'index']);
     Route::post('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'store']);
     Route::get('recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'show']);

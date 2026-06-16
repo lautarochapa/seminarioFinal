@@ -128,6 +128,115 @@ class RecipeService
         });
     }
 
+    public function adminList(array $filters)
+    {
+        return $this->repo->adminPaginate($filters);
+    }
+
+    public function adminShow($id)
+    {
+        return $this->repo->findWithTrashedOrFail($id);
+    }
+
+    public function adminCreate(User $actor, array $data, $ip, $userAgent)
+    {
+        $data = $this->prepare($data);
+
+        if (!empty($data['category_id'])) {
+            $this->assertCategoryExists($data['category_id']);
+        }
+
+        return DB::transaction(function () use ($actor, $data, $ip, $userAgent) {
+            $isOfficial = !empty($data['is_official']);
+            $sourceType = $data['source_type'] ?? ($isOfficial ? 'official' : 'user');
+
+            $recipe = Recipe::create([
+                'name'              => $data['name'],
+                'nombre'            => $data['name'],
+                'normalized_name'   => $this->normalize($data['name']),
+                'description'       => $data['description'] ?? null,
+                'descripcion'       => $data['description'] ?? '',
+                'tiempo'            => '',
+                'img'               => '',
+                'video'             => '',
+                'porcion'           => '',
+                'calorias'          => 0,
+                'servings'          => $data['servings'] ?? null,
+                'prep_time_minutes' => $data['prep_time_minutes'] ?? null,
+                'cook_time_minutes' => $data['cook_time_minutes'] ?? null,
+                'difficulty'        => $data['difficulty'] ?? null,
+                'category_id'       => $data['category_id'] ?? null,
+                'owner_user_id'     => $actor->id,
+                'source_type'       => $sourceType,
+                'source_url'        => $data['source_url'] ?? null,
+                'source_site'       => $data['source_site'] ?? null,
+                'source_author'     => $data['source_author'] ?? null,
+                'status'            => $data['status'] ?? 'active',
+                'is_public'         => !empty($data['is_public']),
+                'is_official'       => $isOfficial,
+                'is_verified'       => false,
+            ]);
+
+            $this->audit($actor->id, 'recipe.admin.created', $recipe->id, null, $this->auditPayload($recipe), $ip, $userAgent);
+
+            return $this->repo->findOrFail($recipe->id);
+        });
+    }
+
+    public function adminUpdate(User $actor, $id, array $data, $ip, $userAgent)
+    {
+        $recipe = Recipe::withTrashed()->findOrFail($id);
+        $data   = $this->prepare($data, false);
+
+        if (array_key_exists('category_id', $data) && $data['category_id']) {
+            $this->assertCategoryExists($data['category_id']);
+        }
+
+        return DB::transaction(function () use ($actor, $recipe, $data, $ip, $userAgent) {
+            $old     = $this->auditPayload($recipe);
+            $allowed = [
+                'name', 'description', 'servings', 'prep_time_minutes', 'cook_time_minutes',
+                'difficulty', 'category_id', 'status', 'is_official', 'is_public',
+                'source_type', 'source_url', 'source_site', 'source_author',
+            ];
+            $recipe->fill(array_intersect_key($data, array_flip($allowed)));
+
+            if (array_key_exists('name', $data)) {
+                $recipe->normalized_name = $this->normalize($data['name']);
+                $recipe->nombre          = $data['name'];
+            }
+
+            $recipe->save();
+            $fresh = $this->repo->findWithTrashedOrFail($recipe->id);
+            $new   = $this->auditPayload($fresh);
+
+            if ($old != $new) {
+                $this->audit($actor->id, 'recipe.admin.updated', $fresh->id, $old, $new, $ip, $userAgent);
+            }
+
+            return $fresh;
+        });
+    }
+
+    public function adminDelete(User $actor, $id, $ip, $userAgent)
+    {
+        $recipe = Recipe::findOrFail($id);
+
+        return DB::transaction(function () use ($actor, $recipe, $ip, $userAgent) {
+            $old            = $this->auditPayload($recipe);
+            $recipe->status = 'inactive';
+            $recipe->save();
+            $recipe->delete();
+
+            $deleted = Recipe::withTrashed()->findOrFail($recipe->id);
+            $new     = $this->auditPayload($deleted);
+
+            $this->audit($actor->id, 'recipe.admin.deleted', $deleted->id, $old, $new, $ip, $userAgent);
+
+            return $deleted;
+        });
+    }
+
     private function assertCanEdit(User $actor, Recipe $recipe)
     {
         if ($recipe->is_official) {
