@@ -10,6 +10,7 @@ use App\Exceptions\Ingredients\IngredientException;
 use App\Exceptions\Objectives\ObjectivesException;
 use App\Exceptions\Rbac\RbacException;
 use App\Exceptions\BodyMeasurement\BodyMeasurementException;
+use App\Exceptions\Nutrients\NutrientException;
 use App\Exceptions\Professional\ProfessionalException;
 use App\Exceptions\UserProfile\UserProfileException;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -144,6 +145,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof ProfessionalException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof NutrientException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),

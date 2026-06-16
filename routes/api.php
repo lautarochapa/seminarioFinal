@@ -106,5 +106,35 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     });
 });
 
+// ---Nutrientes ---
+Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+    // ABM de nutrientes
+    Route::get('admin/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/nutrients/{id}/audit', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/nutrients/{id}/restore', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/nutrients/{id}', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/nutrients/{id}', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/nutrients/{id}', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
 
+    // Nutrientes de ingredientes
+    Route::get('admin/ingredients/{id}/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\IngredientNutrientController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/ingredients/{id}/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\IngredientNutrientController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/ingredients/{id}/nutrients/{nutrientId}', [\App\Http\Controllers\Api\V1\Nutrients\IngredientNutrientController::class, 'update'])
+        ->middleware('permission:catalog.manage');
 
+    // Nutrientes de productos
+    Route::get('admin/products/{id}/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\ProductNutrientController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/products/{id}/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\ProductNutrientController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+});
