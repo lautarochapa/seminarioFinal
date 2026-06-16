@@ -107,8 +107,15 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::get('products/{id}/nutrition', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'nutrition']);
     Route::get('products/{id}/prices', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'prices']);
     Route::get('products/{id}/alternatives', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'alternatives']);
+    Route::post('products/{id}/reports', [\App\Http\Controllers\Api\V1\ProductReports\ProductReportController::class, 'store']);
     Route::get('products/{id}', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'show']);
     Route::get('products', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'index']);
+
+    // Reportes de productos - administración
+    Route::get('admin/product-reports', [\App\Http\Controllers\Api\V1\ProductReports\AdminProductReportController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/product-reports/{id}/resolve', [\App\Http\Controllers\Api\V1\ProductReports\AdminProductReportController::class, 'resolve'])
+        ->middleware('permission:catalog.manage');
 
     Route::get('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'index'])
         ->middleware('permission:catalog.manage');
