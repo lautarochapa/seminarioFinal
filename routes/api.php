@@ -333,6 +333,9 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::delete('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
 
+    Route::get('recipes/{id}/availability', [\App\Http\Controllers\Api\V1\RecipeAvailability\RecipeAvailabilityController::class, 'availability']);
+    Route::get('recipes/{id}/missing-ingredients', [\App\Http\Controllers\Api\V1\RecipeAvailability\RecipeAvailabilityController::class, 'missingIngredients']);
+
     Route::get('recipes/{id}/cost', [\App\Http\Controllers\Api\V1\RecipeCost\RecipeCostController::class, 'show']);
     Route::post('admin/recipes/{id}/recalculate-cost', [\App\Http\Controllers\Api\V1\RecipeCost\RecipeCostController::class, 'recalculate'])
         ->middleware('permission:recipes.manage');
