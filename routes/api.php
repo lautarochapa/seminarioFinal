@@ -28,6 +28,23 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 });
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+    Route::get('admin/ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/ingredient-categories/{id}/restore', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredient-categories/{id}', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/ingredient-categories/{id}', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/ingredient-categories/{id}', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryCatalogController::class, 'index']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
     Route::pattern('healthPreferenceType', 'dietary-restrictions|health-conditions|allergies');
 
     Route::get('admin/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\AdminHealthPreferenceController::class, 'index'])

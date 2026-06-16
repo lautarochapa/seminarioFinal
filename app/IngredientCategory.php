@@ -33,6 +33,16 @@ class IngredientCategory extends Model
         return $this->hasMany(IngredientCategory::class, 'parent_id');
     }
 
+    public function activeChildren()
+    {
+        return $this->hasMany(IngredientCategory::class, 'parent_id')
+            ->where('status', 'active')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->with('activeChildren');
+    }
+
     public function ingredients()
     {
         return $this->hasMany(Ingredient::class, 'category_id');
