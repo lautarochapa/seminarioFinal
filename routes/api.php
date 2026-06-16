@@ -21,6 +21,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(base_path('routes/api_contract.php'));
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+    Route::get('auth/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'show']);
+    Route::patch('auth/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'update']);
+    Route::get('users/me/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'show']);
+    Route::patch('users/me/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'update']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
     Route::pattern('healthPreferenceType', 'dietary-restrictions|health-conditions|allergies');
 
     Route::get('admin/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\AdminHealthPreferenceController::class, 'index'])

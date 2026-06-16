@@ -71,6 +71,26 @@ Route::prefix('admin')->middleware(['trace_id', 'api_token', 'auth'])->group(fun
         ->middleware('permission:audit.read');
     Route::get('{resource}/{id}/audit', [\App\Http\Controllers\Api\V1\Admin\AuditLogController::class, 'forResource'])
         ->middleware('permission:audit.read');
+
+});
+
+Route::prefix('admin')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('objectives', [\App\Http\Controllers\Api\V1\Objectives\AdminObjectiveController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::get('objectives/{id}', [\App\Http\Controllers\Api\V1\Objectives\AdminObjectiveController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::post('objectives', [\App\Http\Controllers\Api\V1\Objectives\AdminObjectiveController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('objectives/{id}/restore', [\App\Http\Controllers\Api\V1\Objectives\AdminObjectiveController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('objectives/{id}', [\App\Http\Controllers\Api\V1\Objectives\AdminObjectiveController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('objectives/{id}', [\App\Http\Controllers\Api\V1\Objectives\AdminObjectiveController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+});
+
+Route::prefix('catalog')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('objectives', [\App\Http\Controllers\Api\V1\Objectives\CatalogObjectiveController::class, 'index']);
 });
 
 Route::prefix('family-groups')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
@@ -103,4 +123,9 @@ Route::prefix('users/me')->middleware(['trace_id', 'api_token', 'auth'])->group(
     Route::post('body-measurements', [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'store']);
     Route::patch('body-measurements/{id}', [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'update']);
     Route::delete('body-measurements/{id}', [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'destroy']);
+
+    Route::get('objectives', [\App\Http\Controllers\Api\V1\Objectives\UserObjectiveController::class, 'index']);
+    Route::post('objectives', [\App\Http\Controllers\Api\V1\Objectives\UserObjectiveController::class, 'store']);
+    Route::patch('objectives/{id}', [\App\Http\Controllers\Api\V1\Objectives\UserObjectiveController::class, 'update']);
+    Route::delete('objectives/{id}', [\App\Http\Controllers\Api\V1\Objectives\UserObjectiveController::class, 'destroy']);
 });
