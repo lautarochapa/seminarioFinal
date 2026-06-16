@@ -28,7 +28,23 @@ class RecipeNutrition extends Model
         'calculated_at',
     ];
 
-    protected $casts = ['calculated_at' => 'datetime'];
+    protected $casts = [
+        'calculated_at'             => 'datetime',
+        'calories_total'            => 'float',
+        'calories_per_serving'      => 'float',
+        'protein_total'             => 'float',
+        'protein_per_serving'       => 'float',
+        'carbohydrates_total'       => 'float',
+        'carbohydrates_per_serving' => 'float',
+        'fat_total'                 => 'float',
+        'fat_per_serving'           => 'float',
+        'sodium_total'              => 'float',
+        'sodium_per_serving'        => 'float',
+        'sugar_total'               => 'float',
+        'sugar_per_serving'         => 'float',
+        'fiber_total'               => 'float',
+        'fiber_per_serving'         => 'float',
+    ];
 
     public function recipe()
     {
