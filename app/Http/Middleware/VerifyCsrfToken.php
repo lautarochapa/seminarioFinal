@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         'api/v1/*',
         'auth/*',
         'admin/*',
+        'family-groups',
         'family-groups/*',
         'users/me/*',
     ];

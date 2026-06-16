@@ -8,6 +8,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
+    <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -41,11 +42,21 @@
         .table-line:last-child { border-bottom:0; }
         .muted { color:var(--muted); }
         .chip { display:inline-flex; align-items:center; background:var(--green-soft); color:var(--green); border-radius:999px; padding:5px 9px; font-size:12px; font-weight:900; margin-right:6px; }
+        .web-table { width:100%; border-collapse:collapse; font-size:14px; }
+        .web-table th, .web-table td { border-bottom:1px solid #edf2ee; padding:10px 8px; vertical-align:top; }
+        .web-table th { color:var(--muted); font-size:12px; text-transform:uppercase; }
+        .web-tools { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+        .web-tools .form-control { max-width:280px; }
+        .family-layout { display:grid; grid-template-columns:minmax(0,2fr) minmax(300px,1fr); gap:14px; }
+        .family-stack { display:grid; gap:12px; }
+        .family-form .form-control { margin-bottom:9px; }
+        .btn-sm { padding:6px 11px; font-size:12px; }
+        .chip.danger { background:#f7e7e7; color:#b33a3a; }
         @media (max-width: 960px) {
             .content { padding:14px; }
             .hero, .topbar { display:block; }
             .actions { justify-content:flex-start; margin-top:14px; }
-            .metric-row, .workspace, .panel-grid { grid-template-columns:1fr; }
+            .metric-row, .workspace, .panel-grid, .family-layout { grid-template-columns:1fr; }
         }
     </style>
 </head>
