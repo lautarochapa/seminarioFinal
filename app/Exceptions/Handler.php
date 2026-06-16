@@ -8,6 +8,7 @@ use App\Exceptions\HealthPreferences\HealthPreferenceException;
 use App\Exceptions\Objectives\ObjectivesException;
 use App\Exceptions\Rbac\RbacException;
 use App\Exceptions\BodyMeasurement\BodyMeasurementException;
+use App\Exceptions\Professional\ProfessionalException;
 use App\Exceptions\UserProfile\UserProfileException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -111,6 +112,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof UserProfileException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof ProfessionalException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),

@@ -150,4 +150,4 @@ Route::get('/vue/{vue_capture?}', function () {
    })->where('vue_capture', '[\/\w\.-]*');
 
 
-Route::group([], base_path('routes/api_contract.php'));
+Route::prefix('api/v1')->group(base_path('routes/api_contract.php'));
