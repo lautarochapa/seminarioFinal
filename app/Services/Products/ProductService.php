@@ -163,6 +163,11 @@ class ProductService
         return $this->products->prices($product->id);
     }
 
+    public function findByBarcode(string $barcode)
+    {
+        return $this->products->findPublicByBarcodeOrFail($barcode);
+    }
+
     public function alternatives($id)
     {
         $product = $this->products->findPublicOrFail($id);

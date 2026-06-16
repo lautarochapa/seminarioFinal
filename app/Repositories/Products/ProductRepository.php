@@ -185,6 +185,67 @@ class ProductRepository
             ->get();
     }
 
+    public function findPublicByBarcodeOrFail(string $barcode)
+    {
+        $barcodeRecord = ProductBarcode::where('barcode', $barcode)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $barcodeRecord) {
+            throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
+        }
+
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])
+            ->where('id', $barcodeRecord->product_id)
+            ->where('status', 'active')
+            ->where('is_active', true)
+            ->first();
+
+        if (! $product) {
+            throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
+        }
+
+        return $product;
+    }
+
+    public function findActiveBarcodeForProduct(int $productId, int $barcodeId)
+    {
+        $barcode = ProductBarcode::where('id', $barcodeId)
+            ->where('product_id', $productId)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $barcode) {
+            throw new IngredientException('PRODUCT_BARCODE_NOT_FOUND', 'El codigo de barras no existe para este producto.', 404);
+        }
+
+        return $barcode;
+    }
+
+    public function barcodeExistsForProduct(int $productId, string $barcode)
+    {
+        return ProductBarcode::where('product_id', $productId)
+            ->where('barcode', $barcode)
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    public function addBarcode(Product $product, string $barcode)
+    {
+        return ProductBarcode::create([
+            'product_id' => $product->id,
+            'barcode' => $barcode,
+            'type' => null,
+            'status' => 'active',
+        ]);
+    }
+
+    public function deactivateBarcode(ProductBarcode $barcodeRecord)
+    {
+        $barcodeRecord->status = 'inactive';
+        $barcodeRecord->save();
+    }
+
     public function alternatives(Product $product)
     {
         $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])

@@ -103,6 +103,7 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::delete('admin/products/{id}', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
 
+    Route::get('products/barcode/{barcode}', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'findByBarcode']);
     Route::get('products/{id}/nutrition', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'nutrition']);
     Route::get('products/{id}/prices', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'prices']);
     Route::get('products/{id}/alternatives', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'alternatives']);
@@ -247,5 +248,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::get('admin/products/{id}/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\ProductNutrientController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/products/{id}/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\ProductNutrientController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+
+    // Códigos de barras de productos
+    Route::post('admin/products/{id}/barcodes', [\App\Http\Controllers\Api\V1\Products\AdminProductBarcodeController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/products/{id}/barcodes/{barcodeId}', [\App\Http\Controllers\Api\V1\Products\AdminProductBarcodeController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
 });
