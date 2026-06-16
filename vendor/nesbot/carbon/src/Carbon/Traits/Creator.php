@@ -631,6 +631,12 @@ trait Creator
 
         if ($date instanceof DateTimeInterface) {
             $instance = static::instance($date);
+            $lastErrors = $lastErrors ?: [
+                'warning_count' => 0,
+                'warnings' => [],
+                'error_count' => 0,
+                'errors' => [],
+            ];
             $instance::setLastErrors($lastErrors);
 
             return $instance;
