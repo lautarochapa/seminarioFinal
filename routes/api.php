@@ -307,6 +307,21 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryCatalogController::class, 'index']);
 
+    Route::get('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/recipe-tags/{id}/restore', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/recipe-tags/{id}', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/recipe-tags/{id}', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/recipe-tags/{id}', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagCatalogController::class, 'index']);
+
     Route::get('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'index']);
     Route::post('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'store']);
     Route::patch('family-groups/{id}/stock-locations/{locationId}', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'update']);
