@@ -257,4 +257,9 @@ Route::prefix('api/v1/users/me')->middleware(['trace_id', 'auth'])->group(functi
     Route::patch('profile',           [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'update']);
     Route::get('priority-settings',   [\App\Http\Controllers\Api\V1\UserProfile\UserPrioritySettingController::class, 'show']);
     Route::patch('priority-settings', [\App\Http\Controllers\Api\V1\UserProfile\UserPrioritySettingController::class, 'update']);
+
+    Route::get('body-measurements',         [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'index']);
+    Route::post('body-measurements',        [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'store']);
+    Route::patch('body-measurements/{id}',  [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'update']);
+    Route::delete('body-measurements/{id}', [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'destroy']);
 });
