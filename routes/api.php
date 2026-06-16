@@ -377,6 +377,22 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::delete('admin/products/{id}/images/{imageId}', [\App\Http\Controllers\Api\V1\Products\AdminProductImageController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
 
+    // Scraping — candidatos de productos (acciones especificas antes del {id} generico)
+    Route::post('admin/scraping/product-candidates/{id}/approve', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'approve'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/product-candidates/{id}/reject', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'reject'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/product-candidates/{id}/match-product', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'matchProduct'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/product-candidates/{id}/create-product', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'createProduct'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/product-candidates/{id}/assign-ingredient', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'assignIngredient'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/scraping/product-candidates/{id}', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/scraping/product-candidates', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+
     // Scraping — fuentes
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
         ->middleware('permission:catalog.manage');
