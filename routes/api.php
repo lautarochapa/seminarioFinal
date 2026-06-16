@@ -296,6 +296,13 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'store']);
     Route::patch('family-groups/{id}/stock-locations/{locationId}', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'update']);
     Route::delete('family-groups/{id}/stock-locations/{locationId}', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'destroy']);
+
+    Route::get('family-groups/{id}/stock/summary', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'summary']);
+    Route::get('family-groups/{id}/stock/value', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'value']);
+    Route::get('family-groups/{id}/stock', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'index']);
+    Route::post('family-groups/{id}/stock', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'store']);
+    Route::patch('family-groups/{id}/stock/{stockItemId}', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'update']);
+    Route::delete('family-groups/{id}/stock/{stockItemId}', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'destroy']);
 });
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
