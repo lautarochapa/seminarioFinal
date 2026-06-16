@@ -5,6 +5,7 @@ namespace App\Repositories\Products;
 use App\Exceptions\Ingredients\IngredientException;
 use App\Product;
 use App\ProductBarcode;
+use App\ProductImage;
 use App\SupermarketProductPrice;
 
 class ProductRepository
@@ -244,6 +245,42 @@ class ProductRepository
     {
         $barcodeRecord->status = 'inactive';
         $barcodeRecord->save();
+    }
+
+    public function addImage(Product $product, array $data)
+    {
+        return ProductImage::create(array_merge($data, [
+            'product_id' => $product->id,
+            'status' => 'active',
+        ]));
+    }
+
+    public function findActiveImageForProduct(int $productId, int $imageId)
+    {
+        $image = ProductImage::where('id', $imageId)
+            ->where('product_id', $productId)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $image) {
+            throw new IngredientException('PRODUCT_IMAGE_NOT_FOUND', 'La imagen no existe para este producto.', 404);
+        }
+
+        return $image;
+    }
+
+    public function clearPrimaryImages(int $productId)
+    {
+        ProductImage::where('product_id', $productId)
+            ->where('is_primary', true)
+            ->where('status', 'active')
+            ->update(['is_primary' => false]);
+    }
+
+    public function deactivateImage(ProductImage $image)
+    {
+        $image->status = 'inactive';
+        $image->save();
     }
 
     public function alternatives(Product $product)

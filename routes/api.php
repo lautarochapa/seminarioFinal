@@ -255,4 +255,10 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
         ->middleware('permission:catalog.manage');
     Route::delete('admin/products/{id}/barcodes/{barcodeId}', [\App\Http\Controllers\Api\V1\Products\AdminProductBarcodeController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
+
+    // Imágenes de productos
+    Route::post('admin/products/{id}/images', [\App\Http\Controllers\Api\V1\Products\AdminProductImageController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/products/{id}/images/{imageId}', [\App\Http\Controllers\Api\V1\Products\AdminProductImageController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
 });
