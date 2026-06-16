@@ -376,4 +376,24 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
         ->middleware('permission:catalog.manage');
     Route::delete('admin/products/{id}/images/{imageId}', [\App\Http\Controllers\Api\V1\Products\AdminProductImageController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
+
+    // Scraping — fuentes
+    Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+
+    // Scraping — jobs (retry/cancel antes del {id} para evitar colision)
+    Route::post('admin/scraping/jobs/{id}/retry', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'retry'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/jobs/{id}/cancel', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'cancel'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/scraping/jobs/{id}/logs', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'logs'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/scraping/jobs/{id}', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/scraping/jobs', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/scraping/jobs', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'store'])
+        ->middleware('permission:catalog.manage');
 });
