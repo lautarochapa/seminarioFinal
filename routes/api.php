@@ -117,6 +117,23 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::patch('admin/product-reports/{id}/resolve', [\App\Http\Controllers\Api\V1\ProductReports\AdminProductReportController::class, 'resolve'])
         ->middleware('permission:catalog.manage');
 
+    // Cadenas de supermercados - administración y catálogo
+    Route::get('admin/supermarket-chains', [\App\Http\Controllers\Api\V1\Supermarkets\AdminSupermarketChainController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/supermarket-chains', [\App\Http\Controllers\Api\V1\Supermarkets\AdminSupermarketChainController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/supermarket-chains/{id}/restore', [\App\Http\Controllers\Api\V1\Supermarkets\AdminSupermarketChainController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/supermarket-chains/{id}', [\App\Http\Controllers\Api\V1\Supermarkets\AdminSupermarketChainController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/supermarket-chains/{id}', [\App\Http\Controllers\Api\V1\Supermarkets\AdminSupermarketChainController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/supermarket-chains/{id}', [\App\Http\Controllers\Api\V1\Supermarkets\AdminSupermarketChainController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('supermarkets/{id}', [\App\Http\Controllers\Api\V1\Supermarkets\SupermarketCatalogController::class, 'show']);
+    Route::get('supermarkets', [\App\Http\Controllers\Api\V1\Supermarkets\SupermarketCatalogController::class, 'index']);
+
     // Ciudades - administración y catálogo
     Route::get('admin/cities', [\App\Http\Controllers\Api\V1\Cities\AdminCityController::class, 'index'])
         ->middleware('permission:catalog.manage');
