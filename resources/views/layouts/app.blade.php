@@ -12,6 +12,8 @@
     <!-- Scripts -->
     <script src="{{ asset('js/loader.js') }}" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/api-client.js') }}" defer></script>
+    <script src="{{ asset('js/auth-api.js') }}" defer></script>
     <!--<script src="{{ asset('js/navbar.js') }}" defer></script>-->
 
     <!-- Fonts -->
@@ -86,9 +88,8 @@ body {
                             </a>
 
                             <div class="dropdown-menu" style=""aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item" href="#">Mi Perfil</a>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item" href="{{ url('/web/profile-objectives') }}">Mi Perfil</a>
+                                <a class="dropdown-item" href="{{ route('logout') }}" data-api-logout data-fallback-form="#logout-form">
                                     {{ __('Cerrar Sesion') }}
                                 </a>
 

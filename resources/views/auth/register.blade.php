@@ -19,11 +19,7 @@
 <script>
 
 function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  window.onApiGoogleSignIn(googleUser);
 }
 
 
@@ -38,8 +34,9 @@ function onSignIn(googleUser) {
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('register') }}" data-api-endpoint="/auth/register" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
                         @csrf
+                        <div class="alert" data-api-message style="display:none"></div>
 
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
@@ -52,6 +49,7 @@ function onSignIn(googleUser) {
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="name" role="alert"></span>
                             </div>
                         </div>
 
@@ -66,6 +64,7 @@ function onSignIn(googleUser) {
                 <strong>{{ $message }}</strong>
             </span>
         @enderror
+        <span class="invalid-feedback" data-field-error="lastname" role="alert"></span>
     </div>
 </div>
 
@@ -80,6 +79,7 @@ function onSignIn(googleUser) {
                 <strong>{{ $message }}</strong>
             </span>
         @enderror
+        <span class="invalid-feedback" data-field-error="username" role="alert"></span>
     </div>
 </div>
 
@@ -94,6 +94,7 @@ function onSignIn(googleUser) {
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="email" role="alert"></span>
                             </div>
                         </div>
 
@@ -108,6 +109,7 @@ function onSignIn(googleUser) {
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="password" role="alert"></span>
                             </div>
                         </div>
 
@@ -116,6 +118,7 @@ function onSignIn(googleUser) {
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                <span class="invalid-feedback" data-field-error="password_confirmation" role="alert"></span>
                             </div>
                         </div>
 
@@ -128,7 +131,7 @@ function onSignIn(googleUser) {
                         </div>
 
 
-                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                        <div class="g-signin2" data-onsuccess="onApiGoogleSignIn"></div>
                         <a href="#" onclick="signOut();">Sign out</a>
                     </form>
 

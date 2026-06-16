@@ -24,6 +24,67 @@
         @endforeach
     </section>
 
+    @if($screenKey === 'profile-objectives')
+        <section class="workspace">
+            <div class="panel-grid">
+                <article class="panel" style="grid-column: 1 / -1;">
+                    <h2>Perfil basico</h2>
+                    <form data-profile-api>
+                        <div class="alert" data-api-message style="display:none"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="profile-name">Nombre</label>
+                                <input id="profile-name" class="form-control" name="name" type="text" autocomplete="given-name">
+                                <span class="invalid-feedback" data-field-error="name" role="alert"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profile-lastname">Apellido</label>
+                                <input id="profile-lastname" class="form-control" name="lastname" type="text" autocomplete="family-name">
+                                <span class="invalid-feedback" data-field-error="lastname" role="alert"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:14px">
+                            <div class="col-md-6">
+                                <label for="profile-username">Usuario</label>
+                                <input id="profile-username" class="form-control" name="username" type="text" autocomplete="username">
+                                <span class="invalid-feedback" data-field-error="username" role="alert"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profile-email">Email</label>
+                                <input id="profile-email" class="form-control" name="email" type="email" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:14px">
+                            <div class="col-md-6">
+                                <label for="profile-phone">Telefono</label>
+                                <input id="profile-phone" class="form-control" name="phone" type="text" autocomplete="tel">
+                                <span class="invalid-feedback" data-field-error="phone" role="alert"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profile-avatar">Avatar URL</label>
+                                <input id="profile-avatar" class="form-control" name="avatar_url" type="url">
+                                <span class="invalid-feedback" data-field-error="avatar_url" role="alert"></span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:18px">
+                            <button type="submit" class="btn-main">Guardar perfil</button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+
+            <aside class="aside-panel">
+                <h2>Sesion API</h2>
+                <div class="table-line"><span class="muted">Endpoint lectura</span><strong>GET /auth/me</strong></div>
+                <div class="table-line"><span class="muted">Endpoint edicion</span><strong>PATCH /auth/me</strong></div>
+                <p class="muted" style="margin-top:14px">Esta pantalla usa el token guardado al iniciar sesion para consultar y actualizar datos basicos.</p>
+            </aside>
+        </section>
+    @else
     <section class="workspace">
         <div class="panel-grid">
             @foreach($screen['panels'] as $panel)
@@ -47,4 +108,5 @@
             <p class="muted" style="margin-top:14px">Esta vista queda lista como pantalla web de usuario para conectar formularios, tablas, filtros, graficos y acciones reales.</p>
         </aside>
     </section>
+    @endif
 @endsection

@@ -8,8 +8,9 @@
                 <div class="card-header">{{ __('Reset Password') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('password.update') }}">
+                    <form method="POST" action="{{ route('password.update') }}" data-api-endpoint="/auth/reset-password" data-api-method="POST" data-success-message="Contrasena restablecida correctamente." data-redirect="{{ route('login') }}">
                         @csrf
+                        <div class="alert" data-api-message style="display:none"></div>
 
                         <input type="hidden" name="token" value="{{ $token }}">
 
@@ -24,6 +25,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="email" role="alert"></span>
                             </div>
                         </div>
 
@@ -38,6 +40,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="password" role="alert"></span>
                             </div>
                         </div>
 
@@ -46,6 +49,7 @@
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                <span class="invalid-feedback" data-field-error="password_confirmation" role="alert"></span>
                             </div>
                         </div>
 

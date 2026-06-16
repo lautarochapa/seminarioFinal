@@ -2,11 +2,14 @@
 
 @section('content')
 <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<meta name="google-signin-client_id" content="623128501385-5iaciaqn2e29igc5j9vrim31i1mnj3oa.apps.googleusercontent.com">
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="{{ route('login') }}" data-api-endpoint="/auth/login" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
                 @csrf
+                <div class="alert" data-api-message style="display:none"></div>
                 <div cass="row" style="text-align:center;">
                     <h1>Iniciar Sesion</h1>
                     <p>¿Nuevo en ComidaCocinaControl? 
@@ -33,6 +36,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="email" role="alert"></span>
                        
 
                         <div class="login-form form-group row">
@@ -51,6 +55,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="password" role="alert"></span>
 
 
 
@@ -84,7 +89,8 @@
 
                     <div class="form-group row" style="margin: 5% auto 5% auto">
                             <div class="col-md-12" style="text-align:center;">
-                              <a href="{{url('/redirect')}}" class="cta">Continuar con Google</a>
+                              <div class="g-signin2" data-onsuccess="onApiGoogleSignIn"></div>
+                              <a href="{{url('/redirect')}}" class="btn btn-link" style="color:rgba(4,172,133, 1); margin-top:12px;">Usar Google legacy</a>
                             </div>
                         </div>
 

@@ -14,8 +14,9 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('password.email') }}">
+                    <form method="POST" action="{{ route('password.email') }}" data-api-endpoint="/auth/forgot-password" data-api-method="POST" data-success-message="Si el email esta registrado, recibiras un enlace de recuperacion.">
                         @csrf
+                        <div class="alert" data-api-message style="display:none"></div>
 
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
@@ -28,6 +29,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="email" role="alert"></span>
                             </div>
                         </div>
 
