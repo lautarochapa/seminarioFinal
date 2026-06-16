@@ -60,6 +60,9 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/app', 'AppScreenController@dashboard')->name('app.dashboard');
+Route::get('/app/{screen}', 'AppScreenController@index')->name('app.screen');
+
 
 
 Route::group(['middleware' => 'App\Http\Middleware\ComensalMiddleware'], function()
