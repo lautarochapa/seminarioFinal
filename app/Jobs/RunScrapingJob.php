@@ -39,9 +39,16 @@ class RunScrapingJob implements ShouldQueue
             $scraper = $resolver->resolve($job->source->code);
 
             if (!$scraper->isAvailable()) {
-                throw new \RuntimeException(
-                    'Fuente no disponible con la infraestructura actual: ' . $job->source->code
-                );
+                $unavailableMsg = 'Fuente no disponible con la infraestructura actual: ' . $job->source->code;
+                $repo->createAlertIfNotDuplicate($job, 'source_unavailable', $unavailableMsg, 'high');
+                $repo->createErrorIfNotDuplicate($job, 'source_unavailable', $unavailableMsg, null, ['source' => $job->source->code]);
+                $repo->updateJob($job, [
+                    'status'        => 'failed',
+                    'finished_at'   => now(),
+                    'error_message' => $unavailableMsg,
+                ]);
+                $repo->addLog($job, 'warning', $unavailableMsg);
+                return;
             }
 
             $result = $scraper->scrape($job->source, $job);
@@ -132,6 +139,10 @@ class RunScrapingJob implements ShouldQueue
             ]);
 
             $repo->addLog($job, 'error', 'Job fallido: ' . $errorMsg);
+            $repo->createErrorIfNotDuplicate($job, 'scraping_failed', $errorMsg, $e->getTraceAsString(), [
+                'exception' => get_class($e),
+            ]);
+            $repo->createAlertIfNotDuplicate($job, 'scraping_failed', $errorMsg, 'high');
         }
     }
 }

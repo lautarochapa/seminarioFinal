@@ -9,6 +9,7 @@ use App\ScrapedProductCandidate;
 use App\SupermarketProduct;
 use App\SupermarketProductPrice;
 use App\Exceptions\Ingredients\IngredientException;
+use App\ScrapingError;
 
 class ScrapingRepository
 {
@@ -104,6 +105,48 @@ class ScrapingRepository
             'message'         => $message,
             'context_json'    => empty($context) ? null : $context,
         ]);
+    }
+
+    public function createAlertIfNotDuplicate(
+        \App\ScrapingJob $job,
+        string $alertType,
+        string $message,
+        string $severity = 'high'
+    ): void {
+        $exists = \App\ScrapingAlert::where('scraping_job_id', $job->id)
+            ->where('alert_type', $alertType)
+            ->exists();
+
+        if (!$exists) {
+            \App\ScrapingAlert::create([
+                'scraping_job_id' => $job->id,
+                'source_id'       => $job->source_id,
+                'alert_type'      => $alertType,
+                'message'         => mb_substr($message, 0, 500),
+                'severity'        => $severity,
+                'status'          => 'open',
+            ]);
+        }
+    }
+
+    public function createErrorIfNotDuplicate(\App\ScrapingJob $job, string $errorType, string $message, ?string $stackTrace = null, array $context = []): void
+    {
+        $message = mb_substr($message, 0, 500);
+        $exists = ScrapingError::where('scraping_job_id', $job->id)
+            ->where('error_type', $errorType)
+            ->where('message', $message)
+            ->exists();
+
+        if (!$exists) {
+            ScrapingError::create([
+                'scraping_job_id' => $job->id,
+                'source_id' => $job->source_id,
+                'error_type' => $errorType,
+                'message' => $message,
+                'stack_trace' => $stackTrace,
+                'context_json' => empty($context) ? null : $context,
+            ]);
+        }
     }
 
     public function paginateLogs(int $jobId, array $filters)
