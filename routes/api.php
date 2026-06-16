@@ -291,7 +291,7 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::get('ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryCatalogController::class, 'index']);
 });
 
-Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::pattern('healthPreferenceType', 'dietary-restrictions|health-conditions|allergies');
 
     Route::get('admin/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\AdminHealthPreferenceController::class, 'index'])

@@ -18,10 +18,10 @@ class AdminHealthPreferenceController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request, $type)
+    public function index(Request $request, $healthPreferenceType)
     {
         $traceId = $request->attributes->get('trace_id');
-        $paginator = $this->service->list($this->type($type), $request->query());
+        $paginator = $this->service->list($this->type($healthPreferenceType), $request->query());
 
         return response()->json([
             'data' => HealthPreferenceResource::collection($paginator),
@@ -41,20 +41,20 @@ class AdminHealthPreferenceController extends Controller
         ])->header('X-Trace-Id', $traceId);
     }
 
-    public function show(Request $request, $type, $id)
+    public function show(Request $request, $healthPreferenceType, $id)
     {
         $traceId = $request->attributes->get('trace_id');
 
         return response()->json([
-            'data' => new HealthPreferenceResource($this->service->show($this->type($type), (int) $id)),
+            'data' => new HealthPreferenceResource($this->service->show($this->type($healthPreferenceType), (int) $id)),
             'trace_id' => $traceId,
         ])->header('X-Trace-Id', $traceId);
     }
 
-    public function store(HealthPreferenceRequest $request, $type)
+    public function store(HealthPreferenceRequest $request, $healthPreferenceType)
     {
         $traceId = $request->attributes->get('trace_id');
-        $item = $this->service->create($this->type($type), $request->user()->id, $request->validated(), $request->ip(), $request->userAgent() ?? '');
+        $item = $this->service->create($this->type($healthPreferenceType), $request->user()->id, $request->validated(), $request->ip(), $request->userAgent() ?? '');
 
         return response()->json([
             'data' => new HealthPreferenceResource($item),
@@ -62,10 +62,10 @@ class AdminHealthPreferenceController extends Controller
         ], 201)->header('X-Trace-Id', $traceId);
     }
 
-    public function update(HealthPreferenceRequest $request, $type, $id)
+    public function update(HealthPreferenceRequest $request, $healthPreferenceType, $id)
     {
         $traceId = $request->attributes->get('trace_id');
-        $item = $this->service->update($this->type($type), $request->user()->id, (int) $id, $request->validated(), $request->ip(), $request->userAgent() ?? '');
+        $item = $this->service->update($this->type($healthPreferenceType), $request->user()->id, (int) $id, $request->validated(), $request->ip(), $request->userAgent() ?? '');
 
         return response()->json([
             'data' => new HealthPreferenceResource($item),
@@ -73,10 +73,10 @@ class AdminHealthPreferenceController extends Controller
         ])->header('X-Trace-Id', $traceId);
     }
 
-    public function destroy(Request $request, $type, $id)
+    public function destroy(Request $request, $healthPreferenceType, $id)
     {
         $traceId = $request->attributes->get('trace_id');
-        $item = $this->service->delete($this->type($type), $request->user()->id, (int) $id, $request->ip(), $request->userAgent() ?? '');
+        $item = $this->service->delete($this->type($healthPreferenceType), $request->user()->id, (int) $id, $request->ip(), $request->userAgent() ?? '');
 
         return response()->json([
             'data' => new HealthPreferenceResource($item),
@@ -84,10 +84,10 @@ class AdminHealthPreferenceController extends Controller
         ])->header('X-Trace-Id', $traceId);
     }
 
-    public function restore(Request $request, $type, $id)
+    public function restore(Request $request, $healthPreferenceType, $id)
     {
         $traceId = $request->attributes->get('trace_id');
-        $item = $this->service->restore($this->type($type), $request->user()->id, (int) $id, $request->ip(), $request->userAgent() ?? '');
+        $item = $this->service->restore($this->type($healthPreferenceType), $request->user()->id, (int) $id, $request->ip(), $request->userAgent() ?? '');
 
         return response()->json([
             'data' => new HealthPreferenceResource($item),

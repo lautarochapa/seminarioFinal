@@ -4,6 +4,17 @@
     var state = {
         objectivesCatalog: [],
         userObjectives: [],
+        healthCatalogs: {
+            'dietary-restrictions': [],
+            'health-conditions': [],
+            'allergies': [],
+        },
+        userHealthSelections: {
+            'dietary-restrictions': [],
+            'health-conditions': [],
+            'allergies': [],
+        },
+        currentHealthType: 'dietary-restrictions',
         measurements: [],
         editingMeasurementId: null,
     };
@@ -108,6 +119,23 @@
                 state.userObjectives = response.data || [];
                 renderUserObjectives(form, state.userObjectives);
                 updateObjectivesSummary();
+            });
+    }
+
+    function loadHealthCatalog(type) {
+        return window.CCApi.request('/api/v1/catalog/' + type)
+            .then(function (response) {
+                state.healthCatalogs[type] = response.data || [];
+            });
+    }
+
+    function loadUserHealth(type, form) {
+        return window.CCApi.request('/api/v1/users/me/' + type)
+            .then(function (response) {
+                state.userHealthSelections[type] = response.data || [];
+                if (type === state.currentHealthType) {
+                    renderUserHealth(form);
+                }
             });
     }
 
@@ -221,6 +249,45 @@
         }).join('');
     }
 
+    function renderUserHealth(form) {
+        var select = qs('[name="item_id"]', form);
+        var body = qs('[data-user-health-body]');
+        var severityWrap = qs('[data-user-health-severity-wrap]', form);
+        var type = state.currentHealthType;
+        var catalog = state.healthCatalogs[type] || [];
+        var selected = state.userHealthSelections[type] || [];
+
+        severityWrap.style.display = type === 'allergies' ? '' : 'none';
+
+        if (!catalog.length) {
+            select.innerHTML = '<option value="">No hay items disponibles</option>';
+        } else {
+            select.innerHTML = '<option value="">Seleccionar item</option>' + catalog.map(function (item) {
+                return '<option value="' + item.id + '">' + escapeHtml(item.name) + '</option>';
+            }).join('');
+        }
+
+        if (!selected.length) {
+            body.innerHTML = '<tr><td colspan="3" class="muted">Todavia no hay selecciones cargadas.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = selected.map(function (row) {
+            var detail = [];
+            if (row.severity) {
+                detail.push('Severidad: ' + row.severity);
+            }
+            if (row.notes) {
+                detail.push(row.notes);
+            }
+            return '<tr>' +
+                '<td><strong>' + escapeHtml(row.item ? row.item.name : '-') + '</strong><br><span class="muted">' + escapeHtml(row.item ? row.item.code : '-') + '</span></td>' +
+                '<td>' + escapeHtml(detail.join(' · ') || '-') + '</td>' +
+                '<td><button type="button" class="btn-secondary-web btn-sm" data-user-health-delete="' + row.id + '">Eliminar</button></td>' +
+                '</tr>';
+        }).join('');
+    }
+
     function escapeHtml(value) {
         return text(value)
             .replace(/&/g, '&amp;')
@@ -260,6 +327,23 @@
             target_date: normalizeString(valueOf(form, 'target_date')),
             notes: normalizeString(valueOf(form, 'notes')),
         };
+    }
+
+    function userHealthPayload(form) {
+        var payload = {
+            notes: normalizeString(valueOf(form, 'notes')),
+        };
+
+        if (state.currentHealthType === 'dietary-restrictions') {
+            payload.dietary_restriction_id = parseNumber(valueOf(form, 'item_id'));
+        } else if (state.currentHealthType === 'health-conditions') {
+            payload.health_condition_id = parseNumber(valueOf(form, 'item_id'));
+        } else {
+            payload.allergy_id = parseNumber(valueOf(form, 'item_id'));
+            payload.severity = normalizeString(valueOf(form, 'severity'));
+        }
+
+        return payload;
     }
 
     function priorityPayload(form) {
@@ -458,6 +542,63 @@
         });
     }
 
+    function bindUserHealth(form) {
+        qsa('[data-user-health-tab]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                state.currentHealthType = button.getAttribute('data-user-health-tab');
+                qsa('[data-user-health-tab]').forEach(function (tab) {
+                    tab.classList.toggle('active', tab === button);
+                });
+                form.reset();
+                renderUserHealth(form);
+            });
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            clearFeedback(form, '[data-user-health-error]', '[data-user-health-message]');
+            setLoading(form, true);
+
+            window.CCApi.request('/api/v1/users/me/' + state.currentHealthType, {
+                method: 'POST',
+                body: userHealthPayload(form),
+            }).then(function () {
+                showMessage(form, '[data-user-health-message]', 'success', 'Seleccion guardada correctamente.');
+                form.reset();
+                return loadUserHealth(state.currentHealthType, form);
+            }).catch(function (error) {
+                showErrors(form, error, '[data-user-health-error', '[data-user-health-message]');
+            }).finally(function () {
+                setLoading(form, false);
+            });
+        });
+
+        var reset = qs('[data-user-health-reset]', form);
+        if (reset) {
+            reset.addEventListener('click', function () {
+                form.reset();
+                clearFeedback(form, '[data-user-health-error]', '[data-user-health-message]');
+                renderUserHealth(form);
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            var id = event.target.getAttribute('data-user-health-delete');
+            if (!id) {
+                return;
+            }
+
+            window.CCApi.request('/api/v1/users/me/' + state.currentHealthType + '/' + id, {
+                method: 'DELETE',
+            }).then(function () {
+                showMessage(form, '[data-user-health-message]', 'success', 'Seleccion eliminada correctamente.');
+                return loadUserHealth(state.currentHealthType, form);
+            }).catch(function (error) {
+                showErrors(form, error, '[data-user-health-error', '[data-user-health-message]');
+            });
+        });
+    }
+
     function resetUserObjectiveForm(form) {
         form.reset();
         setValue(form, 'assignment_id', '');
@@ -557,24 +698,34 @@
         var profileForm = qs('[data-user-profile-form]');
         var priorityForm = qs('[data-priority-settings-form]');
         var objectivesForm = qs('[data-user-objective-form]');
+        var userHealthForm = qs('[data-user-health-form]');
         var measurementForm = qs('[data-body-measurement-form]');
 
-        if (!profileForm || !priorityForm || !objectivesForm || !measurementForm || !window.CCApi) {
+        if (!profileForm || !priorityForm || !objectivesForm || !userHealthForm || !measurementForm || !window.CCApi) {
             return;
         }
 
         bindProfileForm(profileForm);
         bindPriorityForm(priorityForm);
         bindUserObjectives(objectivesForm);
+        bindUserHealth(userHealthForm);
         bindMeasurementForm(measurementForm);
 
         Promise.all([
             loadObjectivesCatalog(),
+            loadHealthCatalog('dietary-restrictions'),
+            loadHealthCatalog('health-conditions'),
+            loadHealthCatalog('allergies'),
             loadProfile(profileForm),
             loadPrioritySettings(priorityForm),
             loadUserObjectives(objectivesForm),
+            loadUserHealth('dietary-restrictions', userHealthForm),
+            loadUserHealth('health-conditions', userHealthForm),
+            loadUserHealth('allergies', userHealthForm),
             loadMeasurements(measurementForm),
-        ]).catch(function () {
+        ]).then(function () {
+            renderUserHealth(userHealthForm);
+        }).catch(function () {
             showMessage(profileForm, '[data-profile-message]', 'warning', 'No se pudo cargar toda la informacion del perfil desde la API.');
         });
     });

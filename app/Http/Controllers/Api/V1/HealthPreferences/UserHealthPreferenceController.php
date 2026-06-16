@@ -18,20 +18,20 @@ class UserHealthPreferenceController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request, $type)
+    public function index(Request $request, $healthPreferenceType)
     {
         $traceId = $request->attributes->get('trace_id');
 
         return response()->json([
-            'data' => UserHealthPreferenceResource::collection($this->service->list(HealthPreferenceTypes::get($type), $request->user()->id)),
+            'data' => UserHealthPreferenceResource::collection($this->service->list(HealthPreferenceTypes::get($healthPreferenceType), $request->user()->id)),
             'trace_id' => $traceId,
         ])->header('X-Trace-Id', $traceId);
     }
 
-    public function store(UserHealthPreferenceRequest $request, $type)
+    public function store(UserHealthPreferenceRequest $request, $healthPreferenceType)
     {
         $traceId = $request->attributes->get('trace_id');
-        $relation = $this->service->create(HealthPreferenceTypes::get($type), $request->user()->id, $request->validated(), $request->ip(), $request->userAgent() ?? '');
+        $relation = $this->service->create(HealthPreferenceTypes::get($healthPreferenceType), $request->user()->id, $request->validated(), $request->ip(), $request->userAgent() ?? '');
 
         return response()->json([
             'data' => new UserHealthPreferenceResource($relation),
@@ -39,9 +39,9 @@ class UserHealthPreferenceController extends Controller
         ], 201)->header('X-Trace-Id', $traceId);
     }
 
-    public function destroy(Request $request, $type, $id)
+    public function destroy(Request $request, $healthPreferenceType, $id)
     {
-        $this->service->delete(HealthPreferenceTypes::get($type), $request->user()->id, (int) $id, $request->ip(), $request->userAgent() ?? '');
+        $this->service->delete(HealthPreferenceTypes::get($healthPreferenceType), $request->user()->id, (int) $id, $request->ip(), $request->userAgent() ?? '');
 
         return response()->noContent();
     }
