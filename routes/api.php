@@ -291,6 +291,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
 
     Route::get('ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryCatalogController::class, 'index']);
+
+    Route::get('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'index']);
+    Route::post('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'store']);
+    Route::patch('family-groups/{id}/stock-locations/{locationId}', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'update']);
+    Route::delete('family-groups/{id}/stock-locations/{locationId}', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'destroy']);
 });
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
