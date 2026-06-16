@@ -116,6 +116,115 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'audit')
+        <section data-admin-audit>
+            <div class="alert" data-audit-message style="display:none"></div>
+
+            <div class="audit-tabs" role="tablist" aria-label="Auditoria">
+                <button type="button" class="audit-tab active" data-audit-tab="audit">Cambios</button>
+                <button type="button" class="audit-tab" data-audit-tab="login">Accesos</button>
+                <button type="button" class="audit-tab" data-audit-tab="resource">Por recurso</button>
+            </div>
+
+            <article class="panel" data-audit-panel="audit">
+                <div class="admin-tools">
+                    <input class="form-control" type="search" data-audit-search placeholder="Buscar accion, entidad o usuario">
+                    <input class="form-control" type="text" data-audit-resource placeholder="Recurso. Ej: users">
+                    <input class="form-control" type="number" min="1" data-audit-user placeholder="ID usuario">
+                    <input class="form-control" type="date" data-audit-from>
+                    <input class="form-control" type="date" data-audit-to>
+                    <button type="button" class="btn-ghost" data-audit-refresh>Actualizar</button>
+                    <span class="chip" data-audit-count>0 eventos</span>
+                </div>
+                <div style="overflow:auto">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                                <th>Accion</th>
+                                <th>Recurso</th>
+                                <th>Antes</th>
+                                <th>Despues</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody data-audit-body>
+                            <tr><td colspan="7" class="muted">Cargando auditoria...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="audit-pagination">
+                    <button type="button" class="btn-ghost btn-sm" data-audit-prev>Anterior</button>
+                    <span class="muted" data-audit-page>Pagina 1</span>
+                    <button type="button" class="btn-ghost btn-sm" data-audit-next>Siguiente</button>
+                </div>
+            </article>
+
+            <article class="panel" data-audit-panel="login" style="display:none">
+                <div class="admin-tools">
+                    <input class="form-control" type="search" data-login-search placeholder="Buscar email o IP">
+                    <select class="form-control" data-login-success>
+                        <option value="">Todos</option>
+                        <option value="1">Exitosos</option>
+                        <option value="0">Fallidos</option>
+                    </select>
+                    <input class="form-control" type="date" data-login-from>
+                    <input class="form-control" type="date" data-login-to>
+                    <button type="button" class="btn-ghost" data-login-refresh>Actualizar</button>
+                    <span class="chip" data-login-count>0 accesos</span>
+                </div>
+                <div style="overflow:auto">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Email</th>
+                                <th>Usuario</th>
+                                <th>Resultado</th>
+                                <th>Motivo</th>
+                                <th>IP</th>
+                                <th>Dispositivo</th>
+                            </tr>
+                        </thead>
+                        <tbody data-login-body>
+                            <tr><td colspan="7" class="muted">Cargando accesos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="audit-pagination">
+                    <button type="button" class="btn-ghost btn-sm" data-login-prev>Anterior</button>
+                    <span class="muted" data-login-page>Pagina 1</span>
+                    <button type="button" class="btn-ghost btn-sm" data-login-next>Siguiente</button>
+                </div>
+            </article>
+
+            <article class="panel" data-audit-panel="resource" style="display:none">
+                <div class="admin-tools">
+                    <input class="form-control" type="text" data-resource-name placeholder="Recurso. Ej: users">
+                    <input class="form-control" type="number" min="1" data-resource-id placeholder="ID recurso">
+                    <button type="button" class="btn-main" data-resource-refresh>Consultar historial</button>
+                    <span class="chip" data-resource-count>0 eventos</span>
+                </div>
+                <div style="overflow:auto">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                                <th>Accion</th>
+                                <th>Antes</th>
+                                <th>Despues</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody data-resource-body>
+                            <tr><td colspan="6" class="muted">Ingresá recurso e ID para consultar.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
     @else
     <section class="grid">
         @foreach($screen['panels'] as $panel)

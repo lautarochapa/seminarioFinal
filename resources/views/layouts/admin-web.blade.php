@@ -8,6 +8,7 @@
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <script src="{{ asset('js/admin-rbac.js') }}?v={{ filemtime(public_path('js/admin-rbac.js')) }}" defer></script>
+    <script src="{{ asset('js/admin-audit.js') }}?v={{ file_exists(public_path('js/admin-audit.js')) ? filemtime(public_path('js/admin-audit.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -51,6 +52,11 @@
         .rbac-layout { display:grid; grid-template-columns:minmax(0,2fr) minmax(300px,1fr); gap:14px; }
         .rbac-form .form-control { margin-bottom:9px; }
         .btn-sm { padding:6px 11px; font-size:12px; }
+        .audit-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+        .audit-tab { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; padding:9px 15px; font-weight:900; }
+        .audit-tab.active { background:rgba(4,172,133,.9); border-color:rgba(4,172,133,.9); color:#fff; }
+        .audit-json { margin:0; white-space:pre-wrap; word-break:break-word; max-width:420px; max-height:190px; overflow:auto; background:#f6f8f9; border:1px solid #edf1f4; border-radius:8px; padding:8px; font-size:12px; }
+        .audit-pagination { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:12px; }
         @media (max-width: 1100px) { .grid, .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics,.rbac-layout { grid-template-columns:1fr; } }
     </style>
