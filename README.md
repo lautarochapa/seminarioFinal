@@ -25,6 +25,7 @@ Ese comando:
 - Copia/configura el `.env` local.
 - Crea la base PostgreSQL `cccontrol` si no existe.
 - Ejecuta todas las migrations en orden.
+- Ejecuta una pasada final de `artisan migrate` para aplicar cualquier migration nueva pendiente.
 - Ejecuta los seeds basicos de catalogos, roles, permisos, canales y feature flags.
 - Crea/actualiza el usuario administrador local.
 
@@ -71,6 +72,18 @@ http://127.0.0.1:8000
 - `system_jobs`: procesos automaticos del sistema.
 
 Los roles y permisos se cargan de forma idempotente desde `SecuritySeeder` y tambien desde la migration `2026_06_15_000015_seed_actor_roles.php`.
+
+## Script maestro real
+
+El script que hoy debe usarse para dejar una base nueva completamente inicializada es:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-database.ps1
+```
+
+Ese script llama a `scripts/bootstrap-local.ps1` y ahora tambien ejecuta una pasada final de `artisan migrate --force`, para no perder migrations nuevas como permisos o pantallas agregadas despues.
+
+Si una PC nueva devuelve `403` en pantallas web o APIs protegidas, normalmente significa que no se aplicaron migrations de permisos/roles. En ese caso, volver a correr el script anterior deberia corregirlo.
 
 ## Taxonomias de ingredientes
 

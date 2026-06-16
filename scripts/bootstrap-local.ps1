@@ -31,6 +31,7 @@ $root = Split-Path -Parent $PSScriptRoot
 & (Join-Path $PSScriptRoot "migrate-api-tokens.ps1")
 & (Join-Path $PSScriptRoot "migrate-demo-users.ps1")
 & (Join-Path $PSScriptRoot "migrate-web-screen-permissions.ps1")
+& (Join-Path $PSScriptRoot "migrate-pending.ps1")
 & (Join-Path $PSScriptRoot "create-admin-user.ps1")
 
 Write-Host "Setup local terminado. Ejecuta .\start-app.ps1 para levantar la app."
