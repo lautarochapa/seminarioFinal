@@ -60,6 +60,21 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 
     Route::get('units', [\App\Http\Controllers\Api\V1\Units\UnitCatalogController::class, 'index']);
 
+    Route::get('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/food-tags/{id}/restore', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/food-tags/{id}', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/food-tags/{id}', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/food-tags/{id}', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('food-tags', [\App\Http\Controllers\Api\V1\FoodTags\FoodTagCatalogController::class, 'index']);
+
     Route::get('admin/ingredient-equivalences', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/ingredient-equivalences', [\App\Http\Controllers\Api\V1\IngredientEquivalences\AdminIngredientEquivalenceController::class, 'store'])
