@@ -66,6 +66,9 @@ Route::get('/app/{screen}', 'AppScreenController@index')->name('app.screen');
 Route::get('/web', 'UserWebScreenController@dashboard')->name('web.dashboard');
 Route::get('/web/{screen}', 'UserWebScreenController@index')->name('web.screen');
 
+Route::get('/admin-web', 'AdminWebScreenController@dashboard')->name('admin.web.dashboard');
+Route::get('/admin-web/{screen}', 'AdminWebScreenController@index')->name('admin.web.screen');
+
 
 
 Route::group(['middleware' => 'App\Http\Middleware\ComensalMiddleware'], function()
