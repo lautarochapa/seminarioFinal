@@ -28,6 +28,38 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 });
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+    Route::get('admin/units', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/units', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/units/{id}/audit', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/units/{id}/restore', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/units/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/units/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/units/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('admin/unit-conversions', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/unit-conversions', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/unit-conversions/{id}/audit', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/unit-conversions/{id}/restore', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/unit-conversions/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/unit-conversions/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/unit-conversions/{id}', [\App\Http\Controllers\Api\V1\Units\AdminUnitConversionController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('units', [\App\Http\Controllers\Api\V1\Units\UnitCatalogController::class, 'index']);
+
     Route::get('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'store'])

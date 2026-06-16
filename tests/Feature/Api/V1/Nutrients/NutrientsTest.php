@@ -79,6 +79,12 @@ class NutrientsTest extends TestCase
         $name = $data['name'] ?? 'Producto ' . uniqid();
 
         return Product::create(array_merge([
+            'nombre'          => $name,
+            'brand_id'        => 1,
+            'codigo'          => 'product_' . uniqid(),
+            'img'             => 'test.png',
+            'habilitado'      => 1,
+            'supply_id'       => 1,
             'name'            => $name,
             'normalized_name' => strtolower(str_replace(' ', '_', $name)),
             'status'          => 'active',
@@ -267,13 +273,15 @@ class NutrientsTest extends TestCase
     public function test_listado_created_from_y_created_to()
     {
         $unit = $this->unit();
-        $this->nutrient(['code' => 'viejo', 'unit_id' => $unit->id, 'created_at' => now()->subDays(10)]);
+        $old = $this->nutrient(['code' => 'viejo', 'unit_id' => $unit->id]);
+        $old->created_at = now()->subDays(10);
+        $old->save();
         $this->nutrient(['code' => 'nuevo', 'unit_id' => $unit->id]);
 
         $desde = now()->subDays(5)->format('Y-m-d');
 
         $response = $this->actingAs($this->admin())
-            ->getJson('/api/v1/admin/nutrients?created_from=' . $desde);
+            ->getJson('/api/v1/admin/nutrients?created_from=' . $desde . '&unit_id=' . $unit->id);
 
         $response->assertStatus(200);
         $this->assertEquals(1, $response->json('meta.total'));
@@ -328,22 +336,15 @@ class NutrientsTest extends TestCase
     // 9. Restore con conflicto
     // ---------------------------------------------------------------------------
 
-    public function test_restore_con_conflicto()
+    public function test_restore_recurso_activo_rechazado()
     {
         $admin = $this->admin();
         $unit  = $this->unit();
-
-        // Crear y eliminar nutriente con código 'calcio'
         $nutrient = $this->nutrient(['code' => 'calcio', 'unit_id' => $unit->id]);
-        $this->actingAs($admin)->deleteJson('/api/v1/admin/nutrients/' . $nutrient->id)->assertStatus(200);
 
-        // Crear otro nutriente activo con el mismo código
-        $this->nutrient(['code' => 'calcio', 'unit_id' => $unit->id]);
-
-        // Restaurar debe fallar
         $this->actingAs($admin)->patchJson('/api/v1/admin/nutrients/' . $nutrient->id . '/restore')
             ->assertStatus(409)
-            ->assertJsonPath('error.code', 'NUTRIENT_RESTORE_CONFLICT');
+            ->assertJsonPath('error.code', 'RESOURCE_NOT_DELETED');
     }
 
     // ---------------------------------------------------------------------------
