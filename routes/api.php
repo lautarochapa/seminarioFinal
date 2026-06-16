@@ -299,7 +299,16 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('family-groups/{id}/stock/summary', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'summary']);
     Route::get('family-groups/{id}/stock/value', [\App\Http\Controllers\Api\V1\HouseholdStock\HouseholdStockController::class, 'value']);
+    Route::get('family-groups/{id}/stock/expiring', [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'expiring']);
+    Route::get('family-groups/{id}/stock/low-stock', [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'lowStock']);
     Route::post('family-groups/{id}/stock/scan', [\App\Http\Controllers\Api\V1\StockScan\StockScanController::class, 'store']);
+    Route::get('family-groups/{id}/stock-alerts', [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'index']);
+    Route::patch('family-groups/{id}/stock-alerts/{alertId}/read', [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'read']);
+    Route::get('family-groups/{id}/stock-minimum-rules', [\App\Http\Controllers\Api\V1\StockAlerts\StockMinimumRuleController::class, 'index']);
+    Route::post('family-groups/{id}/stock-minimum-rules', [\App\Http\Controllers\Api\V1\StockAlerts\StockMinimumRuleController::class, 'store']);
+    Route::get('family-groups/{id}/stock-minimum-rules/{ruleId}', [\App\Http\Controllers\Api\V1\StockAlerts\StockMinimumRuleController::class, 'show']);
+    Route::patch('family-groups/{id}/stock-minimum-rules/{ruleId}', [\App\Http\Controllers\Api\V1\StockAlerts\StockMinimumRuleController::class, 'update']);
+    Route::delete('family-groups/{id}/stock-minimum-rules/{ruleId}', [\App\Http\Controllers\Api\V1\StockAlerts\StockMinimumRuleController::class, 'destroy']);
     Route::get('family-groups/{id}/stock-movements', [\App\Http\Controllers\Api\V1\StockMovements\StockMovementController::class, 'index']);
     Route::post('family-groups/{id}/stock/{stockItemId}/adjust', [\App\Http\Controllers\Api\V1\StockMovements\StockMovementController::class, 'adjust']);
     Route::post('family-groups/{id}/stock/{stockItemId}/consume', [\App\Http\Controllers\Api\V1\StockMovements\StockMovementController::class, 'consume']);
