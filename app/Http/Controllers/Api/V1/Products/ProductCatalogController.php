@@ -18,6 +18,15 @@ class ProductCatalogController extends Controller
         $this->service = $service;
     }
 
+    public function findByBarcode(Request $request, $barcode)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $barcode = trim((string) $barcode);
+
+        return response()->json(['data' => new ProductResource($this->service->findByBarcode($barcode)), 'trace_id' => $traceId])
+            ->header('X-Trace-Id', $traceId);
+    }
+
     public function index(Request $request)
     {
         return $this->paginated($request, $this->service->publicList($request->query()));

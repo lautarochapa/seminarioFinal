@@ -5,6 +5,7 @@ namespace App\Repositories\Products;
 use App\Exceptions\Ingredients\IngredientException;
 use App\Product;
 use App\ProductBarcode;
+use App\ProductImage;
 use App\SupermarketProductPrice;
 
 class ProductRepository
@@ -183,6 +184,103 @@ class ProductRepository
             ->orderBy('scraped_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    public function findPublicByBarcodeOrFail(string $barcode)
+    {
+        $barcodeRecord = ProductBarcode::where('barcode', $barcode)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $barcodeRecord) {
+            throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
+        }
+
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])
+            ->where('id', $barcodeRecord->product_id)
+            ->where('status', 'active')
+            ->where('is_active', true)
+            ->first();
+
+        if (! $product) {
+            throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
+        }
+
+        return $product;
+    }
+
+    public function findActiveBarcodeForProduct(int $productId, int $barcodeId)
+    {
+        $barcode = ProductBarcode::where('id', $barcodeId)
+            ->where('product_id', $productId)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $barcode) {
+            throw new IngredientException('PRODUCT_BARCODE_NOT_FOUND', 'El codigo de barras no existe para este producto.', 404);
+        }
+
+        return $barcode;
+    }
+
+    public function barcodeExistsForProduct(int $productId, string $barcode)
+    {
+        return ProductBarcode::where('product_id', $productId)
+            ->where('barcode', $barcode)
+            ->where('status', 'active')
+            ->exists();
+    }
+
+    public function addBarcode(Product $product, string $barcode)
+    {
+        return ProductBarcode::create([
+            'product_id' => $product->id,
+            'barcode' => $barcode,
+            'type' => null,
+            'status' => 'active',
+        ]);
+    }
+
+    public function deactivateBarcode(ProductBarcode $barcodeRecord)
+    {
+        $barcodeRecord->status = 'inactive';
+        $barcodeRecord->save();
+    }
+
+    public function addImage(Product $product, array $data)
+    {
+        return ProductImage::create(array_merge($data, [
+            'product_id' => $product->id,
+            'status' => 'active',
+        ]));
+    }
+
+    public function findActiveImageForProduct(int $productId, int $imageId)
+    {
+        $image = ProductImage::where('id', $imageId)
+            ->where('product_id', $productId)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $image) {
+            throw new IngredientException('PRODUCT_IMAGE_NOT_FOUND', 'La imagen no existe para este producto.', 404);
+        }
+
+        return $image;
+    }
+
+    public function clearPrimaryImages(int $productId)
+    {
+        ProductImage::where('product_id', $productId)
+            ->where('is_primary', true)
+            ->where('status', 'active')
+            ->update(['is_primary' => false]);
+    }
+
+    public function deactivateImage(ProductImage $image)
+    {
+        $image->status = 'inactive';
+        $image->save();
     }
 
     public function alternatives(Product $product)
