@@ -14,14 +14,14 @@ Route::prefix('auth')->middleware(['trace_id'])->group(function () {
     Route::post('reset-password', [\App\Http\Controllers\Api\V1\Auth\PasswordController::class, 'resetPassword'])
         ->middleware('throttle:60,1');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['api_token', 'auth'])->group(function () {
         Route::post('logout', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'logout']);
         Route::get('me', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'me']);
         Route::patch('me', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'updateProfile']);
     });
 });
 
-Route::prefix('admin')->middleware(['trace_id', 'auth'])->group(function () {
+Route::prefix('admin')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('users', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'index'])
         ->middleware('permission:security.users.read');
     Route::get('users/{id}/audit', [\App\Http\Controllers\Api\V1\Admin\UserAdminController::class, 'audit'])
@@ -73,7 +73,7 @@ Route::prefix('admin')->middleware(['trace_id', 'auth'])->group(function () {
         ->middleware('permission:audit.read');
 });
 
-Route::prefix('family-groups')->middleware(['trace_id', 'auth'])->group(function () {
+Route::prefix('family-groups')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
     Route::post('invitations/{invitationId}/accept', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupInvitationController::class, 'accept']);
 
     Route::get('', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupController::class, 'index']);
@@ -93,7 +93,7 @@ Route::prefix('family-groups')->middleware(['trace_id', 'auth'])->group(function
     Route::patch('{id}/preferences', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'update']);
 });
 
-Route::prefix('users/me')->middleware(['trace_id', 'auth'])->group(function () {
+Route::prefix('users/me')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('profile', [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'show']);
     Route::patch('profile', [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'update']);
     Route::get('priority-settings', [\App\Http\Controllers\Api\V1\UserProfile\UserPrioritySettingController::class, 'show']);

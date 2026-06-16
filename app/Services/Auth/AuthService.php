@@ -48,7 +48,9 @@ class AuthService
         });
 
         Auth::login($user);
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         $user->update(['last_login_at' => now()]);
         $this->writeLoginLog($user->id, $user->email, true, null, $request);
@@ -80,7 +82,9 @@ class AuthService
         }
 
         Auth::login($user, $remember);
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         $user->update(['last_login_at' => now()]);
         $this->writeLoginLog($user->id, $email, true, null, $request);
@@ -91,8 +95,10 @@ class AuthService
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
     }
 
     public function me(User $user)
@@ -181,7 +187,9 @@ class AuthService
         }
 
         Auth::login($user);
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         $user->update(['last_login_at' => now()]);
         $this->writeLoginLog($user->id, $user->email, true, null, $request);
@@ -205,7 +213,7 @@ class AuthService
 
     private function assignDefaultRole(User $user)
     {
-        $role = Role::where('code', 'comensal')->where('status', 'active')->first();
+        $role = Role::where('code', 'user')->where('status', 'active')->first();
         if ($role) {
             $user->roles()->attach($role->id, ['created_at' => now()]);
         }

@@ -104,6 +104,11 @@ class User extends Authenticatable
         return $this->hasMany(LoginLog::class);
     }
 
+    public function apiTokens()
+    {
+        return $this->hasMany(ApiToken::class);
+    }
+
     public function ownedFamilyGroups()
     {
         return $this->hasMany(FamilyGroup::class, 'owner_user_id');

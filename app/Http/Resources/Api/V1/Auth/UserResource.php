@@ -24,6 +24,7 @@ class UserResource extends JsonResource
                     return ['code' => $role->code, 'name' => $role->name];
                 });
             }),
+            'permissions'       => $this->permissions()->pluck('code')->values(),
             'created_at'        => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }

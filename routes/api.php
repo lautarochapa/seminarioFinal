@@ -18,6 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::prefix('v1')->group(base_path('routes/api_contract.php'));
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
     Route::pattern('healthPreferenceType', 'dietary-restrictions|health-conditions|allergies');
