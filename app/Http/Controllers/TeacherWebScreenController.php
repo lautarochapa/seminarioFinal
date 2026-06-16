@@ -23,7 +23,7 @@ class TeacherWebScreenController extends Controller
         }
 
         if (! $this->canAccessScreen($screen)) {
-            return response('Sin permiso para acceder a esta pantalla.', 403);
+            abort(403);
         }
 
         return view('web.teacher-screen', [
