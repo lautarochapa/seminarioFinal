@@ -394,6 +394,13 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
         ->middleware('permission:catalog.manage');
 
     // Scraping — fuentes
+    Route::get('admin/scraping/alerts', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'index'])
+        ->middleware('permission:scraping.manage');
+    Route::patch('admin/scraping/alerts/{id}/resolve', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'resolve'])
+        ->middleware('permission:scraping.manage');
+    Route::get('admin/reports/scraping-errors', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'report'])
+        ->middleware('permission:scraping.manage');
+
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'store'])
