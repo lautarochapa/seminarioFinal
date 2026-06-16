@@ -353,6 +353,13 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::delete('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'destroy']);
 
     Route::get('recipes/search', [\App\Http\Controllers\Api\V1\RecipeSearch\RecipeSearchController::class, '__invoke']);
+    Route::get('recipes/suggestions', [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'suggestions']);
+
+    Route::get('family-groups/{id}/recipes/available',        [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'available']);
+    Route::get('family-groups/{id}/recipes/almost-available', [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'almostAvailable']);
+    Route::get('family-groups/{id}/recipes/by-expiring-stock',[\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'byExpiringStock']);
+    Route::get('family-groups/{id}/recipes/by-budget',        [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'byBudget']);
+    Route::get('family-groups/{id}/recipes/by-objectives',    [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'byObjectives']);
 
     Route::get('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'index']);
     Route::post('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'store']);
