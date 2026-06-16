@@ -117,6 +117,22 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::patch('admin/product-reports/{id}/resolve', [\App\Http\Controllers\Api\V1\ProductReports\AdminProductReportController::class, 'resolve'])
         ->middleware('permission:catalog.manage');
 
+    // Promociones de supermercado - administracion y catalogo por sucursal
+    Route::get('admin/promotions', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/promotions', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/promotions/{id}/restore', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('supermarket-branches/{id}/promotions', [\App\Http\Controllers\Api\V1\Promotions\BranchPromotionController::class, 'index']);
+
     // Productos de supermercado - administracion y catalogo de precios
     Route::get('admin/supermarket-products', [\App\Http\Controllers\Api\V1\SupermarketProducts\AdminSupermarketProductController::class, 'index'])
         ->middleware('permission:catalog.manage');
