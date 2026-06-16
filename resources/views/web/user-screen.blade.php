@@ -84,6 +84,129 @@
                 <p class="muted" style="margin-top:14px">Esta pantalla usa el token guardado al iniciar sesion para consultar y actualizar datos basicos.</p>
             </aside>
         </section>
+    @elseif($screenKey === 'family-group')
+        <section data-family-groups>
+            <div class="alert" data-family-message style="display:none"></div>
+
+            <div class="family-layout">
+                <div class="family-stack">
+                    <article class="panel">
+                        <div class="web-tools">
+                            <select class="form-control" data-family-select>
+                                <option value="">Cargando grupos...</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web" data-family-refresh>Actualizar</button>
+                            <span class="chip" data-family-count>0 grupos</span>
+                        </div>
+
+                        <form class="family-form" data-family-edit-form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Nombre del grupo</label>
+                                    <input class="form-control" name="name" type="text" placeholder="Mi hogar">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Estado</label>
+                                    <select class="form-control" name="status">
+                                        <option value="active">Activo</option>
+                                        <option value="inactive">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                                <button type="submit" class="btn-main">Guardar grupo</button>
+                                <button type="button" class="btn-secondary-web" data-family-delete>Desactivar grupo</button>
+                            </div>
+                        </form>
+
+                        <div class="table-line"><span class="muted">Propietario</span><strong data-family-owner>-</strong></div>
+                        <div class="table-line"><span class="muted">Direccion por defecto</span><strong data-family-address>-</strong></div>
+                    </article>
+
+                    <article class="panel">
+                        <h2>Miembros</h2>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-members-body>
+                                    <tr><td colspan="4" class="muted">Seleccioná un grupo para ver miembros.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="panel">
+                        <h2>Preferencias del grupo</h2>
+                        <form class="family-form" data-preferences-form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Presupuesto</label>
+                                    <input class="form-control" name="default_budget_mode" type="text" placeholder="mensual">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Compras</label>
+                                    <input class="form-control" name="default_shopping_mode" type="text" placeholder="economico">
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:10px">
+                                <div class="col-md-6">
+                                    <label>Prioridad recetas</label>
+                                    <input class="form-control" name="default_recipe_priority_mode" type="text" placeholder="balanceado">
+                                </div>
+                                <div class="col-md-6">
+                                    <label style="display:flex;gap:8px;align-items:center;margin-top:32px">
+                                        <input name="allow_auto_stock_discount" type="checkbox" value="1">
+                                        Descontar stock automaticamente
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-main" style="margin-top:12px">Guardar preferencias</button>
+                        </form>
+                    </article>
+                </div>
+
+                <aside class="aside-panel">
+                    <h2>Nuevo grupo</h2>
+                    <form class="family-form" data-family-create-form>
+                        <input class="form-control" name="name" type="text" placeholder="Nombre del grupo" required>
+                        <button type="submit" class="btn-main">Crear grupo</button>
+                    </form>
+
+                    <h2 style="margin-top:20px">Agregar miembro</h2>
+                    <form class="family-form" data-member-create-form>
+                        <input class="form-control" name="user_id" type="number" min="1" placeholder="ID de usuario" required>
+                        <select class="form-control" name="role" required>
+                            <option value="member">Miembro</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                        <button type="submit" class="btn-main">Agregar miembro</button>
+                    </form>
+
+                    <h2 style="margin-top:20px">Invitar por email</h2>
+                    <form class="family-form" data-invitation-form>
+                        <input class="form-control" name="email" type="email" placeholder="email@ejemplo.com" required>
+                        <select class="form-control" name="role" required>
+                            <option value="member">Miembro</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                        <button type="submit" class="btn-main">Enviar invitacion</button>
+                    </form>
+
+                    <h2 style="margin-top:20px">Aceptar invitacion</h2>
+                    <form class="family-form" data-invitation-accept-form>
+                        <input class="form-control" name="invitation_id" type="number" min="1" placeholder="ID de invitacion" required>
+                        <button type="submit" class="btn-secondary-web">Aceptar invitacion</button>
+                    </form>
+                </aside>
+            </div>
+        </section>
     @else
     <section class="workspace">
         <div class="panel-grid">
