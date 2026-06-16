@@ -6,6 +6,7 @@ use App\Exceptions\Auth\AuthException;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Exceptions\HealthPreferences\HealthPreferenceException;
 use App\Exceptions\IngredientCategories\IngredientCategoryException;
+use App\Exceptions\RecipeCategories\RecipeCategoryException;
 use App\Exceptions\Ingredients\IngredientException;
 use App\Exceptions\Objectives\ObjectivesException;
 use App\Exceptions\Rbac\RbacException;
@@ -106,6 +107,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof IngredientCategoryException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeCategoryException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),

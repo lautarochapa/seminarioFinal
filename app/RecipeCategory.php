@@ -21,6 +21,14 @@ class RecipeCategory extends Model
         return $this->hasMany(RecipeCategory::class, 'parent_id');
     }
 
+    public function activeChildren()
+    {
+        return $this->hasMany(RecipeCategory::class, 'parent_id')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->with('activeChildren');
+    }
+
     public function recipes()
     {
         return $this->hasMany(Recipe::class, 'category_id');
