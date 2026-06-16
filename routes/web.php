@@ -217,3 +217,28 @@ Route::prefix('api/v1/admin')->middleware(['trace_id', 'auth'])->group(function 
     Route::get('{resource}/{id}/audit', [\App\Http\Controllers\Api\V1\Admin\AuditLogController::class, 'forResource'])
         ->middleware('permission:audit.read');
 });
+
+Route::prefix('api/v1/family-groups')->middleware(['trace_id', 'auth'])->group(function () {
+    // Accept invitation (must be before {id} patterns to avoid conflict)
+    Route::post('invitations/{invitationId}/accept', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupInvitationController::class, 'accept']);
+
+    // Family group CRUD
+    Route::get('',      [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupController::class, 'index']);
+    Route::post('',     [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupController::class, 'store']);
+    Route::get('{id}',  [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupController::class, 'show']);
+    Route::patch('{id}',[\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupController::class, 'update']);
+    Route::delete('{id}',[\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupController::class, 'destroy']);
+
+    // Members
+    Route::get('{id}/members',                        [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupMemberController::class, 'index']);
+    Route::post('{id}/members',                       [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupMemberController::class, 'store']);
+    Route::patch('{id}/members/{memberId}',           [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupMemberController::class, 'update']);
+    Route::delete('{id}/members/{memberId}',          [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupMemberController::class, 'destroy']);
+
+    // Invitations
+    Route::post('{id}/invitations', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupInvitationController::class, 'store']);
+
+    // Preferences
+    Route::get('{id}/preferences',   [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'show']);
+    Route::patch('{id}/preferences', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'update']);
+});
