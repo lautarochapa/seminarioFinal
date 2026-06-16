@@ -20,14 +20,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(base_path('routes/api_contract.php'));
 
-Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('auth/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'show']);
     Route::patch('auth/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'update']);
     Route::get('users/me/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'show']);
     Route::patch('users/me/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'update']);
 });
 
-Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('admin/units', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/units', [\App\Http\Controllers\Api\V1\Units\AdminUnitController::class, 'store'])
@@ -107,9 +107,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::get('products/{id}/nutrition', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'nutrition']);
     Route::get('products/{id}/prices', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'prices']);
     Route::get('products/{id}/alternatives', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'alternatives']);
+    Route::post('products/{id}/request-price-refresh', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'store']);
     Route::post('products/{id}/reports', [\App\Http\Controllers\Api\V1\ProductReports\ProductReportController::class, 'store']);
     Route::get('products/{id}', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'show']);
     Route::get('products', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'index']);
+    Route::get('users/me/price-refresh-requests', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'mine']);
 
     // Reportes de productos - administración
     Route::get('admin/product-reports', [\App\Http\Controllers\Api\V1\ProductReports\AdminProductReportController::class, 'index'])
@@ -291,7 +293,7 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::get('ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryCatalogController::class, 'index']);
 });
 
-Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::pattern('healthPreferenceType', 'dietary-restrictions|health-conditions|allergies');
 
     Route::get('admin/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\AdminHealthPreferenceController::class, 'index'])
@@ -314,7 +316,7 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::delete('users/me/{healthPreferenceType}/{id}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'destroy']);
 });
 
-Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     // Professional links (patient perspective)
     Route::prefix('professional-links')->group(function () {
         Route::get('',        [\App\Http\Controllers\Api\V1\Professional\ProfessionalLinkController::class, 'index']);
@@ -334,7 +336,7 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 });
 
 // ---Nutrientes ---
-Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     // ABM de nutrientes
     Route::get('admin/nutrients', [\App\Http\Controllers\Api\V1\Nutrients\AdminNutrientController::class, 'index'])
         ->middleware('permission:catalog.manage');
@@ -399,6 +401,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
     Route::patch('admin/scraping/alerts/{id}/resolve', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'resolve'])
         ->middleware('permission:scraping.manage');
     Route::get('admin/reports/scraping-errors', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'report'])
+        ->middleware('permission:scraping.manage');
+
+    Route::get('admin/price-refresh-requests', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'adminIndex'])
+        ->middleware('permission:scraping.manage');
+    Route::post('admin/price-refresh-requests/{id}/process', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'process'])
         ->middleware('permission:scraping.manage');
 
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
