@@ -130,6 +130,7 @@ class SupermarketProductRepository
                 'branch.city',
                 'prices' => function ($q) {
                     $q->where('status', 'active')
+                        ->whereNull('valid_to')
                         ->orderByDesc('scraped_at')
                         ->orderByDesc('id');
                 },
@@ -150,6 +151,46 @@ class SupermarketProductRepository
             ->values();
     }
 
+    public function priceHistory(int $supermarketProductId, array $filters = [])
+    {
+        $perPage = min(max((int) ($filters['per_page'] ?? 20), 1), 100);
+
+        return SupermarketProductPrice::where('supermarket_product_id', $supermarketProductId)
+            ->orderByDesc('scraped_at')
+            ->orderByDesc('id')
+            ->paginate($perPage);
+    }
+
+    public function currentActivePrice(int $supermarketProductId)
+    {
+        return SupermarketProductPrice::where('supermarket_product_id', $supermarketProductId)
+            ->where('status', 'active')
+            ->whereNull('valid_to')
+            ->orderByDesc('scraped_at')
+            ->orderByDesc('id')
+            ->first();
+    }
+
+    public function addPrice(int $supermarketProductId, array $data)
+    {
+        return SupermarketProductPrice::create([
+            'supermarket_product_id' => $supermarketProductId,
+            'price'                  => $data['price'],
+            'currency'               => $data['currency'] ?? 'ARS',
+            'scraped_at'             => $data['captured_at'] ?? now(),
+            'valid_from'             => now(),
+            'valid_to'               => null,
+            'source'                 => 'manual',
+            'status'                 => 'active',
+        ]);
+    }
+
+    public function closePrice(SupermarketProductPrice $price)
+    {
+        $price->valid_to = now();
+        $price->save();
+    }
+
     public function bestPriceForProduct(int $productId)
     {
         $supermarketProducts = SupermarketProduct::where('product_id', $productId)
@@ -161,6 +202,7 @@ class SupermarketProductRepository
                 'branch.city',
                 'prices' => function ($q) {
                     $q->where('status', 'active')
+                        ->whereNull('valid_to')
                         ->orderByDesc('scraped_at')
                         ->orderByDesc('id');
                 },

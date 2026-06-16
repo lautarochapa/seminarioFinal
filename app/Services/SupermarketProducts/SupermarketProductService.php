@@ -168,6 +168,48 @@ class SupermarketProductService
         return $this->repo->pricesForProduct($productId);
     }
 
+    public function priceHistory(int $id, array $filters = [])
+    {
+        $sp = $this->repo->findOrFail($id);
+        return $this->repo->priceHistory($sp->id, $filters);
+    }
+
+    public function addPrice(int $actorId, int $id, array $data, string $ip, string $userAgent)
+    {
+        $sp = $this->repo->findOrFail($id);
+
+        if ($sp->status !== 'active') {
+            throw new IngredientException('SUPERMARKET_PRODUCT_NOT_FOUND', 'El mapeo no esta activo.', 404);
+        }
+
+        return DB::transaction(function () use ($actorId, $sp, $data, $ip, $userAgent) {
+            $current = $this->repo->currentActivePrice($sp->id);
+            if ($current) {
+                $this->repo->closePrice($current);
+            }
+
+            $price = $this->repo->addPrice($sp->id, $data);
+
+            AuditLog::create([
+                'user_id'     => $actorId,
+                'action'      => 'price.added',
+                'entity_name' => 'supermarket_product_prices',
+                'entity_id'   => (string) $price->id,
+                'old_values'  => null,
+                'new_values'  => [
+                    'supermarket_product_id' => $sp->id,
+                    'price'                  => $price->price,
+                    'currency'               => $price->currency,
+                    'source'                 => $price->source,
+                ],
+                'ip_address'  => $ip,
+                'user_agent'  => $userAgent,
+            ]);
+
+            return $price;
+        });
+    }
+
     public function bestPrice(int $productId)
     {
         $result = $this->repo->bestPriceForProduct($productId);

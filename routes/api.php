@@ -124,6 +124,10 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
         ->middleware('permission:catalog.manage');
     Route::patch('admin/supermarket-products/{id}/restore', [\App\Http\Controllers\Api\V1\SupermarketProducts\AdminSupermarketProductController::class, 'restore'])
         ->middleware('permission:catalog.manage');
+    Route::get('admin/supermarket-products/{id}/prices', [\App\Http\Controllers\Api\V1\SupermarketPrices\AdminSupermarketPriceController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/supermarket-products/{id}/prices', [\App\Http\Controllers\Api\V1\SupermarketPrices\AdminSupermarketPriceController::class, 'store'])
+        ->middleware('permission:catalog.manage');
     Route::get('admin/supermarket-products/{id}', [\App\Http\Controllers\Api\V1\SupermarketProducts\AdminSupermarketProductController::class, 'show'])
         ->middleware('permission:catalog.manage');
     Route::patch('admin/supermarket-products/{id}', [\App\Http\Controllers\Api\V1\SupermarketProducts\AdminSupermarketProductController::class, 'update'])
