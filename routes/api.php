@@ -90,6 +90,25 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 
     Route::get('product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryCatalogController::class, 'index']);
 
+    Route::get('admin/products', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/products', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/products/{id}/restore', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/products/{id}', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/products/{id}', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/products/{id}', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('products/{id}/nutrition', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'nutrition']);
+    Route::get('products/{id}/prices', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'prices']);
+    Route::get('products/{id}/alternatives', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'alternatives']);
+    Route::get('products/{id}', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'show']);
+    Route::get('products', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'index']);
+
     Route::get('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'store'])
