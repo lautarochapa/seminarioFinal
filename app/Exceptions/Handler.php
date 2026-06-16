@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use App\Exceptions\Auth\AuthException;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Exceptions\Rbac\RbacException;
+use App\Exceptions\BodyMeasurement\BodyMeasurementException;
+use App\Exceptions\UserProfile\UserProfileException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -67,6 +69,26 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof FamilyGroupException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof BodyMeasurementException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof UserProfileException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),

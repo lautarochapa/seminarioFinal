@@ -254,3 +254,15 @@ Route::prefix('api/v1/family-groups')->middleware(['trace_id', 'auth'])->group(f
     Route::get('{id}/preferences',   [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'show']);
     Route::patch('{id}/preferences', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'update']);
 });
+
+Route::prefix('api/v1/users/me')->middleware(['trace_id', 'auth'])->group(function () {
+    Route::get('profile',             [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'show']);
+    Route::patch('profile',           [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'update']);
+    Route::get('priority-settings',   [\App\Http\Controllers\Api\V1\UserProfile\UserPrioritySettingController::class, 'show']);
+    Route::patch('priority-settings', [\App\Http\Controllers\Api\V1\UserProfile\UserPrioritySettingController::class, 'update']);
+
+    Route::get('body-measurements',         [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'index']);
+    Route::post('body-measurements',        [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'store']);
+    Route::patch('body-measurements/{id}',  [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'update']);
+    Route::delete('body-measurements/{id}', [\App\Http\Controllers\Api\V1\BodyMeasurement\BodyMeasurementController::class, 'destroy']);
+});
