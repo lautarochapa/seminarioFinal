@@ -28,6 +28,26 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 });
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () {
+    Route::get('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/ingredients', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredients/{id}/audit', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'audit'])
+        ->middleware('permission:audit.read');
+    Route::patch('admin/ingredients/{id}/restore', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/ingredients/{id}', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/ingredients/{id}', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/ingredients/{id}', [\App\Http\Controllers\Api\V1\Ingredients\AdminIngredientController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('ingredients/{id}/nutrition', [\App\Http\Controllers\Api\V1\Ingredients\IngredientCatalogController::class, 'nutrition']);
+    Route::get('ingredients/{id}/equivalences', [\App\Http\Controllers\Api\V1\Ingredients\IngredientCatalogController::class, 'equivalences']);
+    Route::get('ingredients/{id}', [\App\Http\Controllers\Api\V1\Ingredients\IngredientCatalogController::class, 'show']);
+    Route::get('ingredients', [\App\Http\Controllers\Api\V1\Ingredients\IngredientCatalogController::class, 'index']);
+
     Route::get('admin/ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/ingredient-categories', [\App\Http\Controllers\Api\V1\IngredientCategories\IngredientCategoryAdminController::class, 'store'])
