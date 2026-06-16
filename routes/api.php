@@ -75,6 +75,21 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'auth'])->group(function () 
 
     Route::get('brands', [\App\Http\Controllers\Api\V1\Brands\BrandCatalogController::class, 'index']);
 
+    Route::get('admin/product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/product-categories/{id}/restore', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/product-categories/{id}', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/product-categories/{id}', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/product-categories/{id}', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryAdminController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('product-categories', [\App\Http\Controllers\Api\V1\ProductCategories\ProductCategoryCatalogController::class, 'index']);
+
     Route::get('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/food-tags', [\App\Http\Controllers\Api\V1\FoodTags\AdminFoodTagController::class, 'store'])
