@@ -322,6 +322,12 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagCatalogController::class, 'index']);
 
+    Route::get('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'index']);
+    Route::post('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'store']);
+    Route::get('recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'show']);
+    Route::patch('recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'update']);
+    Route::delete('recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'destroy']);
+
     Route::get('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'index']);
     Route::post('family-groups/{id}/stock-locations', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'store']);
     Route::patch('family-groups/{id}/stock-locations/{locationId}', [\App\Http\Controllers\Api\V1\StockLocations\StockLocationController::class, 'update']);

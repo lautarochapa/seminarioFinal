@@ -8,6 +8,7 @@ use App\Exceptions\HealthPreferences\HealthPreferenceException;
 use App\Exceptions\IngredientCategories\IngredientCategoryException;
 use App\Exceptions\RecipeCategories\RecipeCategoryException;
 use App\Exceptions\RecipeTags\RecipeTagException;
+use App\Exceptions\Recipes\RecipeException;
 use App\Exceptions\Ingredients\IngredientException;
 use App\Exceptions\Objectives\ObjectivesException;
 use App\Exceptions\Rbac\RbacException;
@@ -128,6 +129,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof RecipeTagException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
