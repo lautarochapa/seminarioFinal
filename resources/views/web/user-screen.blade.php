@@ -26,6 +26,7 @@
 
     @if($screenKey === 'profile-objectives')
         <section class="workspace">
+            <div style="display:grid;gap:14px">
             <div class="profile-grid">
                 <article class="panel">
                     <h2>Mi perfil</h2>
@@ -190,10 +191,84 @@
                 </article>
             </div>
 
+            <article class="panel">
+                <h2>Mediciones personales</h2>
+                <form class="profile-form" data-body-measurement-form>
+                    <div class="alert" data-measurement-message style="display:none"></div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="measurement-date">Fecha</label>
+                            <input id="measurement-date" class="form-control" name="measured_at" type="date">
+                            <span class="invalid-feedback" data-measurement-error="measured_at" role="alert"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="measurement-weight">Peso (kg)</label>
+                            <input id="measurement-weight" class="form-control" name="weight_kg" type="number" min="0" step="0.1">
+                            <span class="invalid-feedback" data-measurement-error="weight_kg" role="alert"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="measurement-waist">Cintura (cm)</label>
+                            <input id="measurement-waist" class="form-control" name="waist_cm" type="number" min="0" step="0.1">
+                            <span class="invalid-feedback" data-measurement-error="waist_cm" role="alert"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="measurement-glucose">Glucosa</label>
+                            <input id="measurement-glucose" class="form-control" name="glucose_level" type="number" min="0" step="0.1">
+                            <span class="invalid-feedback" data-measurement-error="glucose_level" role="alert"></span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:10px">
+                        <div class="col-md-3">
+                            <label for="measurement-systolic">Presion sistolica</label>
+                            <input id="measurement-systolic" class="form-control" name="blood_pressure_systolic" type="number" min="1" step="1">
+                            <span class="invalid-feedback" data-measurement-error="blood_pressure_systolic" role="alert"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="measurement-diastolic">Presion diastolica</label>
+                            <input id="measurement-diastolic" class="form-control" name="blood_pressure_diastolic" type="number" min="1" step="1">
+                            <span class="invalid-feedback" data-measurement-error="blood_pressure_diastolic" role="alert"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="measurement-notes">Notas</label>
+                            <input id="measurement-notes" class="form-control" name="notes" type="text" placeholder="Ej: despues de entrenar, en ayunas, control medico...">
+                            <span class="invalid-feedback" data-measurement-error="notes" role="alert"></span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+                        <button type="submit" class="btn-main">Guardar medicion</button>
+                        <button type="button" class="btn-secondary-web" data-measurement-reset>Limpiar formulario</button>
+                    </div>
+                </form>
+
+                <div style="overflow:auto;margin-top:18px">
+                    <table class="web-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Peso</th>
+                                <th>Cintura</th>
+                                <th>Presion</th>
+                                <th>Glucosa</th>
+                                <th>Notas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody data-measurements-body>
+                            <tr><td colspan="7" class="muted">Cargando mediciones...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+            </div>
+
             <aside class="aside-panel">
                 <h2>Sesion API</h2>
                 <div class="table-line"><span class="muted">Perfil</span><strong>GET/PATCH /users/me/profile</strong></div>
                 <div class="table-line"><span class="muted">Prioridades</span><strong>GET/PATCH /users/me/priority-settings</strong></div>
+                <div class="table-line"><span class="muted">Mediciones</span><strong>CRUD /users/me/body-measurements</strong></div>
                 <div class="table-line"><span class="muted">Catalogo</span><strong>GET /catalog/objectives</strong></div>
                 <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, sincronizar objetivos y guardar la configuracion de prioridades.</p>
             </aside>

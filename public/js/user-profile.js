@@ -4,6 +4,8 @@
     var state = {
         objectivesCatalog: [],
         selectedObjectiveIds: [],
+        measurements: [],
+        editingMeasurementId: null,
     };
 
     function qs(selector, root) {
@@ -110,6 +112,14 @@
         return window.CCApi.request('/users/me/priority-settings')
             .then(function (response) {
                 fillPrioritySettings(form, response.data || {});
+            });
+    }
+
+    function loadMeasurements(form) {
+        return window.CCApi.request('/users/me/body-measurements?per_page=20')
+            .then(function (response) {
+                state.measurements = response.data || [];
+                renderMeasurements(form, state.measurements);
             });
     }
 
@@ -225,6 +235,18 @@
         };
     }
 
+    function measurementPayload(form) {
+        return {
+            measured_at: normalizeString(valueOf(form, 'measured_at')),
+            weight_kg: parseNumber(valueOf(form, 'weight_kg')),
+            waist_cm: parseNumber(valueOf(form, 'waist_cm')),
+            blood_pressure_systolic: parseNumber(valueOf(form, 'blood_pressure_systolic')),
+            blood_pressure_diastolic: parseNumber(valueOf(form, 'blood_pressure_diastolic')),
+            glucose_level: parseNumber(valueOf(form, 'glucose_level')),
+            notes: normalizeString(valueOf(form, 'notes')),
+        };
+    }
+
     function valueOf(form, name) {
         var input = qs('[name="' + name + '"]', form);
         return input ? input.value : '';
@@ -253,6 +275,53 @@
         var node = qs('[data-priority-mode-summary]');
         if (node) {
             node.textContent = text(mode);
+        }
+    }
+
+    function renderMeasurements(form, items) {
+        var body = qs('[data-measurements-body]');
+        if (!body) {
+            return;
+        }
+
+        if (!items.length) {
+            body.innerHTML = '<tr><td colspan="7" class="muted">Todavia no hay mediciones registradas.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = items.map(function (item) {
+            var pressure = item.blood_pressure_systolic && item.blood_pressure_diastolic
+                ? item.blood_pressure_systolic + '/' + item.blood_pressure_diastolic
+                : '-';
+            return '<tr>' +
+                '<td>' + escapeHtml(item.measured_at) + '</td>' +
+                '<td>' + escapeHtml(text(item.weight_kg)) + '</td>' +
+                '<td>' + escapeHtml(text(item.waist_cm)) + '</td>' +
+                '<td>' + escapeHtml(pressure) + '</td>' +
+                '<td>' + escapeHtml(text(item.glucose_level)) + '</td>' +
+                '<td>' + escapeHtml(text(item.notes)) + '</td>' +
+                '<td><button type="button" class="btn-main btn-sm" data-measurement-edit="' + item.id + '">Editar</button> ' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-measurement-delete="' + item.id + '">Eliminar</button></td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function fillMeasurementForm(form, item) {
+        setValue(form, 'measured_at', item && item.measured_at);
+        setValue(form, 'weight_kg', item && item.weight_kg);
+        setValue(form, 'waist_cm', item && item.waist_cm);
+        setValue(form, 'blood_pressure_systolic', item && item.blood_pressure_systolic);
+        setValue(form, 'blood_pressure_diastolic', item && item.blood_pressure_diastolic);
+        setValue(form, 'glucose_level', item && item.glucose_level);
+        setValue(form, 'notes', item && item.notes);
+    }
+
+    function resetMeasurementForm(form) {
+        form.reset();
+        state.editingMeasurementId = null;
+        var submit = qs('[type="submit"]', form);
+        if (submit) {
+            submit.textContent = submit.dataset.originalText || 'Guardar medicion';
         }
     }
 
@@ -309,21 +378,93 @@
         });
     }
 
+    function bindMeasurementForm(form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            clearFeedback(form, '[data-measurement-error]', '[data-measurement-message]');
+            setLoading(form, true);
+
+            var method = state.editingMeasurementId ? 'PATCH' : 'POST';
+            var endpoint = '/users/me/body-measurements' + (state.editingMeasurementId ? '/' + state.editingMeasurementId : '');
+
+            window.CCApi.request(endpoint, {
+                method: method,
+                body: measurementPayload(form),
+            }).then(function () {
+                showMessage(form, '[data-measurement-message]', 'success', state.editingMeasurementId ? 'Medicion actualizada correctamente.' : 'Medicion registrada correctamente.');
+                resetMeasurementForm(form);
+                return loadMeasurements(form);
+            }).catch(function (error) {
+                showErrors(form, error, '[data-measurement-error', '[data-measurement-message]');
+            }).finally(function () {
+                setLoading(form, false);
+            });
+        });
+
+        var resetButton = qs('[data-measurement-reset]', form);
+        if (resetButton) {
+            resetButton.addEventListener('click', function () {
+                clearFeedback(form, '[data-measurement-error]', '[data-measurement-message]');
+                resetMeasurementForm(form);
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            var editId = event.target.getAttribute('data-measurement-edit');
+            var deleteId = event.target.getAttribute('data-measurement-delete');
+
+            if (editId) {
+                var item = state.measurements.find(function (measurement) {
+                    return String(measurement.id) === String(editId);
+                });
+                if (!item) {
+                    return;
+                }
+
+                state.editingMeasurementId = item.id;
+                fillMeasurementForm(form, item);
+                clearFeedback(form, '[data-measurement-error]', '[data-measurement-message]');
+                var submit = qs('[type="submit"]', form);
+                if (submit) {
+                    submit.textContent = 'Actualizar medicion';
+                }
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            if (deleteId) {
+                window.CCApi.request('/users/me/body-measurements/' + deleteId, {
+                    method: 'DELETE',
+                }).then(function () {
+                    showMessage(form, '[data-measurement-message]', 'success', 'Medicion eliminada correctamente.');
+                    if (state.editingMeasurementId && String(state.editingMeasurementId) === String(deleteId)) {
+                        resetMeasurementForm(form);
+                    }
+                    return loadMeasurements(form);
+                }).catch(function (error) {
+                    showErrors(form, error, '[data-measurement-error', '[data-measurement-message]');
+                });
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         var profileForm = qs('[data-user-profile-form]');
         var priorityForm = qs('[data-priority-settings-form]');
+        var measurementForm = qs('[data-body-measurement-form]');
 
-        if (!profileForm || !priorityForm || !window.CCApi) {
+        if (!profileForm || !priorityForm || !measurementForm || !window.CCApi) {
             return;
         }
 
         bindProfileForm(profileForm);
         bindPriorityForm(priorityForm);
+        bindMeasurementForm(measurementForm);
 
         Promise.all([
             loadObjectivesCatalog(),
             loadProfile(profileForm),
             loadPrioritySettings(priorityForm),
+            loadMeasurements(measurementForm),
         ]).catch(function () {
             showMessage(profileForm, '[data-profile-message]', 'warning', 'No se pudo cargar toda la informacion del perfil desde la API.');
         });
