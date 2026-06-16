@@ -42,6 +42,77 @@
   .nav__links li a {
     transition: all 0.3s ease 0s;
   }
+
+  .nav__links .dropdown {
+    position: relative;
+  }
+
+  .nav__links .dropdown-menu {
+    margin-top: 0;
+    border-radius: 8px;
+    min-width: 220px;
+    z-index: 2000;
+  }
+
+  .nav__links .dropdown-menu::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+  }
+
+  .nav__links .dropdown-menu a {
+    color: #24252a;
+    padding: 8px 14px;
+  }
+
+  .nav__links .dropdown-menu a:hover,
+  .nav__links .dropdown-menu a.active {
+    color: #edf0f1;
+    background-color: rgba(4,172,133, 0.9);
+  }
+
+  .nav__links .dropdown:hover .dropdown-menu,
+  .nav__links .dropdown:focus-within .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown:hover > .dropdown-menu,
+  .dropdown:focus-within > .dropdown-menu {
+    display: block;
+  }
+
+  header > .dropdown {
+    position: relative;
+  }
+
+  header > .dropdown > .dropdown-menu {
+    margin-top: 0;
+    border-radius: 8px;
+    min-width: 180px;
+    z-index: 2000;
+  }
+
+  header > .dropdown > .dropdown-menu::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+  }
+
+  header > .dropdown > .dropdown-menu a {
+    color: #24252a;
+    padding: 8px 14px;
+  }
+
+  header > .dropdown > .dropdown-menu a:hover {
+    color: #edf0f1;
+    background-color: rgba(4,172,133, 0.9);
+  }
   
   .nav__links li a:hover {
     color: #04ac85;

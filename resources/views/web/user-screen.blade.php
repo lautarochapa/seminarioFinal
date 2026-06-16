@@ -2,12 +2,6 @@
 
 @section('title', $screen['title'].' - CC Control Web')
 
-@section('nav')
-    @foreach($screens as $key => $item)
-        <a class="nav-link-web {{ $screenKey === $key ? 'active' : '' }}" href="{{ url('/web/'.$key) }}">{{ $item['title'] }}</a>
-    @endforeach
-@endsection
-
 @section('content')
     <section class="hero">
         <div>

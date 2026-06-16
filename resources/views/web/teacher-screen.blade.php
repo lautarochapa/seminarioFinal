@@ -1,6 +1,6 @@
-@extends('layouts.admin-web')
+@extends('layouts.teacher-web')
 
-@section('title', $screen['title'].' - Admin CC Control')
+@section('title', $screen['title'].' - Docente CC Control')
 
 @section('content')
     <section class="hero">
@@ -24,13 +24,13 @@
         @endforeach
     </section>
 
-    <section class="grid">
+    <section class="panels">
         @foreach($screen['panels'] as $panel)
             <article class="panel">
                 <h2>{{ $panel }}</h2>
-                <div class="line"><span class="muted">Estado</span><strong>Listo</strong></div>
-                <div class="line"><span class="muted">Origen</span><strong>PostgreSQL</strong></div>
-                <div class="line"><span class="muted">Accion</span><strong>ABM</strong></div>
+                <div class="line"><span class="muted">Estado</span><strong>Disponible</strong></div>
+                <div class="line"><span class="muted">Origen</span><strong>Docs/demo</strong></div>
+                <div class="line"><span class="muted">Uso</span><strong>Evaluacion</strong></div>
                 <span class="chip">{{ $screen['module'] }}</span>
             </article>
         @endforeach
