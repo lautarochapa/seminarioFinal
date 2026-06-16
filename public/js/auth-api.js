@@ -3,7 +3,7 @@
 
     function formToObject(form) {
         var data = {};
-        Array.prototype.forEach.call(new FormData(form).entries(), function (entry) {
+        Array.from(new FormData(form).entries()).forEach(function (entry) {
             var key = entry[0];
             var value = entry[1];
             if (key === '_token') {
@@ -124,12 +124,6 @@
             event.preventDefault();
             window.CCApi.request('/auth/logout', { method: 'POST' }).finally(function () {
                 window.CCApi.clearSession();
-                var formSelector = link.dataset.fallbackForm;
-                var form = formSelector ? document.querySelector(formSelector) : null;
-                if (form) {
-                    form.submit();
-                    return;
-                }
                 window.location.href = '/login';
             });
         });
@@ -175,6 +169,38 @@
         });
     }
 
+    function bindDemoLogin(button) {
+        button.addEventListener('click', function () {
+            var email = document.querySelector('input[name="email"]');
+            var password = document.querySelector('input[name="password"]');
+
+            if (email) {
+                email.value = button.dataset.demoEmail || '';
+                email.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
+            if (password) {
+                password.value = button.dataset.demoPassword || '';
+                password.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+    }
+
+    function filterPermissionElements() {
+        var user = window.CCApi.getUser();
+        var permissions = user && Array.isArray(user.permissions) ? user.permissions : null;
+
+        if (!permissions) {
+            return;
+        }
+
+        Array.from(document.querySelectorAll('[data-permission]')).forEach(function (element) {
+            if (permissions.indexOf(element.dataset.permission) === -1) {
+                element.parentNode.removeChild(element);
+            }
+        });
+    }
+
     window.CCAuth = {
         loginWithGoogle: function (idToken) {
             return window.CCApi.request('/auth/google', {
@@ -209,5 +235,7 @@
         Array.prototype.forEach.call(document.querySelectorAll('form[data-api-endpoint]'), bindApiForm);
         Array.prototype.forEach.call(document.querySelectorAll('[data-api-logout]'), bindLogout);
         Array.prototype.forEach.call(document.querySelectorAll('form[data-profile-api]'), bindProfileForm);
+        Array.prototype.forEach.call(document.querySelectorAll('[data-demo-login]'), bindDemoLogin);
+        filterPermissionElements();
     });
 })(window, document);

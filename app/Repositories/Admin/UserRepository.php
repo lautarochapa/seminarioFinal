@@ -9,7 +9,7 @@ class UserRepository
 {
     public function paginate(array $filters): LengthAwarePaginator
     {
-        $query = User::withTrashed();
+        $query = User::withTrashed()->with('roles');
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -42,12 +42,12 @@ class UserRepository
 
     public function findOrFail(int $id): User
     {
-        return User::findOrFail($id);
+        return User::with('roles')->findOrFail($id);
     }
 
     public function findWithTrashedOrFail(int $id): User
     {
-        return User::withTrashed()->findOrFail($id);
+        return User::withTrashed()->with('roles')->findOrFail($id);
     }
 
     public function create(array $data): User
@@ -58,6 +58,6 @@ class UserRepository
     public function update(User $user, array $data): User
     {
         $user->update($data);
-        return $user->fresh();
+        return $user->fresh('roles');
     }
 }

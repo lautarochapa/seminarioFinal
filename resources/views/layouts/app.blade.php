@@ -12,8 +12,8 @@
     <!-- Scripts -->
     <script src="{{ asset('js/loader.js') }}" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/api-client.js') }}" defer></script>
-    <script src="{{ asset('js/auth-api.js') }}" defer></script>
+    <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
+    <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <!--<script src="{{ asset('js/navbar.js') }}" defer></script>-->
 
     <!-- Fonts -->
@@ -107,9 +107,17 @@ body {
                 <div id="mobile__menu" class="overlay">
                     <a class="close">&times;</a>
                     <div class="overlay__content">
-                        <a href="{{ url('/web') }}">Usuario</a>
-                        <a href="{{ url('/admin-web') }}">Admin</a>
-                        <a href="{{ url('/teacher-web') }}">Docente</a>
+                        @auth
+                            @if(Auth::user()->hasPermission('web.user.dashboard'))
+                                <a href="{{ url('/web') }}">Usuario</a>
+                            @endif
+                            @if(Auth::user()->hasPermission('web.admin.dashboard'))
+                                <a href="{{ url('/admin-web') }}">Admin</a>
+                            @endif
+                            @if(Auth::user()->hasPermission('web.teacher.home'))
+                                <a href="{{ url('/teacher-web') }}">Docente</a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
 

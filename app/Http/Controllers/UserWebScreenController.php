@@ -24,6 +24,10 @@ class UserWebScreenController extends Controller
             abort(404);
         }
 
+        if (! $this->canAccessScreen($screen)) {
+            return response('Sin permiso para acceder a esta pantalla.', 403);
+        }
+
         return view('web.user-screen', [
             'screenKey' => $screen,
             'screen' => $screens[$screen],
@@ -148,5 +152,13 @@ class UserWebScreenController extends Controller
                 'panels' => ['Profesionales autorizados', 'Permisos activos', 'Historial', 'Solicitudes'],
             ],
         ];
+    }
+
+    private function canAccessScreen($screen)
+    {
+        $user = request()->user();
+        $permission = 'web.user.' . $screen;
+
+        return $user && $user->hasPermission($permission);
     }
 }

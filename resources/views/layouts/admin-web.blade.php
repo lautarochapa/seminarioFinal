@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin CC Control')</title>
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/api-client.js') }}" defer></script>
-    <script src="{{ asset('js/auth-api.js') }}" defer></script>
+    <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
+    <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
+    <script src="{{ asset('js/admin-rbac.js') }}?v={{ filemtime(public_path('js/admin-rbac.js')) }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -38,8 +39,20 @@
         .line:last-child { border-bottom:0; }
         .muted { color:var(--muted); }
         .chip { display:inline-flex; background:var(--soft); color:var(--accent); border-radius:999px; padding:5px 9px; font-size:12px; font-weight:900; margin-top:10px; }
+        .chips { display:flex; flex-wrap:wrap; gap:6px; min-width:190px; }
+        .chips .chip { margin:0; gap:6px; align-items:center; }
+        .chips .chip button { border:0; background:transparent; color:inherit; font-weight:900; padding:0 0 0 4px; line-height:1; }
+        .chip.danger { background:#f7e7e7; color:var(--danger); }
+        .admin-table { width:100%; border-collapse:collapse; font-size:14px; }
+        .admin-table th, .admin-table td { border-bottom:1px solid #edf1f4; padding:10px 8px; vertical-align:top; }
+        .admin-table th { color:var(--muted); font-size:12px; text-transform:uppercase; }
+        .admin-tools { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+        .admin-tools .form-control { max-width:260px; }
+        .rbac-layout { display:grid; grid-template-columns:minmax(0,2fr) minmax(300px,1fr); gap:14px; }
+        .rbac-form .form-control { margin-bottom:9px; }
+        .btn-sm { padding:6px 11px; font-size:12px; }
         @media (max-width: 1100px) { .grid, .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-        @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics { grid-template-columns:1fr; } }
+        @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics,.rbac-layout { grid-template-columns:1fr; } }
     </style>
 </head>
 <body>

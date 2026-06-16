@@ -102,6 +102,48 @@
                     </div>
                 </div>
             </form>
+
+            <div class="row" style="margin-top:28px;">
+                <div class="col-md-12">
+                    <div style="background:#fff;border:1px solid #dde6df;border-radius:8px;padding:16px;">
+                        <h2 style="font-size:20px;font-weight:900;margin:0 0 10px;">Usuarios demo</h2>
+                        <p class="text-muted" style="margin-bottom:12px;">Contraseña para todos: <strong>12345678</strong></p>
+                        <div style="overflow:auto;">
+                            <table class="table table-sm" style="margin-bottom:0;">
+                                <thead>
+                                    <tr>
+                                        <th>Rol</th>
+                                        <th>Email</th>
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach([
+                                        ['Usuario comun', 'usuario@cccontrol.test'],
+                                        ['Dietologo / profesional', 'dietologo@cccontrol.test'],
+                                        ['Admin catalogo', 'catalogo@cccontrol.test'],
+                                        ['Admin supermercados', 'supermercados@cccontrol.test'],
+                                        ['Admin recetas / chef', 'recetas@cccontrol.test'],
+                                        ['Docente', 'docente@cccontrol.test'],
+                                        ['Super admin', 'superadmin@cccontrol.test'],
+                                        ['Sistema / Jobs', 'sistema@cccontrol.test'],
+                                    ] as $demo)
+                                        <tr>
+                                            <td>{{ $demo[0] }}</td>
+                                            <td><code>{{ $demo[1] }}</code></td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-link" style="color:rgba(4,172,133, 1);" data-demo-login data-demo-email="{{ $demo[1] }}" data-demo-password="12345678">
+                                                    Usar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

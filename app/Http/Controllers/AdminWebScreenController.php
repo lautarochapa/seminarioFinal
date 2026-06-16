@@ -41,6 +41,10 @@ class AdminWebScreenController extends Controller
             abort(404);
         }
 
+        if (! $this->canAccessScreen($screen)) {
+            return response('Sin permiso para acceder a esta pantalla.', 403);
+        }
+
         return view('web.admin-screen', [
             'screenKey' => $screen,
             'screen' => $screens[$screen],
@@ -119,5 +123,13 @@ class AdminWebScreenController extends Controller
             'thesis-docs' => ['title' => 'Documentacion tesis', 'module' => 'Docs', 'description' => 'Editor documentacion.', 'primary' => 'Nuevo documento', 'secondary' => 'Versionar', 'metrics' => ['thesis_documents'], 'panels' => ['Documentos', 'Secciones', 'Versiones', 'Comentarios']],
             'demo-scenarios' => ['title' => 'Escenarios demo', 'module' => 'Docs/demo', 'description' => 'ABM demos para docente.', 'primary' => 'Nuevo escenario', 'secondary' => 'Probar ruta', 'metrics' => ['demo_scenarios'], 'panels' => ['Escenarios', 'Usuario demo', 'Rutas', 'Estado']],
         ];
+    }
+
+    private function canAccessScreen($screen)
+    {
+        $user = request()->user();
+        $permission = 'web.admin.' . $screen;
+
+        return $user && $user->hasPermission($permission);
     }
 }

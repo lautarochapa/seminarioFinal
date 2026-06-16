@@ -63,14 +63,16 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/app', 'AppScreenController@dashboard')->name('app.dashboard');
 Route::get('/app/{screen}', 'AppScreenController@index')->name('app.screen');
 
-Route::get('/web', 'UserWebScreenController@dashboard')->name('web.dashboard');
-Route::get('/web/{screen}', 'UserWebScreenController@index')->name('web.screen');
+Route::middleware('auth')->group(function () {
+    Route::get('/web', 'UserWebScreenController@dashboard')->name('web.dashboard');
+    Route::get('/web/{screen}', 'UserWebScreenController@index')->name('web.screen');
 
-Route::get('/admin-web', 'AdminWebScreenController@dashboard')->name('admin.web.dashboard');
-Route::get('/admin-web/{screen}', 'AdminWebScreenController@index')->name('admin.web.screen');
+    Route::get('/admin-web', 'AdminWebScreenController@dashboard')->name('admin.web.dashboard');
+    Route::get('/admin-web/{screen}', 'AdminWebScreenController@index')->name('admin.web.screen');
 
-Route::get('/teacher-web', 'TeacherWebScreenController@home')->name('teacher.web.home');
-Route::get('/teacher-web/{screen}', 'TeacherWebScreenController@index')->name('teacher.web.screen');
+    Route::get('/teacher-web', 'TeacherWebScreenController@home')->name('teacher.web.home');
+    Route::get('/teacher-web/{screen}', 'TeacherWebScreenController@index')->name('teacher.web.screen');
+});
 
 
 
@@ -150,4 +152,4 @@ Route::get('/vue/{vue_capture?}', function () {
    })->where('vue_capture', '[\/\w\.-]*');
 
 
-Route::prefix('api/v1')->group(base_path('routes/api_contract.php'));
+Route::group([], base_path('routes/api_contract.php'));
