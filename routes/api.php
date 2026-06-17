@@ -355,6 +355,10 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('recipes/search', [\App\Http\Controllers\Api\V1\RecipeSearch\RecipeSearchController::class, '__invoke']);
     Route::get('recipes/suggestions', [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'suggestions']);
 
+    Route::post('recipes/{id}/share', [\App\Http\Controllers\Api\V1\RecipeSharingBranch\RecipeSharingBranchController::class, 'share']);
+    Route::post('recipes/{id}/unshare', [\App\Http\Controllers\Api\V1\RecipeSharingBranch\RecipeSharingBranchController::class, 'unshare']);
+    Route::post('recipes/{id}/branch', [\App\Http\Controllers\Api\V1\RecipeSharingBranch\RecipeSharingBranchController::class, 'branch']);
+
     Route::post('recipes/{id}/favorite', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'addFavorite']);
     Route::delete('recipes/{id}/favorite', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'removeFavorite']);
     Route::post('recipes/{id}/cook', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'cook']);
