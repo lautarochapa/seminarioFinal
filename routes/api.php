@@ -585,6 +585,19 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('admin/reports/scraping-errors', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'report'])
         ->middleware('permission:scraping.manage');
 
+    Route::get('admin/reports/users-active',            [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'usersActive'])
+        ->middleware('permission:audit.read');
+    Route::get('admin/reports/products-pending-review', [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'productsPendingReview'])
+        ->middleware('permission:scraped_products.review');
+    Route::get('admin/reports/recipes-pending-review',  [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'recipesPendingReview'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/reports/price-variations',        [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'priceVariations'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/reports/most-used-recipes',       [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'mostUsedRecipes'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/reports/supermarket-price-status',[\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'supermarketPriceStatus'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/price-refresh-requests', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'adminIndex'])
         ->middleware('permission:scraping.manage');
     Route::post('admin/price-refresh-requests/{id}/process', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'process'])
