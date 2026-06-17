@@ -585,6 +585,27 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('admin/reports/scraping-errors', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'report'])
         ->middleware('permission:scraping.manage');
 
+    Route::get('admin/thesis-documents',                                       [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/thesis-documents',                                      [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/thesis-documents/{id}/versions',                         [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'indexVersions'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/thesis-documents/{id}/versions',                        [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'storeVersion'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/thesis-documents/{id}/sections',                        [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'storeSection'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/thesis-documents/{id}/sections/{sectionId}',           [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'updateSection'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/thesis-documents/{id}/sections/{sectionId}',          [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'destroySection'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/thesis-documents/{id}',                                  [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/thesis-documents/{id}',                                [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/thesis-documents/{id}',                               [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/reports/users-active',            [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'usersActive'])
         ->middleware('permission:audit.read');
     Route::get('admin/reports/products-pending-review', [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'productsPendingReview'])
