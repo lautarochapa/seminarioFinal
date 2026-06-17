@@ -183,6 +183,16 @@ class Handler extends ExceptionHandler
             );
         }
 
+        if ($exception instanceof \App\Exceptions\MealPlanIncompatibilities\MealPlanIncompatibilityException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
         if ($exception instanceof MealPlanItemException) {
             return $this->errorJson(
                 $exception->getErrorCode(),

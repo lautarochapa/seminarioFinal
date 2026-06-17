@@ -588,6 +588,12 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
 });
 
+// Meal Plan Incompatibilities
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans/{planId}/incompatibilities',       [\App\Http\Controllers\Api\V1\MealPlanIncompatibilities\MealPlanIncompatibilityController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/check-incompatibilities', [\App\Http\Controllers\Api\V1\MealPlanIncompatibilities\MealPlanIncompatibilityController::class, 'check']);
+});
+
 // Meal Plan Portions
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions',                  [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'index']);
