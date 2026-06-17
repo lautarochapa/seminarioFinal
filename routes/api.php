@@ -475,6 +475,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('users/me/supplements',       [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'store']);
     Route::patch('users/me/supplements/{id}', [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'update']);
     Route::delete('users/me/supplements/{id}',[\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'destroy']);
+    Route::get('users/me/supplements/{id}/schedule',                           [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'index']);
+    Route::post('users/me/supplements/{id}/schedule',                          [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'store']);
+    Route::patch('users/me/supplements/{id}/schedule/{scheduleId}',            [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'update']);
+    Route::delete('users/me/supplements/{id}/schedule/{scheduleId}',           [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'destroy']);
+    Route::post('users/me/supplements/{id}/log',                               [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'storeLog']);
 
     Route::get('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'index']);
     Route::post('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'store']);
