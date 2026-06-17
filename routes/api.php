@@ -585,6 +585,22 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('admin/reports/scraping-errors', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'report'])
         ->middleware('permission:scraping.manage');
 
+    Route::get('admin/demo-scenarios',        [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'adminIndex'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/demo-scenarios',       [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/demo-scenarios/{id}',   [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'adminShow'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/demo-scenarios/{id}', [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/demo-scenarios/{id}',[\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('demo-scenarios',      [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'publicIndex'])
+        ->middleware('permission:demo_scenarios.read');
+    Route::get('demo-scenarios/{id}', [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'publicShow'])
+        ->middleware('permission:demo_scenarios.read');
+
     Route::get('admin/thesis-documents',                                       [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/thesis-documents',                                      [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'store'])
