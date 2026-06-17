@@ -12,6 +12,7 @@ use App\Exceptions\RecipeIngredients\RecipeIngredientException;
 use App\Exceptions\RecipeAvailability\RecipeAvailabilityException;
 use App\Exceptions\RecipeFavoritesCooked\RecipeFavoritesCookedException;
 use App\Exceptions\RecipeSharingBranch\RecipeSharingBranchException;
+use App\Exceptions\RecipeImportUrl\RecipeImportUrlException;
 use App\Exceptions\RecipeSubstitutions\RecipeSubstitutionsException;
 use App\Exceptions\RecipeCost\RecipeCostException;
 use App\Exceptions\RecipeNutrition\RecipeNutritionException;
@@ -157,6 +158,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof RecipeIngredientException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeImportUrlException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
