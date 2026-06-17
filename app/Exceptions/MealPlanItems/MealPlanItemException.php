@@ -56,4 +56,19 @@ class MealPlanItemException extends RuntimeException
     {
         return new self('MEAL_PLAN_ITEM_DUPLICATE', 'Ya existe un item para esa fecha y tipo de comida en este plan.', 409);
     }
+
+    public static function alreadyFinalized(): self
+    {
+        return new self('MEAL_PLAN_ITEM_ALREADY_FINALIZED', 'El item ya fue finalizado.', 409);
+    }
+
+    public static function recipeRequired(): self
+    {
+        return new self('MEAL_PLAN_ITEM_RECIPE_REQUIRED', 'El item debe tener una receta para marcarse como cocinado.', 422);
+    }
+
+    public static function insufficientStock(): self
+    {
+        return new self('MEAL_PLAN_ITEM_INSUFFICIENT_STOCK', 'No hay stock suficiente para cocinar la receta.', 409);
+    }
 }

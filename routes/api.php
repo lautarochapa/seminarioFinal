@@ -605,6 +605,8 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('family-groups/{id}/meal-plans/{planId}/items',              [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'index']);
     Route::post('family-groups/{id}/meal-plans/{planId}/items',             [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'store']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/mark-cooked', [\App\Http\Controllers\Api\V1\MealPlanItemStatus\MealPlanItemStatusController::class, 'markCooked']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/skip',        [\App\Http\Controllers\Api\V1\MealPlanItemStatus\MealPlanItemStatusController::class, 'skip']);
     Route::patch('family-groups/{id}/meal-plans/{planId}/items/{itemId}',   [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'update']);
     Route::delete('family-groups/{id}/meal-plans/{planId}/items/{itemId}',  [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'destroy']);
 });
