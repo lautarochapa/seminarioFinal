@@ -587,3 +587,12 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('admin/scraping/jobs', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'store'])
         ->middleware('permission:catalog.manage');
 });
+
+// Meal Plans
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans',              [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans',             [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'store']);
+    Route::get('family-groups/{id}/meal-plans/{planId}',     [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'show']);
+    Route::patch('family-groups/{id}/meal-plans/{planId}',   [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'update']);
+    Route::delete('family-groups/{id}/meal-plans/{planId}',  [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'destroy']);
+});
