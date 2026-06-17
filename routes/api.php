@@ -618,6 +618,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('family-groups/{id}/meal-plans/{planId}/regenerate', [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'regenerate']);
     Route::get('family-groups/{id}/meal-plans/{planId}/shopping-list-preview', [\App\Http\Controllers\Api\V1\ShoppingListPreview\ShoppingListPreviewController::class, 'preview']);
     Route::post('family-groups/{id}/meal-plans/{planId}/generate-shopping-list', [\App\Http\Controllers\Api\V1\ShoppingListPreview\ShoppingListPreviewController::class, 'generate']);
+    Route::get('family-groups/{id}/shopping-lists', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'index']);
+    Route::post('family-groups/{id}/shopping-lists', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'store']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'show']);
+    Route::patch('family-groups/{id}/shopping-lists/{listId}', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'update']);
+    Route::delete('family-groups/{id}/shopping-lists/{listId}', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'destroy']);
 });
 
 // Meal Plans — CRUD
