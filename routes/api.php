@@ -639,6 +639,15 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('family-groups/{id}/shopping-sessions/{sessionId}/finish', [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'finish']);
 });
 
+// Budgets
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/budgets/current',         [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'current']);
+    Route::get('family-groups/{id}/budgets',                 [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'index']);
+    Route::post('family-groups/{id}/budgets',                [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'store']);
+    Route::patch('family-groups/{id}/budgets/{budgetId}',    [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'update']);
+    Route::delete('family-groups/{id}/budgets/{budgetId}',   [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'destroy']);
+});
+
 // Purchases
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('family-groups/{id}/purchases',                                          [\App\Http\Controllers\Api\V1\Purchases\PurchaseController::class, 'index']);

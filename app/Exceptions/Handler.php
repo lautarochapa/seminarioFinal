@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Exceptions\Auth\AuthException;
+use App\Exceptions\Budgets\BudgetException;
 use App\Exceptions\Purchases\PurchaseException;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Exceptions\HealthPreferences\HealthPreferenceException;
@@ -375,6 +376,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof NutrientException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof BudgetException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
