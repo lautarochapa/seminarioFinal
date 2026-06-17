@@ -307,6 +307,21 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryCatalogController::class, 'index']);
 
+    Route::get('meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeCatalogController::class, 'index']);
+
+    Route::get('admin/meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/meal-types/{id}/restore', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'store'])
