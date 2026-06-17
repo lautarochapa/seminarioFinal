@@ -337,6 +337,15 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('recipes/{id}/missing-ingredients', [\App\Http\Controllers\Api\V1\RecipeAvailability\RecipeAvailabilityController::class, 'missingIngredients']);
 
     Route::get('recipes/{id}/cost', [\App\Http\Controllers\Api\V1\RecipeCost\RecipeCostController::class, 'show']);
+    Route::post('admin/recipes/scraping/jobs', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'store'])
+        ->middleware('permission:recipes.manage');
+    Route::get('admin/recipes/scraping/jobs', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'index'])
+        ->middleware('permission:recipes.manage');
+    Route::get('admin/recipes/scraping/jobs/{id}', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'show'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/scraping/jobs/{id}/retry', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'retry'])
+        ->middleware('permission:recipes.manage');
+
     Route::post('admin/recipes/import/text', [\App\Http\Controllers\Api\V1\RecipeImportText\RecipeImportTextController::class, '__invoke'])
         ->middleware('permission:recipes.manage');
 
