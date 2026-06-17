@@ -640,6 +640,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('admin/price-refresh-requests/{id}/process', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'process'])
         ->middleware('permission:scraping.manage');
 
+    Route::get('admin/settings', [\App\Http\Controllers\Api\V1\SystemSettings\SystemSettingController::class, 'index'])
+        ->middleware('permission:settings.manage');
+    Route::patch('admin/settings/{key}', [\App\Http\Controllers\Api\V1\SystemSettings\SystemSettingController::class, 'update'])
+        ->middleware('permission:settings.manage');
+
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'store'])
