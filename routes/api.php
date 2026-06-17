@@ -698,6 +698,10 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:thesis_documents.read');
     Route::get('thesis-documents/{id}',         [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'show'])
         ->middleware('permission:thesis_documents.read');
+    Route::get('thesis-documents/{id}/comments',  [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisCommentController::class, 'index'])
+        ->middleware('permission:thesis_documents.read');
+    Route::post('thesis-documents/{id}/comments', [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisCommentController::class, 'store'])
+        ->middleware('permission:thesis_comments.write');
 });
 
 // Budgets
