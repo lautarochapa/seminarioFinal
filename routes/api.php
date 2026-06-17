@@ -490,6 +490,9 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::delete('users/me/supplements/{id}/schedule/{scheduleId}',           [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'destroy']);
     Route::post('users/me/supplements/{id}/log',                               [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'storeLog']);
 
+    Route::get('users/me/reports/body-progress',       [\App\Http\Controllers\Api\V1\PersonalReports\PersonalReportController::class, 'bodyProgress']);
+    Route::get('users/me/reports/objectives-progress', [\App\Http\Controllers\Api\V1\PersonalReports\PersonalReportController::class, 'objectivesProgress']);
+
     Route::get('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'index']);
     Route::post('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'store']);
     Route::delete('users/me/{healthPreferenceType}/{id}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'destroy']);
