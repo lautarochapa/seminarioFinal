@@ -622,6 +622,8 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('family-groups/{id}/shopping-lists', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'store']);
     Route::post('family-groups/{id}/shopping-lists/generate-from-meal-plan', [\App\Http\Controllers\Api\V1\ShoppingListGeneration\ShoppingListGenerationController::class, 'fromMealPlan']);
     Route::post('family-groups/{id}/shopping-lists/generate-from-history', [\App\Http\Controllers\Api\V1\ShoppingListGeneration\ShoppingListGenerationController::class, 'fromHistory']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}/compare-supermarkets', [\App\Http\Controllers\Api\V1\SupermarketComparison\SupermarketComparisonController::class, 'compare']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}/optimize', [\App\Http\Controllers\Api\V1\SupermarketComparison\SupermarketComparisonController::class, 'optimize']);
     Route::get('family-groups/{id}/shopping-lists/{listId}/alternatives', [\App\Http\Controllers\Api\V1\ShoppingAlternatives\ShoppingAlternativeController::class, 'index']);
     Route::get('family-groups/{id}/shopping-lists/{listId}/items', [\App\Http\Controllers\Api\V1\ShoppingListItems\ShoppingListItemController::class, 'index']);
     Route::post('family-groups/{id}/shopping-lists/{listId}/items', [\App\Http\Controllers\Api\V1\ShoppingListItems\ShoppingListItemController::class, 'store']);
