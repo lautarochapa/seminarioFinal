@@ -641,6 +641,8 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
 // Budgets
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/budgets/{budgetId}/alerts',                     [\App\Http\Controllers\Api\V1\Budgets\BudgetAlertController::class, 'index']);
+    Route::patch('family-groups/{id}/budgets/{budgetId}/alerts/{alertId}/read',    [\App\Http\Controllers\Api\V1\Budgets\BudgetAlertController::class, 'markAsRead']);
     Route::get('family-groups/{id}/budgets/{budgetId}/movements',   [\App\Http\Controllers\Api\V1\Budgets\BudgetMovementController::class, 'index']);
     Route::post('family-groups/{id}/budgets/{budgetId}/adjustments', [\App\Http\Controllers\Api\V1\Budgets\BudgetMovementController::class, 'storeAdjustment']);
     Route::get('family-groups/{id}/budgets/{budgetId}/summary',    [\App\Http\Controllers\Api\V1\Budgets\BudgetSummaryController::class, 'summary']);
