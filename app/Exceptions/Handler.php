@@ -14,6 +14,7 @@ use App\Exceptions\RecipeFavoritesCooked\RecipeFavoritesCookedException;
 use App\Exceptions\RecipeSharingBranch\RecipeSharingBranchException;
 use App\Exceptions\MealPlanGeneration\MealPlanGenerationException;
 use App\Exceptions\MealPlanItems\MealPlanItemException;
+use App\Exceptions\MealPlanPortions\MealPlanPortionException;
 use App\Exceptions\MealPlans\MealPlanException;
 use App\Exceptions\MealTypes\MealTypeException;
 use App\Exceptions\RecipeImportCandidates\RecipeImportCandidatesException;
@@ -163,6 +164,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof RecipeIngredientException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof MealPlanPortionException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),

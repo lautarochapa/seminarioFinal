@@ -588,6 +588,13 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
 });
 
+// Meal Plan Portions
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions',                  [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions',                 [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'store']);
+    Route::patch('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions/{portionId}',    [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'update']);
+});
+
 // Meal Plan Items
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('family-groups/{id}/meal-plans/{planId}/items',              [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'index']);
