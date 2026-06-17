@@ -641,6 +641,8 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
 // Budgets
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/budgets/{budgetId}/summary',    [\App\Http\Controllers\Api\V1\Budgets\BudgetSummaryController::class, 'summary']);
+    Route::get('family-groups/{id}/budgets/{budgetId}/projection', [\App\Http\Controllers\Api\V1\Budgets\BudgetSummaryController::class, 'projection']);
     Route::get('family-groups/{id}/budgets/current',         [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'current']);
     Route::get('family-groups/{id}/budgets',                 [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'index']);
     Route::post('family-groups/{id}/budgets',                [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'store']);
