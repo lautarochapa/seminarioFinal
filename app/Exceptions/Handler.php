@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Exceptions\Auth\AuthException;
 use App\Exceptions\Budgets\BudgetException;
+use App\Exceptions\Notifications\NotificationException;
 use App\Exceptions\UserSupplements\UserSupplementException;
 use App\Exceptions\Purchases\PurchaseException;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
@@ -387,6 +388,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof BudgetException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof NotificationException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
