@@ -658,6 +658,18 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::post('family-groups/{id}/shopping-sessions/{sessionId}/finish', [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'finish']);
 });
 
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/reports/stock',             [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'stock']);
+    Route::get('family-groups/{id}/reports/stock-value',       [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'stockValue']);
+    Route::get('family-groups/{id}/reports/expiring-products', [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'expiringProducts']);
+    Route::get('family-groups/{id}/reports/waste',             [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'waste']);
+    Route::get('family-groups/{id}/reports/purchases',         [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'purchases']);
+    Route::get('family-groups/{id}/reports/budget',            [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'budget']);
+    Route::get('family-groups/{id}/reports/budget-vs-actual',  [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'budgetVsActual']);
+    Route::get('family-groups/{id}/reports/recipes-cooked',    [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'recipesCooked']);
+    Route::get('family-groups/{id}/reports/nutrition-estimate',[\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'nutritionEstimate']);
+});
+
 // Budgets
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('family-groups/{id}/budgets/{budgetId}/alerts',                     [\App\Http\Controllers\Api\V1\Budgets\BudgetAlertController::class, 'index']);
