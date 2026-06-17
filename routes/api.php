@@ -684,6 +684,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('family-groups/{id}/reports/budget-vs-actual',  [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'budgetVsActual']);
     Route::get('family-groups/{id}/reports/recipes-cooked',    [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'recipesCooked']);
     Route::get('family-groups/{id}/reports/nutrition-estimate',[\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'nutritionEstimate']);
+    Route::post('family-groups/{id}/reports/export',           [\App\Http\Controllers\Api\V1\ReportExports\ReportExportController::class, 'store']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('report-exports/{id}', [\App\Http\Controllers\Api\V1\ReportExports\ReportExportController::class, 'show']);
 });
 
 // Budgets
