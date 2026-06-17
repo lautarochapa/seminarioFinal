@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Ai\AiSuggestionProviderInterface;
+use App\Services\Ai\FakeAiSuggestionProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(AiSuggestionProviderInterface::class, FakeAiSuggestionProvider::class);
     }
 
     /**

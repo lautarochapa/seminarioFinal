@@ -32,6 +32,17 @@ class FeatureFlagService
         });
     }
 
+    public function findOrFail($key)
+    {
+        $flag = $this->flags->findByKey($key);
+
+        if (!$flag) {
+            throw new IngredientException('FEATURE_FLAG_NOT_FOUND', 'El feature flag solicitado no existe.', 404);
+        }
+
+        return $flag;
+    }
+
     public function update($actorId, $key, array $data, $ip, $userAgent)
     {
         $flag = $this->flags->findByKey($key);

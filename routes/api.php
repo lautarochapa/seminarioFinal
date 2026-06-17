@@ -644,9 +644,13 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:settings.manage');
     Route::patch('admin/settings/{key}', [\App\Http\Controllers\Api\V1\SystemSettings\SystemSettingController::class, 'update'])
         ->middleware('permission:settings.manage');
+    Route::get('admin/feature-flags/ai_enabled', [\App\Http\Controllers\Api\V1\AiFoundation\AiFoundationController::class, 'flag'])
+        ->middleware('permission:feature_flags.manage');
     Route::get('admin/feature-flags', [\App\Http\Controllers\Api\V1\FeatureFlags\FeatureFlagController::class, 'index'])
         ->middleware('permission:feature_flags.manage');
     Route::patch('admin/feature-flags/{key}', [\App\Http\Controllers\Api\V1\FeatureFlags\FeatureFlagController::class, 'update'])
+        ->middleware('permission:feature_flags.manage');
+    Route::post('admin/ai/test-suggestion', [\App\Http\Controllers\Api\V1\AiFoundation\AiFoundationController::class, 'testSuggestion'])
         ->middleware('permission:feature_flags.manage');
 
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
