@@ -571,6 +571,65 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'professional-permissions')
+        <section class="workspace" data-professional-links>
+            <div style="display:grid;gap:14px">
+                <article class="panel">
+                    <h2>Vincular profesional</h2>
+                    <div class="alert" data-professional-links-message style="display:none"></div>
+
+                    <form class="profile-form" data-professional-links-form>
+                        <label for="professional-user-id">ID del profesional</label>
+                        <input id="professional-user-id" class="form-control" name="professional_user_id" type="number" min="1" placeholder="Ej: 2" required>
+
+                        <label>Permisos otorgados</label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-card"><input type="checkbox" name="can_view_profile" value="1"><span>Ver perfil</span></label>
+                            <label class="checkbox-card"><input type="checkbox" name="can_view_stock" value="1"><span>Ver stock</span></label>
+                            <label class="checkbox-card"><input type="checkbox" name="can_view_meal_plans" value="1"><span>Ver planificacion</span></label>
+                            <label class="checkbox-card"><input type="checkbox" name="can_edit_meal_plans" value="1"><span>Editar planificacion</span></label>
+                            <label class="checkbox-card"><input type="checkbox" name="can_view_reports" value="1"><span>Ver reportes</span></label>
+                        </div>
+
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+                            <button type="submit" class="btn-main">Guardar acceso</button>
+                            <button type="button" class="btn-secondary-web" data-professional-links-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </article>
+
+                <article class="panel">
+                    <h2>Profesionales autorizados</h2>
+                    <div class="table-line"><span class="muted">Vinculos activos</span><strong data-professional-links-count>0</strong></div>
+                    <div style="overflow:auto;margin-top:12px">
+                        <table class="web-table">
+                            <thead>
+                                <tr>
+                                    <th>Profesional</th>
+                                    <th>Permisos</th>
+                                    <th>Estado</th>
+                                    <th>Otorgado</th>
+                                    <th>Revocado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-professional-links-body>
+                                <tr><td colspan="6" class="muted">Cargando profesionales vinculados...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel">
+                <h2>Sesion API</h2>
+                <div class="table-line"><span class="muted">Vinculos</span><strong>GET /professional-links</strong></div>
+                <div class="table-line"><span class="muted">Alta</span><strong>POST /professional-links</strong></div>
+                <div class="table-line"><span class="muted">Cambios</span><strong>PATCH /professional-links/{id}</strong></div>
+                <div class="table-line"><span class="muted">Revocacion</span><strong>DELETE /professional-links/{id}</strong></div>
+                <p class="muted" style="margin-top:14px">Desde esta pantalla el usuario otorga acceso profesional a un dietologo, define que puede ver o editar y puede revocar el permiso cuando quiera.</p>
+            </aside>
+        </section>
     @else
     <section class="workspace">
         <div class="panel-grid">

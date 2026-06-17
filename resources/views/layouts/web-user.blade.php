@@ -10,6 +10,7 @@
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-profile.js') }}?v={{ file_exists(public_path('js/user-profile.js')) ? filemtime(public_path('js/user-profile.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/professional-links.js') }}?v={{ file_exists(public_path('js/professional-links.js')) ? filemtime(public_path('js/professional-links.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

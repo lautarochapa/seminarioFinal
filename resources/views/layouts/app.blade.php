@@ -14,6 +14,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
+    <script src="{{ asset('js/professional-panel.js') }}?v={{ file_exists(public_path('js/professional-panel.js')) ? filemtime(public_path('js/professional-panel.js')) : time() }}" defer></script>
     <!--<script src="{{ asset('js/navbar.js') }}" defer></script>-->
 
     <!-- Fonts -->
@@ -38,6 +39,13 @@ body {
    /* background: url('{{asset('images/background/1.jpg')}}') no-repeat 0 50%;*/
     background-color: #cccccc70;
    }
+   .legacy-panel { background:#fff; border:1px solid #dde6df; border-radius:8px; padding:16px; margin-bottom:14px; }
+   .legacy-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+   .legacy-table { width:100%; border-collapse:collapse; font-size:14px; }
+   .legacy-table th, .legacy-table td { border-bottom:1px solid #edf2ee; padding:10px 8px; vertical-align:top; }
+   .legacy-table th { color:#66746b; font-size:12px; text-transform:uppercase; }
+   .legacy-actions { display:flex; gap:8px; flex-wrap:wrap; }
+   @media (max-width:960px) { .legacy-grid { grid-template-columns:1fr; } }
 </style>
 
 
