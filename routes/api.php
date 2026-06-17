@@ -326,6 +326,22 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
     Route::post('admin/recipes', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'store'])
         ->middleware('permission:catalog.manage');
+
+    Route::get('admin/recipes/import-candidates', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'index'])
+        ->middleware('permission:recipes.manage');
+    Route::patch('admin/recipes/import-candidates/{id}', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'update'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/approve', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'approve'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/reject', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'reject'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/map-ingredient', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'mapIngredient'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/create-recipe', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'createRecipe'])
+        ->middleware('permission:recipes.manage');
+    Route::get('admin/recipes/import-candidates/{id}', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'show'])
+        ->middleware('permission:recipes.manage');
+
     Route::get('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'show'])
         ->middleware('permission:catalog.manage');
     Route::patch('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'update'])
