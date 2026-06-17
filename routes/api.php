@@ -691,6 +691,15 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('report-exports/{id}', [\App\Http\Controllers\Api\V1\ReportExports\ReportExportController::class, 'show']);
 });
 
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('thesis-documents',              [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'index'])
+        ->middleware('permission:thesis_documents.read');
+    Route::get('thesis-documents/{id}/sections',[\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'sections'])
+        ->middleware('permission:thesis_documents.read');
+    Route::get('thesis-documents/{id}',         [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'show'])
+        ->middleware('permission:thesis_documents.read');
+});
+
 // Budgets
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('family-groups/{id}/budgets/{budgetId}/alerts',                     [\App\Http\Controllers\Api\V1\Budgets\BudgetAlertController::class, 'index']);
