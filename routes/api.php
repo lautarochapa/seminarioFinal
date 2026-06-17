@@ -471,6 +471,11 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('catalog/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\CatalogHealthPreferenceController::class, 'index']);
 
+    Route::get('users/me/supplements',        [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'index']);
+    Route::post('users/me/supplements',       [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'store']);
+    Route::patch('users/me/supplements/{id}', [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'update']);
+    Route::delete('users/me/supplements/{id}',[\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'destroy']);
+
     Route::get('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'index']);
     Route::post('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'store']);
     Route::delete('users/me/{healthPreferenceType}/{id}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'destroy']);
