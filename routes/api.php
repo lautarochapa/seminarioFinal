@@ -644,6 +644,10 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:settings.manage');
     Route::patch('admin/settings/{key}', [\App\Http\Controllers\Api\V1\SystemSettings\SystemSettingController::class, 'update'])
         ->middleware('permission:settings.manage');
+    Route::get('admin/feature-flags', [\App\Http\Controllers\Api\V1\FeatureFlags\FeatureFlagController::class, 'index'])
+        ->middleware('permission:feature_flags.manage');
+    Route::patch('admin/feature-flags/{key}', [\App\Http\Controllers\Api\V1\FeatureFlags\FeatureFlagController::class, 'update'])
+        ->middleware('permission:feature_flags.manage');
 
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
         ->middleware('permission:catalog.manage');
