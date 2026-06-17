@@ -588,6 +588,14 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
 });
 
+// Meal Plan Items
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans/{planId}/items',              [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items',             [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'store']);
+    Route::patch('family-groups/{id}/meal-plans/{planId}/items/{itemId}',   [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'update']);
+    Route::delete('family-groups/{id}/meal-plans/{planId}/items/{itemId}',  [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'destroy']);
+});
+
 // Meal Plans — generation routes before {planId} to avoid first-match collision on POST
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::post('family-groups/{id}/meal-plans/generate',            [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'generate']);
