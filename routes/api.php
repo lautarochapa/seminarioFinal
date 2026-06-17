@@ -21,6 +21,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(base_path('routes/api_contract.php'));
 
 Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('notifications/unread-count',      [\App\Http\Controllers\Api\V1\Notifications\NotificationController::class, 'unreadCount']);
+    Route::patch('notifications/read-all',        [\App\Http\Controllers\Api\V1\Notifications\NotificationController::class, 'readAll']);
+    Route::get('notifications',                   [\App\Http\Controllers\Api\V1\Notifications\NotificationController::class, 'index']);
+    Route::patch('notifications/{id}/read',       [\App\Http\Controllers\Api\V1\Notifications\NotificationController::class, 'markAsRead']);
+    Route::get('users/me/notification-preferences',   [\App\Http\Controllers\Api\V1\Notifications\NotificationController::class, 'getPreferences']);
+    Route::patch('users/me/notification-preferences', [\App\Http\Controllers\Api\V1\Notifications\NotificationController::class, 'updatePreferences']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
     Route::get('auth/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'show']);
     Route::patch('auth/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'update']);
     Route::get('users/me/consents', [\App\Http\Controllers\Api\V1\Consents\UserConsentController::class, 'show']);
@@ -307,6 +316,21 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
 
     Route::get('recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryCatalogController::class, 'index']);
 
+    Route::get('meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeCatalogController::class, 'index']);
+
+    Route::get('admin/meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/meal-types/{id}/restore', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'restore'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'index'])
         ->middleware('permission:catalog.manage');
     Route::post('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'store'])
@@ -326,12 +350,83 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
     Route::post('admin/recipes', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'store'])
         ->middleware('permission:catalog.manage');
+
+    Route::get('admin/recipes/import-candidates', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'index'])
+        ->middleware('permission:recipes.manage');
+    Route::patch('admin/recipes/import-candidates/{id}', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'update'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/approve', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'approve'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/reject', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'reject'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/map-ingredient', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'mapIngredient'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/import-candidates/{id}/create-recipe', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'createRecipe'])
+        ->middleware('permission:recipes.manage');
+    Route::get('admin/recipes/import-candidates/{id}', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'show'])
+        ->middleware('permission:recipes.manage');
+
     Route::get('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'show'])
         ->middleware('permission:catalog.manage');
     Route::patch('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'update'])
         ->middleware('permission:catalog.manage');
     Route::delete('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'destroy'])
         ->middleware('permission:catalog.manage');
+
+    Route::get('recipes/{id}/availability', [\App\Http\Controllers\Api\V1\RecipeAvailability\RecipeAvailabilityController::class, 'availability']);
+    Route::get('recipes/{id}/missing-ingredients', [\App\Http\Controllers\Api\V1\RecipeAvailability\RecipeAvailabilityController::class, 'missingIngredients']);
+
+    Route::get('recipes/{id}/cost', [\App\Http\Controllers\Api\V1\RecipeCost\RecipeCostController::class, 'show']);
+    Route::post('admin/recipes/scraping/jobs', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'store'])
+        ->middleware('permission:recipes.manage');
+    Route::get('admin/recipes/scraping/jobs', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'index'])
+        ->middleware('permission:recipes.manage');
+    Route::get('admin/recipes/scraping/jobs/{id}', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'show'])
+        ->middleware('permission:recipes.manage');
+    Route::post('admin/recipes/scraping/jobs/{id}/retry', [\App\Http\Controllers\Api\V1\RecipeScraping\RecipeScrapingJobController::class, 'retry'])
+        ->middleware('permission:recipes.manage');
+
+    Route::post('admin/recipes/import/text', [\App\Http\Controllers\Api\V1\RecipeImportText\RecipeImportTextController::class, '__invoke'])
+        ->middleware('permission:recipes.manage');
+
+    Route::post('admin/recipes/import/url', [\App\Http\Controllers\Api\V1\RecipeImportUrl\RecipeImportUrlController::class, '__invoke'])
+        ->middleware('permission:recipes.manage');
+
+    Route::post('admin/recipes/{id}/recalculate-cost', [\App\Http\Controllers\Api\V1\RecipeCost\RecipeCostController::class, 'recalculate'])
+        ->middleware('permission:recipes.manage');
+
+    Route::get('recipes/{id}/nutrition', [\App\Http\Controllers\Api\V1\RecipeNutrition\RecipeNutritionController::class, 'show']);
+    Route::post('admin/recipes/{id}/recalculate-nutrition', [\App\Http\Controllers\Api\V1\RecipeNutrition\RecipeNutritionController::class, 'recalculate'])
+        ->middleware('permission:recipes.manage');
+
+    Route::post('recipes/{id}/steps', [\App\Http\Controllers\Api\V1\RecipeSteps\RecipeStepController::class, 'store']);
+    Route::patch('recipes/{id}/steps/{stepId}', [\App\Http\Controllers\Api\V1\RecipeSteps\RecipeStepController::class, 'update']);
+    Route::delete('recipes/{id}/steps/{stepId}', [\App\Http\Controllers\Api\V1\RecipeSteps\RecipeStepController::class, 'destroy']);
+
+    Route::post('recipes/{id}/ingredients', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'store']);
+    Route::patch('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'update']);
+    Route::delete('recipes/{id}/ingredients/{ingredientId}', [\App\Http\Controllers\Api\V1\RecipeIngredients\RecipeIngredientController::class, 'destroy']);
+
+    Route::get('recipes/search', [\App\Http\Controllers\Api\V1\RecipeSearch\RecipeSearchController::class, '__invoke']);
+    Route::get('recipes/suggestions', [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'suggestions']);
+
+    Route::get('recipes/{id}/substitutions', [\App\Http\Controllers\Api\V1\RecipeSubstitutions\RecipeSubstitutionsController::class, '__invoke']);
+
+    Route::post('recipes/{id}/share', [\App\Http\Controllers\Api\V1\RecipeSharingBranch\RecipeSharingBranchController::class, 'share']);
+    Route::post('recipes/{id}/unshare', [\App\Http\Controllers\Api\V1\RecipeSharingBranch\RecipeSharingBranchController::class, 'unshare']);
+    Route::post('recipes/{id}/branch', [\App\Http\Controllers\Api\V1\RecipeSharingBranch\RecipeSharingBranchController::class, 'branch']);
+
+    Route::post('recipes/{id}/favorite', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'addFavorite']);
+    Route::delete('recipes/{id}/favorite', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'removeFavorite']);
+    Route::post('recipes/{id}/cook', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'cook']);
+    Route::get('users/me/favorite-recipes', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'listFavorites']);
+    Route::get('users/me/cooked-recipes', [\App\Http\Controllers\Api\V1\RecipeFavoritesCooked\RecipeFavoritesCookedController::class, 'listCooked']);
+
+    Route::get('family-groups/{id}/recipes/available',        [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'available']);
+    Route::get('family-groups/{id}/recipes/almost-available', [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'almostAvailable']);
+    Route::get('family-groups/{id}/recipes/by-expiring-stock',[\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'byExpiringStock']);
+    Route::get('family-groups/{id}/recipes/by-budget',        [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'byBudget']);
+    Route::get('family-groups/{id}/recipes/by-objectives',    [\App\Http\Controllers\Api\V1\RecipeSuggestions\RecipeSuggestionsController::class, 'byObjectives']);
 
     Route::get('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'index']);
     Route::post('recipes', [\App\Http\Controllers\Api\V1\Recipes\RecipeController::class, 'store']);
@@ -384,6 +479,19 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
 
     Route::get('catalog/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\CatalogHealthPreferenceController::class, 'index']);
+
+    Route::get('users/me/supplements',        [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'index']);
+    Route::post('users/me/supplements',       [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'store']);
+    Route::patch('users/me/supplements/{id}', [\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'update']);
+    Route::delete('users/me/supplements/{id}',[\App\Http\Controllers\Api\V1\UserSupplements\UserSupplementController::class, 'destroy']);
+    Route::get('users/me/supplements/{id}/schedule',                           [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'index']);
+    Route::post('users/me/supplements/{id}/schedule',                          [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'store']);
+    Route::patch('users/me/supplements/{id}/schedule/{scheduleId}',            [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'update']);
+    Route::delete('users/me/supplements/{id}/schedule/{scheduleId}',           [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'destroy']);
+    Route::post('users/me/supplements/{id}/log',                               [\App\Http\Controllers\Api\V1\UserSupplements\SupplementScheduleController::class, 'storeLog']);
+
+    Route::get('users/me/reports/body-progress',       [\App\Http\Controllers\Api\V1\PersonalReports\PersonalReportController::class, 'bodyProgress']);
+    Route::get('users/me/reports/objectives-progress', [\App\Http\Controllers\Api\V1\PersonalReports\PersonalReportController::class, 'objectivesProgress']);
 
     Route::get('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'index']);
     Route::post('users/me/{healthPreferenceType}', [\App\Http\Controllers\Api\V1\HealthPreferences\UserHealthPreferenceController::class, 'store']);
@@ -477,10 +585,73 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
     Route::get('admin/reports/scraping-errors', [\App\Http\Controllers\Api\V1\ScrapingAlerts\ScrapingAlertController::class, 'report'])
         ->middleware('permission:scraping.manage');
 
+    Route::get('admin/demo-scenarios',        [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'adminIndex'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/demo-scenarios',       [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/demo-scenarios/{id}',   [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'adminShow'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/demo-scenarios/{id}', [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/demo-scenarios/{id}',[\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('demo-scenarios',      [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'publicIndex'])
+        ->middleware('permission:demo_scenarios.read');
+    Route::get('demo-scenarios/{id}', [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'publicShow'])
+        ->middleware('permission:demo_scenarios.read');
+
+    Route::get('admin/thesis-documents',                                       [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'index'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/thesis-documents',                                      [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'store'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/thesis-documents/{id}/versions',                         [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'indexVersions'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/thesis-documents/{id}/versions',                        [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'storeVersion'])
+        ->middleware('permission:catalog.manage');
+    Route::post('admin/thesis-documents/{id}/sections',                        [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'storeSection'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/thesis-documents/{id}/sections/{sectionId}',           [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'updateSection'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/thesis-documents/{id}/sections/{sectionId}',          [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'destroySection'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/thesis-documents/{id}',                                  [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'show'])
+        ->middleware('permission:catalog.manage');
+    Route::patch('admin/thesis-documents/{id}',                                [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'update'])
+        ->middleware('permission:catalog.manage');
+    Route::delete('admin/thesis-documents/{id}',                               [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'destroy'])
+        ->middleware('permission:catalog.manage');
+
+    Route::get('admin/reports/users-active',            [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'usersActive'])
+        ->middleware('permission:audit.read');
+    Route::get('admin/reports/products-pending-review', [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'productsPendingReview'])
+        ->middleware('permission:scraped_products.review');
+    Route::get('admin/reports/recipes-pending-review',  [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'recipesPendingReview'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/reports/price-variations',        [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'priceVariations'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/reports/most-used-recipes',       [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'mostUsedRecipes'])
+        ->middleware('permission:catalog.manage');
+    Route::get('admin/reports/supermarket-price-status',[\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'supermarketPriceStatus'])
+        ->middleware('permission:catalog.manage');
+
     Route::get('admin/price-refresh-requests', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'adminIndex'])
         ->middleware('permission:scraping.manage');
     Route::post('admin/price-refresh-requests/{id}/process', [\App\Http\Controllers\Api\V1\PriceRefreshRequests\PriceRefreshRequestController::class, 'process'])
         ->middleware('permission:scraping.manage');
+
+    Route::get('admin/settings', [\App\Http\Controllers\Api\V1\SystemSettings\SystemSettingController::class, 'index'])
+        ->middleware('permission:settings.manage');
+    Route::patch('admin/settings/{key}', [\App\Http\Controllers\Api\V1\SystemSettings\SystemSettingController::class, 'update'])
+        ->middleware('permission:settings.manage');
+    Route::get('admin/feature-flags/ai_enabled', [\App\Http\Controllers\Api\V1\AiFoundation\AiFoundationController::class, 'flag'])
+        ->middleware('permission:feature_flags.manage');
+    Route::get('admin/feature-flags', [\App\Http\Controllers\Api\V1\FeatureFlags\FeatureFlagController::class, 'index'])
+        ->middleware('permission:feature_flags.manage');
+    Route::patch('admin/feature-flags/{key}', [\App\Http\Controllers\Api\V1\FeatureFlags\FeatureFlagController::class, 'update'])
+        ->middleware('permission:feature_flags.manage');
+    Route::post('admin/ai/test-suggestion', [\App\Http\Controllers\Api\V1\AiFoundation\AiFoundationController::class, 'testSuggestion'])
+        ->middleware('permission:feature_flags.manage');
 
     Route::get('admin/scraping/sources', [\App\Http\Controllers\Api\V1\Scraping\ScrapingSourceController::class, 'index'])
         ->middleware('permission:catalog.manage');
@@ -500,4 +671,128 @@ Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group
         ->middleware('permission:catalog.manage');
     Route::post('admin/scraping/jobs', [\App\Http\Controllers\Api\V1\Scraping\ScrapingJobController::class, 'store'])
         ->middleware('permission:catalog.manage');
+});
+
+// Meal Plan Incompatibilities
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans/{planId}/incompatibilities',       [\App\Http\Controllers\Api\V1\MealPlanIncompatibilities\MealPlanIncompatibilityController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/check-incompatibilities', [\App\Http\Controllers\Api\V1\MealPlanIncompatibilities\MealPlanIncompatibilityController::class, 'check']);
+});
+
+// Meal Plan Portions
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions',                  [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions',                 [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'store']);
+    Route::patch('family-groups/{id}/meal-plans/{planId}/items/{itemId}/portions/{portionId}',    [\App\Http\Controllers\Api\V1\MealPlanPortions\MealPlanPortionController::class, 'update']);
+});
+
+// Meal Plan Items
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans/{planId}/items',              [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items',             [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'store']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/mark-cooked', [\App\Http\Controllers\Api\V1\MealPlanItemStatus\MealPlanItemStatusController::class, 'markCooked']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/skip',        [\App\Http\Controllers\Api\V1\MealPlanItemStatus\MealPlanItemStatusController::class, 'skip']);
+    Route::patch('family-groups/{id}/meal-plans/{planId}/items/{itemId}',   [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'update']);
+    Route::delete('family-groups/{id}/meal-plans/{planId}/items/{itemId}',  [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'destroy']);
+});
+
+// Meal Plans — generation routes before {planId} to avoid first-match collision on POST
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::post('family-groups/{id}/meal-plans/generate',            [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'generate']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/approve',    [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'approve']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/regenerate', [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'regenerate']);
+    Route::get('family-groups/{id}/meal-plans/{planId}/shopping-list-preview', [\App\Http\Controllers\Api\V1\ShoppingListPreview\ShoppingListPreviewController::class, 'preview']);
+    Route::post('family-groups/{id}/meal-plans/{planId}/generate-shopping-list', [\App\Http\Controllers\Api\V1\ShoppingListPreview\ShoppingListPreviewController::class, 'generate']);
+    Route::get('family-groups/{id}/shopping-lists', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'index']);
+    Route::post('family-groups/{id}/shopping-lists', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'store']);
+    Route::post('family-groups/{id}/shopping-lists/generate-from-meal-plan', [\App\Http\Controllers\Api\V1\ShoppingListGeneration\ShoppingListGenerationController::class, 'fromMealPlan']);
+    Route::post('family-groups/{id}/shopping-lists/generate-from-history', [\App\Http\Controllers\Api\V1\ShoppingListGeneration\ShoppingListGenerationController::class, 'fromHistory']);
+    Route::post('family-groups/{id}/shopping-lists/{listId}/start-session', [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'start']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}/compare-supermarkets', [\App\Http\Controllers\Api\V1\SupermarketComparison\SupermarketComparisonController::class, 'compare']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}/optimize', [\App\Http\Controllers\Api\V1\SupermarketComparison\SupermarketComparisonController::class, 'optimize']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}/alternatives', [\App\Http\Controllers\Api\V1\ShoppingAlternatives\ShoppingAlternativeController::class, 'index']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}/items', [\App\Http\Controllers\Api\V1\ShoppingListItems\ShoppingListItemController::class, 'index']);
+    Route::post('family-groups/{id}/shopping-lists/{listId}/items', [\App\Http\Controllers\Api\V1\ShoppingListItems\ShoppingListItemController::class, 'store']);
+    Route::post('family-groups/{id}/shopping-lists/{listId}/items/{itemId}/select-alternative', [\App\Http\Controllers\Api\V1\ShoppingAlternatives\ShoppingAlternativeController::class, 'select']);
+    Route::patch('family-groups/{id}/shopping-lists/{listId}/items/{itemId}', [\App\Http\Controllers\Api\V1\ShoppingListItems\ShoppingListItemController::class, 'update']);
+    Route::delete('family-groups/{id}/shopping-lists/{listId}/items/{itemId}', [\App\Http\Controllers\Api\V1\ShoppingListItems\ShoppingListItemController::class, 'destroy']);
+    Route::get('family-groups/{id}/shopping-lists/{listId}', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'show']);
+    Route::patch('family-groups/{id}/shopping-lists/{listId}', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'update']);
+    Route::delete('family-groups/{id}/shopping-lists/{listId}', [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'destroy']);
+    Route::patch('family-groups/{id}/shopping-sessions/{sessionId}', [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'update']);
+    Route::post('family-groups/{id}/shopping-sessions/{sessionId}/scan', [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'scan']);
+    Route::post('family-groups/{id}/shopping-sessions/{sessionId}/finish', [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'finish']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/reports/stock',             [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'stock']);
+    Route::get('family-groups/{id}/reports/stock-value',       [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'stockValue']);
+    Route::get('family-groups/{id}/reports/expiring-products', [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'expiringProducts']);
+    Route::get('family-groups/{id}/reports/waste',             [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'waste']);
+    Route::get('family-groups/{id}/reports/purchases',         [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'purchases']);
+    Route::get('family-groups/{id}/reports/budget',            [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'budget']);
+    Route::get('family-groups/{id}/reports/budget-vs-actual',  [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'budgetVsActual']);
+    Route::get('family-groups/{id}/reports/recipes-cooked',    [\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'recipesCooked']);
+    Route::get('family-groups/{id}/reports/nutrition-estimate',[\App\Http\Controllers\Api\V1\GroupReports\GroupReportController::class, 'nutritionEstimate']);
+    Route::post('family-groups/{id}/reports/export',           [\App\Http\Controllers\Api\V1\ReportExports\ReportExportController::class, 'store']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('report-exports/{id}', [\App\Http\Controllers\Api\V1\ReportExports\ReportExportController::class, 'show']);
+});
+
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('thesis-documents',              [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'index'])
+        ->middleware('permission:thesis_documents.read');
+    Route::get('thesis-documents/{id}/sections',[\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'sections'])
+        ->middleware('permission:thesis_documents.read');
+    Route::get('thesis-documents/{id}',         [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'show'])
+        ->middleware('permission:thesis_documents.read');
+    Route::get('thesis-documents/{id}/comments',  [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisCommentController::class, 'index'])
+        ->middleware('permission:thesis_documents.read');
+    Route::post('thesis-documents/{id}/comments', [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisCommentController::class, 'store'])
+        ->middleware('permission:thesis_comments.write');
+});
+
+// Budgets
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/budgets/{budgetId}/alerts',                     [\App\Http\Controllers\Api\V1\Budgets\BudgetAlertController::class, 'index']);
+    Route::patch('family-groups/{id}/budgets/{budgetId}/alerts/{alertId}/read',    [\App\Http\Controllers\Api\V1\Budgets\BudgetAlertController::class, 'markAsRead']);
+    Route::get('family-groups/{id}/budgets/{budgetId}/movements',   [\App\Http\Controllers\Api\V1\Budgets\BudgetMovementController::class, 'index']);
+    Route::post('family-groups/{id}/budgets/{budgetId}/adjustments', [\App\Http\Controllers\Api\V1\Budgets\BudgetMovementController::class, 'storeAdjustment']);
+    Route::get('family-groups/{id}/budgets/{budgetId}/summary',    [\App\Http\Controllers\Api\V1\Budgets\BudgetSummaryController::class, 'summary']);
+    Route::get('family-groups/{id}/budgets/{budgetId}/projection', [\App\Http\Controllers\Api\V1\Budgets\BudgetSummaryController::class, 'projection']);
+    Route::get('family-groups/{id}/budgets/{budgetId}/categories',             [\App\Http\Controllers\Api\V1\Budgets\BudgetCategoryController::class, 'index']);
+    Route::post('family-groups/{id}/budgets/{budgetId}/categories',            [\App\Http\Controllers\Api\V1\Budgets\BudgetCategoryController::class, 'store']);
+    Route::patch('family-groups/{id}/budgets/{budgetId}/categories/{categoryId}',  [\App\Http\Controllers\Api\V1\Budgets\BudgetCategoryController::class, 'update']);
+    Route::delete('family-groups/{id}/budgets/{budgetId}/categories/{categoryId}', [\App\Http\Controllers\Api\V1\Budgets\BudgetCategoryController::class, 'destroy']);
+    Route::get('family-groups/{id}/budgets/current',         [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'current']);
+    Route::get('family-groups/{id}/budgets',                 [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'index']);
+    Route::post('family-groups/{id}/budgets',                [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'store']);
+    Route::patch('family-groups/{id}/budgets/{budgetId}',    [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'update']);
+    Route::delete('family-groups/{id}/budgets/{budgetId}',   [\App\Http\Controllers\Api\V1\Budgets\BudgetController::class, 'destroy']);
+});
+
+// Purchases
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/purchases',                                          [\App\Http\Controllers\Api\V1\Purchases\PurchaseController::class, 'index']);
+    Route::post('family-groups/{id}/purchases',                                         [\App\Http\Controllers\Api\V1\Purchases\PurchaseController::class, 'store']);
+    Route::post('family-groups/{id}/purchases/{purchaseId}/confirm',                    [\App\Http\Controllers\Api\V1\Purchases\PurchaseConfirmationController::class, 'confirm']);
+    Route::post('family-groups/{id}/purchases/{purchaseId}/add-to-stock',               [\App\Http\Controllers\Api\V1\Purchases\PurchaseConfirmationController::class, 'addToStock']);
+    Route::get('family-groups/{id}/purchases/{purchaseId}/items',                       [\App\Http\Controllers\Api\V1\Purchases\PurchaseItemController::class, 'index']);
+    Route::post('family-groups/{id}/purchases/{purchaseId}/items',                      [\App\Http\Controllers\Api\V1\Purchases\PurchaseItemController::class, 'store']);
+    Route::patch('family-groups/{id}/purchases/{purchaseId}/items/{itemId}',            [\App\Http\Controllers\Api\V1\Purchases\PurchaseItemController::class, 'update']);
+    Route::delete('family-groups/{id}/purchases/{purchaseId}/items/{itemId}',           [\App\Http\Controllers\Api\V1\Purchases\PurchaseItemController::class, 'destroy']);
+    Route::get('family-groups/{id}/purchases/{purchaseId}',                             [\App\Http\Controllers\Api\V1\Purchases\PurchaseController::class, 'show']);
+    Route::patch('family-groups/{id}/purchases/{purchaseId}',                           [\App\Http\Controllers\Api\V1\Purchases\PurchaseController::class, 'update']);
+    Route::delete('family-groups/{id}/purchases/{purchaseId}',                          [\App\Http\Controllers\Api\V1\Purchases\PurchaseController::class, 'destroy']);
+});
+
+// Meal Plans — CRUD
+Route::prefix('v1')->middleware(['web', 'trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('family-groups/{id}/meal-plans',              [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'index']);
+    Route::post('family-groups/{id}/meal-plans',             [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'store']);
+    Route::get('family-groups/{id}/meal-plans/{planId}',     [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'show']);
+    Route::patch('family-groups/{id}/meal-plans/{planId}',   [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'update']);
+    Route::delete('family-groups/{id}/meal-plans/{planId}',  [\App\Http\Controllers\Api\V1\MealPlans\MealPlanController::class, 'destroy']);
 });

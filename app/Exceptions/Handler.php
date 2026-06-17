@@ -3,11 +3,31 @@
 namespace App\Exceptions;
 
 use App\Exceptions\Auth\AuthException;
+use App\Exceptions\Budgets\BudgetException;
+use App\Exceptions\Notifications\NotificationException;
+use App\Exceptions\ReportExports\ReportExportException;
+use App\Exceptions\UserSupplements\UserSupplementException;
+use App\Exceptions\Purchases\PurchaseException;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Exceptions\HealthPreferences\HealthPreferenceException;
 use App\Exceptions\IngredientCategories\IngredientCategoryException;
 use App\Exceptions\RecipeCategories\RecipeCategoryException;
 use App\Exceptions\RecipeTags\RecipeTagException;
+use App\Exceptions\RecipeIngredients\RecipeIngredientException;
+use App\Exceptions\RecipeAvailability\RecipeAvailabilityException;
+use App\Exceptions\RecipeFavoritesCooked\RecipeFavoritesCookedException;
+use App\Exceptions\RecipeSharingBranch\RecipeSharingBranchException;
+use App\Exceptions\MealPlanGeneration\MealPlanGenerationException;
+use App\Exceptions\MealPlanItems\MealPlanItemException;
+use App\Exceptions\MealPlanPortions\MealPlanPortionException;
+use App\Exceptions\MealPlans\MealPlanException;
+use App\Exceptions\MealTypes\MealTypeException;
+use App\Exceptions\RecipeImportCandidates\RecipeImportCandidatesException;
+use App\Exceptions\RecipeImportUrl\RecipeImportUrlException;
+use App\Exceptions\RecipeSubstitutions\RecipeSubstitutionsException;
+use App\Exceptions\RecipeCost\RecipeCostException;
+use App\Exceptions\RecipeNutrition\RecipeNutritionException;
+use App\Exceptions\RecipeSteps\RecipeStepException;
 use App\Exceptions\Recipes\RecipeException;
 use App\Exceptions\Ingredients\IngredientException;
 use App\Exceptions\Objectives\ObjectivesException;
@@ -148,6 +168,166 @@ class Handler extends ExceptionHandler
             );
         }
 
+        if ($exception instanceof RecipeIngredientException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof MealPlanPortionException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof \App\Exceptions\MealPlanIncompatibilities\MealPlanIncompatibilityException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof MealPlanItemException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof MealPlanGenerationException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof MealPlanException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof MealTypeException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeImportCandidatesException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeImportUrlException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeSubstitutionsException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeSharingBranchException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeFavoritesCookedException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeAvailabilityException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeCostException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeNutritionException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof RecipeStepException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
         if ($exception instanceof IngredientException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
@@ -199,6 +379,56 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof NutrientException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof BudgetException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof ReportExportException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof NotificationException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof UserSupplementException) {
+            return $this->errorJson(
+                $exception->getErrorCode(),
+                $exception->getMessage(),
+                $exception->getHttpStatus(),
+                $traceId,
+                $exception->getDetails()
+            );
+        }
+
+        if ($exception instanceof PurchaseException) {
             return $this->errorJson(
                 $exception->getErrorCode(),
                 $exception->getMessage(),
