@@ -19,6 +19,7 @@
     <script src="{{ asset('js/admin-food-tags.js') }}?v={{ file_exists(public_path('js/admin-food-tags.js')) ? filemtime(public_path('js/admin-food-tags.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-brands.js') }}?v={{ file_exists(public_path('js/admin-brands.js')) ? filemtime(public_path('js/admin-brands.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-product-categories.js') }}?v={{ file_exists(public_path('js/admin-product-categories.js')) ? filemtime(public_path('js/admin-product-categories.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-products.js') }}?v={{ file_exists(public_path('js/admin-products.js')) ? filemtime(public_path('js/admin-products.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

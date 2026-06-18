@@ -784,6 +784,116 @@
                 <div data-product-categories-tree class="muted">Cargando arbol de categorias...</div>
             </article>
         </section>
+    @elseif($screenKey === 'products')
+        <section data-admin-products>
+            <div class="alert" data-products-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-products-search placeholder="Buscar arroz, barcode o marca">
+                        <select class="form-control" data-products-brand>
+                            <option value="">Marca</option>
+                        </select>
+                        <select class="form-control" data-products-category>
+                            <option value="">Categoria</option>
+                        </select>
+                        <select class="form-control" data-products-ingredient>
+                            <option value="">Ingrediente</option>
+                        </select>
+                        <select class="form-control" data-products-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-products-refresh>Actualizar</button>
+                        <span class="chip" data-products-count>0 productos</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Categoria</th>
+                                    <th>Ingrediente</th>
+                                    <th>Barcode</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-products-body>
+                                <tr><td colspan="7" class="muted">Cargando productos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-products-prev>Anterior</button>
+                        <span class="muted" data-products-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-products-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-product-form-title>Nuevo producto</h2>
+                    <form class="rbac-form" data-product-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Arroz Gallo Oro 1 kg" required>
+                        <select class="form-control" name="brand_id" data-product-brand-select>
+                            <option value="">Marca</option>
+                        </select>
+                        <select class="form-control" name="category_id" data-product-category-select>
+                            <option value="">Categoria</option>
+                        </select>
+                        <select class="form-control" name="ingredient_id" data-product-ingredient-select>
+                            <option value="">Ingrediente principal</option>
+                        </select>
+                        <input class="form-control" name="barcode" type="text" placeholder="Codigo de barras">
+                        <input class="form-control" name="net_quantity" type="number" min="0" step="0.0001" placeholder="Cantidad neta">
+                        <select class="form-control" name="default_unit_id" data-product-unit-select>
+                            <option value="">Unidad</option>
+                        </select>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar producto</button>
+                            <button type="button" class="btn-ghost" data-product-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar producto</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-product-restore-id placeholder="ID eliminado">
+                        <button type="button" class="btn-ghost" data-product-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel">
+                    <h2>Detalle publico</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-product-detail-id placeholder="ID producto">
+                        <button type="button" class="btn-ghost" data-product-detail-refresh>Ver detalle</button>
+                    </div>
+                    <div data-product-detail class="muted">Selecciona un producto.</div>
+                </article>
+                <article class="panel">
+                    <h2>Nutricion</h2>
+                    <div data-product-nutrition class="muted">Sin producto seleccionado.</div>
+                </article>
+                <article class="panel">
+                    <h2>Precios</h2>
+                    <div data-product-prices class="muted">Sin producto seleccionado.</div>
+                </article>
+                <article class="panel">
+                    <h2>Alternativas</h2>
+                    <div data-product-alternatives class="muted">Sin producto seleccionado.</div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'equivalences')
         <section data-admin-ingredient-equivalences>
             <div class="alert" data-equivalences-message style="display:none"></div>
