@@ -1511,6 +1511,115 @@
                 </article>
             </div>
         </section>
+    @elseif($screenKey === 'supermarket-products')
+        <section data-admin-supermarket-products>
+            <div class="alert" data-supermarket-products-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-sp-search placeholder="Buscar SKU o referencia">
+                        <select class="form-control" data-sp-filter-product>
+                            <option value="">Producto</option>
+                        </select>
+                        <select class="form-control" data-sp-filter-chain>
+                            <option value="">Cadena</option>
+                        </select>
+                        <select class="form-control" data-sp-filter-branch>
+                            <option value="">Sucursal</option>
+                        </select>
+                        <select class="form-control" data-sp-filter-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-sp-refresh>Actualizar</button>
+                        <span class="chip" data-sp-count>0 mapeos</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Supermercado</th>
+                                    <th>SKU / fuente</th>
+                                    <th>Precio actual</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-sp-body>
+                                <tr><td colspan="6" class="muted">Cargando mapeos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-sp-prev>Anterior</button>
+                        <span class="muted" data-sp-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-sp-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-sp-form-title>Nuevo mapeo</h2>
+                    <form class="rbac-form" data-sp-form>
+                        <input type="hidden" name="id">
+                        <select class="form-control" name="product_id" data-sp-product-select required>
+                            <option value="">Producto interno</option>
+                        </select>
+                        <select class="form-control" name="supermarket_chain_id" data-sp-chain-select required>
+                            <option value="">Cadena</option>
+                        </select>
+                        <select class="form-control" name="supermarket_branch_id" data-sp-branch-select required>
+                            <option value="">Sucursal</option>
+                        </select>
+                        <input class="form-control" name="external_sku" type="text" placeholder="SKU externo">
+                        <input class="form-control" name="source_url" type="url" placeholder="URL externa">
+                        <input class="form-control" name="source_name" type="text" placeholder="Referencia scrapeada">
+                        <input class="form-control" name="last_scraped_at" type="datetime-local">
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-sp-submit>Guardar mapeo</button>
+                            <button type="button" class="btn-ghost" data-sp-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel">
+                    <h2>Productos por sucursal</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-sp-branch-products-chain>
+                            <option value="">Cadena</option>
+                        </select>
+                        <select class="form-control" data-sp-branch-products-branch>
+                            <option value="">Sucursal</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-sp-load-branch-products>Ver productos</button>
+                    </div>
+                    <div data-sp-branch-products class="muted">Selecciona una sucursal.</div>
+                </article>
+                <article class="panel">
+                    <h2>Comparacion de precios</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-sp-price-product>
+                            <option value="">Producto</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-sp-load-prices>Comparar</button>
+                    </div>
+                    <div data-sp-prices class="muted">Selecciona un producto.</div>
+                </article>
+                <article class="panel">
+                    <h2>Mejor precio</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-sp-best-product>
+                            <option value="">Producto</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-sp-load-best>Buscar mejor precio</button>
+                    </div>
+                    <div data-sp-best-price class="muted">Selecciona un producto.</div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'cities')
         <section data-admin-cities>
             <div class="alert" data-cities-message style="display:none"></div>

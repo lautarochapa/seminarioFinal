@@ -303,7 +303,37 @@
             '<div style="display:flex;gap:6px;flex-wrap:wrap">' + delivChip + pickChip + '</div>' +
             hoursHtml +
             routeLink +
+            '<h3 style="font-size:13px;font-weight:900;margin:16px 0 6px">Productos disponibles</h3>' +
+            '<div data-branch-products-list><p class="muted" style="font-size:13px">Cargando productos...</p></div>' +
             '</div>';
+        loadBranchProducts(root, b.id);
+    }
+
+    function loadBranchProducts(root, branchId) {
+        var target = qs('[data-branch-products-list]', root);
+        if (!target) { return; }
+
+        window.CCApi.request(endpoint('/supermarket-branches/' + encodeURIComponent(branchId) + '/products?per_page=12'))
+            .then(function (r) {
+                var rows = r.data || [];
+                if (!rows.length) {
+                    target.innerHTML = '<p class="muted" style="font-size:13px">Esta sucursal no tiene productos mapeados.</p>';
+                    return;
+                }
+                target.innerHTML = rows.map(function (row) {
+                    var product = row.product || {};
+                    var price = row.current_price
+                        ? escapeHtml(row.current_price.currency || 'ARS') + ' ' + escapeHtml(row.current_price.price)
+                        : 'Sin precio';
+                    return '<div class="table-line">' +
+                        '<span>' + escapeHtml(product.name || ('Producto #' + row.product_id)) + '</span>' +
+                        '<strong>' + price + '</strong>' +
+                        '</div>';
+                }).join('');
+            })
+            .catch(function () {
+                target.innerHTML = '<p class="muted" style="font-size:13px">No se pudieron cargar los productos.</p>';
+            });
     }
 
     // ── Bind ───────────────────────────────────────────────────────────────────

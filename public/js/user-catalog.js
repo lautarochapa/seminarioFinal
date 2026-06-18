@@ -75,6 +75,73 @@
         '</div>';
     }
 
+    function priceLabel(row) {
+        if (!row || !row.current_price) {
+            return 'Sin precio';
+        }
+        return escapeHtml(row.current_price.currency || 'ARS') + ' ' + escapeHtml(row.current_price.price);
+    }
+
+    function supermarketLabel(row) {
+        var branch = row && row.branch ? row.branch : null;
+        if (!branch) {
+            return '-';
+        }
+        var chain = branch.chain && branch.chain.name ? branch.chain.name + ' - ' : '';
+        return chain + branch.name;
+    }
+
+    function loadProductPrices(root, productId) {
+        var pricesTarget = qs('[data-catalog-product-prices]', root);
+        var bestTarget = qs('[data-catalog-product-best-price]', root);
+        if (pricesTarget) {
+            pricesTarget.innerHTML = '<p class="muted" style="font-size:13px">Cargando precios...</p>';
+        }
+        if (bestTarget) {
+            bestTarget.innerHTML = '<p class="muted" style="font-size:13px">Buscando mejor precio...</p>';
+        }
+
+        window.CCApi.request(endpoint('/products/' + encodeURIComponent(productId) + '/supermarket-prices'))
+            .then(function (response) {
+                var rows = response.data || [];
+                if (!pricesTarget) {
+                    return;
+                }
+                if (!rows.length) {
+                    pricesTarget.innerHTML = '<p class="muted" style="font-size:13px">Sin precios disponibles.</p>';
+                    return;
+                }
+                pricesTarget.innerHTML = rows.map(function (row) {
+                    return '<div class="table-line">' +
+                        '<span class="muted">' + escapeHtml(supermarketLabel(row)) + '</span>' +
+                        '<strong>' + priceLabel(row) + '</strong>' +
+                        '</div>';
+                }).join('');
+            })
+            .catch(function () {
+                if (pricesTarget) {
+                    pricesTarget.innerHTML = '<p class="muted" style="font-size:13px">No se pudo cargar la comparación.</p>';
+                }
+            });
+
+        window.CCApi.request(endpoint('/products/' + encodeURIComponent(productId) + '/best-price'))
+            .then(function (response) {
+                var row = response.data;
+                if (!bestTarget) {
+                    return;
+                }
+                bestTarget.innerHTML =
+                    '<div class="table-line"><span class="muted">Precio</span><strong>' + priceLabel(row) + '</strong></div>' +
+                    '<div class="table-line"><span class="muted">Sucursal</span><strong>' + escapeHtml(supermarketLabel(row)) + '</strong></div>' +
+                    (row.source_url ? '<a href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noopener noreferrer" class="btn-secondary-web btn-sm">Abrir publicación</a>' : '');
+            })
+            .catch(function () {
+                if (bestTarget) {
+                    bestTarget.innerHTML = '<p class="muted" style="font-size:13px">Sin mejor precio disponible.</p>';
+                }
+            });
+    }
+
     function qs(selector, root) { return (root || document).querySelector(selector); }
 
     function text(v) { return (v === null || v === undefined || v === '') ? '-' : String(v); }
@@ -251,10 +318,16 @@
                     '<div class="table-line"><span class="muted">Código</span><strong style="font-family:monospace;font-size:12px">' + escapeHtml(p.barcode) + '</strong></div>' +
                     '<div class="table-line"><span class="muted">Cantidad</span><strong>'  + escapeHtml(p.net_quantity) + ' ' + escapeHtml(p.unit && p.unit.symbol) + '</strong></div>' +
                     '<div class="table-line"><span class="muted">Descripción</span><span style="font-size:13px">' + escapeHtml(p.description) + '</span></div>' +
+                    '<h3 style="font-size:13px;font-weight:900;margin:16px 0 6px">Mejor precio</h3>' +
+                    '<div data-catalog-product-best-price><p class="muted" style="font-size:13px">Buscando mejor precio...</p></div>' +
+                    '<h3 style="font-size:13px;font-weight:900;margin:16px 0 6px">Comparación por supermercado</h3>' +
+                    '<div data-catalog-product-prices><p class="muted" style="font-size:13px">Cargando precios...</p></div>' +
                     '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">' +
                     '<a href="/web/barcode-scanner" class="btn-secondary-web btn-sm">Buscar por código</a>' +
+                    '<a href="/web/branches" class="btn-secondary-web btn-sm">Ver sucursales</a>' +
                     '</div>' +
                     buildReportFormHtml(p.id);
+                loadProductPrices(root, p.id);
             }).catch(function (err) {
                 var code = err.status || 0;
                 if (code === 404) { detail.innerHTML = '<p class="muted">Producto no encontrado.</p>'; }

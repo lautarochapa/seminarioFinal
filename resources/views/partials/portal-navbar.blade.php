@@ -42,6 +42,7 @@
                 ['Reportes de productos', '/admin-web/product-reports', 'web.admin.product-reports'],
                 ['Ciudades', '/admin-web/cities', 'web.admin.cities'],
                 ['Supermercados', '/admin-web/supermarkets', 'web.admin.supermarkets'],
+                ['Productos supermercado', '/admin-web/supermarket-products', 'catalog.manage'],
                 ['Scraping', '/admin-web/supermarket-scraping', 'web.admin.supermarket-scraping'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],

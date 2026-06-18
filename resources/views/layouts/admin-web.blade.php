@@ -27,6 +27,7 @@
     <script src="{{ asset('js/admin-cities.js') }}?v={{ file_exists(public_path('js/admin-cities.js')) ? filemtime(public_path('js/admin-cities.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-supermarkets.js') }}?v={{ file_exists(public_path('js/admin-supermarkets.js')) ? filemtime(public_path('js/admin-supermarkets.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-branches.js') }}?v={{ file_exists(public_path('js/admin-branches.js')) ? filemtime(public_path('js/admin-branches.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-supermarket-products.js') }}?v={{ file_exists(public_path('js/admin-supermarket-products.js')) ? filemtime(public_path('js/admin-supermarket-products.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

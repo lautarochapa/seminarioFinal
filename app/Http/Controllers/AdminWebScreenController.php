@@ -25,6 +25,7 @@ use App\ScrapingError;
 use App\ScrapingJob;
 use App\SupermarketBranch;
 use App\SupermarketChain;
+use App\SupermarketProduct;
 use App\SupermarketProductPrice;
 use App\SystemSetting;
 use App\ThesisDocument;
@@ -81,6 +82,7 @@ class AdminWebScreenController extends Controller
             'barcodes' => ProductBarcode::count(),
             'supermarkets' => SupermarketChain::count(),
             'branches' => SupermarketBranch::count(),
+            'supermarket_products' => SupermarketProduct::count(),
             'prices' => SupermarketProductPrice::count(),
             'promotions' => Promotion::count(),
             'scraping_jobs' => ScrapingJob::count(),
@@ -119,6 +121,7 @@ class AdminWebScreenController extends Controller
             'barcodes' => ['title' => 'Codigos de barra', 'module' => 'Productos', 'description' => 'Gestion barcodes.', 'primary' => 'Nuevo codigo', 'secondary' => 'Buscar duplicados', 'metrics' => ['barcodes', 'products'], 'panels' => ['Codigos', 'Productos', 'Duplicados', 'Estado']],
             'supermarkets' => ['title' => 'Supermercados', 'module' => 'Supermercados', 'description' => 'ABM cadenas.', 'primary' => 'Nueva cadena', 'secondary' => 'Editar', 'metrics' => ['supermarkets'], 'panels' => ['Cadenas', 'Sitios', 'Estado', 'Scraping']],
             'branches' => ['title' => 'Sucursales', 'module' => 'Supermercados, mapa', 'description' => 'ABM sucursales Bariloche.', 'primary' => 'Nueva sucursal', 'secondary' => 'Ver mapa', 'metrics' => ['branches'], 'panels' => ['Sucursales', 'Direccion', 'Mapa', 'Delivery/Pickup']],
+            'supermarket-products' => ['title' => 'Productos por supermercado', 'module' => 'Supermercados', 'description' => 'Mapeo entre productos internos y publicaciones por sucursal.', 'primary' => 'Nuevo mapeo', 'secondary' => 'Comparar precios', 'metrics' => ['supermarket_products', 'prices'], 'panels' => ['Mapeos', 'Sucursales', 'Precios', 'Scraping'], 'permission' => 'catalog.manage'],
             'prices' => ['title' => 'Precios', 'module' => 'Supermercados', 'description' => 'Precios por producto/super.', 'primary' => 'Cargar precio', 'secondary' => 'Historial', 'metrics' => ['prices', 'products'], 'panels' => ['Actuales', 'Historial', 'Promociones', 'Validacion']],
             'promotions' => ['title' => 'Promociones', 'module' => 'Supermercados', 'description' => 'Descuentos y metodos de pago.', 'primary' => 'Nueva promocion', 'secondary' => 'Metodos de pago', 'metrics' => ['promotions'], 'panels' => ['Promociones', 'Vigencia', 'Pago', 'Sucursales']],
             'supermarket-scraping' => ['title' => 'Scraping supermercados', 'module' => 'Scraping', 'description' => 'Ejecutar scraping, ver jobs y logs.', 'primary' => 'Ejecutar scraping', 'secondary' => 'Ver logs', 'metrics' => ['scraping_jobs', 'scraping_errors'], 'panels' => ['Jobs', 'Logs', 'Parametros', 'Resultados']],
