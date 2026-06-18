@@ -29,6 +29,7 @@
                 ['Categorias ingredientes', '/admin-web/ingredient-categories', 'web.admin.ingredient-categories'],
                 ['Nutrientes', '/admin-web/nutrients', 'web.admin.nutrients'],
                 ['Unidades y conversiones', '/admin-web/units-conversions', 'web.admin.units-conversions'],
+                ['Tags alimentarios', '/admin-web/food-tags', 'catalog.manage'],
                 ['Productos', '/admin-web/products', 'web.admin.products'],
                 ['Supermercados', '/admin-web/supermarkets', 'web.admin.supermarkets'],
                 ['Scraping', '/admin-web/supermarket-scraping', 'web.admin.supermarket-scraping'],

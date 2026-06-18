@@ -110,6 +110,7 @@ class AdminWebScreenController extends Controller
             'nutrients' => ['title' => 'Nutrientes', 'module' => 'Nutricion', 'description' => 'ABM nutrientes y valores.', 'primary' => 'Nuevo nutriente', 'secondary' => 'Valores', 'metrics' => ['nutrients'], 'panels' => ['Nutrientes', 'Unidades', 'Valores por ingrediente', 'Valores por producto']],
             'units-conversions' => ['title' => 'Unidades y conversiones', 'module' => 'Catalogo', 'description' => 'ABM unidades.', 'primary' => 'Nueva unidad', 'secondary' => 'Nueva conversion', 'metrics' => ['units', 'conversions'], 'panels' => ['Unidades', 'Conversiones generales', 'Conversiones por ingrediente', 'Validaciones']],
             'equivalences' => ['title' => 'Equivalencias', 'module' => 'Catalogo', 'description' => 'Sustituciones.', 'primary' => 'Nueva equivalencia', 'secondary' => 'Revisar', 'metrics' => ['ingredients'], 'panels' => ['Sustituciones', 'Motivos', 'Factores', 'Estado']],
+            'food-tags' => ['title' => 'Tags alimentarios', 'module' => 'Catalogo', 'description' => 'Etiquetas de salud y dieta.', 'primary' => 'Nuevo tag', 'secondary' => 'Ver catalogo', 'metrics' => ['food_tags'], 'panels' => ['Tags', 'Tipos', 'Catalogo', 'Estado'], 'permission' => 'catalog.manage'],
             'products' => ['title' => 'Productos', 'module' => 'Productos', 'description' => 'ABM productos.', 'primary' => 'Nuevo producto', 'secondary' => 'Importar', 'metrics' => ['products', 'brands'], 'panels' => ['Listado', 'Marca', 'Categoria', 'Nutricion']],
             'brands' => ['title' => 'Marcas', 'module' => 'Productos', 'description' => 'ABM marcas.', 'primary' => 'Nueva marca', 'secondary' => 'Normalizar', 'metrics' => ['brands'], 'panels' => ['Listado', 'Normalizados', 'Productos', 'Estado']],
             'barcodes' => ['title' => 'Codigos de barra', 'module' => 'Productos', 'description' => 'Gestion barcodes.', 'primary' => 'Nuevo codigo', 'secondary' => 'Buscar duplicados', 'metrics' => ['barcodes', 'products'], 'panels' => ['Codigos', 'Productos', 'Duplicados', 'Estado']],
@@ -135,7 +136,8 @@ class AdminWebScreenController extends Controller
     private function canAccessScreen($screen)
     {
         $user = request()->user();
-        $permission = 'web.admin.' . $screen;
+        $screens = $this->screens();
+        $permission = $screens[$screen]['permission'] ?? 'web.admin.' . $screen;
 
         return $user && $user->hasPermission($permission);
     }

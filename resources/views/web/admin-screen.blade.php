@@ -562,6 +562,82 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'food-tags')
+        <section data-admin-food-tags>
+            <div class="alert" data-food-tags-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-food-tags-search placeholder="Buscar bajo sodio, sin gluten...">
+                        <input class="form-control" type="text" data-food-tags-type placeholder="Tipo. Ej: dieta">
+                        <select class="form-control" data-food-tags-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-food-tags-refresh>Actualizar</button>
+                        <span class="chip" data-food-tags-count>0 tags</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-food-tags-body>
+                                <tr><td colspan="6" class="muted">Cargando tags...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-food-tags-prev>Anterior</button>
+                        <span class="muted" data-food-tags-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-food-tags-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-food-tag-form-title>Nuevo tag alimentario</h2>
+                    <form class="rbac-form" data-food-tag-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="low_sodium" required>
+                        <input class="form-control" name="name" type="text" placeholder="Bajo sodio" required>
+                        <input class="form-control" name="type" type="text" placeholder="dieta, salud, advertencia">
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion funcional"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar tag</button>
+                            <button type="button" class="btn-ghost" data-food-tag-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar tag</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-food-tag-restore-id placeholder="ID inactivo">
+                        <button type="button" class="btn-ghost" data-food-tag-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="panel" style="margin-top:14px">
+                <div class="admin-tools">
+                    <h2 style="margin:0">Catalogo publico</h2>
+                    <input class="form-control" type="search" data-food-tags-public-search placeholder="Buscar tags activos">
+                    <button type="button" class="btn-ghost" data-food-tags-public-refresh>Consultar</button>
+                    <span class="chip" data-food-tags-public-count>0 tags activos</span>
+                </div>
+                <div data-food-tags-public-results class="chips"></div>
+            </article>
+        </section>
     @elseif($screenKey === 'equivalences')
         <section data-admin-ingredient-equivalences>
             <div class="alert" data-equivalences-message style="display:none"></div>
