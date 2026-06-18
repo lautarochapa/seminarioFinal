@@ -164,7 +164,7 @@ class GroupReportsTest extends TestCase
         $this->assertEquals(7, $response->json('data.days_window'));
     }
 
-    public function test_waste_report_returns_totals_and_monthly_breakdown()
+    public function test_waste_report_returns_paginated_movements_with_totals()
     {
         [$user, $group] = $this->groupWithMember();
         $unit = $this->unit();
@@ -180,9 +180,10 @@ class GroupReportsTest extends TestCase
             ->getJson("/api/v1/family-groups/{$group->id}/reports/waste")
             ->assertStatus(200);
 
-        $this->assertArrayHasKey('total_quantity', $response->json('data'));
-        $this->assertArrayHasKey('by_month',       $response->json('data'));
-        $this->assertEquals(2.0, $response->json('data.total_quantity'));
+        $this->assertEquals(1,   $response->json('meta.total'));
+        $this->assertEquals(2.0, $response->json('totals.discarded_quantity'));
+        $this->assertEquals(0.0, $response->json('totals.estimated_loss'));
+        $this->assertArrayHasKey('trace_id', $response->json());
     }
 
     public function test_purchases_report_excludes_cancelled_and_filters_by_date()

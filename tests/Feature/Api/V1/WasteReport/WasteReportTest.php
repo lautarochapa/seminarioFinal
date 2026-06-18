@@ -12,6 +12,7 @@ use App\StockMovement;
 use App\UnitMeasure;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class WasteReportTest extends TestCase
@@ -199,8 +200,25 @@ class WasteReportTest extends TestCase
 
         $this->actingAs($user)->getJson('/api/v1/family-groups/'.$group->id.'/reports/waste')
             ->assertStatus(200)
-            ->assertJsonPath('totals.total_quantity', 5)
+            ->assertJsonPath('totals.discarded_quantity', 5)
             ->assertJsonPath('totals.estimated_loss', 20)
-            ->assertJsonPath('totals.items_with_price', 1);
+            ->assertJsonPath('totals.items_without_price', 1);
+    }
+
+    public function test_waste_route_is_handled_by_waste_report_controller()
+    {
+        $route = collect(Route::getRoutes()->getRoutes())
+            ->filter(function ($r) {
+                return $r->uri() === 'api/v1/family-groups/{id}/reports/waste'
+                    && in_array('GET', $r->methods());
+            })
+            ->first();
+
+        $this->assertNotNull($route, 'Route GET api/v1/family-groups/{id}/reports/waste not found.');
+        $this->assertStringContainsString(
+            'WasteReportController',
+            $route->getActionName(),
+            'Expected WasteReportController to handle the waste route, got: '.$route->getActionName()
+        );
     }
 }

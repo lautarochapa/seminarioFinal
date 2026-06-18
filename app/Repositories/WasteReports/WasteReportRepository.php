@@ -32,7 +32,7 @@ class WasteReportRepository
         }
 
         return [
-            'total_quantity' => round($totalQuantity, 4),
+            'discarded_quantity' => round($totalQuantity, 4),
             'estimated_loss' => round($estimatedLoss, 2),
             'items_with_price' => $itemsWithPrice,
             'items_without_price' => $items->count() - $itemsWithPrice,
