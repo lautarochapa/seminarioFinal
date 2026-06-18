@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // Public auth routes + admin RBAC + family-groups + users/me basics
-Route::prefix('v1')->group(base_path('routes/api_contract.php'));
+Route::prefix('v1')->middleware(['web'])->group(base_path('routes/api_contract.php'));
 
 // Domain modules — all protected by web + trace_id + api_token + auth
 $v1 = ['web', 'trace_id', 'api_token', 'auth'];

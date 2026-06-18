@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('password.email') }}" data-api-endpoint="/auth/forgot-password" data-api-method="POST" data-success-message="Si el email esta registrado, recibiras un enlace de recuperacion.">
+                    <form method="POST" action="{{ route('password.email') }}" data-api-endpoint="/api/v1/auth/forgot-password" data-api-method="POST" data-success-message="Si el email esta registrado, recibiras un enlace de recuperacion.">
                         @csrf
                         <div class="alert" data-api-message style="display:none"></div>
 

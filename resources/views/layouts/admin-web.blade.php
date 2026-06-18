@@ -11,6 +11,7 @@
     <script src="{{ asset('js/admin-audit.js') }}?v={{ file_exists(public_path('js/admin-audit.js')) ? filemtime(public_path('js/admin-audit.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-objectives.js') }}?v={{ file_exists(public_path('js/admin-objectives.js')) ? filemtime(public_path('js/admin-objectives.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-health-preferences.js') }}?v={{ file_exists(public_path('js/admin-health-preferences.js')) ? filemtime(public_path('js/admin-health-preferences.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-ingredients.js') }}?v={{ file_exists(public_path('js/admin-ingredients.js')) ? filemtime(public_path('js/admin-ingredients.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-ingredient-categories.js') }}?v={{ file_exists(public_path('js/admin-ingredient-categories.js')) ? filemtime(public_path('js/admin-ingredient-categories.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">

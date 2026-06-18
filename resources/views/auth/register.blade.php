@@ -34,7 +34,7 @@ function onSignIn(googleUser) {
                 <div class="card-header">Registro</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}" data-api-endpoint="/auth/register" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
+                    <form method="POST" action="{{ route('register') }}" data-api-endpoint="/api/v1/auth/register" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
                         @csrf
                         <div class="alert" data-api-message style="display:none"></div>
 

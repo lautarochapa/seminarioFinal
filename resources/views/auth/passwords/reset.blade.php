@@ -8,7 +8,7 @@
                 <div class="card-header">Restablecer contraseña</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('password.update') }}" data-api-endpoint="/auth/reset-password" data-api-method="POST" data-success-message="Contrasena restablecida correctamente." data-redirect="{{ route('login') }}">
+                    <form method="POST" action="{{ route('password.update') }}" data-api-endpoint="/api/v1/auth/reset-password" data-api-method="POST" data-success-message="Contrasena restablecida correctamente." data-redirect="{{ route('login') }}">
                         @csrf
                         <div class="alert" data-api-message style="display:none"></div>
 

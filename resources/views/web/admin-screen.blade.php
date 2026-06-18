@@ -222,6 +222,122 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'ingredients')
+        <section data-admin-ingredients>
+            <div class="alert" data-ingredients-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-ingredients-search placeholder="Buscar arroz, leche, tomate...">
+                        <select class="form-control" data-ingredients-category>
+                            <option value="">Todas las categorias</option>
+                        </select>
+                        <select class="form-control" data-ingredients-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <select class="form-control" data-ingredients-kind>
+                            <option value="">Todos los tipos</option>
+                            <option value="is_generic">Genericos</option>
+                            <option value="is_preparation">Preparaciones</option>
+                            <option value="is_supplement">Suplementos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-ingredients-refresh>Actualizar</button>
+                        <span class="chip" data-ingredients-count>0 ingredientes</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Ingrediente</th>
+                                    <th>Categoria</th>
+                                    <th>Unidad base</th>
+                                    <th>Flags</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-ingredients-body>
+                                <tr><td colspan="6" class="muted">Cargando ingredientes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-ingredients-prev>Anterior</button>
+                        <span class="muted" data-ingredients-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-ingredients-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-ingredient-form-title>Nuevo ingrediente</h2>
+                    <form class="rbac-form" data-ingredient-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Nombre" required>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="category_id" data-ingredient-category-select>
+                            <option value="">Sin categoria</option>
+                        </select>
+                        <select class="form-control" name="base_unit_id" data-ingredient-unit-select>
+                            <option value="">Sin unidad base</option>
+                        </select>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_generic"> Generico</label>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_preparation"> Preparacion</label>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_supplement"> Suplemento</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar ingrediente</button>
+                            <button type="button" class="btn-ghost" data-ingredient-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar ingrediente</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-ingredient-restore-id placeholder="ID eliminado">
+                        <button type="button" class="btn-ghost" data-ingredient-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <h2 style="margin:0">Buscador publico</h2>
+                        <input class="form-control" type="search" data-ingredient-public-search placeholder="Buscar catalogo activo">
+                        <button type="button" class="btn-ghost" data-ingredient-public-refresh>Buscar</button>
+                    </div>
+                    <div data-ingredient-public-results class="muted">Buscá ingredientes activos para ver detalle, nutricion y equivalencias.</div>
+                </article>
+
+                <article class="panel">
+                    <h2>Detalle nutricional</h2>
+                    <div data-ingredient-detail class="muted">Seleccioná un ingrediente.</div>
+                    <div style="overflow:auto;margin-top:10px">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nutriente</th>
+                                    <th>Cantidad / 100g</th>
+                                    <th>Fuente</th>
+                                </tr>
+                            </thead>
+                            <tbody data-ingredient-nutrition>
+                                <tr><td colspan="3" class="muted">Sin ingrediente seleccionado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <h2>Equivalencias</h2>
+                    <div data-ingredient-equivalences class="muted">Seleccioná un ingrediente.</div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'ingredient-categories')
         <section data-admin-ingredient-categories>
             <div class="alert" data-ingredient-categories-message style="display:none"></div>

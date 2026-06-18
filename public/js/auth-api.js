@@ -90,6 +90,52 @@
         submit.textContent = loading ? 'Procesando...' : submit.dataset.originalText;
     }
 
+    function establishWebSession() {
+        return window.CCApi.request('/api/v1/auth/me').then(function (payload) {
+            window.CCApi.setSession(payload);
+            return payload;
+        });
+    }
+
+    function payloadPermissions(payload) {
+        var token = payload && payload.token_payload ? payload.token_payload : {};
+        var data = payload && payload.data ? payload.data : {};
+
+        if (Array.isArray(token.permissions)) {
+            return token.permissions;
+        }
+
+        if (Array.isArray(data.permissions)) {
+            return data.permissions;
+        }
+
+        return [];
+    }
+
+    function dashboardRedirect(fallback, payload) {
+        var permissions = payloadPermissions(payload);
+
+        if (permissions.indexOf('web.admin.dashboard') !== -1) {
+            return '/admin-web';
+        }
+
+        if (permissions.indexOf('web.teacher.home') !== -1) {
+            return '/teacher-web';
+        }
+
+        if (permissions.indexOf('web.user.dashboard') !== -1) {
+            return '/web';
+        }
+
+        return fallback || '/web';
+    }
+
+    function redirectAfterAuth(fallback) {
+        return establishWebSession().then(function (payload) {
+            window.location.href = dashboardRedirect(fallback, payload);
+        });
+    }
+
     function bindApiForm(form) {
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -108,6 +154,10 @@
                     showMessage(form, 'success', form.dataset.successMessage);
                 }
 
+                if (form.dataset.redirect && form.dataset.authSession === 'true') {
+                    return redirectAfterAuth(form.dataset.redirect);
+                }
+
                 if (form.dataset.redirect) {
                     window.location.href = form.dataset.redirect;
                 }
@@ -122,7 +172,7 @@
     function bindLogout(link) {
         link.addEventListener('click', function (event) {
             event.preventDefault();
-            window.CCApi.request('/auth/logout', { method: 'POST' }).finally(function () {
+            window.CCApi.request('/api/v1/auth/logout', { method: 'POST' }).finally(function () {
                 window.CCApi.clearSession();
                 window.location.href = '/login';
             });
@@ -132,7 +182,7 @@
     function bindProfileForm(form) {
         var message = form.querySelector('[data-api-message]');
 
-        window.CCApi.request('/auth/me').then(function (payload) {
+        window.CCApi.request('/api/v1/auth/me').then(function (payload) {
             var user = payload.data || {};
             window.CCApi.setSession({ data: user });
             ['name', 'lastname', 'username', 'email', 'phone', 'avatar_url'].forEach(function (field) {
@@ -155,7 +205,7 @@
             var body = formToObject(form);
             delete body.email;
 
-            window.CCApi.request('/auth/me', {
+            window.CCApi.request('/api/v1/auth/me', {
                 method: 'PATCH',
                 body: body,
             }).then(function (payload) {
@@ -203,12 +253,12 @@
 
     window.CCAuth = {
         loginWithGoogle: function (idToken) {
-            return window.CCApi.request('/auth/google', {
+            return window.CCApi.request('/api/v1/auth/google', {
                 method: 'POST',
                 body: { token: idToken },
             }).then(function (payload) {
                 window.CCApi.setSession(payload);
-                return payload;
+                return redirectAfterAuth('/web');
             });
         },
     };
@@ -221,9 +271,7 @@
             return;
         }
 
-        window.CCAuth.loginWithGoogle(token).then(function () {
-            window.location.href = '/web';
-        }).catch(function (error) {
+        window.CCAuth.loginWithGoogle(token).catch(function (error) {
             var message = error && error.payload && error.payload.error
                 ? error.payload.error.message
                 : 'No se pudo iniciar sesion con Google.';

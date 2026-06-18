@@ -7,7 +7,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <form method="POST" action="{{ route('login') }}" data-api-endpoint="/auth/login" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
+            <form method="POST" action="{{ route('login') }}" data-api-endpoint="/api/v1/auth/login" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
                 @csrf
                 <div class="alert" data-api-message style="display:none"></div>
                 <div cass="row" style="text-align:center;">
