@@ -630,6 +630,154 @@
                 <p class="muted" style="margin-top:14px">Desde esta pantalla el usuario otorga acceso profesional a un dietologo, define que puede ver o editar y puede revocar el permiso cuando quiera.</p>
             </aside>
         </section>
+    @elseif($screenKey === 'catalog')
+        <section class="workspace" data-user-catalog>
+            <div>
+                <div class="audit-tabs" role="tablist" aria-label="Catálogo">
+                    <button type="button" class="audit-tab active" data-catalog-tab="products">Productos</button>
+                    <button type="button" class="audit-tab" data-catalog-tab="ingredients">Ingredientes</button>
+                </div>
+
+                {{-- Panel Productos --}}
+                <div data-catalog-panel="products">
+                    <article class="panel">
+                        <div class="web-tools">
+                            <input class="form-control" type="search" data-catalog-products-search placeholder="Buscar productos...">
+                            <select class="form-control" data-catalog-products-category>
+                                <option value="">Todas las categorías</option>
+                            </select>
+                            <select class="form-control" data-catalog-products-brand>
+                                <option value="">Todas las marcas</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web" data-catalog-products-refresh>Buscar</button>
+                            <span class="chip" data-catalog-products-count>0 productos</span>
+                        </div>
+                        <div class="alert" data-catalog-products-message style="display:none"></div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Marca</th>
+                                        <th>Categoría</th>
+                                        <th>Código</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody data-catalog-products-body>
+                                    <tr><td colspan="5" class="muted">Cargando productos...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-catalog-products-prev>Anterior</button>
+                            <span class="muted" data-catalog-products-page>Página 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-catalog-products-next>Siguiente</button>
+                        </div>
+                    </article>
+                </div>
+
+                {{-- Panel Ingredientes --}}
+                <div data-catalog-panel="ingredients" style="display:none">
+                    <article class="panel">
+                        <div class="web-tools">
+                            <input class="form-control" type="search" data-catalog-ingredients-search placeholder="Buscar ingredientes...">
+                            <select class="form-control" data-catalog-ingredients-category>
+                                <option value="">Todas las categorías</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web" data-catalog-ingredients-refresh>Buscar</button>
+                            <span class="chip" data-catalog-ingredients-count>0 ingredientes</span>
+                        </div>
+                        <div class="alert" data-catalog-ingredients-message style="display:none"></div>
+                        <div data-catalog-tags-filter style="margin-bottom:12px;display:none">
+                            <span class="muted" style="font-size:13px;margin-right:6px">Filtrar por tag:</span>
+                            <span data-catalog-tags-chips></span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ingrediente</th>
+                                        <th>Categoría</th>
+                                        <th>Tags</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody data-catalog-ingredients-body>
+                                    <tr><td colspan="4" class="muted">Cargando ingredientes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-catalog-ingredients-prev>Anterior</button>
+                            <span class="muted" data-catalog-ingredients-page>Página 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-catalog-ingredients-next>Siguiente</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="aside-panel" data-catalog-detail>
+                <p class="muted">Seleccioná un item para ver el detalle.</p>
+            </aside>
+        </section>
+
+    @elseif($screenKey === 'barcode-scanner')
+        <section class="workspace" data-user-barcode>
+            <div>
+                <article class="panel">
+                    <h2>Buscar por código de barras</h2>
+                    <div class="alert" data-barcode-message style="display:none"></div>
+                    <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+                        <div style="flex:1;min-width:200px">
+                            <label for="barcode-code-input">Código de barras</label>
+                            <input id="barcode-code-input"
+                                   class="form-control"
+                                   type="text"
+                                   inputmode="numeric"
+                                   data-barcode-code-input
+                                   placeholder="Ej: 7790580002312"
+                                   autocomplete="off"
+                                   style="font-size:20px;letter-spacing:2px;margin-top:4px">
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;padding-bottom:1px">
+                            <button type="button" class="btn-main" data-barcode-search-submit>Buscar</button>
+                            <button type="button" class="btn-secondary-web" data-barcode-camera-toggle>Usar cámara</button>
+                        </div>
+                    </div>
+
+                    <div data-barcode-camera-container style="display:none;margin-top:16px">
+                        <video data-barcode-video
+                               autoplay muted playsinline
+                               style="width:100%;max-width:420px;border-radius:8px;border:1px solid var(--line);display:block"></video>
+                        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="button" class="btn-secondary-web btn-sm" data-barcode-camera-stop>Cerrar cámara</button>
+                        </div>
+                        <p class="muted" style="font-size:12px;margin-top:6px">El stream de cámara se libera al cerrar o salir de la pantalla.</p>
+                    </div>
+                </article>
+
+                <article class="panel" style="margin-top:12px">
+                    <h2>Resultado</h2>
+                    <div data-barcode-result>
+                        <p class="muted">Ingresá un código para ver el producto.</p>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel">
+                <h2>Cómo usar</h2>
+                <div class="table-line"><span class="muted">Manual</span><strong>Escribí el código numérico</strong></div>
+                <div class="table-line"><span class="muted">Cámara</span><strong>Apuntá al código de barras</strong></div>
+                <div class="table-line"><span class="muted">Resultado</span><strong>Producto, marca y categoría</strong></div>
+                <p class="muted" style="margin-top:14px;font-size:13px">Si el código no está registrado, el sistema lo indicará claramente.</p>
+                <p class="muted" style="margin-top:8px;font-size:12px">La cámara no guarda imágenes. El stream se libera automáticamente al salir de la pantalla.</p>
+                <div style="margin-top:16px">
+                    <a href="/web/catalog" class="btn-secondary-web btn-sm">Ir al catálogo</a>
+                </div>
+            </aside>
+        </section>
+
     @else
     <section class="workspace">
         <div class="panel-grid">

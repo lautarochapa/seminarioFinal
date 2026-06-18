@@ -894,6 +894,52 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'barcodes')
+        <section data-admin-barcodes>
+            <div class="alert" data-barcodes-message style="display:none"></div>
+            <div class="grid">
+                <article class="panel">
+                    <h2>Busqueda por codigo</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="text" inputmode="numeric" data-barcode-search-code placeholder="7791234567890">
+                        <button type="button" class="btn-main" data-barcode-search-submit>Buscar</button>
+                    </div>
+                    <div data-barcode-search-result class="muted">Escanea o ingresa un codigo para buscar el producto asociado.</div>
+                </article>
+
+                <article class="panel">
+                    <h2>Alta de barcode</h2>
+                    <form class="rbac-form" data-barcode-create-form>
+                        <select class="form-control" name="product_id" data-barcode-product-select required>
+                            <option value="">Producto</option>
+                        </select>
+                        <input class="form-control" name="barcode" type="text" inputmode="numeric" placeholder="Codigo de barras" required>
+                        <button type="submit" class="btn-main">Agregar codigo</button>
+                    </form>
+                    <div data-barcode-created-result class="muted" style="margin-top:10px">El ID generado se muestra aca para poder desactivar el codigo si hace falta.</div>
+                </article>
+
+                <article class="panel">
+                    <h2>Baja de barcode</h2>
+                    <form class="rbac-form" data-barcode-delete-form>
+                        <select class="form-control" name="product_id" data-barcode-delete-product-select required>
+                            <option value="">Producto</option>
+                        </select>
+                        <input class="form-control" name="barcode_id" type="number" min="1" placeholder="ID barcode" required>
+                        <button type="submit" class="btn-ghost">Desactivar codigo</button>
+                    </form>
+                </article>
+
+                <article class="panel">
+                    <h2>Productos recientes</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-barcode-product-search placeholder="Buscar producto">
+                        <button type="button" class="btn-ghost" data-barcode-products-refresh>Actualizar</button>
+                    </div>
+                    <div data-barcode-products-list class="muted">Cargando productos...</div>
+                </article>
+            </div>
+        </section>
     @elseif($screenKey === 'equivalences')
         <section data-admin-ingredient-equivalences>
             <div class="alert" data-equivalences-message style="display:none"></div>

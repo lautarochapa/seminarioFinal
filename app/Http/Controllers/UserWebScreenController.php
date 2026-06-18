@@ -151,6 +151,24 @@ class UserWebScreenController extends Controller
                 'metrics' => ['professional_links'],
                 'panels' => ['Profesionales autorizados', 'Permisos activos', 'Historial', 'Solicitudes'],
             ],
+            'catalog' => [
+                'title' => 'Catálogo',
+                'module' => 'Catálogo',
+                'description' => 'Explorá y buscá productos e ingredientes del catálogo con filtros por categoría, marca y tags.',
+                'primary' => 'Buscar productos',
+                'secondary' => 'Explorar ingredientes',
+                'metrics' => [],
+                'panels' => ['Productos', 'Ingredientes', 'Filtros', 'Detalle'],
+            ],
+            'barcode-scanner' => [
+                'title' => 'Escáner de código',
+                'module' => 'Productos',
+                'description' => 'Buscá un producto ingresando su código de barras o usando la cámara del dispositivo.',
+                'primary' => 'Buscar por código',
+                'secondary' => 'Ir al catálogo',
+                'metrics' => [],
+                'panels' => ['Búsqueda', 'Resultado', 'Historial', 'Acciones'],
+            ],
         ];
     }
 

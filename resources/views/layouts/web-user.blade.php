@@ -11,6 +11,8 @@
     <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-profile.js') }}?v={{ file_exists(public_path('js/user-profile.js')) ? filemtime(public_path('js/user-profile.js')) : time() }}" defer></script>
     <script src="{{ asset('js/professional-links.js') }}?v={{ file_exists(public_path('js/professional-links.js')) ? filemtime(public_path('js/professional-links.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-catalog.js') }}?v={{ file_exists(public_path('js/user-catalog.js')) ? filemtime(public_path('js/user-catalog.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-barcode.js') }}?v={{ file_exists(public_path('js/user-barcode.js')) ? filemtime(public_path('js/user-barcode.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -60,6 +62,10 @@
         .checkbox-card { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fafdfb; display:flex; gap:8px; align-items:flex-start; }
         .objective-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:10px; }
         .objective-item { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; display:flex; gap:8px; align-items:flex-start; }
+        .audit-tabs { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px; }
+        .audit-tab { border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:9px 15px;font-weight:900;cursor:pointer; }
+        .audit-tab.active { background:rgba(4,172,133,.9);border-color:rgba(4,172,133,.9);color:#fff; }
+        .catalog-pagination { display:flex;gap:8px;align-items:center;margin-top:12px; }
         @media (max-width: 960px) {
             .content { padding:14px; }
             .hero, .topbar { display:block; }
