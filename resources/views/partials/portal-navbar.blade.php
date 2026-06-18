@@ -17,6 +17,7 @@
                 ['Catálogo', '/web/catalog', 'web.user.catalog'],
                 ['Escáner', '/web/barcode-scanner', 'web.user.barcode-scanner'],
                 ['Supermercados', '/web/supermarkets', 'web.user.supermarkets'],
+                ['Sucursales', '/web/branches', 'web.user.branches'],
             ],
         ],
         'Admin' => [

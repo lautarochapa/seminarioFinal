@@ -1355,6 +1355,105 @@
                 </div>
             </article>
         </section>
+    @elseif($screenKey === 'branches')
+        <section data-admin-branches>
+            <div class="alert" data-branches-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <input class="form-control" type="text" data-branches-search placeholder="Buscar sucursal o dirección...">
+                        <select class="form-control" data-branches-filter-chain>
+                            <option value="">Todas las cadenas</option>
+                        </select>
+                        <select class="form-control" data-branches-filter-city>
+                            <option value="">Todas las ciudades</option>
+                        </select>
+                        <select class="form-control" data-branches-filter-status>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-branches-refresh>Actualizar</button>
+                        <span class="chip" data-branches-count>0 sucursales</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Cadena</th>
+                                    <th>Ciudad</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-branches-body>
+                                <tr><td colspan="5" class="muted">Cargando sucursales...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-branches-prev>Anterior</button>
+                        <span class="muted" data-branches-page>Pagina 1 de 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-branches-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <article class="panel" style="min-width:0">
+                    <h2 data-branches-form-title>Nueva sucursal</h2>
+                    <form data-branches-form style="max-height:62vh;overflow-y:auto;padding-right:2px">
+                        <input type="hidden" data-branches-edit-id>
+                        <div style="margin-bottom:8px">
+                            <label>Cadena <span style="color:var(--danger)">*</span></label>
+                            <select class="form-control" name="supermarket_chain_id" data-branches-form-chain>
+                                <option value="">Cargando cadenas...</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Ciudad <span style="color:var(--danger)">*</span></label>
+                            <select class="form-control" name="city_id" data-branches-form-city>
+                                <option value="">Cargando ciudades...</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Nombre <span style="color:var(--danger)">*</span></label>
+                            <input class="form-control" name="name" type="text" placeholder="Ej: Sucursal Centro">
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Dirección <span style="color:var(--danger)">*</span></label>
+                            <input class="form-control" name="address" type="text" placeholder="Ej: Av. Bartolomé Mitre 180">
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+                            <div>
+                                <label>Latitud</label>
+                                <input class="form-control" name="latitude" type="number" step="any" min="-90" max="90" placeholder="-41.1334" data-branches-lat>
+                            </div>
+                            <div>
+                                <label>Longitud</label>
+                                <input class="form-control" name="longitude" type="number" step="any" min="-180" max="180" placeholder="-71.3103" data-branches-lng>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Horarios</label>
+                            <textarea class="form-control" name="opening_hours" rows="2" placeholder="Ej: Lun-Vie 8:00-21:00, Sáb 9:00-20:00"></textarea>
+                        </div>
+                        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
+                            <label style="display:flex;gap:6px;align-items:center">
+                                <input type="checkbox" name="delivery_available" value="1"> Delivery disponible
+                            </label>
+                            <label style="display:flex;gap:6px;align-items:center">
+                                <input type="checkbox" name="pickup_available" value="1"> Pickup disponible
+                            </label>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-branches-submit>Crear sucursal</button>
+                            <button type="button" class="btn-ghost" data-branches-reset>Limpiar</button>
+                        </div>
+                    </form>
+                    <div data-branches-map-preview style="height:200px;border-radius:8px;margin-top:12px;display:none;border:1px solid var(--line)"></div>
+                </article>
+            </div>
+        </section>
     @elseif($screenKey === 'supermarkets')
         <section data-admin-supermarkets>
             <div class="alert" data-supermarkets-message style="display:none"></div>

@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin CC Control')</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLcE=" crossorigin="" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
@@ -24,6 +26,7 @@
     <script src="{{ asset('js/admin-product-reports.js') }}?v={{ file_exists(public_path('js/admin-product-reports.js')) ? filemtime(public_path('js/admin-product-reports.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-cities.js') }}?v={{ file_exists(public_path('js/admin-cities.js')) ? filemtime(public_path('js/admin-cities.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-supermarkets.js') }}?v={{ file_exists(public_path('js/admin-supermarkets.js')) ? filemtime(public_path('js/admin-supermarkets.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-branches.js') }}?v={{ file_exists(public_path('js/admin-branches.js')) ? filemtime(public_path('js/admin-branches.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

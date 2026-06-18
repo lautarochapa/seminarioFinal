@@ -787,6 +787,43 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'branches')
+        <section class="workspace" data-user-branches>
+            <div style="display:grid;gap:14px">
+                <article class="panel">
+                    <div class="web-tools" style="flex-wrap:wrap;gap:6px">
+                        <select class="form-control" data-branches-filter-city style="min-width:140px">
+                            <option value="">Todas las ciudades</option>
+                        </select>
+                        <select class="form-control" data-branches-filter-chain style="min-width:150px">
+                            <option value="">Todas las cadenas</option>
+                        </select>
+                        <button type="button" class="btn-secondary-web" data-branches-load>Ver sucursales</button>
+                        <span class="chip" data-branches-count>0 sucursales</span>
+                    </div>
+                    <div style="margin-top:10px;background:var(--green-soft);border-radius:8px;padding:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                        <button type="button" class="btn-secondary-web btn-sm" data-branches-nearby-btn>📍 Usar mi ubicación</button>
+                        <input class="form-control" type="number" data-branches-radius value="5" min="0.1" max="500" step="0.5" style="width:80px">
+                        <span class="muted" style="font-size:13px">km de radio</span>
+                        <span data-branches-geo-status class="muted" style="font-size:12px"></span>
+                    </div>
+                    <div class="alert" data-branches-message style="display:none;margin-top:10px"></div>
+                    <div data-branches-list style="display:grid;gap:8px;margin-top:12px">
+                        <p class="muted">Seleccioná una ciudad o usá tu ubicación para ver sucursales.</p>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel" style="display:flex;flex-direction:column;gap:12px;min-height:300px">
+                <div data-branches-map style="height:220px;border-radius:8px;background:#e8efeb;display:flex;align-items:center;justify-content:center;overflow:hidden">
+                    <span class="muted" style="font-size:13px">El mapa aparecerá aquí</span>
+                </div>
+                <div data-branches-detail>
+                    <p class="muted" style="font-size:13px">Seleccioná una sucursal para ver el detalle.</p>
+                </div>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'supermarkets')
         <section class="workspace" data-user-supermarkets>
             <div>

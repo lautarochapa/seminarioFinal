@@ -178,6 +178,15 @@ class UserWebScreenController extends Controller
                 'metrics' => [],
                 'panels' => ['Cadenas', 'Detalle', 'Sucursales', 'Precios'],
             ],
+            'branches' => [
+                'title' => 'Sucursales',
+                'module' => 'Supermercados',
+                'description' => 'Encontrá sucursales por ciudad, cadena o usando tu ubicación actual.',
+                'primary' => 'Ver sucursales',
+                'secondary' => 'Buscar cercanas',
+                'metrics' => [],
+                'panels' => ['Listado', 'Mapa', 'Cercanas', 'Detalle'],
+            ],
         ];
     }
 
