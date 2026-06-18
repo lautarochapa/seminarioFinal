@@ -562,6 +562,96 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'equivalences')
+        <section data-admin-ingredient-equivalences>
+            <div class="alert" data-equivalences-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-equivalences-search placeholder="Buscar motivo o tipo">
+                        <select class="form-control" data-equivalences-source>
+                            <option value="">Ingrediente origen</option>
+                        </select>
+                        <select class="form-control" data-equivalences-target>
+                            <option value="">Ingrediente destino</option>
+                        </select>
+                        <input class="form-control" type="text" data-equivalences-type placeholder="Tipo. Ej: replacement">
+                        <select class="form-control" data-equivalences-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-equivalences-refresh>Actualizar</button>
+                        <span class="chip" data-equivalences-count>0 equivalencias</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Origen</th>
+                                    <th>Destino</th>
+                                    <th>Tipo</th>
+                                    <th>Factor</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-equivalences-body>
+                                <tr><td colspan="7" class="muted">Cargando equivalencias...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-equivalences-prev>Anterior</button>
+                        <span class="muted" data-equivalences-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-equivalences-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-equivalence-form-title>Nueva equivalencia</h2>
+                    <form class="rbac-form" data-equivalence-form>
+                        <input type="hidden" name="id">
+                        <select class="form-control" name="source_ingredient_id" data-equivalence-source-select required>
+                            <option value="">Ingrediente origen</option>
+                        </select>
+                        <select class="form-control" name="target_ingredient_id" data-equivalence-target-select required>
+                            <option value="">Ingrediente destino</option>
+                        </select>
+                        <input class="form-control" name="equivalence_type" type="text" placeholder="replacement">
+                        <input class="form-control" name="conversion_factor" type="number" min="0.00000001" step="0.0001" placeholder="Factor" required>
+                        <textarea class="form-control" name="reason" rows="4" placeholder="Motivo o criterio"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar equivalencia</button>
+                            <button type="button" class="btn-ghost" data-equivalence-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar equivalencia</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-equivalence-restore-id placeholder="ID inactiva">
+                        <button type="button" class="btn-ghost" data-equivalence-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="panel" style="margin-top:14px">
+                <div class="admin-tools">
+                    <h2 style="margin:0">Sustituciones posibles</h2>
+                    <select class="form-control" data-equivalence-public-ingredient>
+                        <option value="">Seleccionar ingrediente</option>
+                    </select>
+                    <button type="button" class="btn-ghost" data-equivalence-public-refresh>Consultar</button>
+                    <span class="chip" data-equivalence-public-count>0 opciones</span>
+                </div>
+                <div data-equivalence-public-results class="muted">Selecciona un ingrediente para ver reemplazos activos.</div>
+            </article>
+        </section>
     @elseif($screenKey === 'units-conversions')
         <section data-admin-units>
             <div class="alert" data-units-message style="display:none"></div>
