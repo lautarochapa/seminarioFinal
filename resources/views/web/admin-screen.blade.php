@@ -1355,6 +1355,61 @@
                 </div>
             </article>
         </section>
+    @elseif($screenKey === 'product-reports')
+        <section data-admin-product-reports>
+            <div class="alert" data-reports-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <select class="form-control" data-reports-filter-status>
+                            <option value="">Todos los estados</option>
+                            <option value="open">Pendientes</option>
+                            <option value="resolved">Resueltos</option>
+                            <option value="rejected">Rechazados</option>
+                        </select>
+                        <select class="form-control" data-reports-filter-type>
+                            <option value="">Todos los tipos</option>
+                            <option value="incorrect_price">Precio incorrecto</option>
+                            <option value="incorrect_product_data">Datos incorrectos</option>
+                            <option value="incorrect_nutrition">Nutrición incorrecta</option>
+                            <option value="duplicate_product">Producto duplicado</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <input class="form-control" type="date" data-reports-filter-from placeholder="Desde">
+                        <input class="form-control" type="date" data-reports-filter-to placeholder="Hasta">
+                        <button type="button" class="btn-ghost" data-reports-refresh>Actualizar</button>
+                        <span class="chip" data-reports-count>0 reportes</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+                                    <th>Usuario</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-reports-body>
+                                <tr><td colspan="6" class="muted">Cargando reportes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-reports-prev>Anterior</button>
+                        <span class="muted" data-reports-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-reports-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <article class="panel" style="min-width:0">
+                    <h2>Detalle del reporte</h2>
+                    <div data-reports-detail class="muted">Seleccioná un reporte para ver el detalle y resolverlo.</div>
+                </article>
+            </div>
+        </section>
     @else
     <section class="grid">
         @foreach($screen['panels'] as $panel)

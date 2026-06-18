@@ -75,12 +75,24 @@
             });
     }
 
+    function primaryImageUrl(images) {
+        var imgs = (images || []).filter(function (i) { return i.image_url; });
+        var primary = imgs.filter(function (i) { return i.is_primary; })[0] || imgs[0];
+        return primary ? primary.image_url : null;
+    }
+
     function renderResult(el, product) {
         if (!product) {
             el.innerHTML = '<p class="muted">Producto no disponible.</p>';
             return;
         }
+        var imgUrl  = primaryImageUrl(product.images);
+        var imgHtml = imgUrl
+            ? '<img src="' + escapeHtml(imgUrl) + '" loading="lazy" alt="' + escapeHtml(product.name) +
+              '" style="width:100%;max-height:180px;object-fit:contain;background:#f0f0f0;border-radius:8px;display:block;margin-bottom:12px">'
+            : '';
         el.innerHTML =
+            imgHtml +
             '<div class="table-line"><span class="muted">Producto</span><strong>'   + escapeHtml(product.name) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Marca</span><strong>'      + escapeHtml(product.brand    && product.brand.name)    + '</strong></div>' +
             '<div class="table-line"><span class="muted">Categoría</span><strong>'  + escapeHtml(product.category && product.category.name) + '</strong></div>' +

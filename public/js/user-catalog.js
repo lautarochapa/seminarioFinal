@@ -6,7 +6,74 @@
         products: { items: [], page: 1, lastPage: 1, total: 0 },
         ingredients: { items: [], page: 1, lastPage: 1, total: 0 },
         selectedTagIds: [],
+        reportProductId: null,
     };
+
+    var REPORT_TYPES = {
+        incorrect_price:        'Precio incorrecto',
+        incorrect_product_data: 'Datos del producto incorrectos',
+        incorrect_nutrition:    'Información nutricional incorrecta',
+        duplicate_product:      'Producto duplicado',
+        other:                  'Otro problema',
+    };
+
+    function primaryImage(images) {
+        var imgs = (images || []).filter(function (i) { return i.image_url; });
+        return imgs.filter(function (i) { return i.is_primary; })[0] || imgs[0] || null;
+    }
+
+    function thumbnailHtml(images) {
+        var img = primaryImage(images);
+        if (!img) { return ''; }
+        return '<img class="product-thumb-img" src="' + escapeHtml(img.image_url) + '" loading="lazy" alt="">';
+    }
+
+    function buildImageGalleryHtml(images) {
+        var imgs = (images || []).filter(function (i) { return i.image_url; });
+        if (!imgs.length) {
+            return '<div class="product-image-placeholder">Sin imagen disponible</div>';
+        }
+        var main = imgs.filter(function (i) { return i.is_primary; })[0] || imgs[0];
+        var mainHtml = '<img class="product-image-main" data-catalog-img-main src="' +
+            escapeHtml(main.image_url) + '" loading="lazy" alt="">';
+        var thumbsHtml = '';
+        if (imgs.length > 1) {
+            thumbsHtml = '<div class="product-image-gallery">' +
+                imgs.map(function (img) {
+                    var active = img.image_url === main.image_url ? ' active' : '';
+                    return '<img class="product-image-thumb' + active + '" loading="lazy" alt=""' +
+                        ' data-catalog-img-switch="' + escapeHtml(img.image_url) + '"' +
+                        ' src="' + escapeHtml(img.image_url) + '">';
+                }).join('') +
+            '</div>';
+        }
+        return mainHtml + thumbsHtml;
+    }
+
+    function buildReportFormHtml(productId) {
+        var options = Object.keys(REPORT_TYPES).map(function (k) {
+            return '<option value="' + k + '">' + escapeHtml(REPORT_TYPES[k]) + '</option>';
+        }).join('');
+        return '<div class="report-form-toggle">' +
+            '<button type="button" class="btn-secondary-web btn-sm" data-catalog-report-toggle>' +
+                'Reportar problema' +
+            '</button>' +
+        '</div>' +
+        '<div class="report-form-section" data-catalog-report-form style="display:none" data-catalog-report-product="' + productId + '">' +
+            '<select class="form-control" data-catalog-report-type style="margin-bottom:8px">' +
+                '<option value="">Seleccioná el tipo de problema...</option>' +
+                options +
+            '</select>' +
+            '<textarea class="form-control" data-catalog-report-desc rows="3"' +
+                ' placeholder="Descripción (opcional, máx. 2000 caracteres)"' +
+                ' maxlength="2000" style="width:100%;box-sizing:border-box;margin-bottom:8px"></textarea>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+                '<button type="button" class="btn-main btn-sm" data-catalog-report-submit>Enviar reporte</button>' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-catalog-report-cancel>Cancelar</button>' +
+            '</div>' +
+            '<div class="alert" data-catalog-report-message style="display:none;margin-top:8px"></div>' +
+        '</div>';
+    }
 
     function qs(selector, root) { return (root || document).querySelector(selector); }
 
@@ -153,7 +220,10 @@
         }
         tbody.innerHTML = state.products.items.map(function (p) {
             return '<tr>' +
-                '<td>' + escapeHtml(p.name) + '</td>' +
+                '<td style="display:flex;align-items:center;gap:6px;min-width:0">' +
+                    thumbnailHtml(p.images) +
+                    '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHtml(p.name) + '</span>' +
+                '</td>' +
                 '<td>' + escapeHtml(p.brand && p.brand.name) + '</td>' +
                 '<td>' + escapeHtml(p.category && p.category.name) + '</td>' +
                 '<td style="font-family:monospace;font-size:12px">' + escapeHtml(p.barcode) + '</td>' +
@@ -166,24 +236,86 @@
         var detail = qs('[data-catalog-detail]', root);
         if (!detail) { return; }
         detail.innerHTML = '<p class="muted">Cargando...</p>';
+        state.reportProductId = null;
 
         window.CCApi.request(endpoint('/products/' + encodeURIComponent(productId)))
             .then(function (r) {
                 var p = r.data;
                 if (!p) { detail.innerHTML = '<p class="muted">Producto no disponible.</p>'; return; }
+                state.reportProductId = p.id;
                 detail.innerHTML =
-                    '<h2 style="font-size:16px;margin:0 0 12px">' + escapeHtml(p.name) + '</h2>' +
+                    buildImageGalleryHtml(p.images) +
+                    '<h2 style="font-size:16px;margin:0 0 10px">' + escapeHtml(p.name) + '</h2>' +
                     '<div class="table-line"><span class="muted">Marca</span><strong>'     + escapeHtml(p.brand    && p.brand.name)    + '</strong></div>' +
                     '<div class="table-line"><span class="muted">Categoría</span><strong>' + escapeHtml(p.category && p.category.name) + '</strong></div>' +
                     '<div class="table-line"><span class="muted">Código</span><strong style="font-family:monospace;font-size:12px">' + escapeHtml(p.barcode) + '</strong></div>' +
                     '<div class="table-line"><span class="muted">Cantidad</span><strong>'  + escapeHtml(p.net_quantity) + ' ' + escapeHtml(p.unit && p.unit.symbol) + '</strong></div>' +
-                    '<div class="table-line"><span class="muted">Descripción</span><strong>' + escapeHtml(p.description) + '</strong></div>' +
-                    '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">' +
+                    '<div class="table-line"><span class="muted">Descripción</span><span style="font-size:13px">' + escapeHtml(p.description) + '</span></div>' +
+                    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">' +
                     '<a href="/web/barcode-scanner" class="btn-secondary-web btn-sm">Buscar por código</a>' +
-                    '</div>';
-            }).catch(function () {
-                detail.innerHTML = '<p class="muted">No se pudo cargar el detalle del producto.</p>';
+                    '</div>' +
+                    buildReportFormHtml(p.id);
+            }).catch(function (err) {
+                var code = err.status || 0;
+                if (code === 404) { detail.innerHTML = '<p class="muted">Producto no encontrado.</p>'; }
+                else { detail.innerHTML = '<p class="muted">No se pudo cargar el detalle del producto.</p>'; }
             });
+    }
+
+    function submitReport(root) {
+        var form = qs('[data-catalog-report-form]', root);
+        if (!form) { return; }
+
+        var productId = form.dataset.catalogReportProduct;
+        var typeEl    = qs('[data-catalog-report-type]', root);
+        var descEl    = qs('[data-catalog-report-desc]', root);
+        var submitBtn = qs('[data-catalog-report-submit]', root);
+        var msgEl     = qs('[data-catalog-report-message]', root);
+
+        if (!productId) { return; }
+
+        var type = typeEl ? typeEl.value : '';
+        if (!type) {
+            if (msgEl) { msgEl.textContent = 'Seleccioná el tipo de problema.'; msgEl.className = 'alert alert-danger'; msgEl.style.display = 'block'; }
+            return;
+        }
+
+        var body = { type: type };
+        var desc = descEl ? descEl.value.trim() : '';
+        if (desc) { body.description = desc; }
+
+        if (submitBtn) { submitBtn.disabled = true; }
+        if (msgEl) { msgEl.style.display = 'none'; }
+
+        window.CCApi.request(endpoint('/products/' + encodeURIComponent(productId) + '/reports'), {
+            method: 'POST',
+            body: body,
+        })
+        .then(function () {
+            if (typeEl) { typeEl.value = ''; }
+            if (descEl) { descEl.value = ''; }
+            if (form)   { form.style.display = 'none'; }
+            if (msgEl) {
+                msgEl.textContent = 'Reporte enviado. ¡Gracias por tu colaboración!';
+                msgEl.className = 'alert alert-success';
+                msgEl.style.display = 'block';
+            }
+        })
+        .catch(function (err) {
+            var code = err.status || 0;
+            var msg  = 'Error al enviar el reporte.';
+            if (code === 404) { msg = 'Producto no encontrado.'; }
+            else if (code === 422) {
+                var errors = err.payload && err.payload.error && err.payload.error.errors;
+                if (errors && errors.type)        { msg = errors.type[0]; }
+                else if (errors && errors.description) { msg = errors.description[0]; }
+                else { msg = apiError(err); }
+            } else { msg = apiError(err); }
+            if (msgEl) { msgEl.textContent = msg; msgEl.className = 'alert alert-danger'; msgEl.style.display = 'block'; }
+        })
+        .then(function () {
+            if (submitBtn) { submitBtn.disabled = false; }
+        });
     }
 
     // ── INGREDIENTES ─────────────────────────────────────────────────────────
@@ -333,6 +465,34 @@
             if (t.dataset.catalogTab)            { switchTab(root, t.dataset.catalogTab); return; }
             if (t.dataset.catalogProductView)    { showProductDetail(root, t.dataset.catalogProductView); return; }
             if (t.dataset.catalogIngredientView) { showIngredientDetail(root, t.dataset.catalogIngredientView); return; }
+
+            if (t.dataset.catalogImgSwitch) {
+                var mainImg = root.querySelector('[data-catalog-img-main]');
+                if (mainImg) { mainImg.src = t.dataset.catalogImgSwitch; }
+                root.querySelectorAll('.product-image-thumb').forEach(function (thumb) {
+                    thumb.classList.toggle('active', thumb.dataset.catalogImgSwitch === t.dataset.catalogImgSwitch);
+                });
+                return;
+            }
+
+            if (t.dataset.hasOwnProperty('catalogReportToggle')) {
+                var form = root.querySelector('[data-catalog-report-form]');
+                if (form) { form.style.display = form.style.display === 'none' ? '' : 'none'; }
+                return;
+            }
+
+            if (t.dataset.hasOwnProperty('catalogReportCancel')) {
+                var cancelForm = root.querySelector('[data-catalog-report-form]');
+                if (cancelForm) { cancelForm.style.display = 'none'; }
+                var cancelMsg = root.querySelector('[data-catalog-report-message]');
+                if (cancelMsg) { cancelMsg.style.display = 'none'; }
+                return;
+            }
+
+            if (t.dataset.hasOwnProperty('catalogReportSubmit')) {
+                submitReport(root);
+                return;
+            }
 
             if (t.dataset.catalogTagToggle !== undefined) {
                 var tagId = parseInt(t.dataset.catalogTagToggle, 10);

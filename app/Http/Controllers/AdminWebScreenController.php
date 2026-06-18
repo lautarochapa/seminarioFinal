@@ -133,6 +133,7 @@ class AdminWebScreenController extends Controller
             'settings' => ['title' => 'Configuracion', 'module' => 'Settings', 'description' => 'Feature flags y configuracion general.', 'primary' => 'Nuevo setting', 'secondary' => 'Feature flags', 'metrics' => ['settings', 'feature_flags'], 'panels' => ['Settings', 'Feature flags', 'Publicos', 'Sistema']],
             'thesis-docs' => ['title' => 'Documentacion tesis', 'module' => 'Docs', 'description' => 'Editor documentacion.', 'primary' => 'Nuevo documento', 'secondary' => 'Versionar', 'metrics' => ['thesis_documents'], 'panels' => ['Documentos', 'Secciones', 'Versiones', 'Comentarios']],
             'demo-scenarios' => ['title' => 'Escenarios demo', 'module' => 'Docs/demo', 'description' => 'ABM demos para docente.', 'primary' => 'Nuevo escenario', 'secondary' => 'Probar ruta', 'metrics' => ['demo_scenarios'], 'panels' => ['Escenarios', 'Usuario demo', 'Rutas', 'Estado']],
+            'product-reports' => ['title' => 'Reportes de productos', 'module' => 'Productos', 'description' => 'Revisión y resolución de reportes enviados por usuarios sobre errores en productos y precios.', 'primary' => 'Ver pendientes', 'secondary' => 'Ver resueltos', 'metrics' => ['products'], 'panels' => ['Pendientes', 'Resueltos', 'Filtros', 'Detalle']],
         ];
     }
 

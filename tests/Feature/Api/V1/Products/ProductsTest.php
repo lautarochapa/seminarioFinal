@@ -9,6 +9,7 @@ use App\Nutrient;
 use App\Product;
 use App\ProductBarcode;
 use App\ProductCategory;
+use App\ProductImage;
 use App\ProductNutrient;
 use App\Role;
 use App\SupermarketProduct;
@@ -19,6 +20,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductsTest extends TestCase
@@ -318,5 +320,136 @@ class ProductsTest extends TestCase
         $this->assertNotNull(Route::getRoutes()->match(request()->create('/api/v1/products/1/nutrition', 'GET')));
         $this->assertNotNull(Route::getRoutes()->match(request()->create('/api/v1/products/1/prices', 'GET')));
         $this->assertNotNull(Route::getRoutes()->match(request()->create('/api/v1/products/1/alternatives', 'GET')));
+    }
+
+    public function test_imagen_carga_url_valida()
+    {
+        Storage::fake('public');
+        $admin   = $this->admin();
+        $product = $this->product();
+
+        $response = $this->actingAs($admin)
+            ->postJson('/api/v1/admin/products/' . $product->id . '/images', [
+                'url'        => 'https://example.com/producto.jpg',
+                'is_primary' => true,
+            ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.is_primary', true)
+            ->assertJsonPath('data.image_url', 'https://example.com/producto.jpg');
+
+        $this->assertDatabaseHas('product_images', [
+            'product_id' => $product->id,
+            'image_url'  => 'https://example.com/producto.jpg',
+            'is_primary' => true,
+            'status'     => 'active',
+        ]);
+    }
+
+    public function test_imagen_url_invalida_rechazada()
+    {
+        Storage::fake('public');
+        $admin   = $this->admin();
+        $product = $this->product();
+
+        $this->actingAs($admin)
+            ->postJson('/api/v1/admin/products/' . $product->id . '/images', [
+                'url' => 'no-es-una-url-valida',
+            ])
+            ->assertStatus(422);
+    }
+
+    public function test_imagen_sin_archivo_ni_url_rechazado()
+    {
+        Storage::fake('public');
+        $admin   = $this->admin();
+        $product = $this->product();
+
+        $this->actingAs($admin)
+            ->postJson('/api/v1/admin/products/' . $product->id . '/images', [])
+            ->assertStatus(422);
+    }
+
+    public function test_imagen_eliminacion()
+    {
+        Storage::fake('public');
+        $admin   = $this->admin();
+        $product = $this->product();
+
+        $image = ProductImage::create([
+            'product_id' => $product->id,
+            'image_url'  => 'products/images/test.jpg',
+            'is_primary' => false,
+            'status'     => 'active',
+        ]);
+
+        $this->actingAs($admin)
+            ->deleteJson('/api/v1/admin/products/' . $product->id . '/images/' . $image->id)
+            ->assertStatus(204);
+
+        $this->assertDatabaseHas('product_images', [
+            'id'     => $image->id,
+            'status' => 'inactive',
+        ]);
+    }
+
+    public function test_imagenes_presentes_cuando_relacion_cargada()
+    {
+        $product = $this->product();
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'image_url'  => 'https://example.com/img.jpg',
+            'is_primary' => true,
+            'status'     => 'active',
+        ]);
+
+        $response = $this->actingAs(factory(User::class)->create())
+            ->getJson('/api/v1/products/' . $product->id);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data' => ['images']])
+            ->assertJsonPath('data.images.0.is_primary', true)
+            ->assertJsonPath('data.images.0.image_url', 'https://example.com/img.jpg');
+    }
+
+    public function test_producto_sin_imagenes_retorna_array_vacio()
+    {
+        $product = $this->product();
+
+        $response = $this->actingAs(factory(User::class)->create())
+            ->getJson('/api/v1/products/' . $product->id);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.images', []);
+    }
+
+    public function test_producto_con_imagen_principal_marcada()
+    {
+        $product = $this->product();
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'image_url'  => 'https://example.com/secondary.jpg',
+            'is_primary' => false,
+            'status'     => 'active',
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'image_url'  => 'https://example.com/primary.jpg',
+            'is_primary' => true,
+            'status'     => 'active',
+        ]);
+
+        $response = $this->actingAs(factory(User::class)->create())
+            ->getJson('/api/v1/products/' . $product->id);
+
+        $response->assertStatus(200);
+        $images = $response->json('data.images');
+        $this->assertCount(2, $images);
+        $primary = array_values(array_filter($images, fn($i) => $i['is_primary']));
+        $this->assertCount(1, $primary);
+        $this->assertEquals('https://example.com/primary.jpg', $primary[0]['image_url']);
     }
 }

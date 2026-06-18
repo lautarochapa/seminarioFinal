@@ -66,6 +66,15 @@
         .audit-tab { border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:9px 15px;font-weight:900;cursor:pointer; }
         .audit-tab.active { background:rgba(4,172,133,.9);border-color:rgba(4,172,133,.9);color:#fff; }
         .catalog-pagination { display:flex;gap:8px;align-items:center;margin-top:12px; }
+        .product-thumb-img { width:36px;height:36px;object-fit:contain;border-radius:4px;background:#f0f0f0;vertical-align:middle;margin-right:6px;flex-shrink:0; }
+        .product-image-main { width:100%;max-height:220px;object-fit:contain;background:#f0f0f0;border-radius:8px;display:block;margin-bottom:10px; }
+        .product-image-gallery { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px; }
+        .product-image-thumb { width:52px;height:52px;object-fit:contain;background:#f0f0f0;border-radius:4px;cursor:pointer;border:2px solid transparent; }
+        .product-image-thumb.active { border-color:var(--green); }
+        .product-image-placeholder { display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:8px;height:90px;color:var(--muted);font-size:13px;margin-bottom:10px; }
+        .report-form-toggle { margin-top:14px;padding-top:14px;border-top:1px solid var(--line); }
+        .report-form-section select,.report-form-section textarea { width:100%;box-sizing:border-box;margin-bottom:8px; }
+        .report-form-section { margin-top:10px; }
         @media (max-width: 960px) {
             .content { padding:14px; }
             .hero, .topbar { display:block; }
