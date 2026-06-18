@@ -6,6 +6,7 @@
         selectedId: null,
         map: null,
         markers: [],
+        promotionsRequestSeq: 0,
     };
 
     function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
@@ -303,10 +304,89 @@
             '<div style="display:flex;gap:6px;flex-wrap:wrap">' + delivChip + pickChip + '</div>' +
             hoursHtml +
             routeLink +
+            '<h3 style="font-size:13px;font-weight:900;margin:16px 0 6px">Promociones vigentes</h3>' +
+            '<div data-branch-promotions-list><p class="muted" style="font-size:13px">Cargando promociones...</p></div>' +
             '<h3 style="font-size:13px;font-weight:900;margin:16px 0 6px">Productos disponibles</h3>' +
             '<div data-branch-products-list><p class="muted" style="font-size:13px">Cargando productos...</p></div>' +
             '</div>';
+        loadBranchPromotions(root, b.id);
         loadBranchProducts(root, b.id);
+    }
+
+    function promotionTypeLabel(type) {
+        var labels = {
+            percentage: 'Porcentaje',
+            fixed_amount: 'Monto fijo',
+            buy_x_pay_y: '2x1 / Buy X Pay Y',
+            payment_method: 'Metodo de pago',
+            day_discount: 'Descuento por dia',
+        };
+        return labels[type] || 'Promocion';
+    }
+
+    function promotionDayLabel(day) {
+        var days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+        return day !== null && day !== undefined && days[day] ? days[day] : '';
+    }
+
+    function formatPromotionDate(value) {
+        if (!value) { return '-'; }
+        var date = new Date(value);
+        if (isNaN(date.getTime())) { return value; }
+        return date.toLocaleDateString('es-AR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    function promotionBenefit(row) {
+        var type = promotionTypeLabel(row.discount_type);
+        var value = row.discount_value !== null && row.discount_value !== undefined ? row.discount_value : null;
+        if (row.discount_type === 'percentage' && value !== null) {
+            return type + ' ' + value + '%';
+        }
+        if (row.discount_type === 'fixed_amount' && value !== null) {
+            return type + ' ARS ' + value;
+        }
+        if (row.discount_type === 'day_discount') {
+            return type + (promotionDayLabel(row.day_of_week) ? ' - ' + promotionDayLabel(row.day_of_week) : '');
+        }
+        if (row.discount_type === 'payment_method') {
+            return type;
+        }
+        if (row.discount_type === 'buy_x_pay_y') {
+            return type + (value !== null ? ' - valor ' + value : '');
+        }
+        return type + (value !== null ? ' ' + value : '');
+    }
+
+    function loadBranchPromotions(root, branchId) {
+        var target = qs('[data-branch-promotions-list]', root);
+        if (!target) { return; }
+
+        var seq = ++state.promotionsRequestSeq;
+        target.innerHTML = '<p class="muted" style="font-size:13px">Cargando promociones...</p>';
+
+        window.CCApi.request(endpoint('/supermarket-branches/' + encodeURIComponent(branchId) + '/promotions'))
+            .then(function (r) {
+                if (seq !== state.promotionsRequestSeq) { return; }
+                var rows = r.data || [];
+                if (!rows.length) {
+                    target.innerHTML = '<p class="muted" style="font-size:13px">No hay promociones vigentes para esta sucursal.</p>';
+                    return;
+                }
+                target.innerHTML = rows.map(function (row) {
+                    var scope = row.supermarket_branch_id ? 'Sucursal' : 'Cadena';
+                    var dateLabel = formatPromotionDate(row.valid_from) + ' a ' + formatPromotionDate(row.valid_to);
+                    var payment = row.requires_payment_method ? '<br><span class="muted">Requiere metodo de pago</span>' : '';
+                    return '<div class="table-line">' +
+                        '<span><strong>' + escapeHtml(row.name) + '</strong><br>' +
+                        '<span class="muted">' + escapeHtml(scope) + ' - ' + escapeHtml(dateLabel) + '</span>' + payment + '</span>' +
+                        '<strong>' + escapeHtml(promotionBenefit(row)) + '</strong>' +
+                        '</div>';
+                }).join('');
+            })
+            .catch(function () {
+                if (seq !== state.promotionsRequestSeq) { return; }
+                target.innerHTML = '<p class="muted" style="font-size:13px">No se pudieron cargar las promociones.</p>';
+            });
     }
 
     function loadBranchProducts(root, branchId) {

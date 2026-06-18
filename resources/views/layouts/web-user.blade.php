@@ -17,6 +17,7 @@
     <script src="{{ asset('js/user-barcode.js') }}?v={{ file_exists(public_path('js/user-barcode.js')) ? filemtime(public_path('js/user-barcode.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-supermarkets.js') }}?v={{ file_exists(public_path('js/user-supermarkets.js')) ? filemtime(public_path('js/user-supermarkets.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-branches.js') }}?v={{ file_exists(public_path('js/user-branches.js')) ? filemtime(public_path('js/user-branches.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-payment-methods.js') }}?v={{ file_exists(public_path('js/user-payment-methods.js')) ? filemtime(public_path('js/user-payment-methods.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

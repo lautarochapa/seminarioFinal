@@ -1643,6 +1643,174 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'promotions')
+        <section data-admin-promotions>
+            <div class="alert" data-promotions-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-promotions-search placeholder="Buscar promocion">
+                        <select class="form-control" data-promotions-filter-chain>
+                            <option value="">Cadena</option>
+                        </select>
+                        <select class="form-control" data-promotions-filter-branch>
+                            <option value="">Sucursal</option>
+                        </select>
+                        <select class="form-control" data-promotions-filter-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-promotions-refresh>Actualizar</button>
+                        <span class="chip" data-promotions-count>0 promociones</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Promocion</th>
+                                    <th>Supermercado</th>
+                                    <th>Beneficio</th>
+                                    <th>Vigencia</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-promotions-body>
+                                <tr><td colspan="6" class="muted">Cargando promociones...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-promotions-prev>Anterior</button>
+                        <span class="muted" data-promotions-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-promotions-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-promotion-form-title>Nueva promocion</h2>
+                    <form class="rbac-form" data-promotion-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Nombre" required>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="supermarket_chain_id" data-promotion-chain-select required>
+                            <option value="">Cadena</option>
+                        </select>
+                        <select class="form-control" name="supermarket_branch_id" data-promotion-branch-select>
+                            <option value="">Promocion de cadena</option>
+                        </select>
+                        <select class="form-control" name="discount_type" data-promotion-type>
+                            <option value="">Tipo de promocion</option>
+                            <option value="percentage">Porcentaje</option>
+                            <option value="fixed_amount">Monto fijo</option>
+                            <option value="buy_x_pay_y">2x1 / Buy X Pay Y</option>
+                            <option value="payment_method">Metodo de pago</option>
+                            <option value="day_discount">Descuento por dia</option>
+                        </select>
+                        <div data-promotion-value-row>
+                            <input class="form-control" name="discount_value" type="number" min="0" step="0.01" placeholder="Valor del descuento">
+                        </div>
+                        <select class="form-control" name="day_of_week" data-promotion-day-row>
+                            <option value="">Dia de la semana</option>
+                            <option value="0">Domingo</option>
+                            <option value="1">Lunes</option>
+                            <option value="2">Martes</option>
+                            <option value="3">Miercoles</option>
+                            <option value="4">Jueves</option>
+                            <option value="5">Viernes</option>
+                            <option value="6">Sabado</option>
+                        </select>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center">
+                            <input type="checkbox" name="requires_payment_method" value="1" data-promotion-payment-required>
+                            Requiere metodo de pago
+                        </label>
+                        <input class="form-control" name="valid_from" type="datetime-local" placeholder="Desde">
+                        <input class="form-control" name="valid_to" type="datetime-local" placeholder="Hasta">
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-promotion-submit>Guardar promocion</button>
+                            <button type="button" class="btn-ghost" data-promotion-reset>Limpiar</button>
+                        </div>
+                    </form>
+                    <p class="muted" style="margin-top:10px;font-size:13px">El contrato actual permite asociar la promocion a una cadena y opcionalmente a una sucursal. Producto, banco y billetera no se envian porque no forman parte de esta API.</p>
+                </aside>
+            </div>
+        </section>
+    @elseif($screenKey === 'payment-methods')
+        <section data-admin-payment-methods>
+            <div class="alert" data-payment-methods-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-payment-methods-search placeholder="Buscar metodo o emisor">
+                        <select class="form-control" data-payment-methods-filter-type>
+                            <option value="">Todos los tipos</option>
+                            <option value="credit_card">Tarjeta credito</option>
+                            <option value="debit_card">Tarjeta debito</option>
+                            <option value="bank_account">Cuenta bancaria</option>
+                            <option value="digital_wallet">Billetera digital</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <select class="form-control" data-payment-methods-filter-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-payment-methods-refresh>Actualizar</button>
+                        <span class="chip" data-payment-methods-count>0 metodos</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Metodo</th>
+                                    <th>Tipo</th>
+                                    <th>Emisor</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-payment-methods-body>
+                                <tr><td colspan="5" class="muted">Cargando metodos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-payment-methods-prev>Anterior</button>
+                        <span class="muted" data-payment-methods-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-payment-methods-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-payment-method-form-title>Nuevo metodo</h2>
+                    <form class="rbac-form" data-payment-method-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Visa Credito" required>
+                        <select class="form-control" name="type" required>
+                            <option value="">Tipo</option>
+                            <option value="credit_card">Tarjeta credito</option>
+                            <option value="debit_card">Tarjeta debito</option>
+                            <option value="bank_account">Cuenta bancaria</option>
+                            <option value="digital_wallet">Billetera digital</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <input class="form-control" name="issuer" type="text" placeholder="Banco o billetera">
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-payment-method-submit>Guardar metodo</button>
+                            <button type="button" class="btn-ghost" data-payment-method-reset>Limpiar</button>
+                        </div>
+                    </form>
+                    <p class="muted" style="margin-top:10px;font-size:13px">No se guardan numeros de tarjeta, CVV, tokens ni credenciales. El contrato solo admite nombre, tipo y emisor.</p>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'cities')
         <section data-admin-cities>
             <div class="alert" data-cities-message style="display:none"></div>

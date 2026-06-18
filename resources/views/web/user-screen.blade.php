@@ -580,6 +580,69 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'payment-methods')
+        <section class="workspace" data-user-payment-methods>
+            <div style="display:grid;gap:14px">
+                <article class="panel">
+                    <h2>Mis metodos de pago</h2>
+                    <div class="alert" data-user-payment-message style="display:none"></div>
+                    <div style="overflow:auto">
+                        <table class="web-table">
+                            <thead>
+                                <tr>
+                                    <th>Metodo</th>
+                                    <th>Alias</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-user-payment-body>
+                                <tr><td colspan="4" class="muted">Cargando metodos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <h2>Agregar metodo</h2>
+                    <form class="profile-form" data-user-payment-form>
+                        <select class="form-control" name="payment_method_id" required data-user-payment-select>
+                            <option value="">Cargando catalogo...</option>
+                        </select>
+                        <input class="form-control" name="alias" type="text" maxlength="120" placeholder="Alias opcional, ej. Visa personal">
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-user-payment-submit>Agregar metodo</button>
+                            <button type="button" class="btn-secondary-web" data-user-payment-refresh>Actualizar</button>
+                        </div>
+                    </form>
+                </article>
+
+                <article class="panel">
+                    <h2>Catalogo disponible</h2>
+                    <div class="web-tools">
+                        <select class="form-control" data-user-payment-type>
+                            <option value="">Todos los tipos</option>
+                            <option value="credit_card">Tarjeta credito</option>
+                            <option value="debit_card">Tarjeta debito</option>
+                            <option value="bank_account">Cuenta bancaria</option>
+                            <option value="digital_wallet">Billetera digital</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <button type="button" class="btn-secondary-web" data-user-payment-catalog-refresh>Filtrar</button>
+                    </div>
+                    <div data-user-payment-catalog class="muted">Cargando catalogo...</div>
+                </article>
+            </div>
+
+            <aside class="aside-panel">
+                <h2>Seguridad</h2>
+                <div class="table-line"><span class="muted">Datos guardados</span><strong>Metodo y alias</strong></div>
+                <div class="table-line"><span class="muted">No se guarda</span><strong>Numero, CVV ni token</strong></div>
+                <div class="table-line"><span class="muted">Promociones</span><strong>Compatibilidad por tipo/emisor</strong></div>
+                <p class="muted" style="margin-top:14px;font-size:13px">Las promociones generales siguen visibles aunque no tengas metodos asociados.</p>
+            </aside>
+        </section>
     @elseif($screenKey === 'professional-permissions')
         <section class="workspace" data-professional-links>
             <div style="display:grid;gap:14px">

@@ -11,6 +11,7 @@ use App\Ingredient;
 use App\IngredientCategory;
 use App\Nutrient;
 use App\Objective;
+use App\PaymentMethod;
 use App\Permission;
 use App\Product;
 use App\ProductBarcode;
@@ -85,6 +86,7 @@ class AdminWebScreenController extends Controller
             'supermarket_products' => SupermarketProduct::count(),
             'prices' => SupermarketProductPrice::count(),
             'promotions' => Promotion::count(),
+            'payment_methods' => PaymentMethod::count(),
             'scraping_jobs' => ScrapingJob::count(),
             'scraped_products' => ScrapedProductCandidate::count(),
             'scraping_alerts' => ScrapingAlert::count(),
@@ -124,6 +126,7 @@ class AdminWebScreenController extends Controller
             'supermarket-products' => ['title' => 'Productos por supermercado', 'module' => 'Supermercados', 'description' => 'Mapeo entre productos internos y publicaciones por sucursal.', 'primary' => 'Nuevo mapeo', 'secondary' => 'Comparar precios', 'metrics' => ['supermarket_products', 'prices'], 'panels' => ['Mapeos', 'Sucursales', 'Precios', 'Scraping'], 'permission' => 'catalog.manage'],
             'prices' => ['title' => 'Precios', 'module' => 'Supermercados', 'description' => 'Precios por producto/super.', 'primary' => 'Cargar precio', 'secondary' => 'Historial', 'metrics' => ['prices', 'products'], 'panels' => ['Actuales', 'Historial', 'Promociones', 'Validacion']],
             'promotions' => ['title' => 'Promociones', 'module' => 'Supermercados', 'description' => 'Descuentos y metodos de pago.', 'primary' => 'Nueva promocion', 'secondary' => 'Metodos de pago', 'metrics' => ['promotions'], 'panels' => ['Promociones', 'Vigencia', 'Pago', 'Sucursales']],
+            'payment-methods' => ['title' => 'Metodos de pago', 'module' => 'Supermercados', 'description' => 'Catalogo de tarjetas, billeteras, efectivo y otros medios usados por promociones.', 'primary' => 'Nuevo metodo', 'secondary' => 'Ver usuarios', 'metrics' => ['payment_methods'], 'panels' => ['Catalogo', 'Tipos', 'Emisores', 'Usuarios'], 'permission' => 'catalog.manage'],
             'supermarket-scraping' => ['title' => 'Scraping supermercados', 'module' => 'Scraping', 'description' => 'Ejecutar scraping, ver jobs y logs.', 'primary' => 'Ejecutar scraping', 'secondary' => 'Ver logs', 'metrics' => ['scraping_jobs', 'scraping_errors'], 'panels' => ['Jobs', 'Logs', 'Parametros', 'Resultados']],
             'scraped-products' => ['title' => 'Productos scrapeados pendientes', 'module' => 'Scraping', 'description' => 'Validar, mapear, crear productos.', 'primary' => 'Validar seleccion', 'secondary' => 'Crear producto', 'metrics' => ['scraped_products'], 'panels' => ['Pendientes', 'Matches', 'Crear producto', 'Descartar']],
             'official-recipes' => ['title' => 'Recetas oficiales', 'module' => 'Recetas', 'description' => 'ABM recetas oficiales.', 'primary' => 'Nueva receta oficial', 'secondary' => 'Publicar', 'metrics' => ['recipes'], 'panels' => ['Oficiales', 'Ingredientes', 'Pasos', 'Costo/nutricion']],

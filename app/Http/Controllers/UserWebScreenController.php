@@ -55,6 +55,7 @@ class UserWebScreenController extends Controller
             'report_exports' => ReportExport::count(),
             'objectives' => UserObjective::count(),
             'professional_links' => ProfessionalUserLink::count(),
+            'payment_methods' => \App\UserPaymentMethod::where('status', 'active')->count(),
         ];
     }
 
@@ -142,6 +143,16 @@ class UserWebScreenController extends Controller
                 'metrics' => ['objectives'],
                 'panels' => ['Datos personales', 'Objetivos', 'Restricciones', 'Prioridades'],
             ],
+            'payment-methods' => [
+                'title' => 'Metodos de pago',
+                'module' => 'Promociones',
+                'description' => 'Elegí los metodos que usas para que el sistema pueda mostrar promociones compatibles.',
+                'primary' => 'Agregar metodo',
+                'secondary' => 'Ver promociones',
+                'metrics' => ['payment_methods'],
+                'panels' => ['Catalogo', 'Mis metodos', 'Promociones', 'Seguridad'],
+                'permission' => 'web.user.profile-objectives',
+            ],
             'professional-permissions' => [
                 'title' => 'Permisos dietologo',
                 'module' => 'Profesional',
@@ -193,7 +204,8 @@ class UserWebScreenController extends Controller
     private function canAccessScreen($screen)
     {
         $user = request()->user();
-        $permission = 'web.user.' . $screen;
+        $screens = $this->screens();
+        $permission = $screens[$screen]['permission'] ?? 'web.user.' . $screen;
 
         return $user && $user->hasPermission($permission);
     }
