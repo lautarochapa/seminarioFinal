@@ -8,6 +8,11 @@
         branches: [],
         page: 1,
         lastPage: 1,
+        selectedMappingId: null,
+        pricePage: 1,
+        priceLastPage: 1,
+        priceRequestSeq: 0,
+        savingPrice: false,
     };
 
     function qs(selector, root) {
@@ -78,6 +83,17 @@
             return '<span class="muted">Sin precio</span>';
         }
         return '<strong>' + escapeHtml(row.current_price.currency || 'ARS') + ' ' + escapeHtml(row.current_price.price) + '</strong>';
+    }
+
+    function dateLabel(value) {
+        if (!value) {
+            return '-';
+        }
+        var date = new Date(value);
+        if (isNaN(date.getTime())) {
+            return text(value);
+        }
+        return date.toLocaleString('es-AR');
     }
 
     function linkHtml(url) {
@@ -221,9 +237,31 @@
                 '<td><strong>' + escapeHtml(row.external_sku) + '</strong><br><span class="muted">' + escapeHtml(row.source_name) + '</span>' + linkHtml(row.source_url) + '</td>' +
                 '<td>' + currentPrice(row) + '</td>' +
                 '<td>' + escapeHtml(row.status) + '</td>' +
-                '<td><button type="button" class="btn-main btn-sm" data-sp-edit="' + row.id + '">Editar</button> ' + action + '</td>' +
+                '<td><button type="button" class="btn-main btn-sm" data-sp-edit="' + row.id + '">Editar</button> <button type="button" class="btn-ghost btn-sm" data-sp-prices-row="' + row.id + '">Precios</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
+    }
+
+    function setPriceFormEnabled(root, enabled) {
+        var form = qs('[data-sp-price-form]', root);
+        if (!form) {
+            return;
+        }
+        Array.from(form.elements).forEach(function (element) {
+            element.disabled = !enabled || state.savingPrice;
+        });
+    }
+
+    function resetPricePanel(root) {
+        state.selectedMappingId = null;
+        state.pricePage = 1;
+        state.priceLastPage = 1;
+        state.priceRequestSeq += 1;
+        qs('[data-sp-current-price]', root).innerHTML = '<span class="muted">Selecciona un mapeo para cargar precios.</span>';
+        qs('[data-sp-price-history]', root).innerHTML = '<span class="muted">Selecciona un mapeo.</span>';
+        qs('[data-sp-price-page]', root).textContent = 'Pagina 1';
+        qs('[data-sp-price-form]', root).reset();
+        setPriceFormEnabled(root, false);
     }
 
     function resetForm(root) {
@@ -234,6 +272,7 @@
         qs('[data-sp-form-title]', root).textContent = 'Nuevo mapeo';
         qs('[data-sp-submit]', root).textContent = 'Guardar mapeo';
         renderBranchSelect(qs('[data-sp-branch-select]', root), '', 'Sucursal');
+        resetPricePanel(root);
     }
 
     function fillForm(root, row) {
@@ -250,6 +289,7 @@
         form.elements.last_scraped_at.value = row.last_scraped_at ? String(row.last_scraped_at).slice(0, 16) : '';
         qs('[data-sp-form-title]', root).textContent = 'Editar mapeo #' + row.id;
         qs('[data-sp-submit]', root).textContent = 'Guardar cambios';
+        selectPriceMapping(root, row);
     }
 
     function payload(form) {
@@ -312,6 +352,121 @@
             }).catch(function (error) {
                 handleError(root, error);
             });
+    }
+
+    function renderCurrentPrice(root, row, prices) {
+        var target = qs('[data-sp-current-price]', root);
+        var current = prices.find(function (price) { return price.is_current; });
+        if (!current && row && row.current_price) {
+            target.innerHTML = '<div class="line"><span>Precio actual</span>' + currentPrice(row) + '</div>';
+            return;
+        }
+        if (!current) {
+            target.innerHTML = '<span class="muted">Sin precio actual.</span>';
+            return;
+        }
+        target.innerHTML =
+            '<div class="line"><span>Precio actual</span><strong>' + escapeHtml(current.currency || 'ARS') + ' ' + escapeHtml(current.price) + '</strong></div>' +
+            '<div class="line"><span>Fecha</span><span>' + escapeHtml(dateLabel(current.captured_at || current.valid_from || current.created_at)) + '</span></div>' +
+            '<div class="line"><span>Origen</span><span>' + escapeHtml(current.source) + '</span></div>';
+    }
+
+    function renderPriceHistory(root, rows, meta) {
+        var target = qs('[data-sp-price-history]', root);
+        state.priceLastPage = meta && meta.last_page ? meta.last_page : 1;
+        qs('[data-sp-price-page]', root).textContent = 'Pagina ' + (meta && meta.current_page ? meta.current_page : state.pricePage) + ' de ' + state.priceLastPage;
+        if (!rows.length) {
+            target.innerHTML = '<span class="muted">Sin precios historicos.</span>';
+            return;
+        }
+        target.innerHTML = '<div style="overflow:auto"><table class="admin-table"><thead><tr>' +
+            '<th>Precio</th><th>Fecha</th><th>Origen</th><th>Vigencia</th><th>Estado</th>' +
+            '</tr></thead><tbody>' + rows.map(function (price) {
+                var validity = price.valid_to ? 'Hasta ' + dateLabel(price.valid_to) : 'Actual';
+                return '<tr>' +
+                    '<td><strong>' + escapeHtml(price.currency || 'ARS') + ' ' + escapeHtml(price.price) + '</strong></td>' +
+                    '<td>' + escapeHtml(dateLabel(price.captured_at || price.created_at)) + '</td>' +
+                    '<td>' + escapeHtml(price.source) + '</td>' +
+                    '<td>' + escapeHtml(validity) + '</td>' +
+                    '<td>' + escapeHtml(price.status) + '</td>' +
+                    '</tr>';
+            }).join('') + '</tbody></table></div>';
+    }
+
+    function loadPriceHistory(root, page) {
+        if (!state.selectedMappingId) {
+            resetPricePanel(root);
+            return Promise.resolve();
+        }
+        var requestSeq = ++state.priceRequestSeq;
+        state.pricePage = page || state.pricePage || 1;
+        qs('[data-sp-price-history]', root).innerHTML = '<span class="muted">Cargando historial...</span>';
+
+        return window.CCApi.request(endpoint('/admin/supermarket-products/' + encodeURIComponent(state.selectedMappingId) + '/prices?page=' + state.pricePage + '&per_page=10'))
+            .then(function (response) {
+                if (requestSeq !== state.priceRequestSeq) {
+                    return;
+                }
+                var rows = response.data || [];
+                var row = state.mappings.find(function (item) { return String(item.id) === String(state.selectedMappingId); });
+                renderCurrentPrice(root, row, rows);
+                renderPriceHistory(root, rows, response.meta || {});
+                setPriceFormEnabled(root, true);
+            }).catch(function (error) {
+                if (requestSeq !== state.priceRequestSeq) {
+                    return;
+                }
+                qs('[data-sp-price-history]', root).innerHTML = '<span class="muted">No se pudo cargar el historial.</span>';
+                setPriceFormEnabled(root, false);
+                handleError(root, error);
+            });
+    }
+
+    function selectPriceMapping(root, row) {
+        state.selectedMappingId = row.id;
+        state.pricePage = 1;
+        qs('[data-sp-current-price]', root).innerHTML = '<span class="muted">Cargando precio actual...</span>';
+        qs('[data-sp-price-form]', root).reset();
+        setPriceFormEnabled(root, true);
+        return loadPriceHistory(root, 1);
+    }
+
+    function savePrice(root, form) {
+        if (!state.selectedMappingId || state.savingPrice) {
+            return Promise.resolve();
+        }
+        clearMessage(root);
+        var price = form.elements.price.value;
+        if (parseFloat(price) <= 0) {
+            showMessage(root, 'danger', 'El precio debe ser mayor que cero.');
+            return Promise.resolve();
+        }
+        state.savingPrice = true;
+        setPriceFormEnabled(root, true);
+
+        var data = {
+            price: price,
+            currency: form.elements.currency.value || 'ARS',
+        };
+        if (form.elements.captured_at.value) {
+            data.captured_at = form.elements.captured_at.value;
+        }
+
+        return window.CCApi.request(endpoint('/admin/supermarket-products/' + encodeURIComponent(state.selectedMappingId) + '/prices'), {
+            method: 'POST',
+            body: data,
+        }).then(function () {
+            showMessage(root, 'success', 'Precio agregado.');
+            form.reset();
+            return loadPriceHistory(root, 1).then(function () {
+                return fetchMappings(root, state.page);
+            });
+        }).catch(function (error) {
+            handleError(root, error);
+        }).finally(function () {
+            state.savingPrice = false;
+            setPriceFormEnabled(root, true);
+        });
     }
 
     function renderPriceList(target, rows) {
@@ -403,6 +558,16 @@
             event.preventDefault();
             saveMapping(root, event.currentTarget);
         });
+        qs('[data-sp-price-form]', root).addEventListener('submit', function (event) {
+            event.preventDefault();
+            savePrice(root, event.currentTarget);
+        });
+        qs('[data-sp-price-prev]', root).addEventListener('click', function () {
+            loadPriceHistory(root, Math.max(1, state.pricePage - 1));
+        });
+        qs('[data-sp-price-next]', root).addEventListener('click', function () {
+            loadPriceHistory(root, Math.min(state.priceLastPage, state.pricePage + 1));
+        });
         qs('[data-sp-reset]', root).addEventListener('click', function () {
             resetForm(root);
         });
@@ -442,6 +607,7 @@
         });
         qs('[data-sp-body]', root).addEventListener('click', function (event) {
             var edit = event.target.closest('[data-sp-edit]');
+            var prices = event.target.closest('[data-sp-prices-row]');
             var remove = event.target.closest('[data-sp-delete]');
             var restore = event.target.closest('[data-sp-restore-row]');
 
@@ -450,6 +616,13 @@
                 var row = state.mappings.find(function (item) { return item.id === id; });
                 if (row) {
                     fillForm(root, row);
+                }
+            }
+            if (prices) {
+                var priceId = parseInt(prices.getAttribute('data-sp-prices-row'), 10);
+                var priceRow = state.mappings.find(function (item) { return item.id === priceId; });
+                if (priceRow) {
+                    selectPriceMapping(root, priceRow);
                 }
             }
             if (remove) {

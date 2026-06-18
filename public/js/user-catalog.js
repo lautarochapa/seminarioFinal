@@ -82,6 +82,17 @@
         return escapeHtml(row.current_price.currency || 'ARS') + ' ' + escapeHtml(row.current_price.price);
     }
 
+    function dateLabel(value) {
+        if (!value) {
+            return '-';
+        }
+        var date = new Date(value);
+        if (isNaN(date.getTime())) {
+            return text(value);
+        }
+        return date.toLocaleString('es-AR');
+    }
+
     function supermarketLabel(row) {
         var branch = row && row.branch ? row.branch : null;
         if (!branch) {
@@ -112,9 +123,12 @@
                     return;
                 }
                 pricesTarget.innerHTML = rows.map(function (row) {
+                    var updatedAt = row.current_price
+                        ? (row.current_price.scraped_at || row.current_price.captured_at || row.updated_at)
+                        : row.updated_at;
                     return '<div class="table-line">' +
-                        '<span class="muted">' + escapeHtml(supermarketLabel(row)) + '</span>' +
-                        '<strong>' + priceLabel(row) + '</strong>' +
+                        '<span><strong>' + escapeHtml(supermarketLabel(row)) + '</strong><br><span class="muted" style="font-size:12px">Actualizado: ' + escapeHtml(dateLabel(updatedAt)) + '</span></span>' +
+                        '<span style="text-align:right"><strong>' + priceLabel(row) + '</strong><br><a href="/web/branches" class="muted" style="font-size:12px">Ver sucursal</a></span>' +
                         '</div>';
                 }).join('');
             })
@@ -133,6 +147,7 @@
                 bestTarget.innerHTML =
                     '<div class="table-line"><span class="muted">Precio</span><strong>' + priceLabel(row) + '</strong></div>' +
                     '<div class="table-line"><span class="muted">Sucursal</span><strong>' + escapeHtml(supermarketLabel(row)) + '</strong></div>' +
+                    '<div class="table-line"><span class="muted">Actualizado</span><span>' + escapeHtml(dateLabel(row.current_price && (row.current_price.scraped_at || row.current_price.captured_at))) + '</span></div>' +
                     (row.source_url ? '<a href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noopener noreferrer" class="btn-secondary-web btn-sm">Abrir publicación</a>' : '');
             })
             .catch(function () {

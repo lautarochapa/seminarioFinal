@@ -1581,10 +1581,33 @@
                             <button type="button" class="btn-ghost" data-sp-reset>Limpiar</button>
                         </div>
                     </form>
+                    <div style="border-top:1px solid #e2e8f0;margin-top:18px;padding-top:16px">
+                        <h2 style="font-size:1rem;margin-bottom:.75rem">Carga manual de precio</h2>
+                        <div data-sp-current-price class="muted" style="margin-bottom:10px">Selecciona un mapeo para cargar precios.</div>
+                        <form class="rbac-form" data-sp-price-form>
+                            <input class="form-control" name="price" type="number" min="0.01" step="0.01" placeholder="Precio" required disabled>
+                            <select class="form-control" name="currency" disabled>
+                                <option value="ARS">ARS</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                            <input class="form-control" name="captured_at" type="datetime-local" disabled>
+                            <button type="submit" class="btn-main" data-sp-price-submit disabled>Agregar precio</button>
+                        </form>
+                    </div>
                 </aside>
             </div>
 
             <section class="grid" style="margin-top:14px">
+                <article class="panel">
+                    <h2>Historial de precios</h2>
+                    <div data-sp-price-history class="muted">Selecciona un mapeo.</div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-sp-price-prev>Anterior</button>
+                        <span class="muted" data-sp-price-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-sp-price-next>Siguiente</button>
+                    </div>
+                </article>
                 <article class="panel">
                     <h2>Productos por sucursal</h2>
                     <div class="admin-tools">
