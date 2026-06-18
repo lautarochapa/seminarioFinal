@@ -39,6 +39,9 @@ class ProductResource extends JsonResource
                     'symbol' => $this->defaultUnit->symbol,
                 ] : null;
             }),
+            'images' => $this->whenLoaded('images', function () {
+                return ProductImageResource::collection($this->images);
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

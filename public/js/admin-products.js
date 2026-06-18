@@ -300,6 +300,10 @@
 
     function showProductDetails(root, id) {
         qs('[data-product-detail-id]', root).value = id;
+        var imageProductInput = qs('[data-product-image-product-id]', root);
+        if (imageProductInput) {
+            imageProductInput.value = id;
+        }
         return Promise.all([
             window.CCApi.request(endpoint('/products/' + encodeURIComponent(id))),
             window.CCApi.request(endpoint('/products/' + encodeURIComponent(id) + '/nutrition')),
@@ -310,6 +314,7 @@
             renderNutrition(root, responses[1].data || []);
             renderPrices(root, responses[2].data || []);
             renderAlternatives(root, responses[3].data || []);
+            renderImages(root, responses[0].data && responses[0].data.images ? responses[0].data.images : []);
         }).catch(function (error) {
             handleError(root, error);
         });
@@ -371,6 +376,85 @@
         }).join('');
     }
 
+    function renderImages(root, rows) {
+        var target = qs('[data-product-images]', root);
+        if (!target) {
+            return;
+        }
+        if (!rows.length) {
+            target.innerHTML = '<span class="muted">Sin imagenes cargadas.</span>';
+            return;
+        }
+
+        target.innerHTML = rows.map(function (image) {
+            return '<div class="line" style="align-items:center">' +
+                '<span style="display:flex;gap:10px;align-items:center;min-width:0">' +
+                '<img src="' + escapeHtml(image.image_url) + '" alt="Imagen producto" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #edf1f4">' +
+                '<span><strong>' + escapeHtml(image.source || 'manual') + '</strong><br><span class="muted">' + (image.is_primary ? 'Principal' : 'Secundaria') + '</span></span>' +
+                '</span>' +
+                '<button type="button" class="btn-ghost btn-sm" data-product-image-delete="' + escapeHtml(image.product_id) + ':' + escapeHtml(image.id) + '">Eliminar</button>' +
+                '</div>';
+        }).join('');
+    }
+
+    function uploadImage(root, form) {
+        clearMessage(root);
+        var productId = form.elements.product_id.value;
+        var file = form.elements.image.files[0];
+        var url = form.elements.url.value.trim();
+
+        if (!productId) {
+            showMessage(root, 'danger', 'Selecciona un producto.');
+            return Promise.resolve();
+        }
+
+        if (!file && !url) {
+            showMessage(root, 'danger', 'Carga un archivo o indica una URL.');
+            return Promise.resolve();
+        }
+
+        var data = new FormData();
+        if (file) {
+            data.append('image', file);
+        }
+        if (url) {
+            data.append('url', url);
+        }
+        if (form.elements.source.value.trim()) {
+            data.append('source', form.elements.source.value.trim());
+        }
+        if (form.elements.is_primary.checked) {
+            data.append('is_primary', '1');
+        }
+
+        return window.CCApi.request(endpoint('/admin/products/' + encodeURIComponent(productId) + '/images'), {
+            method: 'POST',
+            body: data,
+        }).then(function () {
+            showMessage(root, 'success', 'Imagen cargada.');
+            form.reset();
+            form.elements.product_id.value = productId;
+            return showProductDetails(root, productId);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function deleteImage(root, productId, imageId) {
+        if (!window.confirm('Eliminar esta imagen?')) {
+            return Promise.resolve();
+        }
+
+        return window.CCApi.request(endpoint('/admin/products/' + encodeURIComponent(productId) + '/images/' + encodeURIComponent(imageId)), {
+            method: 'DELETE',
+        }).then(function () {
+            showMessage(root, 'success', 'Imagen eliminada.');
+            return showProductDetails(root, productId);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
     function bind(root) {
         qs('[data-products-refresh]', root).addEventListener('click', function () {
             fetchProducts(root, 1);
@@ -393,6 +477,19 @@
         qs('[data-product-form]', root).addEventListener('submit', function (event) {
             event.preventDefault();
             saveProduct(root, event.currentTarget);
+        });
+        qs('[data-product-image-form]', root).addEventListener('submit', function (event) {
+            event.preventDefault();
+            uploadImage(root, event.currentTarget);
+        });
+        qs('[data-product-images]', root).addEventListener('click', function (event) {
+            var remove = event.target.closest('[data-product-image-delete]');
+            if (!remove) {
+                return;
+            }
+
+            var parts = remove.getAttribute('data-product-image-delete').split(':');
+            deleteImage(root, parts[0], parts[1]);
         });
         qs('[data-products-body]', root).addEventListener('click', function (event) {
             var edit = event.target.closest('[data-product-edit]');

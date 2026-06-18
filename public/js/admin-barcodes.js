@@ -3,6 +3,9 @@
 
     var state = {
         products: [],
+        stream: null,
+        detector: null,
+        scanning: false,
     };
 
     function qs(selector, root) {
@@ -34,6 +37,24 @@
         alert.textContent = message;
         alert.className = 'alert alert-' + type;
         alert.style.display = 'block';
+    }
+
+    function setCameraStatus(root, message) {
+        var target = qs('[data-barcode-camera-status]', root);
+        if (target) {
+            target.textContent = message;
+        }
+    }
+
+    function setCameraButtons(root, active) {
+        var start = qs('[data-barcode-camera-start]', root);
+        var stop = qs('[data-barcode-camera-stop]', root);
+        if (start) {
+            start.style.display = active ? 'none' : '';
+        }
+        if (stop) {
+            stop.style.display = active ? '' : 'none';
+        }
     }
 
     function clearMessage(root) {
@@ -124,17 +145,24 @@
         var input = qs('[data-barcode-search-code]', root);
         var barcode = input.value.trim();
         var target = qs('[data-barcode-search-result]', root);
+        var actions = qs('[data-barcode-next-actions]', root);
 
         if (!barcode) {
             showMessage(root, 'danger', 'Ingresa un codigo para buscar.');
             return Promise.resolve();
         }
 
+        if (actions) {
+            actions.style.display = 'none';
+        }
         target.innerHTML = '<span class="muted">Buscando...</span>';
 
         return window.CCApi.request(endpoint('/products/barcode/' + encodeURIComponent(barcode)))
             .then(function (response) {
                 renderProductResult(target, response.data);
+                if (actions) {
+                    actions.style.display = response.data ? 'flex' : 'none';
+                }
             }).catch(function (error) {
                 target.innerHTML = '<span class="muted">No se encontro producto para ese codigo.</span>';
                 handleError(root, error);
@@ -198,9 +226,101 @@
         });
     }
 
+    function stopCamera(root) {
+        var video = qs('[data-barcode-video]', root);
+
+        state.scanning = false;
+        if (state.stream) {
+            state.stream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+            state.stream = null;
+        }
+        if (video) {
+            video.pause();
+            video.srcObject = null;
+            video.style.display = 'none';
+        }
+        setCameraButtons(root, false);
+        setCameraStatus(root, 'Camara detenida.');
+    }
+
+    function scanFrame(root) {
+        var video = qs('[data-barcode-video]', root);
+
+        if (!state.scanning || !state.detector || !video) {
+            return;
+        }
+
+        state.detector.detect(video).then(function (codes) {
+            if (!state.scanning) {
+                return;
+            }
+
+            if (codes && codes.length && codes[0].rawValue) {
+                var input = qs('[data-barcode-search-code]', root);
+                input.value = codes[0].rawValue;
+                stopCamera(root);
+                setCameraStatus(root, 'Codigo detectado. Buscando producto...');
+                searchBarcode(root);
+                return;
+            }
+
+            window.requestAnimationFrame(function () {
+                scanFrame(root);
+            });
+        }).catch(function () {
+            stopCamera(root);
+            showMessage(root, 'danger', 'No se pudo leer el codigo con la camara.');
+        });
+    }
+
+    function startCamera(root) {
+        clearMessage(root);
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setCameraStatus(root, 'Este navegador no permite acceder a la camara. Usa la entrada manual.');
+            return;
+        }
+
+        if (!window.BarcodeDetector) {
+            setCameraStatus(root, 'Este navegador no soporta deteccion de codigos. Usa la entrada manual.');
+            return;
+        }
+
+        var video = qs('[data-barcode-video]', root);
+        state.detector = new window.BarcodeDetector({
+            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39'],
+        });
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function (stream) {
+                state.stream = stream;
+                state.scanning = true;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                setCameraButtons(root, true);
+                setCameraStatus(root, 'Apunta la camara al codigo de barras.');
+                return video.play();
+            })
+            .then(function () {
+                scanFrame(root);
+            })
+            .catch(function () {
+                stopCamera(root);
+                setCameraStatus(root, 'No se pudo iniciar la camara. Usa la entrada manual.');
+            });
+    }
+
     function bind(root) {
         qs('[data-barcode-search-submit]', root).addEventListener('click', function () {
             searchBarcode(root);
+        });
+        qs('[data-barcode-camera-start]', root).addEventListener('click', function () {
+            startCamera(root);
+        });
+        qs('[data-barcode-camera-stop]', root).addEventListener('click', function () {
+            stopCamera(root);
         });
         qs('[data-barcode-search-code]', root).addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
@@ -218,6 +338,14 @@
         qs('[data-barcode-delete-form]', root).addEventListener('submit', function (event) {
             event.preventDefault();
             deleteBarcode(root, event.currentTarget);
+        });
+        window.addEventListener('pagehide', function () {
+            stopCamera(root);
+        });
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                stopCamera(root);
+            }
         });
     }
 

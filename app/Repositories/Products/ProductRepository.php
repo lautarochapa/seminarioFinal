@@ -12,7 +12,7 @@ class ProductRepository
 {
     public function paginate(array $filters, $publicOnly = false)
     {
-        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes']);
+        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images']);
 
         if ($publicOnly) {
             $query->where('status', 'active')->where('is_active', true);
@@ -72,7 +72,7 @@ class ProductRepository
 
     public function findOrFail($id)
     {
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])->find($id);
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])->find($id);
 
         if (! $product) {
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
@@ -83,7 +83,7 @@ class ProductRepository
 
     public function findPublicOrFail($id)
     {
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])
             ->where('id', $id)
             ->where('status', 'active')
             ->where('is_active', true)
@@ -98,7 +98,7 @@ class ProductRepository
 
     public function findWithTrashedOrFail($id)
     {
-        $product = Product::withTrashed()->with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])->find($id);
+        $product = Product::withTrashed()->with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])->find($id);
 
         if (! $product) {
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
@@ -131,7 +131,7 @@ class ProductRepository
 
     public function create(array $data)
     {
-        return Product::create($data)->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes']);
+        return Product::create($data)->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images']);
     }
 
     public function update(Product $product, array $data)
@@ -139,7 +139,7 @@ class ProductRepository
         $product->fill($data);
         $product->save();
 
-        return $product->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes']);
+        return $product->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images']);
     }
 
     public function syncBarcode(Product $product, $barcode)
@@ -196,7 +196,7 @@ class ProductRepository
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
         }
 
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])
             ->where('id', $barcodeRecord->product_id)
             ->where('status', 'active')
             ->where('is_active', true)
@@ -285,7 +285,7 @@ class ProductRepository
 
     public function alternatives(Product $product)
     {
-        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes'])
+        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])
             ->where('id', '<>', $product->id)
             ->where('status', 'active')
             ->where('is_active', true);

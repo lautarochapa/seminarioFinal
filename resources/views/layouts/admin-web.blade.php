@@ -26,6 +26,7 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
     <style>
         :root { --bg:#cccccc70; --surface:#fff; --ink:#24252a; --muted:#697681; --line:#dde3e8; --accent:#04ac85; --soft:#e7f7f2; --danger:#b33a3a; }
+        html, body { max-width:100%; overflow-x:hidden; }
         body { margin:0; background:var(--bg); color:var(--ink); font-family:Nunito, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         .admin-shell { min-height:calc(100vh - 224px); }
         .nav__links .dropdown-menu a { color:#24252a; }
@@ -46,7 +47,7 @@
         .metric strong { display:block; font-size:27px; }
         .metric span { color:var(--muted); text-transform:capitalize; font-size:13px; }
         .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-        .panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:15px; min-height:170px; }
+        .panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:15px; min-height:170px; min-width:0; }
         .panel h2 { font-size:16px; font-weight:900; margin:0 0 10px; }
         .line { display:flex; justify-content:space-between; gap:10px; border-bottom:1px solid #edf1f4; padding:8px 0; font-size:14px; }
         .line:last-child { border-bottom:0; }
@@ -60,7 +61,7 @@
         .admin-table th, .admin-table td { border-bottom:1px solid #edf1f4; padding:10px 8px; vertical-align:top; }
         .admin-table th { color:var(--muted); font-size:12px; text-transform:uppercase; }
         .admin-tools { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
-        .admin-tools .form-control { max-width:260px; }
+        .admin-tools .form-control { max-width:260px; min-width:0; }
         .rbac-layout { display:grid; grid-template-columns:minmax(0,2fr) minmax(300px,1fr); gap:14px; }
         .rbac-form .form-control { margin-bottom:9px; }
         .btn-sm { padding:6px 11px; font-size:12px; }
@@ -76,7 +77,7 @@
         .tree-node strong { display:block; }
         .tree-node span { display:block; color:var(--muted); font-size:12px; margin-top:2px; }
         @media (max-width: 1100px) { .grid, .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-        @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics,.rbac-layout { grid-template-columns:1fr; } }
+        @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics,.rbac-layout { grid-template-columns:1fr; } .admin-tools .form-control { max-width:100%; flex:1 1 180px; } }
     </style>
 </head>
 <body>
@@ -90,7 +91,7 @@
         @yield('content')
     </main>
 </div>
-<footer style="background-color:#24252a;color:#edf0f1;padding:28px 15%;width:100%;">
+<footer style="background-color:#24252a;color:#edf0f1;padding:28px 15%;width:100%;box-sizing:border-box;">
     <div class="row">
         <div class="col-md-4 align-self-center" style="text-align:center;">Imagenes de Pexels<br>Iconos de Flaticon</div>
         <div class="col-md-4 align-self-center" style="text-align:center;"><img src="{{ asset('images/logo/1.svg') }}" alt="logo" height="92em"></div>

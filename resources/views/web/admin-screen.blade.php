@@ -892,6 +892,20 @@
                     <h2>Alternativas</h2>
                     <div data-product-alternatives class="muted">Sin producto seleccionado.</div>
                 </article>
+                <article class="panel">
+                    <h2>Imagenes</h2>
+                    <form class="rbac-form" data-product-image-form enctype="multipart/form-data">
+                        <input class="form-control" type="number" min="1" name="product_id" data-product-image-product-id placeholder="ID producto" required>
+                        <input class="form-control" type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp">
+                        <input class="form-control" type="url" name="url" placeholder="URL de imagen scraping/manual">
+                        <input class="form-control" type="text" name="source" placeholder="Origen. Ej: manual, scraping">
+                        <label class="muted" style="display:flex;gap:8px;align-items:center;margin-bottom:9px">
+                            <input type="checkbox" name="is_primary" value="1"> Principal
+                        </label>
+                        <button type="submit" class="btn-main">Cargar imagen</button>
+                    </form>
+                    <div data-product-images class="muted" style="margin-top:10px">Selecciona un producto.</div>
+                </article>
             </section>
         </section>
     @elseif($screenKey === 'barcodes')
@@ -903,8 +917,16 @@
                     <div class="admin-tools">
                         <input class="form-control" type="text" inputmode="numeric" data-barcode-search-code placeholder="7791234567890">
                         <button type="button" class="btn-main" data-barcode-search-submit>Buscar</button>
+                        <button type="button" class="btn-ghost" data-barcode-camera-start>Usar camara</button>
+                        <button type="button" class="btn-ghost" data-barcode-camera-stop style="display:none">Detener</button>
                     </div>
+                    <video data-barcode-video playsinline muted style="display:none;width:100%;max-height:260px;background:#111;border-radius:8px;margin-bottom:10px"></video>
+                    <div data-barcode-camera-status class="muted" style="margin-bottom:10px">La camara se activa solo al presionar usar camara.</div>
                     <div data-barcode-search-result class="muted">Escanea o ingresa un codigo para buscar el producto asociado.</div>
+                    <div class="admin-tools" data-barcode-next-actions style="display:none;margin-top:10px">
+                        <a class="btn-ghost" href="{{ url('/web/stock') }}">Continuar a stock</a>
+                        <a class="btn-ghost" href="{{ url('/web/shopping-list') }}">Continuar a compras</a>
+                    </div>
                 </article>
 
                 <article class="panel">
