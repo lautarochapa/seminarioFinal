@@ -16,6 +16,7 @@
                 ['Permisos dietologo', '/web/professional-permissions', 'web.user.professional-permissions'],
                 ['Catálogo', '/web/catalog', 'web.user.catalog'],
                 ['Escáner', '/web/barcode-scanner', 'web.user.barcode-scanner'],
+                ['Supermercados', '/web/supermarkets', 'web.user.supermarkets'],
             ],
         ],
         'Admin' => [

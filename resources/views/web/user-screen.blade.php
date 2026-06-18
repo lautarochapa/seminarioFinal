@@ -787,6 +787,27 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'supermarkets')
+        <section class="workspace" data-user-supermarkets>
+            <div>
+                <article class="panel">
+                    <div class="web-tools">
+                        <input class="form-control" type="search" data-supermarkets-search placeholder="Buscar supermercado...">
+                        <button type="button" class="btn-secondary-web" data-supermarkets-refresh>Buscar</button>
+                        <span class="chip" data-supermarkets-count>0 cadenas</span>
+                    </div>
+                    <div class="alert" data-supermarkets-message style="display:none"></div>
+                    <div data-supermarkets-list style="display:grid;gap:10px;margin-top:10px">
+                        <p class="muted">Cargando supermercados...</p>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel" data-supermarkets-detail>
+                <p class="muted">Seleccioná un supermercado para ver el detalle.</p>
+            </aside>
+        </section>
+
     @else
     <section class="workspace">
         <div class="panel-grid">

@@ -1355,6 +1355,63 @@
                 </div>
             </article>
         </section>
+    @elseif($screenKey === 'supermarkets')
+        <section data-admin-supermarkets>
+            <div class="alert" data-supermarkets-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <input class="form-control" type="text" data-supermarkets-search placeholder="Buscar cadena...">
+                        <select class="form-control" data-supermarkets-filter-status>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-supermarkets-refresh>Actualizar</button>
+                        <span class="chip" data-supermarkets-count>0 cadenas</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Sitio web</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-supermarkets-body>
+                                <tr><td colspan="4" class="muted">Cargando cadenas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-supermarkets-prev>Anterior</button>
+                        <span class="muted" data-supermarkets-page>Pagina 1 de 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-supermarkets-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <article class="panel" style="min-width:0">
+                    <h2 data-supermarkets-form-title>Nueva cadena</h2>
+                    <form data-supermarkets-form>
+                        <input type="hidden" data-supermarkets-edit-id>
+                        <div style="margin-bottom:8px">
+                            <label>Nombre <span style="color:var(--danger)">*</span></label>
+                            <input class="form-control" name="name" type="text" placeholder="Carrefour">
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Sitio web</label>
+                            <input class="form-control" name="website_url" type="url" placeholder="https://www.carrefour.com.ar">
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                            <button type="submit" class="btn-main" data-supermarkets-submit>Crear cadena</button>
+                            <button type="button" class="btn-ghost" data-supermarkets-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </section>
     @elseif($screenKey === 'cities')
         <section data-admin-cities>
             <div class="alert" data-cities-message style="display:none"></div>

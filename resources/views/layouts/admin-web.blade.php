@@ -23,6 +23,7 @@
     <script src="{{ asset('js/admin-barcodes.js') }}?v={{ file_exists(public_path('js/admin-barcodes.js')) ? filemtime(public_path('js/admin-barcodes.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-product-reports.js') }}?v={{ file_exists(public_path('js/admin-product-reports.js')) ? filemtime(public_path('js/admin-product-reports.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-cities.js') }}?v={{ file_exists(public_path('js/admin-cities.js')) ? filemtime(public_path('js/admin-cities.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-supermarkets.js') }}?v={{ file_exists(public_path('js/admin-supermarkets.js')) ? filemtime(public_path('js/admin-supermarkets.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

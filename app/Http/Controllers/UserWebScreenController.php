@@ -169,6 +169,15 @@ class UserWebScreenController extends Controller
                 'metrics' => [],
                 'panels' => ['Búsqueda', 'Resultado', 'Historial', 'Acciones'],
             ],
+            'supermarkets' => [
+                'title' => 'Supermercados',
+                'module' => 'Supermercados',
+                'description' => 'Explorá las cadenas de supermercados disponibles en la plataforma.',
+                'primary' => 'Ver supermercados',
+                'secondary' => 'Ir al catálogo',
+                'metrics' => [],
+                'panels' => ['Cadenas', 'Detalle', 'Sucursales', 'Precios'],
+            ],
         ];
     }
 

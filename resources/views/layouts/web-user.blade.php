@@ -13,6 +13,7 @@
     <script src="{{ asset('js/professional-links.js') }}?v={{ file_exists(public_path('js/professional-links.js')) ? filemtime(public_path('js/professional-links.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-catalog.js') }}?v={{ file_exists(public_path('js/user-catalog.js')) ? filemtime(public_path('js/user-catalog.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-barcode.js') }}?v={{ file_exists(public_path('js/user-barcode.js')) ? filemtime(public_path('js/user-barcode.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-supermarkets.js') }}?v={{ file_exists(public_path('js/user-supermarkets.js')) ? filemtime(public_path('js/user-supermarkets.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
