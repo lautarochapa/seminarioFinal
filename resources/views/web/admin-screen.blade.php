@@ -1811,6 +1811,145 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'supermarket-scraping')
+        <section data-admin-supermarket-scraping>
+            <div class="alert" data-scraping-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <h2>Fuentes</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-scraping-source-search placeholder="Buscar fuente">
+                        <select class="form-control" data-scraping-source-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-scraping-source-refresh>Actualizar</button>
+                        <span class="chip" data-scraping-source-count>0 fuentes</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Fuente</th>
+                                    <th>Tipo</th>
+                                    <th>URL</th>
+                                    <th>Activa</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-scraping-sources-body>
+                                <tr><td colspan="5" class="muted">Cargando fuentes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2>Nueva fuente</h2>
+                    <form class="rbac-form" data-scraping-source-form>
+                        <input class="form-control" name="code" type="text" placeholder="carrefour_bariloche" required>
+                        <input class="form-control" name="name" type="text" placeholder="Carrefour Bariloche" required>
+                        <select class="form-control" name="type">
+                            <option value="web_scraper">Web scraper</option>
+                            <option value="api">API</option>
+                            <option value="feed">Feed</option>
+                        </select>
+                        <input class="form-control" name="base_url" type="url" placeholder="https://..." required>
+                        <select class="form-control" name="city_id" data-scraping-source-city>
+                            <option value="">Ciudad opcional</option>
+                        </select>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center">
+                            <input type="checkbox" name="is_active" value="1" checked>
+                            Activa
+                        </label>
+                        <button type="submit" class="btn-main" data-scraping-source-submit>Crear fuente</button>
+                    </form>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel">
+                    <h2>Ejecutar scraping</h2>
+                    <form class="rbac-form" data-scraping-job-form>
+                        <select class="form-control" name="source_id" data-scraping-job-source required>
+                            <option value="">Fuente</option>
+                        </select>
+                        <select class="form-control" name="supermarket_chain_id" data-scraping-job-chain>
+                            <option value="">Cadena opcional</option>
+                        </select>
+                        <select class="form-control" name="supermarket_branch_id" data-scraping-job-branch>
+                            <option value="">Sucursal opcional</option>
+                        </select>
+                        <input class="form-control" name="max_pages" type="number" min="1" max="50" placeholder="Max paginas">
+                        <button type="submit" class="btn-main" data-scraping-job-submit>Ejecutar</button>
+                    </form>
+                </article>
+
+                <article class="panel" style="grid-column:1 / -1">
+                    <h2>Jobs</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-scraping-job-filter-source>
+                            <option value="">Todas las fuentes</option>
+                        </select>
+                        <select class="form-control" data-scraping-job-filter-status>
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="running">En ejecucion</option>
+                            <option value="cancel_requested">Cancel solicitado</option>
+                            <option value="cancelled">Cancelado</option>
+                            <option value="completed">Completado</option>
+                            <option value="failed">Fallido</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-scraping-job-refresh>Actualizar</button>
+                        <span class="chip" data-scraping-job-count>0 jobs</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Job</th>
+                                    <th>Fuente</th>
+                                    <th>Estado</th>
+                                    <th>Resumen</th>
+                                    <th>Fechas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-scraping-jobs-body>
+                                <tr><td colspan="6" class="muted">Cargando jobs...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-scraping-jobs-prev>Anterior</button>
+                        <span class="muted" data-scraping-jobs-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-scraping-jobs-next>Siguiente</button>
+                    </div>
+                </article>
+            </section>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel" style="grid-column:1 / -1">
+                    <h2>Detalle del job</h2>
+                    <div data-scraping-job-detail class="muted">Selecciona un job.</div>
+                </article>
+                <article class="panel" style="grid-column:1 / -1">
+                    <div class="admin-tools">
+                        <h2 style="margin:0">Logs</h2>
+                        <select class="form-control" data-scraping-log-level>
+                            <option value="">Todos los niveles</option>
+                            <option value="debug">Debug</option>
+                            <option value="info">Info</option>
+                            <option value="warning">Warning</option>
+                            <option value="error">Error</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-scraping-logs-refresh>Actualizar logs</button>
+                    </div>
+                    <div data-scraping-job-logs class="muted">Selecciona un job para ver logs.</div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'cities')
         <section data-admin-cities>
             <div class="alert" data-cities-message style="display:none"></div>
