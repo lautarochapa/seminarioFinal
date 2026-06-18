@@ -638,6 +638,77 @@
                 <div data-food-tags-public-results class="chips"></div>
             </article>
         </section>
+    @elseif($screenKey === 'brands')
+        <section data-admin-brands>
+            <div class="alert" data-brands-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-brands-search placeholder="Buscar Gallo, Pureza...">
+                        <select class="form-control" data-brands-status>
+                            <option value="">Todas</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-brands-refresh>Actualizar</button>
+                        <span class="chip" data-brands-count>0 marcas</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Normalizado</th>
+                                    <th>Estado</th>
+                                    <th>Actualizada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-brands-body>
+                                <tr><td colspan="5" class="muted">Cargando marcas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-brands-prev>Anterior</button>
+                        <span class="muted" data-brands-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-brands-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-brand-form-title>Nueva marca</h2>
+                    <form class="rbac-form" data-brand-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="La Serenisima" required>
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar marca</button>
+                            <button type="button" class="btn-ghost" data-brand-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar marca</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-brand-restore-id placeholder="ID inactiva">
+                        <button type="button" class="btn-ghost" data-brand-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="panel" style="margin-top:14px">
+                <div class="admin-tools">
+                    <h2 style="margin:0">Catalogo publico</h2>
+                    <input class="form-control" type="search" data-brands-public-search placeholder="Buscar marcas activas">
+                    <button type="button" class="btn-ghost" data-brands-public-refresh>Consultar</button>
+                    <span class="chip" data-brands-public-count>0 marcas activas</span>
+                </div>
+                <div data-brands-public-results class="chips"></div>
+            </article>
+        </section>
     @elseif($screenKey === 'equivalences')
         <section data-admin-ingredient-equivalences>
             <div class="alert" data-equivalences-message style="display:none"></div>
