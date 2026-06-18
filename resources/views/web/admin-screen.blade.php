@@ -562,6 +562,200 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'units-conversions')
+        <section data-admin-units>
+            <div class="alert" data-units-message style="display:none"></div>
+            <div class="audit-tabs" role="tablist" aria-label="Unidades y conversiones">
+                <button type="button" class="audit-tab active" data-units-tab="units">Unidades</button>
+                <button type="button" class="audit-tab" data-units-tab="conversions">Conversiones</button>
+                <button type="button" class="audit-tab" data-units-tab="catalog">Catalogo publico</button>
+            </div>
+
+            <section data-units-panel="units">
+                <div class="rbac-layout">
+                    <article class="panel">
+                        <div class="admin-tools">
+                            <input class="form-control" type="search" data-units-search placeholder="Buscar g, kg, ml, taza...">
+                            <select class="form-control" data-units-type>
+                                <option value="">Todos los tipos</option>
+                                <option value="mass">Masa</option>
+                                <option value="volume">Volumen</option>
+                                <option value="count">Conteo</option>
+                                <option value="household">Domestica</option>
+                                <option value="package">Paquete</option>
+                            </select>
+                            <select class="form-control" data-units-status>
+                                <option value="">Todos</option>
+                                <option value="active">Activas</option>
+                                <option value="inactive">Inactivas</option>
+                            </select>
+                            <button type="button" class="btn-ghost" data-units-refresh>Actualizar</button>
+                            <span class="chip" data-units-count>0 unidades</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Codigo</th>
+                                        <th>Nombre</th>
+                                        <th>Tipo</th>
+                                        <th>Simbolo</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-units-body>
+                                    <tr><td colspan="6" class="muted">Cargando unidades...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="audit-pagination">
+                            <button type="button" class="btn-ghost btn-sm" data-units-prev>Anterior</button>
+                            <span class="muted" data-units-page>Pagina 1</span>
+                            <button type="button" class="btn-ghost btn-sm" data-units-next>Siguiente</button>
+                        </div>
+                    </article>
+
+                    <aside class="panel">
+                        <h2 data-unit-form-title>Nueva unidad</h2>
+                        <form class="rbac-form" data-unit-form>
+                            <input type="hidden" name="id">
+                            <input class="form-control" name="code" type="text" placeholder="kg" required>
+                            <input class="form-control" name="name" type="text" placeholder="Kilogramo" required>
+                            <select class="form-control" name="type" required>
+                                <option value="">Tipo</option>
+                                <option value="mass">Masa</option>
+                                <option value="volume">Volumen</option>
+                                <option value="count">Conteo</option>
+                                <option value="household">Domestica</option>
+                                <option value="package">Paquete</option>
+                            </select>
+                            <input class="form-control" name="symbol" type="text" placeholder="kg">
+                            <select class="form-control" name="status">
+                                <option value="active">Activa</option>
+                                <option value="inactive">Inactiva</option>
+                            </select>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                <button type="submit" class="btn-main">Guardar unidad</button>
+                                <button type="button" class="btn-ghost" data-unit-reset>Limpiar</button>
+                            </div>
+                        </form>
+
+                        <h2 style="margin-top:18px">Restaurar unidad</h2>
+                        <div class="admin-tools">
+                            <input class="form-control" type="number" min="1" data-unit-restore-id placeholder="ID inactivo">
+                            <button type="button" class="btn-ghost" data-unit-restore-submit>Restaurar</button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section data-units-panel="conversions" style="display:none">
+                <div class="rbac-layout">
+                    <article class="panel">
+                        <div class="admin-tools">
+                            <input class="form-control" type="search" data-conversions-search placeholder="Buscar en notas">
+                            <select class="form-control" data-conversions-from>
+                                <option value="">Origen</option>
+                            </select>
+                            <select class="form-control" data-conversions-to>
+                                <option value="">Destino</option>
+                            </select>
+                            <select class="form-control" data-conversions-ingredient>
+                                <option value="">General o ingrediente</option>
+                            </select>
+                            <select class="form-control" data-conversions-status>
+                                <option value="">Todos</option>
+                                <option value="active">Activas</option>
+                                <option value="inactive">Inactivas</option>
+                            </select>
+                            <button type="button" class="btn-ghost" data-conversions-refresh>Actualizar</button>
+                            <span class="chip" data-conversions-count>0 conversiones</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Desde</th>
+                                        <th>Hacia</th>
+                                        <th>Ingrediente</th>
+                                        <th>Factor</th>
+                                        <th>Notas</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-conversions-body>
+                                    <tr><td colspan="7" class="muted">Cargando conversiones...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="audit-pagination">
+                            <button type="button" class="btn-ghost btn-sm" data-conversions-prev>Anterior</button>
+                            <span class="muted" data-conversions-page>Pagina 1</span>
+                            <button type="button" class="btn-ghost btn-sm" data-conversions-next>Siguiente</button>
+                        </div>
+                    </article>
+
+                    <aside class="panel">
+                        <h2 data-conversion-form-title>Nueva conversion</h2>
+                        <form class="rbac-form" data-conversion-form>
+                            <input type="hidden" name="id">
+                            <select class="form-control" name="from_unit_id" data-conversion-from-select required>
+                                <option value="">Unidad origen</option>
+                            </select>
+                            <select class="form-control" name="to_unit_id" data-conversion-to-select required>
+                                <option value="">Unidad destino</option>
+                            </select>
+                            <select class="form-control" name="ingredient_id" data-conversion-ingredient-select>
+                                <option value="">Conversion general</option>
+                            </select>
+                            <input class="form-control" name="factor" type="number" min="0.00000001" step="0.00000001" placeholder="Factor" required>
+                            <textarea class="form-control" name="notes" rows="4" placeholder="Notas"></textarea>
+                            <select class="form-control" name="status">
+                                <option value="active">Activa</option>
+                                <option value="inactive">Inactiva</option>
+                            </select>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                <button type="submit" class="btn-main">Guardar conversion</button>
+                                <button type="button" class="btn-ghost" data-conversion-reset>Limpiar</button>
+                            </div>
+                        </form>
+
+                        <h2 style="margin-top:18px">Restaurar conversion</h2>
+                        <div class="admin-tools">
+                            <input class="form-control" type="number" min="1" data-conversion-restore-id placeholder="ID inactiva">
+                            <button type="button" class="btn-ghost" data-conversion-restore-submit>Restaurar</button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section data-units-panel="catalog" style="display:none">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-units-public-search placeholder="Buscar unidades activas">
+                        <button type="button" class="btn-ghost" data-units-public-refresh>Actualizar catalogo</button>
+                        <span class="chip" data-units-public-count>0 unidades activas</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Simbolo</th>
+                                </tr>
+                            </thead>
+                            <tbody data-units-public-body>
+                                <tr><td colspan="4" class="muted">Cargando catalogo publico...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>
