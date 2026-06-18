@@ -11,6 +11,7 @@
     <script src="{{ asset('js/admin-audit.js') }}?v={{ file_exists(public_path('js/admin-audit.js')) ? filemtime(public_path('js/admin-audit.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-objectives.js') }}?v={{ file_exists(public_path('js/admin-objectives.js')) ? filemtime(public_path('js/admin-objectives.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-health-preferences.js') }}?v={{ file_exists(public_path('js/admin-health-preferences.js')) ? filemtime(public_path('js/admin-health-preferences.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-ingredient-categories.js') }}?v={{ file_exists(public_path('js/admin-ingredient-categories.js')) ? filemtime(public_path('js/admin-ingredient-categories.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -59,6 +60,12 @@
         .audit-tab.active { background:rgba(4,172,133,.9); border-color:rgba(4,172,133,.9); color:#fff; }
         .audit-json { margin:0; white-space:pre-wrap; word-break:break-word; max-width:420px; max-height:190px; overflow:auto; background:#f6f8f9; border:1px solid #edf1f4; border-radius:8px; padding:8px; font-size:12px; }
         .audit-pagination { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:12px; }
+        .tree-panel { margin:0; padding:0; list-style:none; }
+        .tree-panel ul { margin:8px 0 0 18px; padding:0; list-style:none; border-left:1px solid #edf1f4; }
+        .tree-panel li { margin:0; padding:6px 0 6px 12px; }
+        .tree-node { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; border:1px solid #edf1f4; background:#f9fbfb; border-radius:8px; padding:9px 10px; }
+        .tree-node strong { display:block; }
+        .tree-node span { display:block; color:var(--muted); font-size:12px; margin-top:2px; }
         @media (max-width: 1100px) { .grid, .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics,.rbac-layout { grid-template-columns:1fr; } }
     </style>

@@ -222,6 +222,82 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'ingredient-categories')
+        <section data-admin-ingredient-categories>
+            <div class="alert" data-ingredient-categories-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-ingredient-categories-search placeholder="Buscar por codigo, nombre o descripcion">
+                        <select class="form-control" data-ingredient-categories-status>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-ingredient-categories-refresh>Actualizar</button>
+                        <span class="chip" data-ingredient-categories-count>0 categorias</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Padre</th>
+                                    <th>Orden</th>
+                                    <th>Estado</th>
+                                    <th>Uso</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-ingredient-categories-body>
+                                <tr><td colspan="6" class="muted">Cargando categorias...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-ingredient-categories-prev>Anterior</button>
+                        <span class="muted" data-ingredient-categories-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-ingredient-categories-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-ingredient-category-form-title>Nueva categoria</h2>
+                    <form class="rbac-form" data-ingredient-category-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="verduras">
+                        <input class="form-control" name="name" type="text" placeholder="Nombre" required>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="parent_id" data-ingredient-category-parent>
+                            <option value="">Sin categoria padre</option>
+                        </select>
+                        <input class="form-control" name="sort_order" type="number" min="0" step="1" placeholder="Orden">
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar categoria</button>
+                            <button type="button" class="btn-ghost" data-ingredient-category-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar categoria</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-ingredient-category-restore-id placeholder="ID eliminado">
+                        <button type="button" class="btn-ghost" data-ingredient-category-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="panel" style="margin-top:14px">
+                <div class="admin-tools">
+                    <h2 style="margin:0">Arbol de categorias activo</h2>
+                    <button type="button" class="btn-ghost" data-ingredient-categories-tree-refresh>Actualizar arbol</button>
+                </div>
+                <div data-ingredient-categories-tree class="muted">Cargando arbol...</div>
+            </article>
+        </section>
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>
