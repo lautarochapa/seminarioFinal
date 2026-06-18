@@ -38,6 +38,7 @@
                 ['Codigos de barra', '/admin-web/barcodes', 'web.admin.barcodes'],
                 ['Marcas', '/admin-web/brands', 'web.admin.brands'],
                 ['Reportes de productos', '/admin-web/product-reports', 'web.admin.product-reports'],
+                ['Ciudades', '/admin-web/cities', 'web.admin.cities'],
                 ['Supermercados', '/admin-web/supermarkets', 'web.admin.supermarkets'],
                 ['Scraping', '/admin-web/supermarket-scraping', 'web.admin.supermarket-scraping'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],

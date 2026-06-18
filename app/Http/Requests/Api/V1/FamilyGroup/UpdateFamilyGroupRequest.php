@@ -14,8 +14,9 @@ class UpdateFamilyGroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'   => 'sometimes|string|max:150',
-            'status' => 'sometimes|string|in:active,inactive',
+            'name'    => 'sometimes|string|max:150',
+            'status'  => 'sometimes|string|in:active,inactive',
+            'city_id' => 'sometimes|nullable|integer|exists:cities,id',
         ];
     }
 }

@@ -88,7 +88,7 @@ class FamilyGroupService
         $this->requireAdminOrOwner($groupId, $userId);
 
         return DB::transaction(function () use ($group, $userId, $data, $ip, $ua) {
-            $allowed  = ['name', 'status'];
+            $allowed  = ['name', 'status', 'city_id'];
             $filtered = array_filter(
                 array_intersect_key($data, array_flip($allowed)),
                 function ($v) { return $v !== null; }

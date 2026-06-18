@@ -4,6 +4,7 @@
     var state = {
         groups: [],
         currentGroupId: null,
+        cities: [],
     };
 
     function qs(selector, root) {
@@ -64,6 +65,23 @@
         }
 
         return true;
+    }
+
+    function loadCities(root) {
+        return window.CCApi.request('/cities')
+            .then(function (response) {
+                state.cities = response.data || [];
+                var select = qs('[data-family-city-select]', root);
+                if (!select) { return; }
+                var current = select.value;
+                select.innerHTML = '<option value="">Sin ciudad asignada</option>' +
+                    state.cities.map(function (c) {
+                        return '<option value="' + c.id + '">' + escapeHtml(c.name) +
+                            (c.province ? ' (' + escapeHtml(c.province) + ')' : '') + '</option>';
+                    }).join('');
+                if (current) { select.value = current; }
+            })
+            .catch(function () {});
     }
 
     function loadGroups(root) {
@@ -152,6 +170,17 @@
         form.elements.name.value = group ? group.name || '' : '';
         form.elements.status.value = group ? group.status || 'active' : 'active';
 
+        var citySelect = qs('[data-family-city-select]', root);
+        if (citySelect) { citySelect.value = group && group.city_id ? String(group.city_id) : ''; }
+
+        var cityNameEl = qs('[data-family-city-name]', root);
+        if (cityNameEl) {
+            var city = group && group.city_id
+                ? state.cities.find(function (c) { return c.id === group.city_id; })
+                : null;
+            cityNameEl.textContent = city ? city.name : '-';
+        }
+
         qs('[data-family-owner]', root).textContent = group ? text(group.owner_user_id) : '-';
         qs('[data-family-address]', root).textContent = group ? text(group.default_address) : '-';
     }
@@ -217,6 +246,17 @@
             loadMembers(root);
             loadPreferences(root);
         });
+
+        var citySelect = qs('[data-family-city-select]', root);
+        if (citySelect) {
+            citySelect.addEventListener('change', function () {
+                var cityNameEl = qs('[data-family-city-name]', root);
+                if (!cityNameEl) { return; }
+                var cityId = parseInt(citySelect.value, 10);
+                var city = cityId ? state.cities.find(function (c) { return c.id === cityId; }) : null;
+                cityNameEl.textContent = city ? city.name : '-';
+            });
+        }
 
         qs('[data-family-create-form]', root).addEventListener('submit', function (event) {
             event.preventDefault();
@@ -355,6 +395,6 @@
         }
 
         bind(root);
-        loadGroups(root);
+        loadCities(root).then(function () { loadGroups(root); });
     });
 })(window, document);

@@ -1355,6 +1355,76 @@
                 </div>
             </article>
         </section>
+    @elseif($screenKey === 'cities')
+        <section data-admin-cities>
+            <div class="alert" data-cities-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <div class="admin-tools">
+                        <input class="form-control" type="text" data-cities-search placeholder="Buscar ciudad...">
+                        <select class="form-control" data-cities-filter-status>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-cities-refresh>Actualizar</button>
+                        <span class="chip" data-cities-count>0 ciudades</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Provincia</th>
+                                    <th>País</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-cities-body>
+                                <tr><td colspan="5" class="muted">Cargando ciudades...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-cities-prev>Anterior</button>
+                        <span class="muted" data-cities-page>Pagina 1 de 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-cities-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <article class="panel" style="min-width:0">
+                    <h2 data-cities-form-title>Nueva ciudad</h2>
+                    <form data-cities-form>
+                        <input type="hidden" data-cities-edit-id>
+                        <div style="margin-bottom:8px">
+                            <label>Nombre <span style="color:var(--danger)">*</span></label>
+                            <input class="form-control" name="name" type="text" placeholder="Bariloche">
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Provincia</label>
+                            <input class="form-control" name="province" type="text" placeholder="Río Negro">
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>País</label>
+                            <input class="form-control" name="country" type="text" placeholder="Argentina">
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Latitud</label>
+                            <input class="form-control" name="latitude" type="number" step="any" placeholder="-41.1335">
+                        </div>
+                        <div style="margin-bottom:8px">
+                            <label>Longitud</label>
+                            <input class="form-control" name="longitude" type="number" step="any" placeholder="-71.3103">
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                            <button type="submit" class="btn-main" data-cities-submit>Crear ciudad</button>
+                            <button type="button" class="btn-ghost" data-cities-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </section>
     @elseif($screenKey === 'product-reports')
         <section data-admin-product-reports>
             <div class="alert" data-reports-message style="display:none"></div>

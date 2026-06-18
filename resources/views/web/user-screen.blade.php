@@ -477,6 +477,14 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="row" style="margin-top:10px">
+                                <div class="col-md-12">
+                                    <label>Ciudad</label>
+                                    <select class="form-control" name="city_id" data-family-city-select>
+                                        <option value="">Sin ciudad asignada</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
                                 <button type="submit" class="btn-main">Guardar grupo</button>
                                 <button type="button" class="btn-secondary-web" data-family-delete>Desactivar grupo</button>
@@ -484,6 +492,7 @@
                         </form>
 
                         <div class="table-line"><span class="muted">Propietario</span><strong data-family-owner>-</strong></div>
+                        <div class="table-line"><span class="muted">Ciudad</span><strong data-family-city-name>-</strong></div>
                         <div class="table-line"><span class="muted">Direccion por defecto</span><strong data-family-address>-</strong></div>
                     </article>
 
