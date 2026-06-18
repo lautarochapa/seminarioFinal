@@ -709,6 +709,81 @@
                 <div data-brands-public-results class="chips"></div>
             </article>
         </section>
+    @elseif($screenKey === 'product-categories')
+        <section data-admin-product-categories>
+            <div class="alert" data-product-categories-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-product-categories-search placeholder="Buscar almacen, lacteos...">
+                        <select class="form-control" data-product-categories-status>
+                            <option value="">Todas</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-product-categories-refresh>Actualizar</button>
+                        <span class="chip" data-product-categories-count>0 categorias</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Padre</th>
+                                    <th>Descripcion</th>
+                                    <th>Hijos</th>
+                                    <th>Productos</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-product-categories-body>
+                                <tr><td colspan="7" class="muted">Cargando categorias...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-product-categories-prev>Anterior</button>
+                        <span class="muted" data-product-categories-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-product-categories-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-product-category-form-title>Nueva categoria</h2>
+                    <form class="rbac-form" data-product-category-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Almacen" required>
+                        <select class="form-control" name="parent_id" data-product-category-parent>
+                            <option value="">Categoria raiz</option>
+                        </select>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar categoria</button>
+                            <button type="button" class="btn-ghost" data-product-category-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar categoria</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-product-category-restore-id placeholder="ID eliminada">
+                        <button type="button" class="btn-ghost" data-product-category-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="panel" style="margin-top:14px">
+                <div class="admin-tools">
+                    <h2 style="margin:0">Catalogo activo</h2>
+                    <button type="button" class="btn-ghost" data-product-categories-tree-refresh>Actualizar arbol</button>
+                </div>
+                <div data-product-categories-tree class="muted">Cargando arbol de categorias...</div>
+            </article>
+        </section>
     @elseif($screenKey === 'equivalences')
         <section data-admin-ingredient-equivalences>
             <div class="alert" data-equivalences-message style="display:none"></div>

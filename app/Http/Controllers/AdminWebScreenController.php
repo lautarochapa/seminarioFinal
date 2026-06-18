@@ -14,6 +14,7 @@ use App\Objective;
 use App\Permission;
 use App\Product;
 use App\ProductBarcode;
+use App\ProductCategory;
 use App\Promotion;
 use App\Recipe;
 use App\RecipeTag;
@@ -75,6 +76,7 @@ class AdminWebScreenController extends Controller
             'units' => UnitMeasure::count(),
             'conversions' => UnitConversion::count(),
             'products' => Product::count(),
+            'product_categories' => ProductCategory::count(),
             'brands' => Brand::count(),
             'barcodes' => ProductBarcode::count(),
             'supermarkets' => SupermarketChain::count(),
@@ -111,6 +113,7 @@ class AdminWebScreenController extends Controller
             'units-conversions' => ['title' => 'Unidades y conversiones', 'module' => 'Catalogo', 'description' => 'ABM unidades.', 'primary' => 'Nueva unidad', 'secondary' => 'Nueva conversion', 'metrics' => ['units', 'conversions'], 'panels' => ['Unidades', 'Conversiones generales', 'Conversiones por ingrediente', 'Validaciones']],
             'equivalences' => ['title' => 'Equivalencias', 'module' => 'Catalogo', 'description' => 'Sustituciones.', 'primary' => 'Nueva equivalencia', 'secondary' => 'Revisar', 'metrics' => ['ingredients'], 'panels' => ['Sustituciones', 'Motivos', 'Factores', 'Estado']],
             'food-tags' => ['title' => 'Tags alimentarios', 'module' => 'Catalogo', 'description' => 'Etiquetas de salud y dieta.', 'primary' => 'Nuevo tag', 'secondary' => 'Ver catalogo', 'metrics' => ['food_tags'], 'panels' => ['Tags', 'Tipos', 'Catalogo', 'Estado'], 'permission' => 'catalog.manage'],
+            'product-categories' => ['title' => 'Categorias productos', 'module' => 'Productos', 'description' => 'Categorias comerciales jerarquicas.', 'primary' => 'Nueva categoria', 'secondary' => 'Ver arbol', 'metrics' => ['product_categories', 'products'], 'panels' => ['Categorias', 'Jerarquia', 'Catalogo', 'Estado'], 'permission' => 'catalog.manage'],
             'products' => ['title' => 'Productos', 'module' => 'Productos', 'description' => 'ABM productos.', 'primary' => 'Nuevo producto', 'secondary' => 'Importar', 'metrics' => ['products', 'brands'], 'panels' => ['Listado', 'Marca', 'Categoria', 'Nutricion']],
             'brands' => ['title' => 'Marcas', 'module' => 'Productos', 'description' => 'ABM marcas.', 'primary' => 'Nueva marca', 'secondary' => 'Normalizar', 'metrics' => ['brands'], 'panels' => ['Listado', 'Normalizados', 'Productos', 'Estado']],
             'barcodes' => ['title' => 'Codigos de barra', 'module' => 'Productos', 'description' => 'Gestion barcodes.', 'primary' => 'Nuevo codigo', 'secondary' => 'Buscar duplicados', 'metrics' => ['barcodes', 'products'], 'panels' => ['Codigos', 'Productos', 'Duplicados', 'Estado']],
