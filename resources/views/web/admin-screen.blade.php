@@ -414,6 +414,154 @@
                 <div data-ingredient-categories-tree class="muted">Cargando arbol...</div>
             </article>
         </section>
+    @elseif($screenKey === 'nutrients')
+        <section data-admin-nutrients>
+            <div class="alert" data-nutrients-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-nutrients-search placeholder="Buscar calorias, proteinas, sodio...">
+                        <select class="form-control" data-nutrients-unit>
+                            <option value="">Todas las unidades</option>
+                        </select>
+                        <select class="form-control" data-nutrients-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-nutrients-refresh>Actualizar</button>
+                        <span class="chip" data-nutrients-count>0 nutrientes</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Unidad</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-nutrients-body>
+                                <tr><td colspan="6" class="muted">Cargando nutrientes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-nutrients-prev>Anterior</button>
+                        <span class="muted" data-nutrients-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-nutrients-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-nutrient-form-title>Nuevo nutriente</h2>
+                    <form class="rbac-form" data-nutrient-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="proteinas" required>
+                        <input class="form-control" name="name" type="text" placeholder="Nombre" required>
+                        <select class="form-control" name="unit_id" data-nutrient-unit-select required>
+                            <option value="">Unidad</option>
+                        </select>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar nutriente</button>
+                            <button type="button" class="btn-ghost" data-nutrient-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar nutriente</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-nutrient-restore-id placeholder="ID inactivo">
+                        <button type="button" class="btn-ghost" data-nutrient-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel">
+                    <h2>Carga nutricional de ingrediente</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-nutrient-ingredient-select>
+                            <option value="">Seleccionar ingrediente</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-ingredient-nutrients-refresh>Ver valores</button>
+                    </div>
+                    <form class="rbac-form" data-ingredient-nutrient-form>
+                        <select class="form-control" name="nutrient_id" data-ingredient-nutrient-select required>
+                            <option value="">Nutriente</option>
+                        </select>
+                        <input class="form-control" name="amount_per_100g" type="number" min="0" step="0.0001" placeholder="Cantidad cada 100g" required>
+                        <input class="form-control" name="source" type="text" placeholder="Fuente">
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <button type="submit" class="btn-main">Guardar valor</button>
+                    </form>
+                    <div style="overflow:auto;margin-top:10px">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nutriente</th>
+                                    <th>Cantidad / 100g</th>
+                                    <th>Fuente</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-ingredient-nutrients-body>
+                                <tr><td colspan="4" class="muted">Selecciona un ingrediente.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <h2>Carga nutricional de producto</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-nutrient-product-select>
+                            <option value="">Seleccionar producto</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-product-nutrients-refresh>Ver valores</button>
+                    </div>
+                    <form class="rbac-form" data-product-nutrient-form>
+                        <select class="form-control" name="nutrient_id" data-product-nutrient-select required>
+                            <option value="">Nutriente</option>
+                        </select>
+                        <input class="form-control" name="amount_per_100g" type="number" min="0" step="0.0001" placeholder="Cantidad cada 100g">
+                        <input class="form-control" name="amount_per_serving" type="number" min="0" step="0.0001" placeholder="Cantidad por porcion">
+                        <input class="form-control" name="serving_size" type="number" min="0" step="0.0001" placeholder="Tamano porcion">
+                        <input class="form-control" name="source" type="text" placeholder="Fuente">
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <button type="submit" class="btn-main">Guardar valor</button>
+                    </form>
+                    <div style="overflow:auto;margin-top:10px">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nutriente</th>
+                                    <th>/100g</th>
+                                    <th>Porcion</th>
+                                    <th>Fuente</th>
+                                </tr>
+                            </thead>
+                            <tbody data-product-nutrients-body>
+                                <tr><td colspan="4" class="muted">Selecciona un producto.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>

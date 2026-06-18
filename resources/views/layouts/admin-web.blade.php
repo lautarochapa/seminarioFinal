@@ -13,6 +13,7 @@
     <script src="{{ asset('js/admin-health-preferences.js') }}?v={{ file_exists(public_path('js/admin-health-preferences.js')) ? filemtime(public_path('js/admin-health-preferences.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-ingredients.js') }}?v={{ file_exists(public_path('js/admin-ingredients.js')) ? filemtime(public_path('js/admin-ingredients.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-ingredient-categories.js') }}?v={{ file_exists(public_path('js/admin-ingredient-categories.js')) ? filemtime(public_path('js/admin-ingredient-categories.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-nutrients.js') }}?v={{ file_exists(public_path('js/admin-nutrients.js')) ? filemtime(public_path('js/admin-nutrients.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
