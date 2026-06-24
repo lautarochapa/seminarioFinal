@@ -82,6 +82,47 @@
                         </div>
                     </article>
 
+                    <article class="panel" style="margin-bottom:14px">
+                        <h2>Movimientos de stock</h2>
+                        <div class="web-tools">
+                            <select class="form-control" data-stock-movement-filter-type>
+                                <option value="">Todos los tipos</option>
+                                <option value="adjustment">Ajustes</option>
+                                <option value="consumption">Consumos</option>
+                                <option value="discard">Descartes</option>
+                                <option value="entry">Entradas</option>
+                                <option value="expiration">Vencimientos</option>
+                            </select>
+                            <input class="form-control" data-stock-movement-date-from type="date" aria-label="Desde">
+                            <input class="form-control" data-stock-movement-date-to type="date" aria-label="Hasta">
+                            <button type="button" class="btn-secondary-web" data-stock-movements-refresh>Actualizar historial</button>
+                            <span class="chip" data-stock-movements-count>0 movimientos</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Producto</th>
+                                        <th>Ubicacion</th>
+                                        <th>Cantidad</th>
+                                        <th>Motivo</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-stock-movements-body>
+                                    <tr><td colspan="7" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-stock-movements-prev>Anterior</button>
+                            <span class="muted" data-stock-movements-page>Pagina 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-stock-movements-next>Siguiente</button>
+                        </div>
+                    </article>
+
                     <article class="panel">
                         <h2>Ubicaciones del hogar</h2>
                         <div class="web-tools">
@@ -151,6 +192,37 @@
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
                             <button type="submit" class="btn-main" data-stock-item-submit>Guardar stock</button>
                             <button type="button" class="btn-secondary-web" data-stock-item-cancel style="display:none">Cancelar</button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <h2 data-stock-movement-form-title>Registrar movimiento</h2>
+                    <form class="family-form" data-stock-movement-form>
+                        <input type="hidden" name="stock_item_id">
+                        <label>Item de stock</label>
+                        <select class="form-control" name="stock_item_select" data-stock-movement-item-select>
+                            <option value="">Selecciona item</option>
+                        </select>
+                        <label>Operacion</label>
+                        <select class="form-control" name="operation" data-stock-movement-operation>
+                            <option value="adjust">Ajustar</option>
+                            <option value="consume">Consumir</option>
+                            <option value="discard">Descartar</option>
+                        </select>
+                        <label>Modo de ajuste</label>
+                        <select class="form-control" name="mode" data-stock-movement-mode>
+                            <option value="set">Fijar cantidad final</option>
+                            <option value="add">Sumar cantidad</option>
+                            <option value="subtract">Restar cantidad</option>
+                        </select>
+                        <label>Cantidad</label>
+                        <input class="form-control" name="quantity" type="number" step="0.01" min="0" required>
+                        <label>Motivo</label>
+                        <textarea class="form-control" name="reason" rows="3" maxlength="1000" placeholder="Conteo manual, consumo, vencido..."></textarea>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                            <button type="submit" class="btn-main" data-stock-movement-submit>Registrar</button>
+                            <button type="button" class="btn-secondary-web" data-stock-movement-cancel>Limpiar</button>
                         </div>
                     </form>
 

@@ -13,6 +13,9 @@
         stock: [],
         stockPage: 1,
         stockLastPage: 1,
+        movements: [],
+        movementPage: 1,
+        movementLastPage: 1,
         products: [],
         units: [],
         productSearchTimer: null,
@@ -116,6 +119,26 @@
         return location.name || ('Ubicacion #' + location.id);
     }
 
+    function movementTypeLabel(type) {
+        var labels = {
+            adjustment: 'Ajuste',
+            consumption: 'Consumo',
+            discard: 'Descarte',
+            entry: 'Entrada',
+            expiration: 'Vencimiento',
+            recipe_consumption: 'Receta',
+        };
+        return labels[type] || type || '-';
+    }
+
+    function stockItemLabel(item) {
+        if (!item) {
+            return 'Selecciona item';
+        }
+        return productLabel(item.product) + ' - ' + locationLabel(item.location) + ' - ' +
+            text(item.quantity) + ' ' + unitLabel(item.unit);
+    }
+
     function getLocation(id) {
         return state.locations.filter(function (location) {
             return String(location.id) === String(id);
@@ -177,6 +200,18 @@
         select.value = current;
     }
 
+    function renderMovementItemOptions(root) {
+        var select = qs('[data-stock-movement-item-select]', root);
+        if (!select) {
+            return;
+        }
+        var current = select.value;
+        select.innerHTML = '<option value="">Selecciona item</option>' + state.stock.map(function (item) {
+            return '<option value="' + item.id + '">' + escapeHtml(stockItemLabel(item)) + '</option>';
+        }).join('');
+        select.value = current;
+    }
+
     function renderLocationLoading(root) {
         var body = qs('[data-stock-locations-body]', root);
         if (body) {
@@ -188,6 +223,13 @@
         var body = qs('[data-stock-body]', root);
         if (body) {
             body.innerHTML = '<tr><td colspan="6" class="muted">Cargando stock...</td></tr>';
+        }
+    }
+
+    function renderMovementLoading(root) {
+        var body = qs('[data-stock-movements-body]', root);
+        if (body) {
+            body.innerHTML = '<tr><td colspan="7" class="muted">Cargando movimientos...</td></tr>';
         }
     }
 
@@ -279,8 +321,54 @@
                 '<td>' + escapeHtml(item.purchase_price) + '</td>' +
                 '<td>' +
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-edit="' + item.id + '">Editar</button> ' +
+                    '<button type="button" class="btn-secondary-web btn-sm" data-stock-movement-for="' + item.id + '">Mover</button> ' +
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-delete="' + item.id + '">Eliminar</button>' +
                 '</td>' +
+            '</tr>';
+        }).join('');
+        renderMovementItemOptions(root);
+    }
+
+    function renderMovements(root) {
+        var body = qs('[data-stock-movements-body]', root);
+        var count = qs('[data-stock-movements-count]', root);
+        var page = qs('[data-stock-movements-page]', root);
+        var prev = qs('[data-stock-movements-prev]', root);
+        var next = qs('[data-stock-movements-next]', root);
+
+        if (count) {
+            count.textContent = state.movements.length + (state.movements.length === 1 ? ' movimiento' : ' movimientos');
+        }
+        if (page) {
+            page.textContent = 'Pagina ' + state.movementPage + ' de ' + state.movementLastPage;
+        }
+        if (prev) {
+            prev.disabled = state.movementPage <= 1 || state.loading;
+        }
+        if (next) {
+            next.disabled = state.movementPage >= state.movementLastPage || state.loading;
+        }
+        if (!body) {
+            return;
+        }
+        if (!state.currentGroupId) {
+            body.innerHTML = '<tr><td colspan="7" class="muted">Selecciona un grupo familiar.</td></tr>';
+            return;
+        }
+        if (!state.movements.length) {
+            body.innerHTML = '<tr><td colspan="7" class="muted">No hay movimientos para mostrar.</td></tr>';
+            return;
+        }
+        body.innerHTML = state.movements.map(function (movement) {
+            var unit = movement.unit || {};
+            return '<tr>' +
+                '<td>' + escapeHtml(movement.created_at) + '</td>' +
+                '<td><span class="chip">' + escapeHtml(movementTypeLabel(movement.movement_type)) + '</span></td>' +
+                '<td>' + escapeHtml(productLabel(movement.product)) + '</td>' +
+                '<td>' + escapeHtml(locationLabel(movement.location)) + '</td>' +
+                '<td>' + escapeHtml(movement.quantity) + ' ' + escapeHtml(unit.symbol || unit.code || unit.name) + '</td>' +
+                '<td>' + escapeHtml(movement.reason) + '</td>' +
+                '<td>' + escapeHtml(movement.user && (movement.user.name || movement.user.email)) + '</td>' +
             '</tr>';
         }).join('');
     }
@@ -347,6 +435,32 @@
         }
     }
 
+    function updateMovementModeVisibility(root) {
+        var operation = qs('[data-stock-movement-operation]', root);
+        var mode = qs('[data-stock-movement-mode]', root);
+        if (!operation || !mode) {
+            return;
+        }
+        var show = operation.value === 'adjust';
+        mode.disabled = !show;
+        mode.style.opacity = show ? '1' : '0.55';
+    }
+
+    function resetMovementForm(root) {
+        var form = qs('[data-stock-movement-form]', root);
+        var title = qs('[data-stock-movement-form-title]', root);
+        if (form) {
+            form.reset();
+            form.elements.stock_item_id.value = '';
+            form.elements.operation.value = 'adjust';
+            form.elements.mode.value = 'set';
+        }
+        if (title) {
+            title.textContent = 'Registrar movimiento';
+        }
+        updateMovementModeVisibility(root);
+    }
+
     function fillLocationForm(root, location) {
         var form = qs('[data-stock-location-form]', root);
         var title = qs('[data-stock-location-form-title]', root);
@@ -391,6 +505,22 @@
         if (cancel) {
             cancel.style.display = 'inline-flex';
         }
+    }
+
+    function fillMovementForm(root, item) {
+        var form = qs('[data-stock-movement-form]', root);
+        var title = qs('[data-stock-movement-form-title]', root);
+        if (!form || !item) {
+            return;
+        }
+        form.elements.stock_item_id.value = item.id;
+        form.elements.stock_item_select.value = item.id;
+        form.elements.quantity.value = '';
+        form.elements.reason.value = '';
+        if (title) {
+            title.textContent = 'Movimiento: ' + stockItemLabel(item);
+        }
+        updateMovementModeVisibility(root);
     }
 
     function loadGroups(root) {
@@ -498,6 +628,41 @@
             });
     }
 
+    function loadMovements(root) {
+        if (!state.currentGroupId) {
+            renderMovements(root);
+            return Promise.resolve();
+        }
+        renderMovementLoading(root);
+        var params = new URLSearchParams();
+        params.set('page', state.movementPage);
+        params.set('per_page', 20);
+        var type = qs('[data-stock-movement-filter-type]', root);
+        var from = qs('[data-stock-movement-date-from]', root);
+        var to = qs('[data-stock-movement-date-to]', root);
+        if (type && type.value) {
+            params.set('type', type.value);
+        }
+        if (from && from.value) {
+            params.set('date_from', from.value);
+        }
+        if (to && to.value) {
+            params.set('date_to', to.value);
+        }
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock-movements') + '?' + params.toString())
+            .then(function (response) {
+                state.movements = response.data || [];
+                state.movementPage = response.meta ? response.meta.current_page : 1;
+                state.movementLastPage = response.meta ? response.meta.last_page : 1;
+                renderMovements(root);
+            })
+            .catch(function (error) {
+                state.movements = [];
+                renderMovements(root);
+                handleError(root, error);
+            });
+    }
+
     function loadSummary(root) {
         if (!state.currentGroupId) {
             return Promise.resolve();
@@ -530,6 +695,7 @@
             loadLocations(root),
             loadLocationOptions(root),
             loadStock(root),
+            loadMovements(root),
             loadSummary(root),
             loadValue(root),
         ]);
@@ -668,6 +834,60 @@
         });
     }
 
+    function saveMovement(root, event) {
+        event.preventDefault();
+        if (!state.currentGroupId) {
+            showMessage(root, 'warning', 'Selecciona un grupo familiar.');
+            return;
+        }
+        var form = event.currentTarget;
+        var submit = qs('[data-stock-movement-submit]', root);
+        var itemId = form.elements.stock_item_id.value || form.elements.stock_item_select.value;
+        var operation = form.elements.operation.value;
+        var quantity = Number(form.elements.quantity.value);
+        var reason = form.elements.reason.value.trim();
+
+        if (!itemId) {
+            showMessage(root, 'danger', 'Selecciona un item de stock.');
+            return;
+        }
+        if (operation !== 'adjust' && quantity <= 0) {
+            showMessage(root, 'danger', 'La cantidad debe ser mayor que cero.');
+            return;
+        }
+        if ((operation === 'adjust' || operation === 'discard') && !reason) {
+            showMessage(root, 'danger', 'El motivo es obligatorio para esta operacion.');
+            return;
+        }
+
+        var body = {
+            quantity: quantity,
+            reason: reason || null,
+        };
+        if (operation === 'adjust') {
+            body.mode = form.elements.mode.value;
+        }
+
+        if (submit) {
+            submit.disabled = true;
+        }
+        clearMessage(root);
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock/' + encodeURIComponent(itemId) + '/' + operation), {
+            method: 'POST',
+            body: body,
+        }).then(function () {
+            resetMovementForm(root);
+            showMessage(root, 'success', 'Movimiento registrado.');
+            return Promise.all([loadStock(root), loadMovements(root), loadSummary(root), loadValue(root)]);
+        }).catch(function (error) {
+            handleError(root, error);
+        }).then(function () {
+            if (submit) {
+                submit.disabled = false;
+            }
+        });
+    }
+
     function bind(root) {
         var groupSelect = qs('[data-stock-group-select]', root);
         var locationStatus = qs('[data-stock-location-status]', root);
@@ -684,14 +904,26 @@
         var stockLocationFilter = qs('[data-stock-filter-location]', root);
         var stockExpiryFilter = qs('[data-stock-filter-expiry]', root);
         var productSearch = qs('[data-stock-product-search]', root);
+        var movementForm = qs('[data-stock-movement-form]', root);
+        var movementCancel = qs('[data-stock-movement-cancel]', root);
+        var movementOperation = qs('[data-stock-movement-operation]', root);
+        var movementItemSelect = qs('[data-stock-movement-item-select]', root);
+        var movementRefresh = qs('[data-stock-movements-refresh]', root);
+        var movementType = qs('[data-stock-movement-filter-type]', root);
+        var movementFrom = qs('[data-stock-movement-date-from]', root);
+        var movementTo = qs('[data-stock-movement-date-to]', root);
+        var movementPrev = qs('[data-stock-movements-prev]', root);
+        var movementNext = qs('[data-stock-movements-next]', root);
 
         if (groupSelect) {
             groupSelect.addEventListener('change', function () {
                 state.currentGroupId = groupSelect.value || null;
                 state.locationPage = 1;
                 state.stockPage = 1;
+                state.movementPage = 1;
                 resetLocationForm(root);
                 resetStockForm(root);
+                resetMovementForm(root);
                 reloadGroupData(root);
             });
         }
@@ -787,12 +1019,69 @@
                 }, 250);
             });
         }
+        if (movementForm) {
+            movementForm.addEventListener('submit', function (event) {
+                saveMovement(root, event);
+            });
+        }
+        if (movementCancel) {
+            movementCancel.addEventListener('click', function () {
+                resetMovementForm(root);
+                clearMessage(root);
+            });
+        }
+        if (movementOperation) {
+            movementOperation.addEventListener('change', function () {
+                updateMovementModeVisibility(root);
+            });
+        }
+        if (movementItemSelect) {
+            movementItemSelect.addEventListener('change', function () {
+                var itemId = movementItemSelect.value;
+                var item = state.stock.filter(function (row) {
+                    return String(row.id) === String(itemId);
+                })[0] || null;
+                if (item) {
+                    fillMovementForm(root, item);
+                }
+            });
+        }
+        [movementType, movementFrom, movementTo].forEach(function (filter) {
+            if (filter) {
+                filter.addEventListener('change', function () {
+                    state.movementPage = 1;
+                    loadMovements(root);
+                });
+            }
+        });
+        if (movementRefresh) {
+            movementRefresh.addEventListener('click', function () {
+                loadMovements(root);
+            });
+        }
+        if (movementPrev) {
+            movementPrev.addEventListener('click', function () {
+                if (state.movementPage > 1) {
+                    state.movementPage -= 1;
+                    loadMovements(root);
+                }
+            });
+        }
+        if (movementNext) {
+            movementNext.addEventListener('click', function () {
+                if (state.movementPage < state.movementLastPage) {
+                    state.movementPage += 1;
+                    loadMovements(root);
+                }
+            });
+        }
 
         root.addEventListener('click', function (event) {
             var locationEdit = event.target.closest('[data-stock-location-edit]');
             var locationDelete = event.target.closest('[data-stock-location-delete]');
             var stockEdit = event.target.closest('[data-stock-edit]');
             var stockDelete = event.target.closest('[data-stock-delete]');
+            var stockMovement = event.target.closest('[data-stock-movement-for]');
 
             if (locationEdit) {
                 fillLocationForm(root, getLocation(locationEdit.getAttribute('data-stock-location-edit')));
@@ -809,6 +1098,12 @@
             if (stockDelete) {
                 deleteStock(root, stockDelete.getAttribute('data-stock-delete'));
             }
+            if (stockMovement) {
+                var movementItemId = stockMovement.getAttribute('data-stock-movement-for');
+                fillMovementForm(root, state.stock.filter(function (item) {
+                    return String(item.id) === String(movementItemId);
+                })[0]);
+            }
         });
     }
 
@@ -818,6 +1113,7 @@
             return;
         }
         bind(root);
+        updateMovementModeVisibility(root);
         loadProducts(root, '');
         loadUnits(root);
         loadGroups(root);
