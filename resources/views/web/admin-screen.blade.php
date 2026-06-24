@@ -1811,6 +1811,101 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'scraped-products')
+        <section data-admin-scraped-products>
+            <div class="alert" data-scraped-products-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <h2>Candidatos scrapeados</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-candidates-search placeholder="Buscar nombre, SKU o URL">
+                        <select class="form-control" data-candidates-status>
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="matched">Mapeados</option>
+                            <option value="created">Producto creado</option>
+                            <option value="approved">Aprobados</option>
+                            <option value="rejected">Rechazados</option>
+                        </select>
+                        <select class="form-control" data-candidates-source>
+                            <option value="">Todas las fuentes</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-candidates-refresh>Actualizar</button>
+                        <span class="chip" data-candidates-count>0 candidatos</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto scrapeado</th>
+                                    <th>Fuente</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Match</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-candidates-body>
+                                <tr><td colspan="6" class="muted">Cargando candidatos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-candidates-prev>Anterior</button>
+                        <span class="muted" data-candidates-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-candidates-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2>Detalle y revision</h2>
+                    <div data-candidate-detail class="muted">Selecciona un candidato.</div>
+
+                    <div data-candidate-actions style="display:none">
+                        <h2 style="margin-top:18px">Mapear producto existente</h2>
+                        <form class="rbac-form" data-candidate-match-form>
+                            <select class="form-control" name="product_id" data-candidate-product required>
+                                <option value="">Producto</option>
+                            </select>
+                            <button type="submit" class="btn-main">Asociar producto</button>
+                        </form>
+
+                        <h2 style="margin-top:18px">Asignar ingrediente</h2>
+                        <form class="rbac-form" data-candidate-ingredient-form>
+                            <select class="form-control" name="ingredient_id" data-candidate-ingredient required>
+                                <option value="">Ingrediente</option>
+                            </select>
+                            <button type="submit" class="btn-main">Asignar ingrediente</button>
+                        </form>
+
+                        <h2 style="margin-top:18px">Crear producto nuevo</h2>
+                        <form class="rbac-form" data-candidate-create-product-form>
+                            <input class="form-control" name="name" type="text" placeholder="Nombre del producto">
+                            <select class="form-control" name="brand_id" data-candidate-brand>
+                                <option value="">Marca opcional</option>
+                            </select>
+                            <select class="form-control" name="category_id" data-candidate-category>
+                                <option value="">Categoria opcional</option>
+                            </select>
+                            <select class="form-control" name="ingredient_id" data-candidate-create-ingredient>
+                                <option value="">Ingrediente opcional</option>
+                            </select>
+                            <button type="submit" class="btn-main">Crear y asociar</button>
+                        </form>
+
+                        <div class="admin-tools" style="margin-top:18px">
+                            <button type="button" class="btn-main" data-candidate-approve>Aprobar</button>
+                        </div>
+
+                        <h2 style="margin-top:18px">Rechazar</h2>
+                        <form class="rbac-form" data-candidate-reject-form>
+                            <textarea class="form-control" name="reason" rows="3" maxlength="500" placeholder="Motivo del rechazo" required></textarea>
+                            <button type="submit" class="btn-ghost" style="color:var(--danger)">Rechazar candidato</button>
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'supermarket-scraping')
         <section data-admin-supermarket-scraping>
             <div class="alert" data-scraping-message style="display:none"></div>

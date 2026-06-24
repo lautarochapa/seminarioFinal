@@ -47,6 +47,7 @@
                 ['Promociones', '/admin-web/promotions', 'catalog.manage'],
                 ['Metodos de pago', '/admin-web/payment-methods', 'catalog.manage'],
                 ['Scraping', '/admin-web/supermarket-scraping', 'web.admin.supermarket-scraping'],
+                ['Validacion scrapeados', '/admin-web/scraped-products', 'catalog.manage'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],
