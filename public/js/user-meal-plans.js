@@ -8,6 +8,7 @@
         selectedPlan: null,
         selectedItem: null,
         portions: [],
+        incompatibilities: [],
         members: [],
         mealTypes: [],
         recipes: [],
@@ -237,6 +238,50 @@
         }).join('') : '<tr><td colspan="5" class="muted">No hay porciones personalizadas para esta comida.</td></tr>';
         panel.className = '';
         panel.innerHTML = '<div style="overflow:auto"><table class="web-table"><thead><tr><th>Miembro</th><th>Factor</th><th>Porciones</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }
+
+    function severityLabel(value) {
+        var labels = { high: 'Alta', medium: 'Media', low: 'Baja', warning: 'Advertencia' };
+        return labels[value] || value;
+    }
+
+    function incompatibilityTypeLabel(value) {
+        var labels = {
+            allergy: 'Alergia',
+            restriction: 'Restriccion',
+            high_sodium: 'Alto sodio',
+            high_sugar: 'Alto azucar',
+        };
+        return labels[value] || value;
+    }
+
+    function renderIncompatibilities(root) {
+        var panel = qs('[data-meal-plan-incompatibilities]', root);
+        if (!panel) {
+            return;
+        }
+        if (!state.selectedPlan) {
+            panel.className = 'muted';
+            panel.textContent = 'Selecciona un plan para ver sus alertas.';
+            return;
+        }
+        if (!state.incompatibilities.length) {
+            panel.className = 'muted';
+            panel.textContent = 'No hay incompatibilidades registradas para este plan.';
+            return;
+        }
+        var rows = state.incompatibilities.map(function (item) {
+            var itemLabel = item.meal_plan_item_id ? ('#' + item.meal_plan_item_id) : '-';
+            return '<tr>' +
+                '<td>' + escapeHtml(incompatibilityTypeLabel(item.incompatibility_type)) + '</td>' +
+                '<td>' + escapeHtml(severityLabel(item.severity)) + '</td>' +
+                '<td>' + escapeHtml(item.message) + '</td>' +
+                '<td>' + escapeHtml(itemLabel) + '</td>' +
+                '<td>' + escapeHtml(item.status) + '</td>' +
+                '</tr>';
+        }).join('');
+        panel.className = '';
+        panel.innerHTML = '<div style="overflow:auto"><table class="web-table"><thead><tr><th>Tipo</th><th>Severidad</th><th>Mensaje</th><th>Item</th><th>Estado</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     }
 
     function resetForm(root) {
@@ -508,6 +553,7 @@
                     if (refreshed) {
                         state.selectedPlan = refreshed;
                         renderDetail(root, refreshed);
+                        renderIncompatibilities(root);
                     }
                 }
             })
@@ -527,14 +573,59 @@
                 state.selectedPlan = response.data || null;
                 state.selectedItem = null;
                 state.portions = [];
+                state.incompatibilities = [];
                 renderDetail(root, state.selectedPlan);
                 renderPortions(root);
+                renderIncompatibilities(root);
                 resetItemForm(root);
                 resetPortionForm(root);
+                return loadIncompatibilities(root);
             })
             .catch(function (error) {
                 handleError(root, error);
             });
+    }
+
+    function loadIncompatibilities(root) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            state.incompatibilities = [];
+            renderIncompatibilities(root);
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/incompatibilities'))
+            .then(function (response) {
+                state.incompatibilities = response.data || [];
+                renderIncompatibilities(root);
+            })
+            .catch(function (error) {
+                state.incompatibilities = [];
+                renderIncompatibilities(root);
+                handleError(root, error);
+            });
+    }
+
+    function checkIncompatibilities(root) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            showMessage(root, 'warning', 'Selecciona un plan para revisar incompatibilidades.');
+            return Promise.resolve();
+        }
+        var button = qs('[data-meal-plan-check-incompatibilities]', root);
+        if (button) {
+            button.disabled = true;
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/check-incompatibilities'), {
+            method: 'POST',
+        }).then(function (response) {
+            state.incompatibilities = response.data || [];
+            renderIncompatibilities(root);
+            showMessage(root, 'success', state.incompatibilities.length ? 'Alertas actualizadas.' : 'No se detectaron incompatibilidades.');
+        }).catch(function (error) {
+            handleError(root, error);
+        }).finally(function () {
+            if (button) {
+                button.disabled = false;
+            }
+        });
     }
 
     function loadPortions(root, itemId) {
@@ -637,6 +728,8 @@
             showMessage(root, 'success', id ? 'Plan actualizado.' : 'Plan creado.');
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
+            state.incompatibilities = [];
+            renderIncompatibilities(root);
             resetForm(root);
             return loadPlans(root);
         }).catch(function (error) {
@@ -660,6 +753,8 @@
             showMessage(root, 'success', 'Menu sugerido generado. Revisalo y aprobalo si esta correcto.');
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
+            state.incompatibilities = [];
+            renderIncompatibilities(root);
             return loadPlans(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -681,7 +776,9 @@
             showMessage(root, 'success', 'Plan aprobado.');
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
-            return loadPlans(root);
+            return loadIncompatibilities(root).then(function () {
+                return loadPlans(root);
+            });
         }).catch(function (error) {
             handleError(root, error);
         });
@@ -700,6 +797,8 @@
             showMessage(root, 'success', 'Plan regenerado.');
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
+            state.incompatibilities = [];
+            renderIncompatibilities(root);
             return loadPlans(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -715,7 +814,9 @@
         }).then(function () {
             showMessage(root, 'success', 'Plan eliminado.');
             state.selectedPlan = null;
+            state.incompatibilities = [];
             renderDetail(root, null);
+            renderIncompatibilities(root);
             return loadPlans(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -746,9 +847,11 @@
                 state.selectedPlan = null;
                 state.selectedItem = null;
                 state.portions = [];
+                state.incompatibilities = [];
                 state.members = [];
                 renderDetail(root, null);
                 renderPortions(root);
+                renderIncompatibilities(root);
                 resetItemForm(root);
                 resetPortionForm(root);
                 loadMembers(root).then(function () {
@@ -810,6 +913,9 @@
         qs('[data-meal-plan-regenerate]', root).addEventListener('click', function () {
             regenerateSelected(root);
         });
+        qs('[data-meal-plan-check-incompatibilities]', root).addEventListener('click', function () {
+            checkIncompatibilities(root);
+        });
         qs('[data-meal-plan-body]', root).addEventListener('click', function (event) {
             var show = event.target.closest('[data-meal-plan-show]');
             var edit = event.target.closest('[data-meal-plan-edit]');
@@ -827,6 +933,7 @@
                     renderDetail(root, plan);
                     fillForm(root, plan);
                     resetItemForm(root);
+                    loadIncompatibilities(root);
                 }
             }
             if (remove) {

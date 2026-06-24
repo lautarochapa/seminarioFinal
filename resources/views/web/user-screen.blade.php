@@ -1428,6 +1428,14 @@
                     </article>
 
                     <article class="panel">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+                            <h2 style="margin:0">Alertas alimentarias</h2>
+                            <button type="button" class="btn-secondary-web btn-sm" data-meal-plan-check-incompatibilities>Revisar incompatibilidades</button>
+                        </div>
+                        <div data-meal-plan-incompatibilities class="muted" style="margin-top:12px">Selecciona un plan para ver sus alertas.</div>
+                    </article>
+
+                    <article class="panel">
                         <h2 data-meal-plan-portions-title>Porciones por persona</h2>
                         <div data-meal-plan-portions-panel class="muted">Selecciona una comida para gestionar porciones.</div>
                     </article>
