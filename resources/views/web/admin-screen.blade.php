@@ -3115,6 +3115,27 @@ Preparación:
             </aside>
         </section>
 
+    @elseif($screenKey === 'settings')
+        <section data-admin-settings>
+            <div class="panel" style="padding:14px;margin-bottom:14px">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+                    <input class="form-control" type="search" data-settings-search placeholder="Buscar por clave o descripción" style="max-width:320px">
+                    <button type="button" class="btn-ghost" data-settings-refresh>Actualizar</button>
+                    <span class="chip" data-settings-count>0 configuraciones</span>
+                    <span style="flex:1"></span>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <button type="button" class="btn-ghost btn-sm" data-settings-prev>Anterior</button>
+                        <span class="muted" data-settings-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-settings-next>Siguiente</button>
+                    </div>
+                </div>
+            </div>
+            <div class="alert" data-settings-message style="display:none;margin-bottom:12px"></div>
+            <div data-settings-container>
+                <p class="muted" style="text-align:center;padding:24px 0">Cargando configuraciones...</p>
+            </div>
+        </section>
+
     @else
     <section class="grid">
         @foreach($screen['panels'] as $panel)
