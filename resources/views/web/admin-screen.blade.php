@@ -1496,6 +1496,67 @@
             </div>
         </div>
 
+    @elseif($screenKey === 'demo-scenarios')
+        <section data-admin-demo-scenarios>
+            <div class="alert" data-demo-message style="display:none;margin-bottom:12px"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-demo-search placeholder="Buscar por nombre o ruta">
+                        <select class="form-control" data-demo-status-filter>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-demo-refresh>Actualizar</button>
+                        <span class="chip" data-demo-count>0 escenarios</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Ruta</th>
+                                    <th>Usuario demo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-demo-body>
+                                <tr><td colspan="6" class="muted">Cargando escenarios...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-demo-prev>Anterior</button>
+                        <span class="muted" data-demo-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-demo-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-demo-form-title>Nuevo escenario</h2>
+                    <div class="alert" data-demo-form-message style="display:none;margin-bottom:10px"></div>
+                    <form class="rbac-form" data-demo-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Nombre del escenario" required>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripción del escenario"></textarea>
+                        <input class="form-control" name="route" type="text" placeholder="Ruta. Ej: /web/stock">
+                        <input class="form-control" name="demo_user_id" type="number" min="1" placeholder="ID usuario demo (opcional)">
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-demo-save>Crear</button>
+                            <button type="button" class="btn-ghost" data-demo-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </section>
+
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>

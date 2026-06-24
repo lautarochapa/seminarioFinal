@@ -66,6 +66,7 @@
                 ['Validacion recetas', '/admin-web/imported-recipes', 'recipes.manage'],
                 ['Reportes admin', '/admin-web/admin-reports', 'web.admin.admin-reports'],
                 ['Documentacion tesis', '/admin-web/thesis-docs', 'web.admin.thesis-docs'],
+                ['Escenarios demo', '/admin-web/demo-scenarios', 'web.admin.demo-scenarios'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],
             ],

@@ -24,7 +24,34 @@
         @endforeach
     </section>
 
-    @if($screenKey === 'functional-docs' || $screenKey === 'technical-docs')
+    @if($screenKey === 'demo-scenarios')
+
+        <div data-teacher-demo-scenarios style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:14px;margin-top:4px">
+            {{-- Lista de escenarios --}}
+            <div>
+                <div class="panel" style="padding:14px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
+                        <h2 style="margin:0;font-size:15px">Escenarios de demo</h2>
+                        <span style="font-size:11px;color:#716d64" data-demo-count></span>
+                    </div>
+                    <div class="alert" data-demo-message style="display:none"></div>
+                    <div data-demo-list>
+                        <p style="font-size:13px;color:#716d64;text-align:center;padding:24px 0">Cargando...</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Detalle del escenario seleccionado --}}
+            <div>
+                <div class="panel" style="padding:18px">
+                    <div data-demo-detail>
+                        <p style="font-size:13px;color:#716d64;text-align:center;padding:32px 0">Seleccioná un escenario de la lista.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @elseif($screenKey === 'functional-docs' || $screenKey === 'technical-docs')
 
         @php $docRoot = $screenKey === 'functional-docs' ? 'data-teacher-functional-docs' : 'data-teacher-technical-docs'; @endphp
 

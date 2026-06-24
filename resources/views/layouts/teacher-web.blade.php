@@ -8,6 +8,7 @@
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <script src="{{ asset('js/teacher-docs.js') }}?v={{ file_exists(public_path('js/teacher-docs.js')) ? filemtime(public_path('js/teacher-docs.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/teacher-demo-scenarios.js') }}?v={{ file_exists(public_path('js/teacher-demo-scenarios.js')) ? filemtime(public_path('js/teacher-demo-scenarios.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
