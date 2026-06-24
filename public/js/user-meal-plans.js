@@ -130,6 +130,10 @@
         return 'Sin contenido';
     }
 
+    function itemIsFinalized(item) {
+        return ['cooked', 'skipped', 'eating_out', 'cancelled'].indexOf(item.status) !== -1;
+    }
+
     function renderPlans(root, meta) {
         var body = qs('[data-meal-plan-body]', root);
         var count = qs('[data-meal-plan-count]', root);
@@ -190,13 +194,19 @@
         }
         var items = plan.items || [];
         var rows = items.length ? items.map(function (item) {
+            var finalized = itemIsFinalized(item);
+            var statusActions = finalized ? '' :
+                (item.recipe_id ? '<button type="button" class="btn-main btn-sm" data-meal-plan-item-cooked="' + escapeHtml(item.id) + '">Cocine esto</button> ' : '') +
+                '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-skip="' + escapeHtml(item.id) + '">Saltear</button> ' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-eating-out="' + escapeHtml(item.id) + '">Comi afuera</button> ';
             return '<tr>' +
                 '<td>' + escapeHtml(item.date) + '</td>' +
                 '<td>' + escapeHtml(item.meal_type ? item.meal_type.name : item.meal_type_id) + '</td>' +
                 '<td>' + escapeHtml(itemTitle(item)) + '</td>' +
                 '<td>' + escapeHtml(item.servings_total) + '</td>' +
                 '<td>' + escapeHtml(item.status) + '</td>' +
-                '<td><button type="button" class="btn-main btn-sm" data-meal-plan-item-portions="' + escapeHtml(item.id) + '">Porciones</button> ' +
+                '<td>' + statusActions +
+                '<button type="button" class="btn-main btn-sm" data-meal-plan-item-portions="' + escapeHtml(item.id) + '">Porciones</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-edit="' + escapeHtml(item.id) + '">Editar</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-delete="' + escapeHtml(item.id) + '">Eliminar</button></td>' +
                 '</tr>';
@@ -714,6 +724,73 @@
         });
     }
 
+    function changeItemStatus(root, itemId, action) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id || !itemId) {
+            showMessage(root, 'warning', 'Selecciona una comida del plan.');
+            return Promise.resolve();
+        }
+        var item = (state.selectedPlan.items || []).find(function (candidate) {
+            return String(candidate.id) === String(itemId);
+        });
+        if (!item) {
+            showMessage(root, 'warning', 'No se encontro la comida seleccionada.');
+            return Promise.resolve();
+        }
+        if (itemIsFinalized(item)) {
+            showMessage(root, 'warning', 'Esta comida ya esta finalizada.');
+            return Promise.resolve();
+        }
+
+        var endpoint = action === 'cooked' ? 'mark-cooked' : 'skip';
+        var body = {};
+        var question = action === 'cooked' ? 'Marcar esta comida como cocinada?' : (action === 'eating_out' ? 'Marcar como comida afuera?' : 'Saltear esta comida?');
+        if (!window.confirm(question)) {
+            return Promise.resolve();
+        }
+        if (action === 'eating_out') {
+            body.eating_out = true;
+        }
+        if (action === 'cooked') {
+            var servings = window.prompt('Porciones cocinadas (opcional)', item.servings_total || '');
+            if (servings === null) {
+                return Promise.resolve();
+            }
+            if (String(servings).trim() !== '') {
+                body.servings = Number(servings);
+            }
+        }
+        if (action !== 'cooked') {
+            var notes = window.prompt('Notas (opcional)', '');
+            if (notes === null) {
+                return Promise.resolve();
+            }
+            if (String(notes).trim() !== '') {
+                body.notes = String(notes).trim();
+            }
+        }
+
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/items/' + encodeURIComponent(itemId) + '/' + endpoint), {
+            method: 'POST',
+            body: body,
+        }).then(function (response) {
+            var messages = {
+                cooked: 'Comida marcada como cocinada.',
+                skipped: 'Comida salteada.',
+                eating_out: 'Comida marcada como comer afuera.',
+            };
+            showMessage(root, 'success', messages[action] || 'Estado actualizado.');
+            state.selectedItem = null;
+            state.portions = [];
+            renderPortions(root);
+            resetPortionForm(root);
+            return loadPlan(root, state.selectedPlan.id).then(function () {
+                return loadPlans(root);
+            });
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
     function savePlan(root, form) {
         if (!state.currentGroupId) {
             showMessage(root, 'warning', 'Selecciona un grupo familiar.');
@@ -945,6 +1022,18 @@
                 var editItem = event.target.closest('[data-meal-plan-item-edit]');
                 var deleteItemButton = event.target.closest('[data-meal-plan-item-delete]');
                 var portionsButton = event.target.closest('[data-meal-plan-item-portions]');
+                var cookedButton = event.target.closest('[data-meal-plan-item-cooked]');
+                var skipButton = event.target.closest('[data-meal-plan-item-skip]');
+                var eatingOutButton = event.target.closest('[data-meal-plan-item-eating-out]');
+                if (cookedButton) {
+                    changeItemStatus(root, cookedButton.getAttribute('data-meal-plan-item-cooked'), 'cooked');
+                }
+                if (skipButton) {
+                    changeItemStatus(root, skipButton.getAttribute('data-meal-plan-item-skip'), 'skipped');
+                }
+                if (eatingOutButton) {
+                    changeItemStatus(root, eatingOutButton.getAttribute('data-meal-plan-item-eating-out'), 'eating_out');
+                }
                 if (portionsButton) {
                     loadPortions(root, portionsButton.getAttribute('data-meal-plan-item-portions'));
                 }
