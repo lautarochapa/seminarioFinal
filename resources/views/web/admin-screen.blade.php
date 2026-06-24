@@ -2582,6 +2582,28 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'recipe-import')
+        <section class="rbac-layout" data-admin-recipe-import>
+            <div style="display:flex;flex-direction:column;gap:14px">
+                <article class="panel">
+                    <h2>Importar receta por URL</h2>
+                    <p class="muted" style="font-size:13px;margin:0 0 12px">Pegá la URL de una receta desde una fuente compatible. La importación puede tardar hasta 15 segundos.</p>
+                    <div class="admin-tools">
+                        <input type="url" class="form-control" data-import-url placeholder="https://cookpad.com/ar/recetas/..." style="flex:1;min-width:200px">
+                        <button type="button" class="btn-main" data-import-btn>Importar</button>
+                    </div>
+                    <div data-import-message style="display:none;font-size:13px;padding:8px 12px;border-radius:4px;margin-top:10px"></div>
+                    <div style="margin-top:16px">
+                        <p style="font-size:12px;color:var(--muted);margin:0 0 8px;font-weight:700">Fuentes compatibles:</p>
+                        <div data-import-sources style="display:flex;flex-wrap:wrap;gap:6px"></div>
+                    </div>
+                </article>
+            </div>
+            <aside class="panel" data-import-detail style="align-self:start">
+                <p class="muted" style="font-size:13px">Pegá una URL para ver el resultado del parseo.</p>
+            </aside>
+        </section>
+
     @else
     <section class="grid">
         @foreach($screen['panels'] as $panel)

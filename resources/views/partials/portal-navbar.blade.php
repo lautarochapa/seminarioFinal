@@ -55,6 +55,7 @@
                 ['Categorias recetas', '/admin-web/recipe-categories', 'web.admin.recipe-categories'],
                 ['Tags recetas', '/admin-web/recipe-tags', 'web.admin.recipe-tags'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
+                ['Importar recetas', '/admin-web/recipe-import', 'web.admin.recipe-import'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],
             ],
