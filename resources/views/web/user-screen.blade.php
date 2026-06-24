@@ -1370,6 +1370,102 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'budget')
+        <section class="workspace" data-user-budget>
+            <div>
+                <article class="panel">
+                    <h2>Presupuestos mensuales</h2>
+                    <div class="alert" data-budget-message style="display:none"></div>
+                    <div class="web-tools" style="flex-wrap:wrap;gap:8px">
+                        <select class="form-control" data-budget-group style="max-width:220px">
+                            <option value="">Cargando grupos...</option>
+                        </select>
+                        <button type="button" class="btn-secondary-web" data-budget-refresh>Actualizar</button>
+                        <span class="chip" data-budget-count>0 presupuestos</span>
+                    </div>
+                    <div style="overflow:auto;margin-top:10px">
+                        <table class="web-table">
+                            <thead>
+                                <tr>
+                                    <th>Período</th>
+                                    <th>Monto</th>
+                                    <th>Gastado</th>
+                                    <th>Disponible</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-budget-body>
+                                <tr><td colspan="5" class="muted">Seleccioná un grupo familiar.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                        <button type="button" class="btn-secondary-web btn-sm" data-budget-prev disabled>‹ Anterior</button>
+                        <span data-budget-page style="font-size:13px;color:#66746b">Pág. 1 / 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-budget-next disabled>Siguiente ›</button>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel">
+                {{-- Presupuesto actual --}}
+                <div style="margin-bottom:16px">
+                    <h2 style="font-size:15px;margin-bottom:10px">Mes actual</h2>
+                    <div data-budget-current>
+                        <p class="muted" style="font-size:13px;margin:0">Seleccioná un grupo para ver el presupuesto actual.</p>
+                    </div>
+                </div>
+
+                {{-- Formulario crear / editar --}}
+                <div style="border-top:1px solid #dde6df;padding-top:16px">
+                    <h2 data-budget-form-title style="font-size:15px;margin-bottom:10px">Nuevo presupuesto</h2>
+                    <div class="alert" data-budget-form-message style="display:none"></div>
+                    <form data-budget-form>
+                        <input type="hidden" name="id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+                            <div>
+                                <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Mes *</label>
+                                <select class="form-control" name="month">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Año *</label>
+                                <input class="form-control" type="number" name="year" min="2020" max="2099" step="1" placeholder="{{ date('Y') }}">
+                            </div>
+                        </div>
+                        <div style="margin-bottom:9px">
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Monto *</label>
+                            <input class="form-control" type="number" name="amount" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div style="margin-bottom:9px">
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Moneda</label>
+                            <input class="form-control" type="text" name="currency" maxlength="10" placeholder="ARS">
+                        </div>
+                        <div style="margin-bottom:14px">
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Notas</label>
+                            <textarea class="form-control" name="notes" rows="2" placeholder="Observaciones opcionales..." style="resize:vertical"></textarea>
+                        </div>
+                        <div style="display:flex;gap:8px">
+                            <button type="submit" class="btn-main" data-budget-save>Guardar</button>
+                            <button type="button" class="btn-secondary-web" data-budget-reset>Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'shopping-list')
         <section data-user-shopping-lists>
             <div class="alert" data-shopping-lists-message style="display:none"></div>
