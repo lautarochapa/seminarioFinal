@@ -16,6 +16,10 @@
         movements: [],
         movementPage: 1,
         movementLastPage: 1,
+        alerts: [],
+        expiring: [],
+        lowStock: [],
+        rules: [],
         products: [],
         units: [],
         productSearchTimer: null,
@@ -177,27 +181,31 @@
     }
 
     function renderProducts(root) {
-        var select = qs('[data-stock-product-select]', root);
-        if (!select) {
-            return;
-        }
-        var current = select.value;
-        select.innerHTML = '<option value="">Selecciona producto</option>' + state.products.map(function (product) {
-            return '<option value="' + product.id + '">' + escapeHtml(productLabel(product)) + '</option>';
-        }).join('');
-        select.value = current;
+        ['[data-stock-product-select]', '[data-stock-rule-product-select]'].forEach(function (selector) {
+            var select = qs(selector, root);
+            if (!select) {
+                return;
+            }
+            var current = select.value;
+            select.innerHTML = '<option value="">Selecciona producto</option>' + state.products.map(function (product) {
+                return '<option value="' + product.id + '">' + escapeHtml(productLabel(product)) + '</option>';
+            }).join('');
+            select.value = current;
+        });
     }
 
     function renderUnits(root) {
-        var select = qs('[data-stock-unit-select]', root);
-        if (!select) {
-            return;
-        }
-        var current = select.value;
-        select.innerHTML = '<option value="">Selecciona unidad</option>' + state.units.map(function (unit) {
-            return '<option value="' + unit.id + '">' + escapeHtml(unit.name) + (unit.symbol ? ' (' + escapeHtml(unit.symbol) + ')' : '') + '</option>';
-        }).join('');
-        select.value = current;
+        ['[data-stock-unit-select]', '[data-stock-rule-unit-select]'].forEach(function (selector) {
+            var select = qs(selector, root);
+            if (!select) {
+                return;
+            }
+            var current = select.value;
+            select.innerHTML = '<option value="">Selecciona unidad</option>' + state.units.map(function (unit) {
+                return '<option value="' + unit.id + '">' + escapeHtml(unit.name) + (unit.symbol ? ' (' + escapeHtml(unit.symbol) + ')' : '') + '</option>';
+            }).join('');
+            select.value = current;
+        });
     }
 
     function renderMovementItemOptions(root) {
@@ -373,6 +381,90 @@
         }).join('');
     }
 
+    function renderStockItemsList(target, items, emptyMessage) {
+        if (!target) {
+            return;
+        }
+        if (!items.length) {
+            target.innerHTML = '<p class="muted">' + escapeHtml(emptyMessage) + '</p>';
+            return;
+        }
+        target.innerHTML = items.map(function (item) {
+            return '<div class="table-line">' +
+                '<span class="muted">' + escapeHtml(item.expiration_date || locationLabel(item.location)) + '</span>' +
+                '<strong>' + escapeHtml(productLabel(item.product)) + ' - ' +
+                    escapeHtml(item.quantity) + ' ' + escapeHtml(unitLabel(item.unit)) +
+                '</strong>' +
+            '</div>';
+        }).join('');
+    }
+
+    function renderAlerts(root) {
+        var target = qs('[data-stock-alerts-list]', root);
+        var count = qs('[data-stock-alerts-count]', root);
+        if (count) {
+            count.textContent = state.alerts.length + (state.alerts.length === 1 ? ' alerta' : ' alertas');
+        }
+        if (!target) {
+            return;
+        }
+        if (!state.currentGroupId) {
+            target.innerHTML = '<p class="muted">Selecciona un grupo familiar.</p>';
+            return;
+        }
+        if (!state.alerts.length) {
+            target.innerHTML = '<p class="muted">No hay alertas para mostrar.</p>';
+            return;
+        }
+        target.innerHTML = state.alerts.map(function (alert) {
+            var action = alert.status === 'read'
+                ? '<span class="chip">Leida</span>'
+                : '<button type="button" class="btn-secondary-web btn-sm" data-stock-alert-read="' + alert.id + '">Marcar leida</button>';
+            return '<div class="panel" style="padding:12px">' +
+                '<div class="table-line"><span class="muted">' + escapeHtml(alert.alert_type) + ' / ' + escapeHtml(alert.severity) + '</span><strong>' + escapeHtml(alert.message) + '</strong></div>' +
+                '<div class="table-line"><span class="muted">Producto</span><strong>' + escapeHtml(productLabel(alert.product)) + '</strong></div>' +
+                '<div class="table-line"><span class="muted">Ubicacion</span><strong>' + escapeHtml(locationLabel(alert.location)) + '</strong></div>' +
+                '<div style="margin-top:8px">' + action + '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function renderExpiring(root) {
+        renderStockItemsList(qs('[data-stock-expiring-list]', root), state.expiring, 'No hay productos proximos a vencer.');
+    }
+
+    function renderLowStock(root) {
+        renderStockItemsList(qs('[data-stock-low-list]', root), state.lowStock, 'No hay productos bajo minimo.');
+    }
+
+    function renderRules(root) {
+        var body = qs('[data-stock-rules-body]', root);
+        if (!body) {
+            return;
+        }
+        if (!state.currentGroupId) {
+            body.innerHTML = '<tr><td colspan="5" class="muted">Selecciona un grupo familiar.</td></tr>';
+            return;
+        }
+        if (!state.rules.length) {
+            body.innerHTML = '<tr><td colspan="5" class="muted">No hay reglas de minimo cargadas.</td></tr>';
+            return;
+        }
+        body.innerHTML = state.rules.map(function (rule) {
+            var target = rule.product ? productLabel(rule.product) : (rule.ingredient ? rule.ingredient.name : '-');
+            return '<tr>' +
+                '<td>' + escapeHtml(target) + '</td>' +
+                '<td>' + escapeHtml(rule.minimum_quantity) + '</td>' +
+                '<td>' + escapeHtml(unitLabel(rule.unit)) + '</td>' +
+                '<td><span class="chip">' + escapeHtml(rule.status) + '</span></td>' +
+                '<td>' +
+                    '<button type="button" class="btn-secondary-web btn-sm" data-stock-rule-edit="' + rule.id + '">Editar</button> ' +
+                    '<button type="button" class="btn-secondary-web btn-sm" data-stock-rule-delete="' + rule.id + '">Eliminar</button>' +
+                '</td>' +
+            '</tr>';
+        }).join('');
+    }
+
     function renderSummary(root, summary) {
         var total = qs('[data-stock-summary-total]', root);
         var products = qs('[data-stock-summary-products]', root);
@@ -461,6 +553,19 @@
         updateMovementModeVisibility(root);
     }
 
+    function resetRuleForm(root) {
+        var form = qs('[data-stock-rule-form]', root);
+        var title = qs('[data-stock-rule-form-title]', root);
+        if (form) {
+            form.reset();
+            form.elements.id.value = '';
+            form.elements.status.value = 'active';
+        }
+        if (title) {
+            title.textContent = 'Regla de minimo';
+        }
+    }
+
     function fillLocationForm(root, location) {
         var form = qs('[data-stock-location-form]', root);
         var title = qs('[data-stock-location-form-title]', root);
@@ -521,6 +626,22 @@
             title.textContent = 'Movimiento: ' + stockItemLabel(item);
         }
         updateMovementModeVisibility(root);
+    }
+
+    function fillRuleForm(root, rule) {
+        var form = qs('[data-stock-rule-form]', root);
+        var title = qs('[data-stock-rule-form-title]', root);
+        if (!form || !rule) {
+            return;
+        }
+        form.elements.id.value = rule.id;
+        form.elements.product_id.value = rule.product_id || '';
+        form.elements.minimum_quantity.value = rule.minimum_quantity || 0;
+        form.elements.unit_id.value = rule.unit_id || '';
+        form.elements.status.value = rule.status || 'active';
+        if (title) {
+            title.textContent = 'Editar regla';
+        }
     }
 
     function loadGroups(root) {
@@ -663,6 +784,88 @@
             });
     }
 
+    function loadAlerts(root) {
+        if (!state.currentGroupId) {
+            renderAlerts(root);
+            return Promise.resolve();
+        }
+        var params = new URLSearchParams();
+        params.set('per_page', 20);
+        var status = qs('[data-stock-alert-status]', root);
+        var severity = qs('[data-stock-alert-severity]', root);
+        if (status && status.value) {
+            params.set('status', status.value);
+        }
+        if (severity && severity.value) {
+            params.set('severity', severity.value);
+        }
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock-alerts') + '?' + params.toString())
+            .then(function (response) {
+                state.alerts = response.data || [];
+                renderAlerts(root);
+            })
+            .catch(function (error) {
+                state.alerts = [];
+                renderAlerts(root);
+                handleError(root, error);
+            });
+    }
+
+    function loadExpiring(root) {
+        if (!state.currentGroupId) {
+            renderExpiring(root);
+            return Promise.resolve();
+        }
+        var days = qs('[data-stock-expiring-days]', root);
+        var params = new URLSearchParams();
+        params.set('per_page', 20);
+        params.set('days', days && days.value ? days.value : 7);
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock/expiring') + '?' + params.toString())
+            .then(function (response) {
+                state.expiring = response.data || [];
+                renderExpiring(root);
+            })
+            .catch(function (error) {
+                state.expiring = [];
+                renderExpiring(root);
+                handleError(root, error);
+            });
+    }
+
+    function loadLowStock(root) {
+        if (!state.currentGroupId) {
+            renderLowStock(root);
+            return Promise.resolve();
+        }
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock/low-stock?per_page=20'))
+            .then(function (response) {
+                state.lowStock = response.data || [];
+                renderLowStock(root);
+            })
+            .catch(function (error) {
+                state.lowStock = [];
+                renderLowStock(root);
+                handleError(root, error);
+            });
+    }
+
+    function loadRules(root) {
+        if (!state.currentGroupId) {
+            renderRules(root);
+            return Promise.resolve();
+        }
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock-minimum-rules?per_page=100'))
+            .then(function (response) {
+                state.rules = response.data || [];
+                renderRules(root);
+            })
+            .catch(function (error) {
+                state.rules = [];
+                renderRules(root);
+                handleError(root, error);
+            });
+    }
+
     function loadSummary(root) {
         if (!state.currentGroupId) {
             return Promise.resolve();
@@ -696,6 +899,10 @@
             loadLocationOptions(root),
             loadStock(root),
             loadMovements(root),
+            loadAlerts(root),
+            loadExpiring(root),
+            loadLowStock(root),
+            loadRules(root),
             loadSummary(root),
             loadValue(root),
         ]);
@@ -888,6 +1095,75 @@
         });
     }
 
+    function saveRule(root, event) {
+        event.preventDefault();
+        if (!state.currentGroupId) {
+            showMessage(root, 'warning', 'Selecciona un grupo familiar.');
+            return;
+        }
+        var form = event.currentTarget;
+        var submit = qs('[data-stock-rule-submit]', root);
+        var id = form.elements.id.value;
+        var body = {
+            product_id: form.elements.product_id.value ? Number(form.elements.product_id.value) : null,
+            minimum_quantity: Number(form.elements.minimum_quantity.value),
+            unit_id: Number(form.elements.unit_id.value),
+            status: form.elements.status.value,
+        };
+        if (!body.product_id) {
+            showMessage(root, 'danger', 'Selecciona un producto para la regla.');
+            return;
+        }
+        if (submit) {
+            submit.disabled = true;
+        }
+        clearMessage(root);
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock-minimum-rules' + (id ? '/' + encodeURIComponent(id) : '')), {
+            method: id ? 'PATCH' : 'POST',
+            body: body,
+        }).then(function () {
+            resetRuleForm(root);
+            showMessage(root, 'success', id ? 'Regla actualizada.' : 'Regla creada.');
+            return Promise.all([loadRules(root), loadLowStock(root)]);
+        }).catch(function (error) {
+            handleError(root, error);
+        }).then(function () {
+            if (submit) {
+                submit.disabled = false;
+            }
+        });
+    }
+
+    function deleteRule(root, id) {
+        if (!state.currentGroupId || !id || !window.confirm('Eliminar esta regla de minimo?')) {
+            return;
+        }
+        clearMessage(root);
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock-minimum-rules/' + encodeURIComponent(id)), {
+            method: 'DELETE',
+        }).then(function () {
+            showMessage(root, 'success', 'Regla eliminada.');
+            return Promise.all([loadRules(root), loadLowStock(root)]);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function markAlertRead(root, id) {
+        if (!state.currentGroupId || !id) {
+            return;
+        }
+        clearMessage(root);
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock-alerts/' + encodeURIComponent(id) + '/read'), {
+            method: 'PATCH',
+        }).then(function () {
+            showMessage(root, 'success', 'Alerta marcada como leida.');
+            return loadAlerts(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
     function bind(root) {
         var groupSelect = qs('[data-stock-group-select]', root);
         var locationStatus = qs('[data-stock-location-status]', root);
@@ -914,6 +1190,13 @@
         var movementTo = qs('[data-stock-movement-date-to]', root);
         var movementPrev = qs('[data-stock-movements-prev]', root);
         var movementNext = qs('[data-stock-movements-next]', root);
+        var alertStatus = qs('[data-stock-alert-status]', root);
+        var alertSeverity = qs('[data-stock-alert-severity]', root);
+        var alertsRefresh = qs('[data-stock-alerts-refresh]', root);
+        var expiringRefresh = qs('[data-stock-expiring-refresh]', root);
+        var lowRefresh = qs('[data-stock-low-refresh]', root);
+        var ruleForm = qs('[data-stock-rule-form]', root);
+        var ruleCancel = qs('[data-stock-rule-cancel]', root);
 
         if (groupSelect) {
             groupSelect.addEventListener('change', function () {
@@ -924,6 +1207,7 @@
                 resetLocationForm(root);
                 resetStockForm(root);
                 resetMovementForm(root);
+                resetRuleForm(root);
                 reloadGroupData(root);
             });
         }
@@ -1075,6 +1359,39 @@
                 }
             });
         }
+        [alertStatus, alertSeverity].forEach(function (filter) {
+            if (filter) {
+                filter.addEventListener('change', function () {
+                    loadAlerts(root);
+                });
+            }
+        });
+        if (alertsRefresh) {
+            alertsRefresh.addEventListener('click', function () {
+                loadAlerts(root);
+            });
+        }
+        if (expiringRefresh) {
+            expiringRefresh.addEventListener('click', function () {
+                loadExpiring(root);
+            });
+        }
+        if (lowRefresh) {
+            lowRefresh.addEventListener('click', function () {
+                loadLowStock(root);
+            });
+        }
+        if (ruleForm) {
+            ruleForm.addEventListener('submit', function (event) {
+                saveRule(root, event);
+            });
+        }
+        if (ruleCancel) {
+            ruleCancel.addEventListener('click', function () {
+                resetRuleForm(root);
+                clearMessage(root);
+            });
+        }
 
         root.addEventListener('click', function (event) {
             var locationEdit = event.target.closest('[data-stock-location-edit]');
@@ -1082,6 +1399,9 @@
             var stockEdit = event.target.closest('[data-stock-edit]');
             var stockDelete = event.target.closest('[data-stock-delete]');
             var stockMovement = event.target.closest('[data-stock-movement-for]');
+            var alertRead = event.target.closest('[data-stock-alert-read]');
+            var ruleEdit = event.target.closest('[data-stock-rule-edit]');
+            var ruleDelete = event.target.closest('[data-stock-rule-delete]');
 
             if (locationEdit) {
                 fillLocationForm(root, getLocation(locationEdit.getAttribute('data-stock-location-edit')));
@@ -1103,6 +1423,18 @@
                 fillMovementForm(root, state.stock.filter(function (item) {
                     return String(item.id) === String(movementItemId);
                 })[0]);
+            }
+            if (alertRead) {
+                markAlertRead(root, alertRead.getAttribute('data-stock-alert-read'));
+            }
+            if (ruleEdit) {
+                var ruleId = ruleEdit.getAttribute('data-stock-rule-edit');
+                fillRuleForm(root, state.rules.filter(function (rule) {
+                    return String(rule.id) === String(ruleId);
+                })[0]);
+            }
+            if (ruleDelete) {
+                deleteRule(root, ruleDelete.getAttribute('data-stock-rule-delete'));
             }
         });
     }

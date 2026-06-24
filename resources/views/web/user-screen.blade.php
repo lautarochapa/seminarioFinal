@@ -123,6 +123,64 @@
                         </div>
                     </article>
 
+                    <article class="panel" style="margin-bottom:14px">
+                        <h2>Alertas y stock minimo</h2>
+                        <div class="web-tools">
+                            <select class="form-control" data-stock-alert-status>
+                                <option value="">Todas las alertas</option>
+                                <option value="open">Abiertas</option>
+                                <option value="read">Leidas</option>
+                            </select>
+                            <select class="form-control" data-stock-alert-severity>
+                                <option value="">Todas las severidades</option>
+                                <option value="low">Baja</option>
+                                <option value="medium">Media</option>
+                                <option value="high">Alta</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web" data-stock-alerts-refresh>Actualizar alertas</button>
+                            <span class="chip" data-stock-alerts-count>0 alertas</span>
+                        </div>
+                        <div data-stock-alerts-list style="display:grid;gap:8px;margin-top:12px">
+                            <p class="muted">Selecciona un grupo familiar.</p>
+                        </div>
+
+                        <div class="web-tools" style="margin-top:16px">
+                            <input class="form-control" data-stock-expiring-days type="number" min="1" max="365" value="7" aria-label="Dias a vencer">
+                            <button type="button" class="btn-secondary-web" data-stock-expiring-refresh>Ver por vencer</button>
+                            <button type="button" class="btn-secondary-web" data-stock-low-refresh>Ver bajo stock</button>
+                        </div>
+                        <div class="profile-grid" style="margin-top:12px">
+                            <div>
+                                <h3>Productos por vencer</h3>
+                                <div data-stock-expiring-list class="muted">Sin datos cargados.</div>
+                            </div>
+                            <div>
+                                <h3>Bajo stock</h3>
+                                <div data-stock-low-list class="muted">Sin datos cargados.</div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h3>Reglas de stock minimo</h3>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Minimo</th>
+                                        <th>Unidad</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-stock-rules-body>
+                                    <tr><td colspan="5" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
                     <article class="panel">
                         <h2>Ubicaciones del hogar</h2>
                         <div class="web-tools">
@@ -223,6 +281,32 @@
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
                             <button type="submit" class="btn-main" data-stock-movement-submit>Registrar</button>
                             <button type="button" class="btn-secondary-web" data-stock-movement-cancel>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <h2 data-stock-rule-form-title>Regla de minimo</h2>
+                    <form class="family-form" data-stock-rule-form>
+                        <input type="hidden" name="id">
+                        <label>Producto</label>
+                        <select class="form-control" name="product_id" required data-stock-rule-product-select>
+                            <option value="">Selecciona producto</option>
+                        </select>
+                        <label>Cantidad minima</label>
+                        <input class="form-control" name="minimum_quantity" type="number" min="0" step="0.01" required>
+                        <label>Unidad</label>
+                        <select class="form-control" name="unit_id" required data-stock-rule-unit-select>
+                            <option value="">Selecciona unidad</option>
+                        </select>
+                        <label>Estado</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                            <button type="submit" class="btn-main" data-stock-rule-submit>Guardar regla</button>
+                            <button type="button" class="btn-secondary-web" data-stock-rule-cancel>Limpiar</button>
                         </div>
                     </form>
 
