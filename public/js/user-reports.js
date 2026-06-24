@@ -12,6 +12,9 @@
         personalReport: 'body-progress',
         personalData: null,
         personalLoading: false,
+        exportLoading: false,
+        exportId: null,
+        exportPollTimer: null,
     };
 
     var REPORTS = [
@@ -450,6 +453,126 @@
             });
     }
 
+    var EXPORT_STATUS_LABELS = {
+        pending:    { text: 'En cola...',     color: '#66746b' },
+        processing: { text: 'Procesando...',  color: '#1a5fb4' },
+        completed:  { text: 'Listo.',         color: '#04ac85' },
+        failed:     { text: 'Error al exportar.', color: '#b33a3a' },
+    };
+
+    function showExportMsg(root, type, msg) {
+        var el = qs('[data-export-message]', root);
+        if (!el) { return; }
+        el.className = 'alert alert-' + type; el.textContent = msg; el.style.display = 'block';
+    }
+
+    function clearExportMsg(root) {
+        var el = qs('[data-export-message]', root);
+        if (el) { el.style.display = 'none'; el.textContent = ''; }
+    }
+
+    function setExportStatus(root, status, downloadUrl) {
+        var statusEl = qs('[data-export-status]', root);
+        var textEl   = qs('[data-export-status-text]', root);
+        var dlBtn    = qs('[data-export-download]', root);
+        if (!statusEl) { return; }
+
+        statusEl.style.display = '';
+        var info = EXPORT_STATUS_LABELS[status] || { text: escapeHtml(status), color: '#66746b' };
+        if (textEl) { textEl.textContent = info.text; textEl.style.color = info.color; }
+        if (dlBtn) {
+            if (status === 'completed' && downloadUrl) {
+                dlBtn.href = downloadUrl;
+                dlBtn.style.display = '';
+            } else {
+                dlBtn.style.display = 'none';
+            }
+        }
+    }
+
+    function stopExportPoll() {
+        if (state.exportPollTimer) {
+            clearInterval(state.exportPollTimer);
+            state.exportPollTimer = null;
+        }
+    }
+
+    function pollExport(root) {
+        stopExportPoll();
+        state.exportPollTimer = setInterval(function () {
+            if (!state.exportId) { stopExportPoll(); return; }
+            window.CCApi.request(endpoint('/api/v1/report-exports/' + encodeURIComponent(state.exportId)))
+                .then(function (response) {
+                    var job = response.data || response;
+                    var status = job.status || 'pending';
+                    setExportStatus(root, status, job.download_url || job.url || null);
+                    if (status === 'completed' || status === 'failed') {
+                        stopExportPoll();
+                        state.exportLoading = false;
+                        var btn = qs('[data-export-submit]', root);
+                        if (btn) { btn.disabled = false; btn.textContent = 'Generar exportación'; }
+                        if (status === 'failed') {
+                            showExportMsg(root, 'danger', 'La exportación falló. Intentá de nuevo.');
+                        }
+                    }
+                })
+                .catch(function () {});
+        }, 3000);
+    }
+
+    function triggerExport(root) {
+        if (!state.currentGroupId) { showExportMsg(root, 'warning', 'Seleccioná un grupo familiar.'); return; }
+
+        var formatSel  = qs('[data-export-format]', root);
+        var reportSel  = qs('[data-export-report-type]', root);
+        var format     = formatSel ? formatSel.value : 'xlsx';
+        var reportType = reportSel ? reportSel.value : state.activeReport;
+
+        var payload = { format: format, report_type: reportType };
+        if (state.dateFrom) { payload.from = state.dateFrom; }
+        if (state.dateTo)   { payload.to   = state.dateTo; }
+
+        state.exportLoading = true;
+        state.exportId      = null;
+        stopExportPoll();
+        clearExportMsg(root);
+
+        var statusEl = qs('[data-export-status]', root);
+        if (statusEl) { statusEl.style.display = 'none'; }
+        var dlBtn = qs('[data-export-download]', root);
+        if (dlBtn) { dlBtn.style.display = 'none'; }
+
+        var btn = qs('[data-export-submit]', root);
+        if (btn) { btn.disabled = true; btn.textContent = 'Generando...'; }
+
+        window.CCApi.request(
+            endpoint('/api/v1/family-groups/' + encodeURIComponent(state.currentGroupId) + '/reports/export'),
+            { method: 'POST', body: payload }
+        )
+            .then(function (response) {
+                var job = response.data || response;
+                state.exportId = job.id;
+                var status = job.status || 'pending';
+                setExportStatus(root, status, job.download_url || job.url || null);
+                if (status === 'completed') {
+                    state.exportLoading = false;
+                    if (btn) { btn.disabled = false; btn.textContent = 'Generar exportación'; }
+                } else {
+                    pollExport(root);
+                }
+            })
+            .catch(function (err) {
+                state.exportLoading = false;
+                if (btn) { btn.disabled = false; btn.textContent = 'Generar exportación'; }
+                showExportMsg(root, 'danger', errMsg(err));
+            });
+    }
+
+    function syncExportReportType(root) {
+        var sel = qs('[data-export-report-type]', root);
+        if (sel) { sel.value = state.activeReport; }
+    }
+
     function bind(root) {
         var groupSel = qs('[data-report-group]', root);
         if (groupSel) {
@@ -484,7 +607,22 @@
                 state.data = null;
                 renderTabs(root);
                 renderContent(root);
+                syncExportReportType(root);
             });
+        }
+
+        root.addEventListener('click', function (event) {
+            if (event.target.closest('[data-report-export-toggle]')) {
+                var panel = qs('[data-export-panel]', root);
+                if (panel) { panel.style.display = panel.style.display === 'none' ? '' : 'none'; }
+                syncExportReportType(root);
+                clearExportMsg(root);
+            }
+        });
+
+        var exportBtn = qs('[data-export-submit]', root);
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function () { triggerExport(root); });
         }
 
         var personalTabsEl = qs('[data-personal-tabs]', root);

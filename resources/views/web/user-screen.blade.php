@@ -1663,6 +1663,47 @@
                         <input class="form-control" type="date" data-report-to>
                     </div>
                     <button type="button" class="btn-main" data-report-generate style="align-self:flex-end">Generar reporte</button>
+                    <button type="button" class="btn-secondary-web" data-report-export-toggle style="align-self:flex-end">Exportar</button>
+                </div>
+            </div>
+
+            {{-- Panel exportación --}}
+            <div data-export-panel style="display:none;margin-bottom:14px">
+                <div class="panel" style="padding:14px;border-left:3px solid rgba(4,172,133,.8)">
+                    <h3 style="font-size:14px;font-weight:900;margin:0 0 10px">Exportar reporte</h3>
+                    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-bottom:10px">
+                        <div>
+                            <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#66746b">FORMATO</label>
+                            <select class="form-control" data-export-format style="min-width:120px">
+                                <option value="xlsx">Excel (.xlsx)</option>
+                                <option value="pdf">PDF</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#66746b">REPORTE</label>
+                            <select class="form-control" data-export-report-type style="min-width:200px">
+                                <option value="stock">Stock</option>
+                                <option value="stock-value">Valor stock</option>
+                                <option value="expiring-products">Por vencer</option>
+                                <option value="waste">Desperdicio</option>
+                                <option value="purchases">Compras</option>
+                                <option value="budget">Presupuesto</option>
+                                <option value="budget-vs-actual">Presup. vs real</option>
+                                <option value="recipes-cooked">Recetas cocinadas</option>
+                                <option value="nutrition-estimate">Nutrición estimada</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn-main" data-export-submit style="align-self:flex-end">Generar exportación</button>
+                        <button type="button" class="btn-secondary-web" data-report-export-toggle style="align-self:flex-end">Cancelar</button>
+                    </div>
+                    <div class="alert" data-export-message style="display:none"></div>
+                    <div data-export-status style="display:none;margin-top:8px">
+                        <div style="display:flex;align-items:center;gap:10px">
+                            <span data-export-status-text style="font-size:13px;color:#66746b">Procesando...</span>
+                            <a data-export-download href="#" target="_blank" style="display:none" class="btn-main btn-sm">Descargar</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
