@@ -1370,6 +1370,101 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'recipe-search')
+        <section class="workspace" data-recipe-search>
+            {{-- Main: results --}}
+            <div style="display:flex;flex-direction:column;gap:14px">
+                <article class="panel">
+                    <h2>Buscar recetas</h2>
+                    <div class="web-tools" style="margin-bottom:10px">
+                        <input class="form-control" type="search" data-rs-search placeholder="Nombre de la receta..." style="flex:1;min-width:180px">
+                        <button type="button" class="btn-main btn-sm" data-rs-btn>Buscar</button>
+                        <button type="button" class="btn-secondary-web btn-sm" data-rs-clear>Limpiar</button>
+                        <span class="chip" data-rs-count style="display:none">0 resultados</span>
+                    </div>
+                    <div data-rs-message style="display:none;font-size:13px;padding:7px 10px;border-radius:4px;margin-bottom:10px"></div>
+                    <div data-rs-list style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:4px">
+                        <p class="muted" style="font-size:13px">Usá los filtros para buscar recetas.</p>
+                    </div>
+                    <div class="catalog-pagination" style="margin-top:12px" data-rs-pagination>
+                        <button type="button" class="btn-secondary-web btn-sm" data-rs-prev disabled>Anterior</button>
+                        <span class="muted" data-rs-page>Pág 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-rs-next disabled>Siguiente</button>
+                    </div>
+                </article>
+            </div>
+
+            {{-- Aside: filters + detail --}}
+            <aside style="display:flex;flex-direction:column;gap:14px">
+                <div class="aside-panel">
+                    <h2>Filtros</h2>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Categoría</label>
+                        <select class="form-control" data-rs-category>
+                            <option value="">Todas las categorías</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Dificultad</label>
+                        <select class="form-control" data-rs-difficulty>
+                            <option value="">Cualquier dificultad</option>
+                            <option value="easy">Fácil</option>
+                            <option value="medium">Media</option>
+                            <option value="hard">Difícil</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Tiempo total máx. (min)</label>
+                        <input class="form-control" type="number" min="1" data-rs-max-time placeholder="ej. 30">
+                    </div>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Fuente</label>
+                        <select class="form-control" data-rs-source>
+                            <option value="">Todas</option>
+                            <option value="official">Oficiales</option>
+                            <option value="user">De usuario</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Incluir ingrediente</label>
+                        <div style="position:relative">
+                            <input class="form-control" type="text" data-rs-inc-input placeholder="Buscar ingrediente..." autocomplete="off" style="width:100%">
+                            <div data-rs-inc-results style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #dde3e8;border-radius:4px;z-index:20;max-height:160px;overflow-y:auto"></div>
+                        </div>
+                        <div data-rs-inc-chips style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px"></div>
+                    </div>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Excluir ingrediente</label>
+                        <div style="position:relative">
+                            <input class="form-control" type="text" data-rs-exc-input placeholder="Buscar ingrediente..." autocomplete="off" style="width:100%">
+                            <div data-rs-exc-results style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #dde3e8;border-radius:4px;z-index:20;max-height:160px;overflow-y:auto"></div>
+                        </div>
+                        <div data-rs-exc-chips style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px"></div>
+                    </div>
+
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Tags</label>
+                        <div data-rs-tag-chips style="display:flex;flex-wrap:wrap;gap:5px;max-height:120px;overflow-y:auto"></div>
+                    </div>
+
+                    <div style="display:flex;gap:8px;margin-top:4px">
+                        <button type="button" class="btn-main btn-sm" style="flex:1" data-rs-apply>Aplicar</button>
+                        <button type="button" class="btn-secondary-web btn-sm" data-rs-reset>Reset</button>
+                    </div>
+                </div>
+
+                <div class="aside-panel" data-rs-detail style="display:none">
+                    <p class="muted" style="font-size:13px">Seleccioná una receta para ver el detalle.</p>
+                </div>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'supermarkets')
         <section class="workspace" data-user-supermarkets>
             <div>

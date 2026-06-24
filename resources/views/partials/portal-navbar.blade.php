@@ -7,6 +7,7 @@
                 ['Dashboard', '/web', 'web.user.dashboard'],
                 ['Stock del hogar', '/web/stock', 'web.user.stock'],
                 ['Recetas', '/web/recipes', 'web.user.recipes'],
+                ['Buscar recetas', '/web/recipe-search', 'web.user.recipe-search'],
                 ['Planificacion', '/web/planning', 'web.user.planning'],
                 ['Lista de compras', '/web/shopping-list', 'web.user.shopping-list'],
                 ['Presupuesto', '/web/budget', 'web.user.budget'],
