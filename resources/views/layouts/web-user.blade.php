@@ -26,6 +26,7 @@
     <script src="{{ asset('js/recipe-availability.js') }}?v={{ file_exists(public_path('js/recipe-availability.js')) ? filemtime(public_path('js/recipe-availability.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipes.js') }}?v={{ file_exists(public_path('js/user-recipes.js')) ? filemtime(public_path('js/user-recipes.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipe-search.js') }}?v={{ file_exists(public_path('js/user-recipe-search.js')) ? filemtime(public_path('js/user-recipe-search.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-recipe-suggestions.js') }}?v={{ file_exists(public_path('js/user-recipe-suggestions.js')) ? filemtime(public_path('js/user-recipe-suggestions.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

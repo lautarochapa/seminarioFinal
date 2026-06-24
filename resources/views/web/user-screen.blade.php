@@ -1465,6 +1465,32 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'recipe-suggestions')
+        <section class="workspace" data-recipe-sugg>
+            <div style="display:flex;flex-direction:column;gap:14px">
+                <article class="panel" style="min-height:400px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+                        <h2 style="margin:0">Recomendaciones</h2>
+                        <select class="form-control" data-sugg-group style="max-width:200px;display:none;font-size:13px"></select>
+                    </div>
+                    <div data-sugg-tabs class="audit-tabs"></div>
+                    <div data-sugg-extra style="margin-bottom:8px"></div>
+                    <div data-sugg-message style="display:none;font-size:13px;padding:7px 10px;border-radius:4px;margin-bottom:10px"></div>
+                    <div data-sugg-list style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:4px">
+                        <p class="muted" style="font-size:13px">Cargando recomendaciones...</p>
+                    </div>
+                    <div class="catalog-pagination" style="margin-top:12px;display:none" data-sugg-pagination>
+                        <button type="button" class="btn-secondary-web btn-sm" data-sugg-prev disabled>Anterior</button>
+                        <span class="muted" data-sugg-page>Pág 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-sugg-next disabled>Siguiente</button>
+                    </div>
+                </article>
+            </div>
+            <aside class="aside-panel" data-sugg-detail>
+                <p class="muted" style="font-size:13px">Seleccioná una receta para ver el detalle.</p>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'supermarkets')
         <section class="workspace" data-user-supermarkets>
             <div>
