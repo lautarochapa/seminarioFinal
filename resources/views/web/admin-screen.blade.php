@@ -638,6 +638,78 @@
                 <div data-food-tags-public-results class="chips"></div>
             </article>
         </section>
+    @elseif($screenKey === 'meal-types')
+        <section data-admin-meal-types>
+            <div class="alert" data-meal-types-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-meal-types-search placeholder="Buscar desayuno, almuerzo...">
+                        <select class="form-control" data-meal-types-status>
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-meal-types-refresh>Actualizar</button>
+                        <span class="chip" data-meal-types-count>0 tipos</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Orden</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-meal-types-body>
+                                <tr><td colspan="5" class="muted">Cargando tipos de comida...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-meal-types-prev>Anterior</button>
+                        <span class="muted" data-meal-types-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-meal-types-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-meal-type-form-title>Nuevo tipo de comida</h2>
+                    <form class="rbac-form" data-meal-type-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="desayuno" required>
+                        <input class="form-control" name="name" type="text" placeholder="Desayuno" required>
+                        <input class="form-control" name="sort_order" type="number" min="0" max="9999" placeholder="Orden" value="0">
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar tipo</button>
+                            <button type="button" class="btn-ghost" data-meal-type-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Restaurar tipo</h2>
+                    <div class="admin-tools">
+                        <input class="form-control" type="number" min="1" data-meal-type-restore-id placeholder="ID inactivo">
+                        <button type="button" class="btn-ghost" data-meal-type-restore-submit>Restaurar</button>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="panel" style="margin-top:14px">
+                <div class="admin-tools">
+                    <h2 style="margin:0">Catalogo activo</h2>
+                    <button type="button" class="btn-ghost" data-meal-types-public-refresh>Consultar</button>
+                    <span class="chip" data-meal-types-public-count>0 tipos activos</span>
+                </div>
+                <div data-meal-types-public-results class="chips"></div>
+            </article>
+        </section>
     @elseif($screenKey === 'brands')
         <section data-admin-brands>
             <div class="alert" data-brands-message style="display:none"></div>

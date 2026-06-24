@@ -56,6 +56,7 @@
                 ['Categorias recetas', '/admin-web/recipe-categories', 'web.admin.recipe-categories'],
                 ['Tags recetas', '/admin-web/recipe-tags', 'web.admin.recipe-tags'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
+                ['Tipos de comida', '/admin-web/meal-types', 'catalog.manage'],
                 ['Importar recetas', '/admin-web/recipe-import', 'web.admin.recipe-import'],
                 ['Importar por texto', '/admin-web/recipe-import-text', 'web.admin.recipe-import-text'],
                 ['Validacion recetas', '/admin-web/imported-recipes', 'recipes.manage'],
