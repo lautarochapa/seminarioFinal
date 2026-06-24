@@ -260,6 +260,8 @@
 
         var costHtml = '<div data-cost-panel></div>';
 
+        var availabilityHtml = '<div data-availability-panel></div>';
+
         var sourceHtml = '';
         if (r.source_type === 'external' && r.sources && r.sources.length) {
             var src = r.sources[0];
@@ -298,6 +300,7 @@
             stepsHtml +
             nutritionHtml +
             costHtml +
+            availabilityHtml +
             actionsHtml;
 
         if (window.RecipeIngredients) {
@@ -315,6 +318,10 @@
         if (window.RecipeCost) {
             var costPanel = qs('[data-cost-panel]', detailEl);
             if (costPanel) { window.RecipeCost.mount(costPanel, r.id, false); }
+        }
+        if (window.RecipeAvailability) {
+            var availPanel = qs('[data-availability-panel]', detailEl);
+            if (availPanel) { window.RecipeAvailability.mount(availPanel, r.id); }
         }
     }
 

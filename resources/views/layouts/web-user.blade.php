@@ -23,6 +23,7 @@
     <script src="{{ asset('js/recipe-steps.js') }}?v={{ file_exists(public_path('js/recipe-steps.js')) ? filemtime(public_path('js/recipe-steps.js')) : time() }}" defer></script>
     <script src="{{ asset('js/recipe-nutrition.js') }}?v={{ file_exists(public_path('js/recipe-nutrition.js')) ? filemtime(public_path('js/recipe-nutrition.js')) : time() }}" defer></script>
     <script src="{{ asset('js/recipe-cost.js') }}?v={{ file_exists(public_path('js/recipe-cost.js')) ? filemtime(public_path('js/recipe-cost.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/recipe-availability.js') }}?v={{ file_exists(public_path('js/recipe-availability.js')) ? filemtime(public_path('js/recipe-availability.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipes.js') }}?v={{ file_exists(public_path('js/user-recipes.js')) ? filemtime(public_path('js/user-recipes.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
