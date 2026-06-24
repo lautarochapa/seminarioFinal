@@ -199,6 +199,14 @@
         }
     }
 
+    function buildGenerationPayload(form) {
+        return {
+            period_type: form.elements.period_type.value,
+            start_date: form.elements.start_date.value,
+            end_date: form.elements.end_date.value,
+        };
+    }
+
     function fillForm(root, plan) {
         var form = qs('[data-meal-plan-form]', root);
         var title = qs('[data-meal-plan-form-title]', root);
@@ -369,6 +377,68 @@
         });
     }
 
+    function generatePlan(root, form) {
+        if (!state.currentGroupId) {
+            showMessage(root, 'warning', 'Selecciona un grupo familiar.');
+            return Promise.resolve();
+        }
+        var submit = qs('[data-meal-plan-generate-submit]', root);
+        if (submit) {
+            submit.disabled = true;
+        }
+        return window.CCApi.request(groupPath('/meal-plans/generate'), {
+            method: 'POST',
+            body: buildGenerationPayload(form),
+        }).then(function (response) {
+            showMessage(root, 'success', 'Menu sugerido generado. Revisalo y aprobalo si esta correcto.');
+            state.selectedPlan = response.data || null;
+            renderDetail(root, state.selectedPlan);
+            return loadPlans(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        }).finally(function () {
+            if (submit) {
+                submit.disabled = false;
+            }
+        });
+    }
+
+    function approveSelected(root) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            showMessage(root, 'warning', 'Selecciona un plan pendiente.');
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/approve'), {
+            method: 'POST',
+        }).then(function (response) {
+            showMessage(root, 'success', 'Plan aprobado.');
+            state.selectedPlan = response.data || null;
+            renderDetail(root, state.selectedPlan);
+            return loadPlans(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function regenerateSelected(root) {
+        var form = qs('[data-meal-plan-generate-form]', root);
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            showMessage(root, 'warning', 'Selecciona un plan no aprobado.');
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/regenerate'), {
+            method: 'POST',
+            body: form ? buildGenerationPayload(form) : {},
+        }).then(function (response) {
+            showMessage(root, 'success', 'Plan regenerado.');
+            state.selectedPlan = response.data || null;
+            renderDetail(root, state.selectedPlan);
+            return loadPlans(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
     function deletePlan(root, id) {
         if (!state.currentGroupId || !id || !window.confirm('Eliminar este plan de comidas?')) {
             return Promise.resolve();
@@ -388,6 +458,7 @@
     function bind(root) {
         var groupSelect = qs('[data-meal-plan-group]', root);
         var form = qs('[data-meal-plan-form]', root);
+        var generateForm = qs('[data-meal-plan-generate-form]', root);
         ['[data-meal-plan-period]', '[data-meal-plan-status]', '[data-meal-plan-from]', '[data-meal-plan-to]'].forEach(function (selector) {
             var field = qs(selector, root);
             if (field) {
@@ -430,6 +501,18 @@
                 savePlan(root, form);
             });
         }
+        if (generateForm) {
+            generateForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                generatePlan(root, generateForm);
+            });
+        }
+        qs('[data-meal-plan-approve]', root).addEventListener('click', function () {
+            approveSelected(root);
+        });
+        qs('[data-meal-plan-regenerate]', root).addEventListener('click', function () {
+            regenerateSelected(root);
+        });
         qs('[data-meal-plan-body]', root).addEventListener('click', function (event) {
             var show = event.target.closest('[data-meal-plan-show]');
             var edit = event.target.closest('[data-meal-plan-edit]');

@@ -1429,6 +1429,22 @@
                 </div>
 
                 <aside class="panel">
+                    <h2>Generacion automatica</h2>
+                    <form class="family-form" data-meal-plan-generate-form>
+                        <select class="form-control" name="period_type" required>
+                            <option value="weekly">Semanal</option>
+                            <option value="daily">Diario</option>
+                            <option value="monthly">Mensual</option>
+                        </select>
+                        <input class="form-control" name="start_date" type="date" required>
+                        <input class="form-control" name="end_date" type="date" required>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+                            <button type="submit" class="btn-main" data-meal-plan-generate-submit>Generar menu</button>
+                            <button type="button" class="btn-secondary-web" data-meal-plan-approve>Aprobar seleccionado</button>
+                            <button type="button" class="btn-secondary-web" data-meal-plan-regenerate>Regenerar seleccionado</button>
+                        </div>
+                    </form>
+
                     <h2 data-meal-plan-form-title>Crear plan</h2>
                     <form class="family-form" data-meal-plan-form>
                         <input type="hidden" name="id">
