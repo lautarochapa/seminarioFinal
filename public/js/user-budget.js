@@ -17,6 +17,12 @@
         projection: null,
         summaryLoading: false,
         projectionLoading: false,
+        catsBudgetId: null,
+        catsBudget: null,
+        categories: [],
+        catsLoading: false,
+        catSaving: false,
+        selectedCatId: null,
     };
 
     function qs(sel, root) { return (root || document).querySelector(sel); }
@@ -158,6 +164,7 @@
                 '<td style="color:' + remainColor + ';font-weight:700">' + escapeHtml(fmt(remaining)) + '</td>' +
                 '<td>' +
                 '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Resumen</button>' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-budget-cats="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Categorías</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-edit="' + escapeHtml(String(b.id)) + '">Editar</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-delete="' + escapeHtml(String(b.id)) + '">Eliminar</button>' +
                 '</td>' +
@@ -513,6 +520,214 @@
             });
     }
 
+    function catBudgetPath(extra) {
+        return groupPath('/budgets/' + encodeURIComponent(state.catsBudgetId) + '/categories' + (extra || ''));
+    }
+
+    function showCatsMsg(root, type, msg) {
+        var el = qs('[data-budget-cats-message]', root);
+        if (!el) { return; }
+        el.className = 'alert alert-' + type;
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function clearCatsMsg(root) {
+        var el = qs('[data-budget-cats-message]', root);
+        if (!el) { return; }
+        el.style.display = 'none';
+    }
+
+    function showCatFormMsg(root, type, msg) {
+        var el = qs('[data-budget-cat-form-message]', root);
+        if (!el) { return; }
+        el.className = 'alert alert-' + type;
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function clearCatFormMsg(root) {
+        var el = qs('[data-budget-cat-form-message]', root);
+        if (!el) { return; }
+        el.style.display = 'none';
+    }
+
+    function resetCatForm(root) {
+        var form = qs('[data-budget-cat-form]', root);
+        var title = qs('[data-budget-cat-form-title]', root);
+        if (form) {
+            form.reset();
+            if (form.elements.id) { form.elements.id.value = ''; }
+            if (form.elements.color) { form.elements.color.value = '#04ac85'; }
+        }
+        if (title) { title.textContent = 'Agregar categoría'; }
+        state.selectedCatId = null;
+        clearCatFormMsg(root);
+    }
+
+    function fillCatForm(root, cat) {
+        var form = qs('[data-budget-cat-form]', root);
+        var title = qs('[data-budget-cat-form-title]', root);
+        if (!form || !cat) { return; }
+        if (form.elements.id) { form.elements.id.value = cat.id; }
+        if (form.elements.name) { form.elements.name.value = cat.name || ''; }
+        if (form.elements.allocated_amount) { form.elements.allocated_amount.value = cat.allocated_amount || ''; }
+        if (form.elements.color) { form.elements.color.value = cat.color || '#04ac85'; }
+        if (title) { title.textContent = 'Editar: ' + (cat.name || 'categoría'); }
+        state.selectedCatId = cat.id;
+        clearCatFormMsg(root);
+    }
+
+    function renderCategoriesPanel(root) {
+        var panel = qs('[data-budget-categories-panel]', root);
+        if (!panel) { return; }
+        if (!state.catsBudgetId) { panel.style.display = 'none'; return; }
+        panel.style.display = '';
+
+        var titleEl = qs('[data-budget-cats-title]', root);
+        var allocEl = qs('[data-budget-cats-allocation]', root);
+        var listEl = qs('[data-budget-cats-list]', root);
+
+        var budget = state.catsBudget;
+        if (titleEl) {
+            titleEl.textContent = 'Categorías' + (budget ? ' — ' + monthLabel(budget) : '');
+        }
+
+        if (state.catsLoading) {
+            if (listEl) { listEl.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">Cargando categorías...</p>'; }
+            if (allocEl) { allocEl.textContent = ''; }
+            return;
+        }
+
+        var totalBudget = budget ? (parseFloat(budget.amount) || 0) : 0;
+        var totalAlloc = state.categories.reduce(function (acc, c) { return acc + (parseFloat(c.allocated_amount) || 0); }, 0);
+        var unalloc = totalBudget - totalAlloc;
+
+        if (allocEl && totalBudget) {
+            var allocPct = Math.min(100, Math.round((totalAlloc / totalBudget) * 100));
+            var allocColor = totalAlloc > totalBudget ? '#b33a3a' : '#04ac85';
+            allocEl.innerHTML =
+                'Asignado: <strong style="color:' + allocColor + '">' + fmt(totalAlloc) + '</strong>' +
+                ' de ' + fmt(totalBudget) +
+                (unalloc >= 0
+                    ? ' — <span style="color:#66746b">Sin asignar: ' + fmt(unalloc) + '</span>'
+                    : ' <span style="color:#b33a3a">⚠ Excede el presupuesto en ' + fmt(-unalloc) + '</span>') +
+                '<div style="background:#eee;border-radius:999px;height:6px;margin-top:4px;overflow:hidden">' +
+                '<div style="background:' + allocColor + ';width:' + allocPct + '%;height:100%;border-radius:999px"></div></div>';
+        } else if (allocEl) {
+            allocEl.innerHTML = '';
+        }
+
+        if (!listEl) { return; }
+        if (!state.categories.length) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">No hay categorías definidas. Agregá una abajo.</p>';
+            return;
+        }
+
+        listEl.innerHTML = state.categories.map(function (cat) {
+            var alloc = parseFloat(cat.allocated_amount) || 0;
+            var spent = parseFloat(cat.spent) || 0;
+            var avail = alloc - spent;
+            var spentPct = alloc ? Math.min(100, Math.round((spent / alloc) * 100)) : 0;
+            var barColor = spentPct >= 90 ? '#b33a3a' : spentPct >= 70 ? '#b35c00' : (cat.color || '#04ac85');
+            var availColor = avail >= 0 ? '#2a7a2a' : '#b33a3a';
+            var dot = cat.color
+                ? '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + escapeHtml(cat.color) + ';margin-right:6px;flex-shrink:0"></span>'
+                : '';
+            return '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px 12px;margin-bottom:8px">' +
+                '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">' +
+                '<div style="display:flex;align-items:center;font-size:13px;font-weight:700;min-width:0">' + dot + escapeHtml(cat.name || 'Sin nombre') + '</div>' +
+                '<div style="display:flex;gap:4px;flex-shrink:0">' +
+                '<button type="button" class="btn-secondary-web btn-sm" style="padding:3px 8px;font-size:11px" data-cat-edit="' + escapeHtml(String(cat.id)) + '">Editar</button>' +
+                '<button type="button" class="btn-secondary-web btn-sm" style="padding:3px 8px;font-size:11px" data-cat-delete="' + escapeHtml(String(cat.id)) + '">✕</button>' +
+                '</div></div>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:11px;margin-bottom:6px">' +
+                '<div><div style="color:#66746b">Asignado</div><div style="font-weight:700">' + escapeHtml(fmt(alloc)) + '</div></div>' +
+                '<div><div style="color:#66746b">Gastado</div><div style="font-weight:700">' + escapeHtml(fmt(spent)) + '</div></div>' +
+                '<div><div style="color:#66746b">Disponible</div><div style="font-weight:700;color:' + availColor + '">' + escapeHtml(fmt(avail)) + '</div></div>' +
+                '</div>' +
+                '<div style="background:#eee;border-radius:999px;height:6px;overflow:hidden">' +
+                '<div style="background:' + barColor + ';width:' + spentPct + '%;height:100%;border-radius:999px"></div>' +
+                '</div>' +
+                '</div>';
+        }).join('');
+    }
+
+    function loadCategories(root, budgetId) {
+        var budget = state.budgets.find(function (b) { return String(b.id) === String(budgetId); });
+        if (!budget && state.currentBudget && String(state.currentBudget.id) === String(budgetId)) {
+            budget = state.currentBudget;
+        }
+        state.catsBudgetId = budgetId;
+        state.catsBudget = budget || null;
+        state.categories = [];
+        state.catsLoading = true;
+        state.selectedCatId = null;
+        clearCatsMsg(root);
+        resetCatForm(root);
+        renderCategoriesPanel(root);
+
+        window.CCApi.request(catBudgetPath())
+            .then(function (response) {
+                state.categories = response.data || [];
+                state.catsLoading = false;
+                renderCategoriesPanel(root);
+            })
+            .catch(function (err) {
+                state.catsLoading = false;
+                state.categories = [];
+                renderCategoriesPanel(root);
+                showCatsMsg(root, 'danger', errMsg(err));
+            });
+
+        var panel = qs('[data-budget-categories-panel]', root);
+        if (panel) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+
+    function saveCategory(root, form) {
+        if (!state.catsBudgetId || !state.currentGroupId) { return; }
+        var name = form.elements.name ? form.elements.name.value.trim() : '';
+        var amount = form.elements.allocated_amount ? form.elements.allocated_amount.value : '';
+        if (!name) { showCatFormMsg(root, 'warning', 'Ingresá el nombre de la categoría.'); return; }
+        if (!amount) { showCatFormMsg(root, 'warning', 'Ingresá el monto asignado.'); return; }
+
+        var id = form.elements.id ? form.elements.id.value : '';
+        var payload = { name: name, allocated_amount: parseFloat(amount) };
+        if (form.elements.color && form.elements.color.value) { payload.color = form.elements.color.value; }
+
+        state.catSaving = true;
+        var btn = qs('[data-budget-cat-save]', root);
+        if (btn) { btn.disabled = true; }
+
+        window.CCApi.request(catBudgetPath(id ? '/' + encodeURIComponent(id) : ''), {
+            method: id ? 'PATCH' : 'POST',
+            body: payload,
+        }).then(function () {
+            state.catSaving = false;
+            if (btn) { btn.disabled = false; }
+            showCatsMsg(root, 'success', id ? 'Categoría actualizada.' : 'Categoría creada.');
+            resetCatForm(root);
+            return loadCategories(root, state.catsBudgetId);
+        }).catch(function (err) {
+            state.catSaving = false;
+            if (btn) { btn.disabled = false; }
+            showCatFormMsg(root, 'danger', errMsg(err));
+        });
+    }
+
+    function deleteCategory(root, catId) {
+        if (!state.catsBudgetId || !catId) { return; }
+        var cat = state.categories.find(function (c) { return String(c.id) === String(catId); });
+        if (!window.confirm('¿Eliminar la categoría "' + (cat ? cat.name : catId) + '"?')) { return; }
+        window.CCApi.request(catBudgetPath('/' + encodeURIComponent(catId)), { method: 'DELETE' })
+            .then(function () {
+                showCatsMsg(root, 'success', 'Categoría eliminada.');
+                if (String(state.selectedCatId) === String(catId)) { resetCatForm(root); }
+                return loadCategories(root, state.catsBudgetId);
+            })
+            .catch(function (err) { showCatsMsg(root, 'danger', errMsg(err)); });
+    }
+
     function bind(root) {
         var groupSel = qs('[data-budget-group]', root);
         var form = qs('[data-budget-form]', root);
@@ -580,16 +795,46 @@
             reloadProjBtn.addEventListener('click', function () { reloadProjection(root); });
         }
 
-        // Table + current card actions (delegated from root)
+        // Categories panel close
+        var catCloseBtn = qs('[data-budget-cats-close]', root);
+        if (catCloseBtn) {
+            catCloseBtn.addEventListener('click', function () {
+                state.catsBudgetId = null;
+                renderCategoriesPanel(root);
+            });
+        }
+
+        // Categories form
+        var catForm = qs('[data-budget-cat-form]', root);
+        if (catForm) {
+            catForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                saveCategory(root, catForm);
+            });
+        }
+        var catResetBtn = qs('[data-budget-cat-reset]', root);
+        if (catResetBtn) {
+            catResetBtn.addEventListener('click', function () { resetCatForm(root); });
+        }
+
+        // Table + current card + categories list actions (delegated from root)
         root.addEventListener('click', function (event) {
             var summBtn = event.target.closest('[data-budget-summary]');
+            var catsBtn = event.target.closest('[data-budget-cats]');
             var editBtn = event.target.closest('[data-budget-edit]');
             var delBtn = event.target.closest('[data-budget-delete]');
+            var catEditBtn = event.target.closest('[data-cat-edit]');
+            var catDelBtn = event.target.closest('[data-cat-delete]');
 
-            if (summBtn) {
-                loadSummary(root, summBtn.getAttribute('data-budget-summary'));
+            if (summBtn) { loadSummary(root, summBtn.getAttribute('data-budget-summary')); return; }
+            if (catsBtn) { loadCategories(root, catsBtn.getAttribute('data-budget-cats')); return; }
+            if (catEditBtn) {
+                var cid = catEditBtn.getAttribute('data-cat-edit');
+                var cat = state.categories.find(function (c) { return String(c.id) === String(cid); });
+                if (cat) { fillCatForm(root, cat); }
                 return;
             }
+            if (catDelBtn) { deleteCategory(root, catDelBtn.getAttribute('data-cat-delete')); return; }
             if (editBtn) {
                 var id = editBtn.getAttribute('data-budget-edit');
                 var budget = state.budgets.find(function (b) { return String(b.id) === String(id); });
@@ -609,6 +854,7 @@
         if (!root) { return; }
         bind(root);
         renderSummaryPanel(root);
+        renderCategoriesPanel(root);
         loadGroups(root).then(function () {
             if (state.currentGroupId) {
                 return Promise.all([loadBudgets(root), loadCurrent(root)]);

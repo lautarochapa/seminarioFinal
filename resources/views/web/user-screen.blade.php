@@ -1436,6 +1436,46 @@
                         </div>
                     </article>
                 </div>
+
+                {{-- Panel categorías (se muestra al hacer click en "Categorías") --}}
+                <div data-budget-categories-panel style="display:none;margin-top:12px">
+                    <article class="panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                            <h2 data-budget-cats-title style="margin:0;font-size:16px">Categorías</h2>
+                            <button type="button" class="btn-secondary-web btn-sm" data-budget-cats-close>✕ Cerrar</button>
+                        </div>
+                        <div data-budget-cats-allocation style="font-size:12px;color:#66746b;margin-bottom:12px"></div>
+                        <div class="alert" data-budget-cats-message style="display:none"></div>
+                        <div data-budget-cats-list style="margin-bottom:16px"></div>
+
+                        {{-- Formulario inline agregar / editar categoría --}}
+                        <div style="border-top:1px solid #dde6df;padding-top:14px">
+                            <h3 data-budget-cat-form-title style="font-size:13px;font-weight:900;margin:0 0 10px">Agregar categoría</h3>
+                            <div class="alert" data-budget-cat-form-message style="display:none"></div>
+                            <form data-budget-cat-form>
+                                <input type="hidden" name="id">
+                                <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;align-items:end">
+                                    <div>
+                                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Nombre *</label>
+                                        <input class="form-control" type="text" name="name" placeholder="Ej: Carnes, Lácteos..." maxlength="80">
+                                    </div>
+                                    <div>
+                                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Color</label>
+                                        <input type="color" name="color" value="#04ac85" style="height:38px;padding:2px;border:1px solid #dde6df;border-radius:4px;cursor:pointer">
+                                    </div>
+                                </div>
+                                <div style="margin-bottom:10px">
+                                    <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Monto asignado *</label>
+                                    <input class="form-control" type="number" name="allocated_amount" min="0" step="0.01" placeholder="0.00">
+                                </div>
+                                <div style="display:flex;gap:8px">
+                                    <button type="submit" class="btn-main btn-sm" data-budget-cat-save>Guardar</button>
+                                    <button type="button" class="btn-secondary-web btn-sm" data-budget-cat-reset>Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </article>
+                </div>
             </div>
 
             <aside class="aside-panel">
