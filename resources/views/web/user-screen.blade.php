@@ -24,7 +24,72 @@
         @endforeach
     </section>
 
-    @if($screenKey === 'profile-objectives')
+    @if($screenKey === 'stock')
+        <section data-user-stock-locations>
+            <div class="alert" data-stock-locations-message style="display:none"></div>
+            <div class="family-layout">
+                <div class="family-stack">
+                    <article class="panel">
+                        <h2>Ubicaciones del hogar</h2>
+                        <div class="web-tools">
+                            <select class="form-control" data-stock-group-select>
+                                <option value="">Cargando grupo familiar...</option>
+                            </select>
+                            <select class="form-control" data-stock-location-status>
+                                <option value="">Todas</option>
+                                <option value="active">Activas</option>
+                                <option value="inactive">Inactivas</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web" data-stock-locations-refresh>Actualizar</button>
+                            <span class="chip" data-stock-locations-count>0 ubicaciones</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Tipo</th>
+                                        <th>Estado</th>
+                                        <th>Actualizacion</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-stock-locations-body>
+                                    <tr><td colspan="5" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-stock-locations-prev>Anterior</button>
+                            <span class="muted" data-stock-locations-page>Pagina 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-stock-locations-next>Siguiente</button>
+                        </div>
+                    </article>
+                </div>
+
+                <aside class="aside-panel">
+                    <h2 data-stock-location-form-title>Nueva ubicacion</h2>
+                    <form class="family-form" data-stock-location-form>
+                        <input type="hidden" name="id">
+                        <label>Nombre</label>
+                        <input class="form-control" name="name" type="text" placeholder="Alacena" required maxlength="120">
+                        <label>Tipo</label>
+                        <input class="form-control" name="type" type="text" placeholder="pantry, fridge, freezer" maxlength="60">
+                        <label>Estado</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                            <button type="submit" class="btn-main" data-stock-location-submit>Guardar</button>
+                            <button type="button" class="btn-secondary-web" data-stock-location-cancel style="display:none">Cancelar</button>
+                        </div>
+                    </form>
+                    <p class="muted" style="margin-top:14px">Las ubicaciones permiten organizar stock por alacena, heladera, freezer u otros espacios. Al eliminar una ubicacion no se borran productos ni historial.</p>
+                </aside>
+            </div>
+        </section>
+    @elseif($screenKey === 'profile-objectives')
         <section class="workspace">
             <div style="display:grid;gap:14px">
             <div class="profile-grid">
