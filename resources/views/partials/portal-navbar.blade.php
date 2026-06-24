@@ -50,6 +50,7 @@
                 ['Promociones', '/admin-web/promotions', 'catalog.manage'],
                 ['Metodos de pago', '/admin-web/payment-methods', 'catalog.manage'],
                 ['Scraping', '/admin-web/supermarket-scraping', 'web.admin.supermarket-scraping'],
+                ['Scraping recetas', '/admin-web/recipe-scraping', 'recipes.manage'],
                 ['Validacion scrapeados', '/admin-web/scraped-products', 'catalog.manage'],
                 ['Refresh precios', '/admin-web/price-refresh-requests', 'scraping.manage'],
                 ['Categorias recetas', '/admin-web/recipe-categories', 'web.admin.recipe-categories'],

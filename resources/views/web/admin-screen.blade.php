@@ -1906,6 +1906,69 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'recipe-scraping')
+        <section data-admin-recipe-scraping>
+            <div class="alert" data-recipe-scraping-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <h2>Jobs Cookpad</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-recipe-scraping-status>
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="running">En ejecucion</option>
+                            <option value="completed">Completados</option>
+                            <option value="failed">Fallidos</option>
+                            <option value="cancelled">Cancelados</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-recipe-scraping-refresh>Actualizar</button>
+                        <span class="chip" data-recipe-scraping-count>0 jobs</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Job</th>
+                                    <th>Fuente</th>
+                                    <th>Estado</th>
+                                    <th>Parametros</th>
+                                    <th>Resumen</th>
+                                    <th>Fechas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-recipe-scraping-jobs-body>
+                                <tr><td colspan="7" class="muted">Cargando jobs...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-recipe-scraping-prev>Anterior</button>
+                        <span class="muted" data-recipe-scraping-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-recipe-scraping-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2>Ejecutar Cookpad</h2>
+                    <form class="rbac-form" data-recipe-scraping-form>
+                        <label class="muted" for="recipe-scraping-max-pages">Paginas maximas</label>
+                        <input id="recipe-scraping-max-pages" class="form-control" name="max_pages" type="number" min="1" max="50" value="1" required>
+                        <button type="submit" class="btn-main" data-recipe-scraping-submit>Ejecutar Cookpad</button>
+                    </form>
+                    <div class="line"><span>Fuente</span><strong>Cookpad Argentina</strong></div>
+                    <div class="line"><span>Estado inicial</span><strong>pending</strong></div>
+                    <p class="muted" style="margin-top:12px">El backend crea o reutiliza la fuente Cookpad y encola el job. Los resultados se revisan en las pantallas de importacion y recetas existentes.</p>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel" style="grid-column:1 / -1">
+                    <h2>Detalle del job</h2>
+                    <div data-recipe-scraping-detail class="muted">Selecciona un job.</div>
+                </article>
+            </section>
+        </section>
     @elseif($screenKey === 'supermarket-scraping')
         <section data-admin-supermarket-scraping>
             <div class="alert" data-scraping-message style="display:none"></div>
