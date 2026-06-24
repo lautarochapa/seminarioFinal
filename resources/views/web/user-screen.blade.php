@@ -1370,6 +1370,91 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'shopping-list')
+        <section data-user-shopping-lists>
+            <div class="alert" data-shopping-lists-message style="display:none"></div>
+            <div class="family-layout">
+                <div class="family-stack">
+                    <article class="panel">
+                        <h2>Listas de compras</h2>
+                        <div class="web-tools">
+                            <select class="form-control" data-shopping-list-group>
+                                <option value="">Grupo familiar</option>
+                            </select>
+                            <select class="form-control" data-shopping-list-status>
+                                <option value="">Todos los estados</option>
+                                <option value="draft">Borrador</option>
+                                <option value="active">Activa</option>
+                                <option value="completed">Completada</option>
+                                <option value="cancelled">Cancelada</option>
+                            </select>
+                            <select class="form-control" data-shopping-list-source>
+                                <option value="">Todos los origenes</option>
+                                <option value="manual">Manual</option>
+                                <option value="meal_plan">Planificacion</option>
+                                <option value="history">Historico</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web" data-shopping-list-refresh>Actualizar</button>
+                            <span class="chip" data-shopping-list-count>0 listas</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Origen</th>
+                                        <th>Estado</th>
+                                        <th>Plan</th>
+                                        <th>Estimado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-shopping-list-body>
+                                    <tr><td colspan="6" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-shopping-list-prev>Anterior</button>
+                            <span class="muted" data-shopping-list-page>Pagina 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-shopping-list-next>Siguiente</button>
+                        </div>
+                    </article>
+
+                    <article class="panel">
+                        <h2>Detalle</h2>
+                        <div data-shopping-list-detail class="muted">Selecciona una lista para ver sus items.</div>
+                    </article>
+                </div>
+
+                <aside class="panel">
+                    <h2 data-shopping-list-form-title>Crear lista</h2>
+                    <form class="family-form" data-shopping-list-form>
+                        <input type="hidden" name="id">
+                        <select class="form-control" name="source_type">
+                            <option value="manual">Manual</option>
+                            <option value="meal_plan">Desde plan</option>
+                            <option value="history">Desde historico</option>
+                        </select>
+                        <select class="form-control" name="meal_plan_id" data-shopping-list-plan>
+                            <option value="">Plan asociado opcional</option>
+                        </select>
+                        <select class="form-control" name="status">
+                            <option value="draft">Borrador</option>
+                            <option value="active">Activa</option>
+                            <option value="completed">Completada</option>
+                            <option value="cancelled">Cancelada</option>
+                        </select>
+                        <input class="form-control" name="optimization_mode" type="text" maxlength="60" placeholder="Modo de optimizacion opcional">
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar lista</button>
+                            <button type="button" class="btn-secondary-web" data-shopping-list-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </section>
+
     @elseif($screenKey === 'planning')
         <section data-user-meal-plans>
             <div class="alert" data-meal-plans-message style="display:none"></div>
