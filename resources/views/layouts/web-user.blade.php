@@ -21,6 +21,7 @@
     <script src="{{ asset('js/user-stock-locations.js') }}?v={{ file_exists(public_path('js/user-stock-locations.js')) ? filemtime(public_path('js/user-stock-locations.js')) : time() }}" defer></script>
     <script src="{{ asset('js/recipe-ingredients.js') }}?v={{ file_exists(public_path('js/recipe-ingredients.js')) ? filemtime(public_path('js/recipe-ingredients.js')) : time() }}" defer></script>
     <script src="{{ asset('js/recipe-steps.js') }}?v={{ file_exists(public_path('js/recipe-steps.js')) ? filemtime(public_path('js/recipe-steps.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/recipe-nutrition.js') }}?v={{ file_exists(public_path('js/recipe-nutrition.js')) ? filemtime(public_path('js/recipe-nutrition.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipes.js') }}?v={{ file_exists(public_path('js/user-recipes.js')) ? filemtime(public_path('js/user-recipes.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">

@@ -256,6 +256,8 @@
 
         var stepsHtml = '<div data-steps-panel></div>';
 
+        var nutritionHtml = '<div data-nutrition-panel></div>';
+
         var sourceHtml = '';
         if (r.source_type === 'external' && r.sources && r.sources.length) {
             var src = r.sources[0];
@@ -292,6 +294,7 @@
             (tagsHtml ? '<div style="margin-top:10px">' + tagsHtml + '</div>' : '') +
             ingredientsHtml +
             stepsHtml +
+            nutritionHtml +
             actionsHtml;
 
         if (window.RecipeIngredients) {
@@ -301,6 +304,10 @@
         if (window.RecipeSteps) {
             var stepsPanel = qs('[data-steps-panel]', detailEl);
             if (stepsPanel) { window.RecipeSteps.mount(stepsPanel, r.id, isOwner, r.steps || []); }
+        }
+        if (window.RecipeNutrition) {
+            var nutrPanel = qs('[data-nutrition-panel]', detailEl);
+            if (nutrPanel) { window.RecipeNutrition.mount(nutrPanel, r.id, false); }
         }
     }
 
