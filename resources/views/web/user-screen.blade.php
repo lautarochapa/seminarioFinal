@@ -1370,6 +1370,63 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'notifications')
+        <section class="workspace" data-user-notifications>
+            <div>
+                {{-- Herramientas --}}
+                <div class="web-tools" style="flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                    <select class="form-control" data-notif-read-filter style="max-width:140px">
+                        <option value="">Todas</option>
+                        <option value="0">Sin leer</option>
+                        <option value="1">Leídas</option>
+                    </select>
+                    <select class="form-control" data-notif-type-filter style="max-width:190px">
+                        <option value="">Todos los tipos</option>
+                        <option value="stock_low">Bajo stock</option>
+                        <option value="stock_expiry">Vencimiento</option>
+                        <option value="menu_today">Menú del día</option>
+                        <option value="budget_warning">Alerta presupuesto</option>
+                        <option value="budget_exceeded">Presupuesto superado</option>
+                        <option value="scraping">Actualización precios</option>
+                        <option value="purchase_confirmed">Compra confirmada</option>
+                        <option value="supplement">Suplemento</option>
+                        <option value="general">General</option>
+                    </select>
+                    <button type="button" class="btn-secondary-web btn-sm" data-notif-refresh>Actualizar</button>
+                    <button type="button" class="btn-secondary-web btn-sm" data-notif-read-all>Marcar todo leído</button>
+                    <span class="chip" data-notif-unread-count style="font-size:11px">0 sin leer</span>
+                </div>
+
+                {{-- Lista --}}
+                <article class="panel" style="padding:16px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                        <h2 style="margin:0;font-size:16px">Notificaciones</h2>
+                        <span style="font-size:12px;color:#66746b" data-notif-count>0 notificaciones</span>
+                    </div>
+                    <div class="alert" data-notif-message style="display:none"></div>
+                    <div data-notif-list></div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                        <button type="button" class="btn-secondary-web btn-sm" data-notif-prev disabled>‹</button>
+                        <span style="font-size:12px;color:#66746b" data-notif-page>Pág. 1 / 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-notif-next disabled>›</button>
+                    </div>
+                </article>
+            </div>
+
+            {{-- Preferencias --}}
+            <aside class="aside-panel">
+                <h2 style="font-size:15px;margin-bottom:4px">Preferencias</h2>
+                <p style="font-size:12px;color:#66746b;margin-bottom:12px">Elegí cómo recibir cada tipo de notificación.</p>
+                <div class="alert" data-prefs-message style="display:none"></div>
+                <div data-prefs-grid>
+                    <p style="font-size:13px;color:#66746b;margin:0">Cargando preferencias...</p>
+                </div>
+                <div style="margin-top:14px">
+                    <button type="button" class="btn-main" data-prefs-save>Guardar preferencias</button>
+                </div>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'supplements')
         <section class="workspace" data-user-supplements>
             <div>

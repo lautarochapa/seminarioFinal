@@ -107,6 +107,15 @@ class UserWebScreenController extends Controller
                 'metrics' => ['shopping_lists', 'purchases'],
                 'panels' => ['Items pendientes', 'Alternativas', 'Comparacion', 'Historial'],
             ],
+            'notifications' => [
+                'title' => 'Notificaciones',
+                'module' => 'Notificaciones',
+                'description' => 'Centro de notificaciones: vencimientos, bajo stock, presupuesto, menú del día y más.',
+                'primary' => 'Marcar todo leído',
+                'secondary' => 'Preferencias',
+                'metrics' => [],
+                'panels' => ['Sin leer', 'Todas', 'Por tipo', 'Preferencias'],
+            ],
             'supplements' => [
                 'title' => 'Suplementos',
                 'module' => 'Suplementos',

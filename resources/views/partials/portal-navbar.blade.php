@@ -14,6 +14,7 @@
                 ['Lista de compras', '/web/shopping-list', 'web.user.shopping-list'],
                 ['Sesión de compra', '/web/shopping-session', 'web.user.shopping-session'],
                 ['Compras realizadas', '/web/purchases', 'web.user.purchases'],
+                ['Notificaciones', '/web/notifications', 'web.user.notifications'],
                 ['Suplementos', '/web/supplements', 'web.user.supplements'],
                 ['Presupuesto', '/web/budget', 'web.user.budget'],
                 ['Reportes', '/web/reports', 'web.user.reports'],
