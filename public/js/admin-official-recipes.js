@@ -217,17 +217,7 @@
             return '<span class="chip" style="margin-bottom:4px">' + escapeHtml(t.name) + '</span>';
         }).join('');
 
-        var ingredientsHtml = '';
-        if (r.ingredients && r.ingredients.length) {
-            ingredientsHtml = '<div style="margin-top:12px"><h3 style="font-size:13px;font-weight:900;margin:0 0 6px">Ingredientes (' + r.ingredients.length + ')</h3>' +
-                '<ul style="margin:0;padding-left:18px;font-size:13px">' +
-                r.ingredients.map(function (ing) {
-                    var qty  = ing.quantity ? parseFloat(ing.quantity) + ' ' : '';
-                    var unit = (ing.unit && ing.unit.name) ? ing.unit.name + ' ' : '';
-                    var name = (ing.ingredient && ing.ingredient.name) ? ing.ingredient.name : '-';
-                    return '<li>' + escapeHtml(qty + unit) + '<strong>' + escapeHtml(name) + '</strong>' + (ing.is_optional ? ' <span class="muted">(opt.)</span>' : '') + '</li>';
-                }).join('') + '</ul></div>';
-        }
+        var ingredientsHtml = '<div data-ingr-panel></div>';
 
         var stepsHtml = '';
         if (r.steps && r.steps.length) {
@@ -269,6 +259,11 @@
             ingredientsHtml +
             stepsHtml +
             editBtn;
+
+        if (window.RecipeIngredients) {
+            var ingrPanel = detailEl.querySelector('[data-ingr-panel]');
+            if (ingrPanel) { window.RecipeIngredients.mount(ingrPanel, r.id, !r.deleted_at, r.ingredients || []); }
+        }
     }
 
     // ─── Form ─────────────────────────────────────────────────────────────────

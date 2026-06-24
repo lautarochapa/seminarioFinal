@@ -252,20 +252,7 @@
             return '<span class="chip" style="margin-bottom:4px">' + escapeHtml(t.name) + '</span>';
         }).join('');
 
-        var ingredientsHtml = '';
-        if (r.ingredients && r.ingredients.length) {
-            ingredientsHtml = '<div style="margin-top:14px">' +
-                '<h3 style="font-size:14px;font-weight:900;margin:0 0 8px">Ingredientes (' + r.ingredients.length + ')</h3>' +
-                '<ul style="margin:0;padding-left:18px;font-size:14px">' +
-                r.ingredients.map(function (ing) {
-                    var qty = ing.quantity ? parseFloat(ing.quantity) + ' ' : '';
-                    var unit = (ing.unit && ing.unit.name) ? ing.unit.name + ' ' : '';
-                    var name = (ing.ingredient && ing.ingredient.name) ? ing.ingredient.name : '-';
-                    var optional = ing.is_optional ? ' <span class="muted">(opcional)</span>' : '';
-                    return '<li>' + escapeHtml(qty + unit) + '<strong>' + escapeHtml(name) + '</strong>' + optional + '</li>';
-                }).join('') +
-                '</ul></div>';
-        }
+        var ingredientsHtml = '<div data-ingr-panel></div>';
 
         var stepsHtml = '';
         if (r.steps && r.steps.length) {
@@ -316,6 +303,11 @@
             ingredientsHtml +
             stepsHtml +
             actionsHtml;
+
+        if (window.RecipeIngredients) {
+            var ingrPanel = qs('[data-ingr-panel]', detailEl);
+            if (ingrPanel) { window.RecipeIngredients.mount(ingrPanel, r.id, isOwner, r.ingredients || []); }
+        }
     }
 
     // ─── Form ─────────────────────────────────────────────────────────────────
