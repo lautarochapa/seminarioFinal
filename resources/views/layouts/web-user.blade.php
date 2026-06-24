@@ -25,6 +25,7 @@
     <script src="{{ asset('js/recipe-cost.js') }}?v={{ file_exists(public_path('js/recipe-cost.js')) ? filemtime(public_path('js/recipe-cost.js')) : time() }}" defer></script>
     <script src="{{ asset('js/recipe-availability.js') }}?v={{ file_exists(public_path('js/recipe-availability.js')) ? filemtime(public_path('js/recipe-availability.js')) : time() }}" defer></script>
     <script src="{{ asset('js/recipe-favorites-actions.js') }}?v={{ file_exists(public_path('js/recipe-favorites-actions.js')) ? filemtime(public_path('js/recipe-favorites-actions.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/recipe-sharing-branch.js') }}?v={{ file_exists(public_path('js/recipe-sharing-branch.js')) ? filemtime(public_path('js/recipe-sharing-branch.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipes.js') }}?v={{ file_exists(public_path('js/user-recipes.js')) ? filemtime(public_path('js/user-recipes.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipe-favorites.js') }}?v={{ file_exists(public_path('js/user-recipe-favorites.js')) ? filemtime(public_path('js/user-recipe-favorites.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-recipe-search.js') }}?v={{ file_exists(public_path('js/user-recipe-search.js')) ? filemtime(public_path('js/user-recipe-search.js')) : time() }}" defer></script>

@@ -264,6 +264,8 @@
 
         var favActionsHtml = '<div data-fav-panel></div>';
 
+        var sharingHtml = '<div data-sharing-panel></div>';
+
         var sourceHtml = '';
         if (r.source_type === 'external' && r.sources && r.sources.length) {
             var src = r.sources[0];
@@ -304,6 +306,7 @@
             costHtml +
             availabilityHtml +
             favActionsHtml +
+            sharingHtml +
             actionsHtml;
 
         if (window.RecipeIngredients) {
@@ -329,6 +332,10 @@
         if (window.RecipeFavoritesActions) {
             var favPanel = qs('[data-fav-panel]', detailEl);
             if (favPanel) { window.RecipeFavoritesActions.mount(favPanel, r.id, r.servings || 1); }
+        }
+        if (window.RecipeSharingBranch) {
+            var sharingPanel = qs('[data-sharing-panel]', detailEl);
+            if (sharingPanel) { window.RecipeSharingBranch.mount(sharingPanel, r.id, isOwner, r.is_public, r.branched_from_recipe_id); }
         }
     }
 
