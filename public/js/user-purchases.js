@@ -5,12 +5,16 @@
         groups: [],
         products: [],
         units: [],
+        locations: [],
         currentGroupId: null,
         currentPurchaseId: null,
+        purchaseStatus: null,
         items: [],
         selectedItem: null,
         loading: false,
         saving: false,
+        confirming: false,
+        addingToStock: false,
     };
 
     function qs(sel, root) { return (root || document).querySelector(sel); }
@@ -58,6 +62,20 @@
 
     function clearFormMsg(root) {
         var el = qs('[data-purchases-form-message]', root);
+        if (!el) { return; }
+        el.style.display = 'none';
+    }
+
+    function showConfirmMsg(root, type, msg) {
+        var el = qs('[data-purchases-confirm-message]', root);
+        if (!el) { return; }
+        el.className = 'alert alert-' + type;
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function clearConfirmMsg(root) {
+        var el = qs('[data-purchases-confirm-message]', root);
         if (!el) { return; }
         el.style.display = 'none';
     }
@@ -240,6 +258,7 @@
     function loadItems(root) {
         if (!state.currentGroupId || !state.currentPurchaseId) {
             renderItems(root);
+            renderConfirmPanel(root);
             return Promise.resolve();
         }
         state.loading = true;
@@ -247,13 +266,17 @@
         return window.CCApi.request(basePath() + '/items')
             .then(function (response) {
                 state.items = response.data || [];
+                state.purchaseStatus = (response.meta && response.meta.purchase_status) ||
+                    (response.data && response.data.purchase_status) || null;
                 state.loading = false;
                 renderItems(root);
+                renderConfirmPanel(root);
             })
             .catch(function (err) {
                 state.loading = false;
                 state.items = [];
                 renderItems(root);
+                renderConfirmPanel(root);
                 showMsg(root, 'danger', errMsg(err));
             });
     }
@@ -302,6 +325,135 @@
             });
     }
 
+    var STATUS_LABELS = {
+        pending: 'Pendiente',
+        confirmed: 'Confirmada',
+        cancelled: 'Cancelada',
+    };
+    var STATUS_COLORS = {
+        pending: 'background:#f0f0f0;color:#555',
+        confirmed: 'background:#e7f7f2;color:#04ac85',
+        cancelled: 'background:#f7e7e7;color:#b33a3a',
+    };
+
+    function calcItemsTotal() {
+        var total = 0;
+        state.items.forEach(function (item) {
+            var qty = parseFloat(item.quantity) || 0;
+            var price = parseFloat(item.unit_price) || 0;
+            total += qty * price;
+        });
+        return total;
+    }
+
+    function renderConfirmPanel(root) {
+        var panel = qs('[data-purchases-confirm-panel]', root);
+        if (!panel) { return; }
+        if (!state.currentPurchaseId) {
+            panel.style.display = 'none';
+            return;
+        }
+        panel.style.display = '';
+
+        var badge = qs('[data-purchases-status-badge]', root);
+        if (badge) {
+            var status = state.purchaseStatus || 'pending';
+            var label = STATUS_LABELS[status] || status;
+            var color = STATUS_COLORS[status] || 'background:#f0f0f0;color:#555';
+            badge.innerHTML = '<span style="' + color + ';border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700">' + escapeHtml(label) + '</span>';
+        }
+
+        var totalEl = qs('[data-purchases-total]', root);
+        if (totalEl) { totalEl.textContent = fmt(calcItemsTotal()); }
+
+        var confirmBtn = qs('[data-purchases-confirm]', root);
+        if (confirmBtn) {
+            var isConfirmed = state.purchaseStatus === 'confirmed';
+            confirmBtn.disabled = isConfirmed || state.confirming;
+            confirmBtn.textContent = state.confirming ? 'Confirmando...' : (isConfirmed ? '✓ Compra confirmada' : '✓ Confirmar compra');
+        }
+
+        var stockBtn = qs('[data-purchases-add-to-stock]', root);
+        if (stockBtn) {
+            stockBtn.disabled = state.addingToStock;
+            stockBtn.textContent = state.addingToStock ? 'Ingresando...' : '↑ Ingresar al stock';
+        }
+    }
+
+    function renderLocationOptions(root) {
+        var sel = qs('[data-purchases-stock-location]', root);
+        if (!sel) { return; }
+        sel.innerHTML = '<option value="">Sin ubicación específica</option>' +
+            state.locations.map(function (loc) {
+                return '<option value="' + escapeHtml(loc.id) + '">' +
+                    escapeHtml(loc.name || loc.description || ('#' + loc.id)) + '</option>';
+            }).join('');
+    }
+
+    function loadLocations(root) {
+        if (!state.currentGroupId) { return Promise.resolve(); }
+        return window.CCApi.request('/api/v1/family-groups/' + encodeURIComponent(state.currentGroupId) + '/stock-locations?per_page=100')
+            .then(function (response) {
+                state.locations = response.data || [];
+                renderLocationOptions(root);
+            })
+            .catch(function () {
+                state.locations = [];
+            });
+    }
+
+    function confirmPurchase(root) {
+        if (!state.currentGroupId || !state.currentPurchaseId || state.confirming) { return; }
+        if (state.purchaseStatus === 'confirmed') { return; }
+        state.confirming = true;
+        clearConfirmMsg(root);
+        renderConfirmPanel(root);
+
+        window.CCApi.request(basePath() + '/confirm', { method: 'POST', body: {} })
+            .then(function (response) {
+                state.confirming = false;
+                var data = response.data || {};
+                state.purchaseStatus = data.status || 'confirmed';
+                renderConfirmPanel(root);
+                var msgParts = ['Compra confirmada.'];
+                if (data.budget_entry) { msgParts.push('Presupuesto actualizado.'); }
+                showConfirmMsg(root, 'success', msgParts.join(' '));
+            })
+            .catch(function (err) {
+                state.confirming = false;
+                renderConfirmPanel(root);
+                showConfirmMsg(root, 'danger', errMsg(err));
+            });
+    }
+
+    function addToStock(root) {
+        if (!state.currentGroupId || !state.currentPurchaseId || state.addingToStock) { return; }
+        state.addingToStock = true;
+        clearConfirmMsg(root);
+        renderConfirmPanel(root);
+
+        var locationSel = qs('[data-purchases-stock-location]', root);
+        var overwriteChk = qs('[data-purchases-overwrite]', root);
+        var body = {};
+        if (locationSel && locationSel.value) { body.location_id = Number(locationSel.value); }
+        if (overwriteChk) { body.overwrite = overwriteChk.checked; }
+
+        window.CCApi.request(basePath() + '/add-to-stock', { method: 'POST', body: body })
+            .then(function (response) {
+                state.addingToStock = false;
+                renderConfirmPanel(root);
+                var data = response.data || {};
+                var added = data.items_added !== undefined ? data.items_added : '?';
+                showConfirmMsg(root, 'success', added + ' ítem(s) ingresados al stock.');
+                return loadItems(root);
+            })
+            .catch(function (err) {
+                state.addingToStock = false;
+                renderConfirmPanel(root);
+                showConfirmMsg(root, 'danger', errMsg(err));
+            });
+    }
+
     function updateTotal(root) {
         var qty = parseFloat((qs('[data-item-quantity]', root) || {}).value || '0');
         var price = parseFloat((qs('[data-item-unit-price]', root) || {}).value || '0');
@@ -324,10 +476,14 @@
             groupSelect.addEventListener('change', function () {
                 state.currentGroupId = groupSelect.value || null;
                 state.currentPurchaseId = null;
+                state.purchaseStatus = null;
+                state.locations = [];
                 if (purchaseInput) { purchaseInput.value = ''; }
                 state.items = [];
                 renderItems(root);
+                renderConfirmPanel(root);
                 resetForm(root);
+                if (state.currentGroupId) { loadLocations(root); }
             });
         }
 
@@ -337,7 +493,9 @@
                 if (!val) { showMsg(root, 'warning', 'Ingresá el ID de la compra.'); return; }
                 if (!state.currentGroupId) { showMsg(root, 'warning', 'Seleccioná un grupo familiar.'); return; }
                 state.currentPurchaseId = val;
+                state.purchaseStatus = null;
                 state.items = [];
+                clearConfirmMsg(root);
                 resetForm(root);
                 loadItems(root);
             };
@@ -345,6 +503,16 @@
             purchaseInput.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') { doLoad(); }
             });
+        }
+
+        var confirmBtn = qs('[data-purchases-confirm]', root);
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', function () { confirmPurchase(root); });
+        }
+
+        var addToStockBtn = qs('[data-purchases-add-to-stock]', root);
+        if (addToStockBtn) {
+            addToStockBtn.addEventListener('click', function () { addToStock(root); });
         }
 
         if (form) {
@@ -390,6 +558,10 @@
         var root = qs('[data-user-purchases]');
         if (!root) { return; }
         bind(root);
-        Promise.all([loadGroups(root), loadCatalogs(root)]);
+        renderConfirmPanel(root);
+        loadGroups(root).then(function () {
+            if (state.currentGroupId) { loadLocations(root); }
+        });
+        loadCatalogs(root);
     });
 })(window, document);

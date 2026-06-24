@@ -1981,6 +1981,49 @@
                         <button type="button" class="btn-secondary-web" data-purchases-reset>Cancelar</button>
                     </div>
                 </form>
+
+                {{-- Panel: confirmar compra y stock --}}
+                <div data-purchases-confirm-panel style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid #dde6df">
+                    <h2 style="font-size:15px;margin-bottom:4px">Finalizar compra</h2>
+
+                    <div style="margin-bottom:12px">
+                        <span style="font-size:12px;color:#66746b">Estado:</span>
+                        <span data-purchases-status-badge style="margin-left:6px;font-size:12px;font-weight:700"></span>
+                    </div>
+
+                    <div class="alert" data-purchases-confirm-message style="display:none"></div>
+
+                    <div style="margin-bottom:10px">
+                        <div style="font-size:12px;font-weight:700;margin-bottom:4px">Total de la compra</div>
+                        <div data-purchases-total style="font-size:22px;font-weight:900;color:#04ac85">$0.00</div>
+                    </div>
+
+                    <div style="display:grid;gap:8px">
+                        <button type="button" class="btn-main" data-purchases-confirm style="width:100%">
+                            ✓ Confirmar compra
+                        </button>
+                        <div style="border-top:1px solid #dde6df;padding-top:8px">
+                            <div style="font-size:12px;color:#66746b;margin-bottom:6px">
+                                Ingresa los productos comprados al stock del hogar en una sola acción.
+                            </div>
+                            <div style="margin-bottom:6px">
+                                <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Ubicación de stock</label>
+                                <select class="form-control" data-purchases-stock-location style="font-size:13px">
+                                    <option value="">Sin ubicación específica</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom:8px;display:flex;align-items:center;gap:6px">
+                                <input type="checkbox" id="purchases-overwrite-stock" data-purchases-overwrite value="1">
+                                <label for="purchases-overwrite-stock" style="font-size:12px;cursor:pointer;margin:0">
+                                    Sobreescribir entradas existentes
+                                </label>
+                            </div>
+                            <button type="button" class="btn-secondary-web" data-purchases-add-to-stock style="width:100%">
+                                ↑ Ingresar al stock
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </aside>
         </section>
 
