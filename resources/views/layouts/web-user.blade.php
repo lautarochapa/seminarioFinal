@@ -33,6 +33,7 @@
     <script src="{{ asset('js/user-recipe-suggestions.js') }}?v={{ file_exists(public_path('js/user-recipe-suggestions.js')) ? filemtime(public_path('js/user-recipe-suggestions.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-meal-plans.js') }}?v={{ file_exists(public_path('js/user-meal-plans.js')) ? filemtime(public_path('js/user-meal-plans.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-notifications.js') }}?v={{ file_exists(public_path('js/user-notifications.js')) ? filemtime(public_path('js/user-notifications.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/user-reports.js') }}?v={{ file_exists(public_path('js/user-reports.js')) ? filemtime(public_path('js/user-reports.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-supplements.js') }}?v={{ file_exists(public_path('js/user-supplements.js')) ? filemtime(public_path('js/user-supplements.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-budget.js') }}?v={{ file_exists(public_path('js/user-budget.js')) ? filemtime(public_path('js/user-budget.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-purchases.js') }}?v={{ file_exists(public_path('js/user-purchases.js')) ? filemtime(public_path('js/user-purchases.js')) : time() }}" defer></script>

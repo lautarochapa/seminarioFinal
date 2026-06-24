@@ -1643,6 +1643,41 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'reports')
+        <section data-user-reports>
+            {{-- Barra de controles --}}
+            <div class="panel" style="padding:14px;margin-bottom:14px">
+                <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px">
+                    <div>
+                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#66746b">GRUPO FAMILIAR</label>
+                        <select class="form-control" data-report-group style="min-width:180px">
+                            <option value="">Seleccionar grupo...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#66746b">DESDE</label>
+                        <input class="form-control" type="date" data-report-from>
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#66746b">HASTA</label>
+                        <input class="form-control" type="date" data-report-to>
+                    </div>
+                    <button type="button" class="btn-main" data-report-generate style="align-self:flex-end">Generar reporte</button>
+                </div>
+            </div>
+
+            {{-- Tabs de reporte --}}
+            <div data-report-tabs style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
+
+            {{-- Mensajes --}}
+            <div class="alert" data-report-message style="display:none;margin-bottom:10px"></div>
+
+            {{-- Contenido dinámico --}}
+            <div data-report-content>
+                <p style="font-size:13px;color:#66746b;text-align:center;padding:32px 0">Seleccioná un grupo y hacé clic en "Generar" para ver el reporte.</p>
+            </div>
+        </section>
+
     @elseif($screenKey === 'budget')
         <section class="workspace" data-user-budget>
             <div>
