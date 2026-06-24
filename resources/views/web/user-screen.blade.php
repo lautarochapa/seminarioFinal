@@ -1476,6 +1476,74 @@
                         </div>
                     </article>
                 </div>
+
+                {{-- Panel movimientos --}}
+                <div data-budget-movements-panel style="display:none;margin-top:12px">
+                    <article class="panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                            <h2 data-budget-movs-title style="margin:0;font-size:16px">Movimientos</h2>
+                            <button type="button" class="btn-secondary-web btn-sm" data-budget-movs-close>✕ Cerrar</button>
+                        </div>
+                        <div class="alert" data-budget-movs-message style="display:none"></div>
+
+                        {{-- Filtros --}}
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center">
+                            <select class="form-control" data-movs-type-filter style="max-width:160px;font-size:13px">
+                                <option value="">Todos los tipos</option>
+                                <option value="purchase">Compra real</option>
+                                <option value="planned">Planificada</option>
+                                <option value="reserve">Reserva</option>
+                                <option value="release">Liberación</option>
+                                <option value="adjustment">Ajuste</option>
+                            </select>
+                            <button type="button" class="btn-secondary-web btn-sm" data-movs-refresh>Actualizar</button>
+                            <span class="chip" data-movs-count style="font-size:11px">0 movimientos</span>
+                        </div>
+
+                        {{-- Lista --}}
+                        <div data-budget-movs-list style="margin-bottom:10px"></div>
+
+                        {{-- Paginación --}}
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
+                            <button type="button" class="btn-secondary-web btn-sm" data-movs-prev disabled>‹</button>
+                            <span data-movs-page style="font-size:12px;color:#66746b">Pág. 1 / 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-movs-next disabled>›</button>
+                        </div>
+
+                        {{-- Ajuste manual --}}
+                        <div style="border-top:1px solid #dde6df;padding-top:14px">
+                            <h3 style="font-size:13px;font-weight:900;margin:0 0 10px">Registrar ajuste</h3>
+                            <div class="alert" data-movs-adj-message style="display:none"></div>
+                            <form data-budget-adj-form>
+                                <div style="margin-bottom:8px">
+                                    <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Tipo *</label>
+                                    <select class="form-control" name="type" style="font-size:13px">
+                                        <option value="adjustment">Ajuste manual</option>
+                                        <option value="reserve">Reserva</option>
+                                        <option value="release">Liberación</option>
+                                    </select>
+                                </div>
+                                <div style="margin-bottom:8px">
+                                    <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">
+                                        Monto * <span style="font-weight:400;color:#66746b">(negativo = gasto, positivo = crédito)</span>
+                                    </label>
+                                    <input class="form-control" type="number" name="amount" step="0.01" placeholder="Ej: -500 o 200">
+                                </div>
+                                <div style="margin-bottom:8px">
+                                    <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Descripción *</label>
+                                    <input class="form-control" type="text" name="description" maxlength="200" placeholder="Motivo del ajuste...">
+                                </div>
+                                <div style="margin-bottom:12px">
+                                    <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Categoría</label>
+                                    <select class="form-control" name="category_id" data-movs-adj-category style="font-size:13px">
+                                        <option value="">Sin categoría</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-main btn-sm" data-movs-adj-save>Registrar ajuste</button>
+                            </form>
+                        </div>
+                    </article>
+                </div>
             </div>
 
             <aside class="aside-panel">

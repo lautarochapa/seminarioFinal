@@ -23,6 +23,15 @@
         catsLoading: false,
         catSaving: false,
         selectedCatId: null,
+        movsBudgetId: null,
+        movsBudget: null,
+        movements: [],
+        movsPage: 1,
+        movsLastPage: 1,
+        movsTotal: 0,
+        movsLoading: false,
+        movSaving: false,
+        movsTypeFilter: '',
     };
 
     function qs(sel, root) { return (root || document).querySelector(sel); }
@@ -165,6 +174,7 @@
                 '<td>' +
                 '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Resumen</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-cats="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Categorías</button>' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-budget-movs="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Movimientos</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-edit="' + escapeHtml(String(b.id)) + '">Editar</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-delete="' + escapeHtml(String(b.id)) + '">Eliminar</button>' +
                 '</td>' +
@@ -728,6 +738,187 @@
             .catch(function (err) { showCatsMsg(root, 'danger', errMsg(err)); });
     }
 
+    var MOV_TYPE = {
+        purchase:   { label: 'Compra real',   bg: '#f7e7e7', color: '#b33a3a' },
+        planned:    { label: 'Planificada',   bg: '#fff3e0', color: '#b35c00' },
+        reserve:    { label: 'Reserva',       bg: '#e7f3ff', color: '#1a5fb4' },
+        release:    { label: 'Liberación',    bg: '#e7f7f2', color: '#04ac85' },
+        adjustment: { label: 'Ajuste',        bg: '#f0f0f0', color: '#555'    },
+    };
+
+    function movTypeBadge(type) {
+        var t = MOV_TYPE[type] || { label: type || '?', bg: '#f0f0f0', color: '#555' };
+        return '<span style="background:' + t.bg + ';color:' + t.color + ';border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap">' + escapeHtml(t.label) + '</span>';
+    }
+
+    function movsBudgetPath(extra) {
+        return groupPath('/budgets/' + encodeURIComponent(state.movsBudgetId) + (extra || ''));
+    }
+
+    function showMovsMsg(root, type, msg) {
+        var el = qs('[data-budget-movs-message]', root);
+        if (!el) { return; }
+        el.className = 'alert alert-' + type; el.textContent = msg; el.style.display = 'block';
+    }
+
+    function showAdjMsg(root, type, msg) {
+        var el = qs('[data-movs-adj-message]', root);
+        if (!el) { return; }
+        el.className = 'alert alert-' + type; el.textContent = msg; el.style.display = 'block';
+    }
+
+    function clearAdjMsg(root) {
+        var el = qs('[data-movs-adj-message]', root);
+        if (el) { el.style.display = 'none'; el.textContent = ''; }
+    }
+
+    function renderAdjCategoryOptions(root) {
+        var sel = qs('[data-movs-adj-category]', root);
+        if (!sel) { return; }
+        sel.innerHTML = '<option value="">Sin categoría</option>' +
+            state.categories.map(function (c) {
+                return '<option value="' + escapeHtml(c.id) + '">' + escapeHtml(c.name || ('#' + c.id)) + '</option>';
+            }).join('');
+    }
+
+    function renderMovementsPanel(root) {
+        var panel = qs('[data-budget-movements-panel]', root);
+        if (!panel) { return; }
+        if (!state.movsBudgetId) { panel.style.display = 'none'; return; }
+        panel.style.display = '';
+
+        var titleEl = qs('[data-budget-movs-title]', root);
+        var listEl  = qs('[data-budget-movs-list]', root);
+        var countEl = qs('[data-movs-count]', root);
+        var pageEl  = qs('[data-movs-page]', root);
+        var prevBtn = qs('[data-movs-prev]', root);
+        var nextBtn = qs('[data-movs-next]', root);
+
+        if (titleEl) {
+            var b = state.movsBudget;
+            titleEl.textContent = 'Movimientos' + (b ? ' — ' + monthLabel(b) : '');
+        }
+        if (countEl) { countEl.textContent = state.movsTotal + ' movimiento' + (state.movsTotal !== 1 ? 's' : ''); }
+        if (pageEl)  { pageEl.textContent = 'Pág. ' + state.movsPage + ' / ' + state.movsLastPage; }
+        if (prevBtn) { prevBtn.disabled = state.movsLoading || state.movsPage <= 1; }
+        if (nextBtn) { nextBtn.disabled = state.movsLoading || state.movsPage >= state.movsLastPage; }
+
+        if (!listEl) { return; }
+
+        if (state.movsLoading) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">Cargando movimientos...</p>';
+            return;
+        }
+        if (!state.movements.length) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">No hay movimientos para los filtros seleccionados.</p>';
+            return;
+        }
+
+        listEl.innerHTML = state.movements.map(function (m) {
+            var amount = parseFloat(m.amount);
+            var isNeg  = amount < 0;
+            var amtColor = isNeg ? '#b33a3a' : '#2a7a2a';
+            var amtSign  = isNeg ? '' : '+';
+            var date = m.created_at ? m.created_at.substring(0, 10) : '-';
+            var catName = m.category_name || (m.category ? m.category.name : null);
+            return '<div style="border-bottom:1px solid #f0f0f0;padding:9px 0;display:flex;gap:10px;align-items:flex-start">' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">' +
+                movTypeBadge(m.type) +
+                (catName ? '<span style="font-size:11px;color:#66746b">' + escapeHtml(catName) + '</span>' : '') +
+                '</div>' +
+                '<div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(m.description || '-') + '</div>' +
+                '<div style="font-size:11px;color:#66746b;margin-top:2px">' + escapeHtml(date) + '</div>' +
+                '</div>' +
+                '<div style="font-size:15px;font-weight:900;color:' + amtColor + ';white-space:nowrap;padding-top:2px">' +
+                amtSign + escapeHtml(fmt(amount)) +
+                '</div>' +
+                '</div>';
+        }).join('');
+    }
+
+    function loadMovements(root, budgetId) {
+        var budget = state.budgets.find(function (b) { return String(b.id) === String(budgetId); });
+        if (!budget && state.currentBudget && String(state.currentBudget.id) === String(budgetId)) {
+            budget = state.currentBudget;
+        }
+        state.movsBudgetId = budgetId;
+        state.movsBudget   = budget || null;
+        state.movements    = [];
+        state.movsPage     = 1;
+        state.movsLoading  = true;
+        renderMovementsPanel(root);
+        renderAdjCategoryOptions(root);
+
+        fetchMovements(root);
+
+        var panel = qs('[data-budget-movements-panel]', root);
+        if (panel) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+
+    function fetchMovements(root) {
+        if (!state.movsBudgetId || !state.currentGroupId) { return; }
+        state.movsLoading = true;
+        renderMovementsPanel(root);
+
+        var params = new URLSearchParams();
+        params.set('page', state.movsPage);
+        params.set('per_page', 15);
+        if (state.movsTypeFilter) { params.set('type', state.movsTypeFilter); }
+
+        window.CCApi.request(movsBudgetPath('/movements?' + params.toString()))
+            .then(function (response) {
+                state.movements    = response.data || [];
+                state.movsTotal    = (response.meta && response.meta.total) || state.movements.length;
+                state.movsPage     = (response.meta && response.meta.current_page) || state.movsPage;
+                state.movsLastPage = (response.meta && response.meta.last_page) || 1;
+                state.movsLoading  = false;
+                renderMovementsPanel(root);
+            })
+            .catch(function (err) {
+                state.movements   = [];
+                state.movsLoading = false;
+                renderMovementsPanel(root);
+                showMovsMsg(root, 'danger', errMsg(err));
+            });
+    }
+
+    function saveAdjustment(root, form) {
+        if (!state.movsBudgetId || !state.currentGroupId) { return; }
+        var amount = form.elements.amount ? form.elements.amount.value : '';
+        var description = form.elements.description ? form.elements.description.value.trim() : '';
+        if (!amount) { showAdjMsg(root, 'warning', 'Ingresá el monto.'); return; }
+        if (!description) { showAdjMsg(root, 'warning', 'Ingresá una descripción.'); return; }
+
+        var payload = {
+            type: form.elements.type ? (form.elements.type.value || 'adjustment') : 'adjustment',
+            amount: parseFloat(amount),
+            description: description,
+        };
+        if (form.elements.category_id && form.elements.category_id.value) {
+            payload.category_id = Number(form.elements.category_id.value);
+        }
+
+        state.movSaving = true;
+        var btn = qs('[data-movs-adj-save]', root);
+        if (btn) { btn.disabled = true; }
+        clearAdjMsg(root);
+
+        window.CCApi.request(movsBudgetPath('/adjustments'), { method: 'POST', body: payload })
+            .then(function () {
+                state.movSaving = false;
+                if (btn) { btn.disabled = false; }
+                form.reset();
+                state.movsPage = 1;
+                fetchMovements(root);
+            })
+            .catch(function (err) {
+                state.movSaving = false;
+                if (btn) { btn.disabled = false; }
+                showAdjMsg(root, 'danger', errMsg(err));
+            });
+    }
+
     function bind(root) {
         var groupSel = qs('[data-budget-group]', root);
         var form = qs('[data-budget-form]', root);
@@ -817,10 +1008,68 @@
             catResetBtn.addEventListener('click', function () { resetCatForm(root); });
         }
 
+        // Movements panel close
+        var movsCloseBtn = qs('[data-budget-movs-close]', root);
+        if (movsCloseBtn) {
+            movsCloseBtn.addEventListener('click', function () {
+                state.movsBudgetId = null;
+                renderMovementsPanel(root);
+            });
+        }
+
+        // Movements type filter
+        var movsTypeFilter = qs('[data-movs-type-filter]', root);
+        if (movsTypeFilter) {
+            movsTypeFilter.addEventListener('change', function () {
+                state.movsTypeFilter = movsTypeFilter.value;
+                state.movsPage = 1;
+                if (state.movsBudgetId) { fetchMovements(root); }
+            });
+        }
+
+        // Movements refresh button
+        var movsRefreshBtn = qs('[data-movs-refresh]', root);
+        if (movsRefreshBtn) {
+            movsRefreshBtn.addEventListener('click', function () {
+                state.movsPage = 1;
+                if (state.movsBudgetId) { fetchMovements(root); }
+            });
+        }
+
+        // Movements pagination
+        var movsPrevBtn = qs('[data-movs-prev]', root);
+        if (movsPrevBtn) {
+            movsPrevBtn.addEventListener('click', function () {
+                if (state.movsPage > 1) {
+                    state.movsPage -= 1;
+                    fetchMovements(root);
+                }
+            });
+        }
+        var movsNextBtn = qs('[data-movs-next]', root);
+        if (movsNextBtn) {
+            movsNextBtn.addEventListener('click', function () {
+                if (state.movsPage < state.movsLastPage) {
+                    state.movsPage += 1;
+                    fetchMovements(root);
+                }
+            });
+        }
+
+        // Adjustment form
+        var adjForm = qs('[data-budget-adj-form]', root);
+        if (adjForm) {
+            adjForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                saveAdjustment(root, adjForm);
+            });
+        }
+
         // Table + current card + categories list actions (delegated from root)
         root.addEventListener('click', function (event) {
             var summBtn = event.target.closest('[data-budget-summary]');
             var catsBtn = event.target.closest('[data-budget-cats]');
+            var movsBtn = event.target.closest('[data-budget-movs]');
             var editBtn = event.target.closest('[data-budget-edit]');
             var delBtn = event.target.closest('[data-budget-delete]');
             var catEditBtn = event.target.closest('[data-cat-edit]');
@@ -828,6 +1077,7 @@
 
             if (summBtn) { loadSummary(root, summBtn.getAttribute('data-budget-summary')); return; }
             if (catsBtn) { loadCategories(root, catsBtn.getAttribute('data-budget-cats')); return; }
+            if (movsBtn) { loadMovements(root, movsBtn.getAttribute('data-budget-movs')); return; }
             if (catEditBtn) {
                 var cid = catEditBtn.getAttribute('data-cat-edit');
                 var cat = state.categories.find(function (c) { return String(c.id) === String(cid); });
@@ -855,6 +1105,7 @@
         bind(root);
         renderSummaryPanel(root);
         renderCategoriesPanel(root);
+        renderMovementsPanel(root);
         loadGroups(root).then(function () {
             if (state.currentGroupId) {
                 return Promise.all([loadBudgets(root), loadCurrent(root)]);
