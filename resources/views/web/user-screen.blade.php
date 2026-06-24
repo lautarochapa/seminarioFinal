@@ -1370,6 +1370,102 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'planning')
+        <section data-user-meal-plans>
+            <div class="alert" data-meal-plans-message style="display:none"></div>
+            <div class="family-layout">
+                <div class="family-stack">
+                    <article class="panel">
+                        <h2>Calendario de comidas</h2>
+                        <div class="web-tools">
+                            <select class="form-control" data-meal-plan-group>
+                                <option value="">Grupo familiar</option>
+                            </select>
+                            <select class="form-control" data-meal-plan-period>
+                                <option value="">Todos los periodos</option>
+                                <option value="daily">Diario</option>
+                                <option value="weekly">Semanal</option>
+                                <option value="monthly">Mensual</option>
+                            </select>
+                            <select class="form-control" data-meal-plan-status>
+                                <option value="">Todos los estados</option>
+                                <option value="draft">Borrador</option>
+                                <option value="approved">Aprobado</option>
+                                <option value="active">Activo</option>
+                                <option value="archived">Archivado</option>
+                            </select>
+                            <input class="form-control" type="date" data-meal-plan-from aria-label="Desde">
+                            <input class="form-control" type="date" data-meal-plan-to aria-label="Hasta">
+                            <button type="button" class="btn-secondary-web" data-meal-plan-refresh>Actualizar</button>
+                            <span class="chip" data-meal-plan-count>0 planes</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Periodo</th>
+                                        <th>Fechas</th>
+                                        <th>Estado</th>
+                                        <th>Items</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-meal-plan-body>
+                                    <tr><td colspan="5" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-meal-plan-prev>Anterior</button>
+                            <span class="muted" data-meal-plan-page>Pagina 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-meal-plan-next>Siguiente</button>
+                        </div>
+                    </article>
+
+                    <article class="panel">
+                        <h2>Detalle del plan</h2>
+                        <div data-meal-plan-detail class="muted">Selecciona un plan para ver sus comidas.</div>
+                    </article>
+                </div>
+
+                <aside class="panel">
+                    <h2 data-meal-plan-form-title>Crear plan</h2>
+                    <form class="family-form" data-meal-plan-form>
+                        <input type="hidden" name="id">
+                        <select class="form-control" name="period_type" required>
+                            <option value="weekly">Semanal</option>
+                            <option value="daily">Diario</option>
+                            <option value="monthly">Mensual</option>
+                        </select>
+                        <input class="form-control" name="start_date" type="date" required>
+                        <input class="form-control" name="end_date" type="date" required>
+                        <input class="form-control" name="mode" type="text" maxlength="50" placeholder="Modo opcional">
+
+                        <h2 style="margin-top:16px">Item rapido</h2>
+                        <input class="form-control" name="item_date" type="date">
+                        <select class="form-control" name="meal_type_id" data-meal-plan-meal-type>
+                            <option value="">Tipo de comida</option>
+                        </select>
+                        <select class="form-control" name="recipe_id" data-meal-plan-recipe>
+                            <option value="">Receta opcional</option>
+                        </select>
+                        <input class="form-control" name="free_meal_description" type="text" maxlength="500" placeholder="Comida libre">
+                        <input class="form-control" name="servings_total" type="number" min="0" step="0.1" placeholder="Porciones">
+                        <textarea class="form-control" name="notes" rows="2" maxlength="1000" placeholder="Notas"></textarea>
+                        <label class="checkbox-card" style="margin-bottom:9px">
+                            <input type="checkbox" name="is_eating_out" value="1">
+                            <span>Comer afuera</span>
+                        </label>
+
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar plan</button>
+                            <button type="button" class="btn-secondary-web" data-meal-plan-reset>Limpiar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </section>
+
     @elseif($screenKey === 'recipe-search')
         <section class="workspace" data-recipe-search>
             {{-- Main: results --}}
