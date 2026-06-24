@@ -33,6 +33,7 @@
     <script src="{{ asset('js/user-recipe-suggestions.js') }}?v={{ file_exists(public_path('js/user-recipe-suggestions.js')) ? filemtime(public_path('js/user-recipe-suggestions.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-meal-plans.js') }}?v={{ file_exists(public_path('js/user-meal-plans.js')) ? filemtime(public_path('js/user-meal-plans.js')) : time() }}" defer></script>
     <script src="{{ asset('js/shopping-alternatives.js') }}?v={{ file_exists(public_path('js/shopping-alternatives.js')) ? filemtime(public_path('js/shopping-alternatives.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/shopping-compare.js') }}?v={{ file_exists(public_path('js/shopping-compare.js')) ? filemtime(public_path('js/shopping-compare.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-shopping-lists.js') }}?v={{ file_exists(public_path('js/user-shopping-lists.js')) ? filemtime(public_path('js/user-shopping-lists.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">

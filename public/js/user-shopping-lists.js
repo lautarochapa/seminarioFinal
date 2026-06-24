@@ -245,10 +245,15 @@
             '<div class="table-line"><span>Estado</span><strong>' + escapeHtml(statusLabel(list.status)) + '</strong></div>' +
             '<div class="table-line"><span>Total estimado</span><strong>' + escapeHtml(list.estimated_total) + '</strong></div>' +
             '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Item</th><th>Cantidad</th><th>Estimado</th><th>Real</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-            '<div data-alt-panel></div>';
+            '<div data-alt-panel></div>' +
+            '<div data-compare-panel></div>';
         if (window.ShoppingAlternatives && state.currentGroupId) {
             var altPanel = qs('[data-alt-panel]', target);
             if (altPanel) { window.ShoppingAlternatives.mount(altPanel, state.currentGroupId, list.id); }
+        }
+        if (window.ShoppingCompare && state.currentGroupId) {
+            var comparePanel = qs('[data-compare-panel]', target);
+            if (comparePanel) { window.ShoppingCompare.mount(comparePanel, state.currentGroupId, list.id); }
         }
     }
 
