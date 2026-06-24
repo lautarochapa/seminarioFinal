@@ -75,6 +75,25 @@
         '</div>';
     }
 
+    function buildPriceRefreshHtml(productId) {
+        return '<div class="report-form-toggle" style="margin-top:10px">' +
+            '<button type="button" class="btn-secondary-web btn-sm" data-price-refresh-toggle>' +
+                'Precio incorrecto' +
+            '</button>' +
+        '</div>' +
+        '<div class="report-form-section" data-price-refresh-form style="display:none" data-price-refresh-product="' + productId + '">' +
+            '<textarea class="form-control" data-price-refresh-reason rows="3"' +
+                ' placeholder="Contanos que precio viste o donde esta desactualizado (opcional)"' +
+                ' maxlength="1000" style="width:100%;box-sizing:border-box;margin-bottom:8px"></textarea>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+                '<button type="button" class="btn-main btn-sm" data-price-refresh-submit>Solicitar actualizacion</button>' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-price-refresh-cancel>Cancelar</button>' +
+            '</div>' +
+            '<div class="alert" data-price-refresh-message style="display:none;margin-top:8px"></div>' +
+        '</div>' +
+        '<div data-price-refresh-mine style="margin-top:12px"></div>';
+    }
+
     function priceLabel(row) {
         if (!row || !row.current_price) {
             return 'Sin precio';
@@ -154,6 +173,31 @@
                 if (bestTarget) {
                     bestTarget.innerHTML = '<p class="muted" style="font-size:13px">Sin mejor precio disponible.</p>';
                 }
+            });
+    }
+
+    function loadMyPriceRefreshRequests(root) {
+        var target = qs('[data-price-refresh-mine]', root);
+        if (!target) { return; }
+        target.innerHTML = '<p class="muted" style="font-size:13px">Cargando solicitudes recientes...</p>';
+        window.CCApi.request(endpoint('/users/me/price-refresh-requests?per_page=5'))
+            .then(function (response) {
+                var rows = response.data || [];
+                if (!rows.length) {
+                    target.innerHTML = '<p class="muted" style="font-size:13px">Todavia no enviaste solicitudes de actualizacion.</p>';
+                    return;
+                }
+                target.innerHTML = '<h3 style="font-size:13px;font-weight:900;margin:16px 0 6px">Mis solicitudes recientes</h3>' +
+                    rows.map(function (row) {
+                        var name = row.product ? row.product.name : ('Producto #' + row.product_id);
+                        return '<div class="table-line">' +
+                            '<span><strong>' + escapeHtml(name) + '</strong><br><span class="muted" style="font-size:12px">' + escapeHtml(dateLabel(row.requested_at || row.created_at)) + '</span></span>' +
+                            '<span>' + escapeHtml(row.status) + '</span>' +
+                        '</div>';
+                    }).join('');
+            })
+            .catch(function () {
+                target.innerHTML = '<p class="muted" style="font-size:13px">No se pudieron cargar tus solicitudes.</p>';
             });
     }
 
@@ -341,8 +385,10 @@
                     '<a href="/web/barcode-scanner" class="btn-secondary-web btn-sm">Buscar por código</a>' +
                     '<a href="/web/branches" class="btn-secondary-web btn-sm">Ver sucursales</a>' +
                     '</div>' +
+                    buildPriceRefreshHtml(p.id) +
                     buildReportFormHtml(p.id);
                 loadProductPrices(root, p.id);
+                loadMyPriceRefreshRequests(root);
             }).catch(function (err) {
                 var code = err.status || 0;
                 if (code === 404) { detail.innerHTML = '<p class="muted">Producto no encontrado.</p>'; }
@@ -400,6 +446,56 @@
                 else { msg = apiError(err); }
             } else { msg = apiError(err); }
             if (msgEl) { msgEl.textContent = msg; msgEl.className = 'alert alert-danger'; msgEl.style.display = 'block'; }
+        })
+        .then(function () {
+            if (submitBtn) { submitBtn.disabled = false; }
+        });
+    }
+
+    function submitPriceRefresh(root) {
+        var form = qs('[data-price-refresh-form]', root);
+        if (!form) { return; }
+
+        var productId = form.dataset.priceRefreshProduct;
+        var reasonEl = qs('[data-price-refresh-reason]', root);
+        var submitBtn = qs('[data-price-refresh-submit]', root);
+        var msgEl = qs('[data-price-refresh-message]', root);
+        if (!productId) { return; }
+
+        var body = {};
+        var reason = reasonEl ? reasonEl.value.trim() : '';
+        if (reason) { body.reason = reason; }
+
+        if (submitBtn) { submitBtn.disabled = true; }
+        if (msgEl) { msgEl.style.display = 'none'; }
+
+        window.CCApi.request(endpoint('/products/' + encodeURIComponent(productId) + '/request-price-refresh'), {
+            method: 'POST',
+            body: body,
+        })
+        .then(function () {
+            if (reasonEl) { reasonEl.value = ''; }
+            form.style.display = 'none';
+            if (msgEl) {
+                msgEl.textContent = 'Solicitud enviada. Vamos a revisar este precio.';
+                msgEl.className = 'alert alert-success';
+                msgEl.style.display = 'block';
+            }
+            loadMyPriceRefreshRequests(root);
+        })
+        .catch(function (err) {
+            var msg = apiError(err);
+            if (err && err.status === 409) {
+                msg = 'Ya tenes una solicitud pendiente para este producto.';
+            }
+            if (err && err.status === 404) {
+                msg = 'Producto no encontrado.';
+            }
+            if (msgEl) {
+                msgEl.textContent = msg;
+                msgEl.className = 'alert alert-danger';
+                msgEl.style.display = 'block';
+            }
         })
         .then(function () {
             if (submitBtn) { submitBtn.disabled = false; }
@@ -579,6 +675,25 @@
 
             if (t.dataset.hasOwnProperty('catalogReportSubmit')) {
                 submitReport(root);
+                return;
+            }
+
+            if (t.dataset.hasOwnProperty('priceRefreshToggle')) {
+                var priceForm = root.querySelector('[data-price-refresh-form]');
+                if (priceForm) { priceForm.style.display = priceForm.style.display === 'none' ? '' : 'none'; }
+                return;
+            }
+
+            if (t.dataset.hasOwnProperty('priceRefreshCancel')) {
+                var cancelPriceForm = root.querySelector('[data-price-refresh-form]');
+                if (cancelPriceForm) { cancelPriceForm.style.display = 'none'; }
+                var priceMsg = root.querySelector('[data-price-refresh-message]');
+                if (priceMsg) { priceMsg.style.display = 'none'; }
+                return;
+            }
+
+            if (t.dataset.hasOwnProperty('priceRefreshSubmit')) {
+                submitPriceRefresh(root);
                 return;
             }
 

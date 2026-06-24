@@ -13,6 +13,7 @@ use App\Nutrient;
 use App\Objective;
 use App\PaymentMethod;
 use App\Permission;
+use App\PriceRefreshRequest;
 use App\Product;
 use App\ProductBarcode;
 use App\ProductCategory;
@@ -87,6 +88,7 @@ class AdminWebScreenController extends Controller
             'prices' => SupermarketProductPrice::count(),
             'promotions' => Promotion::count(),
             'payment_methods' => PaymentMethod::count(),
+            'price_refresh_requests' => PriceRefreshRequest::count(),
             'scraping_jobs' => ScrapingJob::count(),
             'scraped_products' => ScrapedProductCandidate::count(),
             'scraping_alerts' => ScrapingAlert::count(),
@@ -129,6 +131,7 @@ class AdminWebScreenController extends Controller
             'payment-methods' => ['title' => 'Metodos de pago', 'module' => 'Supermercados', 'description' => 'Catalogo de tarjetas, billeteras, efectivo y otros medios usados por promociones.', 'primary' => 'Nuevo metodo', 'secondary' => 'Ver usuarios', 'metrics' => ['payment_methods'], 'panels' => ['Catalogo', 'Tipos', 'Emisores', 'Usuarios'], 'permission' => 'catalog.manage'],
             'supermarket-scraping' => ['title' => 'Scraping supermercados', 'module' => 'Scraping', 'description' => 'Ejecutar scraping, ver jobs y logs.', 'primary' => 'Ejecutar scraping', 'secondary' => 'Ver logs', 'metrics' => ['scraping_jobs', 'scraping_errors'], 'panels' => ['Jobs', 'Logs', 'Parametros', 'Resultados']],
             'scraped-products' => ['title' => 'Productos scrapeados pendientes', 'module' => 'Scraping', 'description' => 'Validar, mapear, crear productos.', 'primary' => 'Validar seleccion', 'secondary' => 'Crear producto', 'metrics' => ['scraped_products'], 'panels' => ['Pendientes', 'Matches', 'Crear producto', 'Descartar'], 'permission' => 'catalog.manage'],
+            'price-refresh-requests' => ['title' => 'Solicitudes de refresh de precio', 'module' => 'Scraping', 'description' => 'Usuarios reportan precios desactualizados para revisar o disparar scraping puntual.', 'primary' => 'Procesar pendientes', 'secondary' => 'Ver historial', 'metrics' => ['price_refresh_requests', 'scraping_jobs'], 'panels' => ['Pendientes', 'Procesadas', 'Productos', 'Scraping'], 'permission' => 'scraping.manage'],
             'official-recipes' => ['title' => 'Recetas oficiales', 'module' => 'Recetas', 'description' => 'ABM recetas oficiales.', 'primary' => 'Nueva receta oficial', 'secondary' => 'Publicar', 'metrics' => ['recipes'], 'panels' => ['Oficiales', 'Ingredientes', 'Pasos', 'Costo/nutricion']],
             'imported-recipes' => ['title' => 'Recetas importadas pendientes', 'module' => 'Importacion recetas', 'description' => 'Validar recetas scrapeadas.', 'primary' => 'Validar receta', 'secondary' => 'Crear oficial', 'metrics' => ['imported_recipes'], 'panels' => ['Pendientes', 'Parseo', 'Revision', 'Creacion']],
             'recipe-scraping' => ['title' => 'Scraping recetas', 'module' => 'Importacion recetas', 'description' => 'Ejecutar scraping Cookpad.', 'primary' => 'Ejecutar Cookpad', 'secondary' => 'Ver jobs', 'metrics' => ['scraping_jobs', 'imported_recipes'], 'panels' => ['Fuentes', 'Jobs', 'Logs', 'Errores']],

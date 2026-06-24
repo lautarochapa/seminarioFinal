@@ -2045,6 +2045,58 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'price-refresh-requests')
+        <section data-admin-price-refresh>
+            <div class="alert" data-price-refresh-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <h2>Solicitudes de actualizacion de precio</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-price-refresh-status>
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="queued">Encoladas</option>
+                            <option value="failed">Fallidas</option>
+                            <option value="processed">Procesadas</option>
+                        </select>
+                        <input class="form-control" type="number" min="1" data-price-refresh-product placeholder="Producto ID">
+                        <input class="form-control" type="number" min="1" data-price-refresh-user placeholder="Usuario ID">
+                        <input class="form-control" type="date" data-price-refresh-from>
+                        <input class="form-control" type="date" data-price-refresh-to>
+                        <button type="button" class="btn-ghost" data-price-refresh-refresh>Actualizar</button>
+                        <span class="chip" data-price-refresh-count>0 solicitudes</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Usuario</th>
+                                    <th>Contexto</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Fechas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-price-refresh-body>
+                                <tr><td colspan="7" class="muted">Cargando solicitudes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-price-refresh-prev>Anterior</button>
+                        <span class="muted" data-price-refresh-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-price-refresh-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2>Detalle</h2>
+                    <div data-price-refresh-detail class="muted">Selecciona una solicitud.</div>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'scraping-alerts')
         <section data-admin-scraping-alerts>
             <div class="alert" data-scraping-alerts-message style="display:none"></div>
