@@ -50,6 +50,7 @@
                 ['Validacion scrapeados', '/admin-web/scraped-products', 'catalog.manage'],
                 ['Refresh precios', '/admin-web/price-refresh-requests', 'scraping.manage'],
                 ['Categorias recetas', '/admin-web/recipe-categories', 'web.admin.recipe-categories'],
+                ['Tags recetas', '/admin-web/recipe-tags', 'web.admin.recipe-tags'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],

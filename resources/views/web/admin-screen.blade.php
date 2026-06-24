@@ -2312,6 +2312,87 @@
                 </article>
             </div>
         </section>
+    @elseif($screenKey === 'recipe-tags')
+        <section data-admin-recipe-tags>
+            <div class="alert" data-recipe-tags-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-recipe-tags-search placeholder="Buscar por codigo, nombre o descripcion">
+                        <select class="form-control" data-recipe-tags-type>
+                            <option value="">Todos los tipos</option>
+                            <option value="diet">Dieta</option>
+                            <option value="health">Salud</option>
+                            <option value="time">Tiempo</option>
+                            <option value="cost">Costo</option>
+                            <option value="general">General</option>
+                        </select>
+                        <select class="form-control" data-recipe-tags-status>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-recipe-tags-refresh>Actualizar</button>
+                        <span class="chip" data-recipe-tags-count>0 tags</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-recipe-tags-body>
+                                <tr><td colspan="6" class="muted">Cargando tags...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-recipe-tags-prev>Anterior</button>
+                        <span class="muted" data-recipe-tags-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-recipe-tags-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-recipe-tag-form-title>Nuevo tag</h2>
+                    <form class="rbac-form" data-recipe-tag-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="code" type="text" placeholder="ej: vegana, baja_sodio, alta_proteina">
+                        <input class="form-control" name="name" type="text" placeholder="Nombre (ej: Vegana, Baja en sodio)" required>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripcion opcional"></textarea>
+                        <select class="form-control" name="type">
+                            <option value="">Sin tipo</option>
+                            <option value="diet">Dieta</option>
+                            <option value="health">Salud</option>
+                            <option value="time">Tiempo</option>
+                            <option value="cost">Costo</option>
+                            <option value="general">General</option>
+                        </select>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar tag</button>
+                            <button type="button" class="btn-ghost" data-recipe-tag-reset>Limpiar</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px">Vista catalogo</h2>
+                    <div class="admin-tools">
+                        <button type="button" class="btn-ghost" data-recipe-tags-catalog-refresh>Actualizar catalogo</button>
+                        <span class="chip" data-recipe-tags-catalog-count>0 activos</span>
+                    </div>
+                    <div data-recipe-tags-catalog class="muted" style="margin-top:8px">Cargando...</div>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'recipe-categories')
         <section data-admin-recipe-categories>
             <div class="alert" data-recipe-categories-message style="display:none"></div>
