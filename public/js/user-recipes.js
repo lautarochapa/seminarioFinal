@@ -256,6 +256,8 @@
 
         var stepsHtml = '<div data-steps-panel></div>';
 
+        var substitutionsHtml = '<div data-subs-panel></div>';
+
         var nutritionHtml = '<div data-nutrition-panel></div>';
 
         var costHtml = '<div data-cost-panel></div>';
@@ -302,6 +304,7 @@
             (tagsHtml ? '<div style="margin-top:10px">' + tagsHtml + '</div>' : '') +
             ingredientsHtml +
             stepsHtml +
+            substitutionsHtml +
             nutritionHtml +
             costHtml +
             availabilityHtml +
@@ -316,6 +319,10 @@
         if (window.RecipeSteps) {
             var stepsPanel = qs('[data-steps-panel]', detailEl);
             if (stepsPanel) { window.RecipeSteps.mount(stepsPanel, r.id, isOwner, r.steps || []); }
+        }
+        if (window.RecipeSubstitutions) {
+            var subsPanel = qs('[data-subs-panel]', detailEl);
+            if (subsPanel) { window.RecipeSubstitutions.mount(subsPanel, r.id); }
         }
         if (window.RecipeNutrition) {
             var nutrPanel = qs('[data-nutrition-panel]', detailEl);
