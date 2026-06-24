@@ -9,6 +9,9 @@
         dateTo: '',
         loading: false,
         data: null,
+        personalReport: 'body-progress',
+        personalData: null,
+        personalLoading: false,
     };
 
     var REPORTS = [
@@ -297,6 +300,156 @@
             .catch(function () {});
     }
 
+    var PERSONAL_REPORTS = [
+        { key: 'body-progress',       label: 'Evolución corporal', icon: '⚖' },
+        { key: 'objectives-progress', label: 'Progreso objetivos', icon: '🎯' },
+    ];
+
+    var PERSONAL_COLS = {
+        'body-progress': [
+            { key: 'date',           label: 'Fecha' },
+            { key: 'weight_kg',      label: 'Peso (kg)',        fmt: 'num' },
+            { key: 'height_cm',      label: 'Altura (cm)',      fmt: 'num' },
+            { key: 'bmi',            label: 'IMC',              fmt: 'num' },
+            { key: 'body_fat_pct',   label: 'Grasa corp. (%)',  fmt: 'num' },
+            { key: 'muscle_mass_kg', label: 'Masa muscular (kg)', fmt: 'num' },
+            { key: 'notes',          label: 'Notas' },
+        ],
+        'objectives-progress': [
+            { key: 'objective_name', label: 'Objetivo' },
+            { key: 'category',       label: 'Categoría' },
+            { key: 'target_value',   label: 'Meta',             fmt: 'num' },
+            { key: 'current_value',  label: 'Actual',           fmt: 'num' },
+            { key: 'unit',           label: 'Unidad' },
+            { key: 'progress_pct',   label: '% avance',         fmt: 'pct' },
+            { key: 'status',         label: 'Estado' },
+        ],
+    };
+
+    function renderPersonalTabs(root) {
+        var el = qs('[data-personal-tabs]', root);
+        if (!el) { return; }
+        el.innerHTML = PERSONAL_REPORTS.map(function (r) {
+            var active = r.key === state.personalReport;
+            return '<button type="button" data-personal-tab="' + escapeHtml(r.key) + '" style="' +
+                'border:1px solid ' + (active ? 'rgba(4,172,133,.8)' : '#dde6df') + ';' +
+                'background:' + (active ? 'rgba(4,172,133,.8)' : '#fff') + ';' +
+                'color:' + (active ? '#fff' : '#24252a') + ';' +
+                'border-radius:50px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">' +
+                escapeHtml(r.icon) + ' ' + escapeHtml(r.label) +
+                '</button>';
+        }).join('');
+    }
+
+    function renderPersonalContent(root) {
+        var contentEl = qs('[data-personal-content]', root);
+        if (!contentEl) { return; }
+
+        if (state.personalLoading) {
+            contentEl.innerHTML = '<p style="font-size:13px;color:#66746b;text-align:center;padding:24px 0">Cargando reporte...</p>';
+            return;
+        }
+        if (!state.personalData) {
+            contentEl.innerHTML = '<p style="font-size:13px;color:#66746b;text-align:center;padding:24px 0">Hacé clic en "Cargar" para ver el reporte.</p>';
+            return;
+        }
+
+        var rep = PERSONAL_REPORTS.find(function (r) { return r.key === state.personalReport; });
+        var cols = PERSONAL_COLS[state.personalReport] || [];
+        var rows = state.personalData.data || state.personalData.items || state.personalData.rows || [];
+        var summary = state.personalData.summary || state.personalData.meta_summary || {};
+        var summaryKeys = Object.keys(summary).filter(function (k) { return typeof summary[k] === 'number'; }).slice(0, 4);
+
+        var metricsHtml = summaryKeys.length
+            ? '<div class="metric-row" style="margin-bottom:14px">' +
+              summaryKeys.map(function (k) {
+                  var val = summary[k];
+                  var label = k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+                  return '<div class="metric"><strong>' + (Number.isInteger(val) ? fmtInt(val) : fmt(val)) + '</strong><span>' + escapeHtml(label) + '</span></div>';
+              }).join('') +
+              '</div>'
+            : '';
+
+        var tableHtml;
+        if (!rows.length) {
+            tableHtml = '<p style="font-size:13px;color:#66746b;margin:16px 0;text-align:center">No hay datos para el período seleccionado.</p>';
+        } else {
+            var activeCols = cols.length ? cols : Object.keys(rows[0]).slice(0, 8).map(function (k) {
+                return { key: k, label: k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }) };
+            });
+
+            if (state.personalReport === 'objectives-progress') {
+                tableHtml = '<div style="overflow-x:auto"><table class="web-table"><thead><tr>' +
+                    activeCols.map(function (c) { return '<th>' + escapeHtml(c.label) + '</th>'; }).join('') +
+                    '</tr></thead><tbody>' +
+                    rows.map(function (row) {
+                        return '<tr>' + activeCols.map(function (c) {
+                            var raw = row[c.key];
+                            var extra = '';
+                            if (c.key === 'progress_pct' && raw != null) {
+                                var pct = Math.min(100, Math.max(0, Number(raw)));
+                                var barColor = pct >= 100 ? '#04ac85' : pct >= 60 ? '#2f80ed' : '#b35c00';
+                                extra = '<div style="height:4px;border-radius:2px;background:#f0f0f0;margin-top:3px">' +
+                                    '<div style="height:4px;border-radius:2px;background:' + barColor + ';width:' + pct + '%"></div></div>';
+                            }
+                            if (c.key === 'status') {
+                                var s = String(raw || '');
+                                var statusStyle = s === 'completed' ? 'background:#e7f7f2;color:#04ac85' : s === 'in_progress' ? 'background:#e7f3ff;color:#1a5fb4' : 'background:#f0f0f0;color:#555';
+                                var statusLabel = s === 'completed' ? 'Completado' : s === 'in_progress' ? 'En progreso' : escapeHtml(s);
+                                return '<td><span style="' + statusStyle + ';border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">' + statusLabel + '</span></td>';
+                            }
+                            return '<td>' + fmtCell(raw, c.fmt) + extra + '</td>';
+                        }).join('') + '</tr>';
+                    }).join('') +
+                    '</tbody></table>' +
+                    '<p style="font-size:11px;color:#66746b;margin:6px 0 0">' + fmtInt(rows.length) + ' registros</p></div>';
+            } else {
+                tableHtml = '<div style="overflow-x:auto"><table class="web-table"><thead><tr>' +
+                    activeCols.map(function (c) { return '<th>' + escapeHtml(c.label) + '</th>'; }).join('') +
+                    '</tr></thead><tbody>' +
+                    rows.map(function (row) {
+                        return '<tr>' + activeCols.map(function (c) {
+                            return '<td>' + fmtCell(row[c.key], c.fmt) + '</td>';
+                        }).join('') + '</tr>';
+                    }).join('') +
+                    '</tbody></table>' +
+                    '<p style="font-size:11px;color:#66746b;margin:6px 0 0">' + fmtInt(rows.length) + ' registros</p></div>';
+            }
+        }
+
+        contentEl.innerHTML = metricsHtml +
+            '<div class="panel" style="padding:14px">' +
+            '<h3 style="font-size:14px;font-weight:900;margin:0 0 10px">' + (rep ? rep.icon + ' ' + rep.label : '') + '</h3>' +
+            tableHtml +
+            '</div>';
+    }
+
+    function loadPersonalReport(root) {
+        state.personalLoading = true;
+        state.personalData    = null;
+        var msgEl = qs('[data-personal-message]', root);
+        if (msgEl) { msgEl.style.display = 'none'; }
+        renderPersonalContent(root);
+
+        var params = new URLSearchParams();
+        if (state.dateFrom) { params.set('from', state.dateFrom); }
+        if (state.dateTo)   { params.set('to',   state.dateTo); }
+        var qs2 = params.toString() ? '?' + params.toString() : '';
+
+        window.CCApi.request(endpoint('/api/v1/users/me/reports/' + encodeURIComponent(state.personalReport) + qs2))
+            .then(function (response) {
+                state.personalData    = response;
+                state.personalLoading = false;
+                renderPersonalContent(root);
+            })
+            .catch(function (err) {
+                state.personalData    = null;
+                state.personalLoading = false;
+                renderPersonalContent(root);
+                if (msgEl) { msgEl.className = 'alert alert-danger'; msgEl.textContent = errMsg(err); msgEl.style.display = 'block'; }
+            });
+    }
+
     function bind(root) {
         var groupSel = qs('[data-report-group]', root);
         if (groupSel) {
@@ -333,6 +486,23 @@
                 renderContent(root);
             });
         }
+
+        var personalTabsEl = qs('[data-personal-tabs]', root);
+        if (personalTabsEl) {
+            personalTabsEl.addEventListener('click', function (event) {
+                var btn = event.target.closest('[data-personal-tab]');
+                if (!btn) { return; }
+                state.personalReport = btn.getAttribute('data-personal-tab');
+                state.personalData   = null;
+                renderPersonalTabs(root);
+                renderPersonalContent(root);
+            });
+        }
+
+        var personalGenerateBtn = qs('[data-personal-generate]', root);
+        if (personalGenerateBtn) {
+            personalGenerateBtn.addEventListener('click', function () { loadPersonalReport(root); });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -341,6 +511,8 @@
         bind(root);
         renderTabs(root);
         renderContent(root);
+        renderPersonalTabs(root);
+        renderPersonalContent(root);
         loadGroups(root);
     });
 })(window, document);

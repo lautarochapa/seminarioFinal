@@ -1676,6 +1676,22 @@
             <div data-report-content>
                 <p style="font-size:13px;color:#66746b;text-align:center;padding:32px 0">Seleccioná un grupo y hacé clic en "Generar" para ver el reporte.</p>
             </div>
+
+            {{-- Reportes personales --}}
+            <div style="margin-top:24px;border-top:2px solid #dde6df;padding-top:20px">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px">
+                    <div>
+                        <h2 style="font-size:17px;font-weight:900;margin:0 0 2px">Reportes personales</h2>
+                        <p style="font-size:12px;color:#66746b;margin:0">Evolución corporal y progreso de objetivos individuales.</p>
+                    </div>
+                    <button type="button" class="btn-main" data-personal-generate>Cargar</button>
+                </div>
+                <div data-personal-tabs style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>
+                <div class="alert" data-personal-message style="display:none;margin-bottom:10px"></div>
+                <div data-personal-content>
+                    <p style="font-size:13px;color:#66746b;text-align:center;padding:24px 0">Hacé clic en "Cargar" para ver el reporte.</p>
+                </div>
+            </div>
         </section>
 
     @elseif($screenKey === 'budget')
