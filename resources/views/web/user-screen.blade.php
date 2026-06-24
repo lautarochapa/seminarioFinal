@@ -1426,6 +1426,11 @@
                         <h2>Detalle del plan</h2>
                         <div data-meal-plan-detail class="muted">Selecciona un plan para ver sus comidas.</div>
                     </article>
+
+                    <article class="panel">
+                        <h2 data-meal-plan-portions-title>Porciones por persona</h2>
+                        <div data-meal-plan-portions-panel class="muted">Selecciona una comida para gestionar porciones.</div>
+                    </article>
                 </div>
 
                 <aside class="panel">
@@ -1499,6 +1504,21 @@
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
                             <button type="submit" class="btn-main">Guardar comida</button>
                             <button type="button" class="btn-secondary-web" data-meal-plan-item-reset>Limpiar comida</button>
+                        </div>
+                    </form>
+
+                    <h2 style="margin-top:18px" data-meal-plan-portion-form-title>Asignar porcion</h2>
+                    <form class="family-form" data-meal-plan-portion-form>
+                        <input type="hidden" name="portion_id">
+                        <select class="form-control" name="user_id" data-meal-plan-portion-user required>
+                            <option value="">Miembro del grupo</option>
+                        </select>
+                        <input class="form-control" name="portion_factor" type="number" min="0.01" step="0.01" placeholder="Factor de porcion">
+                        <input class="form-control" name="servings" type="number" min="0" step="0.1" placeholder="Porciones">
+                        <textarea class="form-control" name="notes" rows="2" maxlength="1000" placeholder="Notas"></textarea>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar porcion</button>
+                            <button type="button" class="btn-secondary-web" data-meal-plan-portion-reset>Limpiar porcion</button>
                         </div>
                     </form>
                 </aside>
