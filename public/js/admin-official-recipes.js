@@ -219,15 +219,7 @@
 
         var ingredientsHtml = '<div data-ingr-panel></div>';
 
-        var stepsHtml = '';
-        if (r.steps && r.steps.length) {
-            stepsHtml = '<div style="margin-top:12px"><h3 style="font-size:13px;font-weight:900;margin:0 0 6px">Pasos (' + r.steps.length + ')</h3>' +
-                '<ol style="margin:0;padding-left:18px;font-size:13px">' +
-                r.steps.map(function (s) {
-                    var t = s.estimated_minutes ? ' <span class="muted">(' + formatMinutes(s.estimated_minutes) + ')</span>' : '';
-                    return '<li style="margin-bottom:6px">' + escapeHtml(s.description) + t + '</li>';
-                }).join('') + '</ol></div>';
-        }
+        var stepsHtml = '<div data-steps-panel></div>';
 
         var sourceHtml = '';
         if (r.sources && r.sources.length) {
@@ -263,6 +255,10 @@
         if (window.RecipeIngredients) {
             var ingrPanel = detailEl.querySelector('[data-ingr-panel]');
             if (ingrPanel) { window.RecipeIngredients.mount(ingrPanel, r.id, !r.deleted_at, r.ingredients || []); }
+        }
+        if (window.RecipeSteps) {
+            var stepsPanel = detailEl.querySelector('[data-steps-panel]');
+            if (stepsPanel) { window.RecipeSteps.mount(stepsPanel, r.id, !r.deleted_at, r.steps || []); }
         }
     }
 
