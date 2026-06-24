@@ -12,6 +12,11 @@
         total: 0,
         loading: false,
         saving: false,
+        summaryBudgetId: null,
+        summary: null,
+        projection: null,
+        summaryLoading: false,
+        projectionLoading: false,
     };
 
     function qs(sel, root) { return (root || document).querySelector(sel); }
@@ -107,7 +112,8 @@
             '<strong style="color:' + remainColor + '">' + escapeHtml(fmt(remaining)) + '</strong>' +
             '</div>' +
             (b.notes ? '<div style="margin-top:8px;font-size:12px;color:#66746b;border-top:1px solid #c0e8d8;padding-top:6px">' + escapeHtml(b.notes) + '</div>' : '') +
-            '<div style="margin-top:10px">' +
+            '<div style="margin-top:10px;display:flex;gap:6px">' +
+            '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '">Resumen</button>' +
             '<button type="button" class="btn-secondary-web btn-sm" data-budget-edit="' + escapeHtml(String(b.id)) + '">Editar</button>' +
             '</div>' +
             '</div>';
@@ -151,6 +157,7 @@
                 '<td>' + (b.spent !== undefined ? escapeHtml(fmt(b.spent)) : '-') + '</td>' +
                 '<td style="color:' + remainColor + ';font-weight:700">' + escapeHtml(fmt(remaining)) + '</td>' +
                 '<td>' +
+                '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Resumen</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-edit="' + escapeHtml(String(b.id)) + '">Editar</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-delete="' + escapeHtml(String(b.id)) + '">Eliminar</button>' +
                 '</td>' +
@@ -315,6 +322,197 @@
             .catch(function (err) { showMsg(root, 'danger', errMsg(err)); });
     }
 
+    function metricCard(label, value, color) {
+        return '<div style="border:1px solid #dde6df;border-radius:8px;padding:12px;text-align:center">' +
+            '<div style="font-size:11px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:4px">' + escapeHtml(label) + '</div>' +
+            '<div style="font-size:18px;font-weight:900;color:' + (color || '#24252a') + '">' + escapeHtml(fmt(value)) + '</div>' +
+            '</div>';
+    }
+
+    function renderSummaryPanel(root) {
+        var panel = qs('[data-budget-summary-panel]', root);
+        if (!panel) { return; }
+
+        if (!state.summaryBudgetId) { panel.style.display = 'none'; return; }
+        panel.style.display = '';
+
+        var titleEl = qs('[data-budget-summary-title]', root);
+        var msgEl = qs('[data-budget-summary-message]', root);
+        var metricsEl = qs('[data-budget-summary-metrics]', root);
+        var barsEl = qs('[data-budget-summary-bars]', root);
+        var catsEl = qs('[data-budget-summary-categories]', root);
+
+        if (msgEl) { msgEl.style.display = 'none'; }
+
+        if (state.summaryLoading) {
+            if (metricsEl) { metricsEl.innerHTML = '<div style="grid-column:1/-1;font-size:13px;color:#66746b">Cargando resumen...</div>'; }
+            if (barsEl) { barsEl.innerHTML = ''; }
+            if (catsEl) { catsEl.innerHTML = ''; }
+            return;
+        }
+
+        var s = state.summary;
+        if (!s) {
+            if (msgEl) { msgEl.className = 'alert alert-danger'; msgEl.textContent = 'No se pudo cargar el resumen.'; msgEl.style.display = 'block'; }
+            if (metricsEl) { metricsEl.innerHTML = ''; }
+            return;
+        }
+
+        if (titleEl) { titleEl.textContent = 'Resumen — ' + (s.period || monthLabel({ month: s.month, year: s.year }) || '#' + state.summaryBudgetId); }
+
+        var total = parseFloat(s.total_budget) || parseFloat(s.amount) || 0;
+        var spent = parseFloat(s.spent_real) || parseFloat(s.spent) || 0;
+        var reserved = parseFloat(s.planned_reserved) || 0;
+        var availReal = s.available_real !== undefined ? parseFloat(s.available_real) : (total - spent);
+        var availProj = s.available_projected !== undefined ? parseFloat(s.available_projected) : (total - spent - reserved);
+
+        if (metricsEl) {
+            metricsEl.innerHTML =
+                metricCard('Presupuesto total', total, '#24252a') +
+                metricCard('Gastado real', spent, spent > total ? '#b33a3a' : '#24252a') +
+                metricCard('Reservado planificado', reserved, '#b35c00') +
+                metricCard('Disponible real', availReal, availReal >= 0 ? '#04ac85' : '#b33a3a') +
+                metricCard('Disponible proyectado', availProj, availProj >= 0 ? '#04ac85' : '#b33a3a');
+        }
+
+        if (barsEl) {
+            var spentPct = total ? Math.min(100, Math.round((spent / total) * 100)) : 0;
+            var reservedPct = total ? Math.min(100 - spentPct, Math.round((reserved / total) * 100)) : 0;
+            barsEl.innerHTML = '<div style="margin-bottom:8px">' +
+                '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">' +
+                '<span style="color:#66746b">Gastado</span><span style="font-weight:700">' + spentPct + '%</span></div>' +
+                '<div style="background:#eee;border-radius:999px;height:10px;overflow:hidden">' +
+                '<div style="background:#04ac85;width:' + spentPct + '%;height:100%;border-radius:999px"></div></div>' +
+                '</div>' +
+                (reserved > 0
+                    ? '<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">' +
+                      '<span style="color:#66746b">Gastado + Reservado</span><span style="font-weight:700">' + (spentPct + reservedPct) + '%</span></div>' +
+                      '<div style="background:#eee;border-radius:999px;height:10px;overflow:hidden;display:flex">' +
+                      '<div style="background:#04ac85;width:' + spentPct + '%;height:100%"></div>' +
+                      '<div style="background:#b35c00;width:' + reservedPct + '%;height:100%"></div>' +
+                      '</div></div>'
+                    : '');
+        }
+
+        if (catsEl) {
+            var cats = s.by_category || s.categories || [];
+            if (cats.length) {
+                catsEl.innerHTML = '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #dde6df">' +
+                    '<div style="font-size:12px;font-weight:700;color:#66746b;text-transform:uppercase;margin-bottom:8px">Por categoría</div>' +
+                    cats.map(function (c) {
+                        var pct = parseFloat(c.pct) || (total ? Math.round((parseFloat(c.spent) / total) * 100) : 0);
+                        return '<div style="margin-bottom:6px">' +
+                            '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px">' +
+                            '<span>' + escapeHtml(c.category || c.name || 'Sin categoría') + '</span>' +
+                            '<span style="font-weight:700">' + escapeHtml(fmt(c.spent)) + ' (' + pct + '%)</span>' +
+                            '</div>' +
+                            '<div style="background:#eee;border-radius:999px;height:6px;overflow:hidden">' +
+                            '<div style="background:#2f80ed;width:' + Math.min(100, pct) + '%;height:100%;border-radius:999px"></div>' +
+                            '</div></div>';
+                    }).join('') + '</div>';
+            } else {
+                catsEl.innerHTML = '';
+            }
+        }
+    }
+
+    function renderProjection(root) {
+        var el = qs('[data-budget-projection-content]', root);
+        if (!el) { return; }
+
+        if (state.projectionLoading) {
+            el.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">Calculando proyección...</p>';
+            return;
+        }
+
+        var p = state.projection;
+        if (!p) {
+            el.innerHTML = '<p style="font-size:13px;color:#b33a3a;margin:0">No se pudo cargar la proyección.</p>';
+            return;
+        }
+
+        var willExceed = p.at_current_rate_will_exceed || false;
+        var exceedDate = p.exceed_date || null;
+        var projSpend = p.projected_total_spend !== undefined ? parseFloat(p.projected_total_spend) : null;
+        var projRemaining = p.projected_remaining !== undefined ? parseFloat(p.projected_remaining) : null;
+        var dailyAvg = p.daily_average !== undefined ? parseFloat(p.daily_average) : null;
+        var daysElapsed = p.days_elapsed !== undefined ? p.days_elapsed : null;
+        var daysRemaining = p.days_remaining !== undefined ? p.days_remaining : null;
+
+        el.innerHTML = (willExceed
+            ? '<div style="background:#f7e7e7;border:1px solid #b33a3a;border-radius:6px;padding:10px 12px;margin-bottom:10px">' +
+              '<div style="font-size:12px;font-weight:700;color:#b33a3a">⚠ Al ritmo actual se superará el presupuesto' +
+              (exceedDate ? ' el ' + escapeHtml(exceedDate) : '') + '</div>' +
+              '</div>'
+            : '<div style="background:#e7f7f2;border:1px solid #04ac85;border-radius:6px;padding:10px 12px;margin-bottom:10px">' +
+              '<div style="font-size:12px;font-weight:700;color:#04ac85">✓ El gasto actual está dentro del presupuesto</div>' +
+              '</div>') +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            (dailyAvg !== null ? '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:2px">Promedio diario</div><div style="font-size:16px;font-weight:900">' + escapeHtml(fmt(dailyAvg)) + '</div></div>' : '') +
+            (projSpend !== null ? '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:2px">Gasto proyectado</div><div style="font-size:16px;font-weight:900;color:' + (willExceed ? '#b33a3a' : '#24252a') + '">' + escapeHtml(fmt(projSpend)) + '</div></div>' : '') +
+            (daysElapsed !== null ? '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:2px">Días transcurridos</div><div style="font-size:16px;font-weight:900">' + escapeHtml(String(daysElapsed)) + '</div></div>' : '') +
+            (daysRemaining !== null ? '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:2px">Días restantes</div><div style="font-size:16px;font-weight:900">' + escapeHtml(String(daysRemaining)) + '</div></div>' : '') +
+            (projRemaining !== null ? '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px;text-align:center;grid-column:1/-1"><div style="font-size:10px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:2px">Disponible proyectado al fin de mes</div><div style="font-size:20px;font-weight:900;color:' + (projRemaining >= 0 ? '#04ac85' : '#b33a3a') + '">' + escapeHtml(fmt(projRemaining)) + '</div></div>' : '') +
+            '</div>';
+    }
+
+    function loadSummary(root, budgetId) {
+        state.summaryBudgetId = budgetId;
+        state.summary = null;
+        state.projection = null;
+        state.summaryLoading = true;
+        state.projectionLoading = true;
+        renderSummaryPanel(root);
+        renderProjection(root);
+
+        var budgetPath = groupPath('/budgets/' + encodeURIComponent(budgetId));
+
+        window.CCApi.request(budgetPath + '/summary')
+            .then(function (response) {
+                state.summary = response.data || null;
+                state.summaryLoading = false;
+                renderSummaryPanel(root);
+            })
+            .catch(function () {
+                state.summary = null;
+                state.summaryLoading = false;
+                renderSummaryPanel(root);
+            });
+
+        window.CCApi.request(budgetPath + '/projection')
+            .then(function (response) {
+                state.projection = response.data || null;
+                state.projectionLoading = false;
+                renderProjection(root);
+            })
+            .catch(function () {
+                state.projection = null;
+                state.projectionLoading = false;
+                renderProjection(root);
+            });
+
+        var panel = qs('[data-budget-summary-panel]', root);
+        if (panel) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+
+    function reloadProjection(root) {
+        if (!state.summaryBudgetId || !state.currentGroupId) { return; }
+        state.projection = null;
+        state.projectionLoading = true;
+        renderProjection(root);
+        window.CCApi.request(groupPath('/budgets/' + encodeURIComponent(state.summaryBudgetId) + '/projection'))
+            .then(function (response) {
+                state.projection = response.data || null;
+                state.projectionLoading = false;
+                renderProjection(root);
+            })
+            .catch(function () {
+                state.projection = null;
+                state.projectionLoading = false;
+                renderProjection(root);
+            });
+    }
+
     function bind(root) {
         var groupSel = qs('[data-budget-group]', root);
         var form = qs('[data-budget-form]', root);
@@ -367,10 +565,31 @@
             resetBtn.addEventListener('click', function () { resetForm(root); });
         }
 
+        // Summary panel close
+        var summaryCloseBtn = qs('[data-budget-summary-close]', root);
+        if (summaryCloseBtn) {
+            summaryCloseBtn.addEventListener('click', function () {
+                state.summaryBudgetId = null;
+                renderSummaryPanel(root);
+            });
+        }
+
+        // Reload projection button
+        var reloadProjBtn = qs('[data-budget-reload-projection]', root);
+        if (reloadProjBtn) {
+            reloadProjBtn.addEventListener('click', function () { reloadProjection(root); });
+        }
+
         // Table + current card actions (delegated from root)
         root.addEventListener('click', function (event) {
+            var summBtn = event.target.closest('[data-budget-summary]');
             var editBtn = event.target.closest('[data-budget-edit]');
             var delBtn = event.target.closest('[data-budget-delete]');
+
+            if (summBtn) {
+                loadSummary(root, summBtn.getAttribute('data-budget-summary'));
+                return;
+            }
             if (editBtn) {
                 var id = editBtn.getAttribute('data-budget-edit');
                 var budget = state.budgets.find(function (b) { return String(b.id) === String(id); });
@@ -389,6 +608,7 @@
         var root = qs('[data-user-budget]');
         if (!root) { return; }
         bind(root);
+        renderSummaryPanel(root);
         loadGroups(root).then(function () {
             if (state.currentGroupId) {
                 return Promise.all([loadBudgets(root), loadCurrent(root)]);

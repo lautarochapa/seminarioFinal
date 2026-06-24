@@ -1405,6 +1405,37 @@
                         <button type="button" class="btn-secondary-web btn-sm" data-budget-next disabled>Siguiente ›</button>
                     </div>
                 </article>
+
+                {{-- Panel resumen / proyección (se muestra al hacer click en "Resumen") --}}
+                <div data-budget-summary-panel style="display:none;margin-top:12px">
+                    <article class="panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                            <h2 data-budget-summary-title style="margin:0;font-size:16px">Resumen</h2>
+                            <button type="button" class="btn-secondary-web btn-sm" data-budget-summary-close>✕ Cerrar</button>
+                        </div>
+                        <div class="alert" data-budget-summary-message style="display:none"></div>
+
+                        {{-- Métricas principales --}}
+                        <div data-budget-summary-metrics style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px"></div>
+
+                        {{-- Barras de progreso --}}
+                        <div data-budget-summary-bars style="margin-bottom:14px"></div>
+
+                        {{-- Desglose por categoría --}}
+                        <div data-budget-summary-categories></div>
+
+                        {{-- Proyección --}}
+                        <div data-budget-projection style="margin-top:14px;padding-top:14px;border-top:1px solid #dde6df">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                                <h3 style="margin:0;font-size:14px;font-weight:900">Proyección</h3>
+                                <button type="button" class="btn-secondary-web btn-sm" data-budget-reload-projection>Recalcular</button>
+                            </div>
+                            <div data-budget-projection-content>
+                                <p class="muted" style="font-size:13px;margin:0">Cargando proyección...</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </div>
 
             <aside class="aside-panel">
