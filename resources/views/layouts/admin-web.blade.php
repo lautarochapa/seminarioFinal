@@ -35,6 +35,7 @@
     <script src="{{ asset('js/recipe-cost.js') }}?v={{ file_exists(public_path('js/recipe-cost.js')) ? filemtime(public_path('js/recipe-cost.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-official-recipes.js') }}?v={{ file_exists(public_path('js/admin-official-recipes.js')) ? filemtime(public_path('js/admin-official-recipes.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-recipe-import.js') }}?v={{ file_exists(public_path('js/admin-recipe-import.js')) ? filemtime(public_path('js/admin-recipe-import.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-recipe-import-text.js') }}?v={{ file_exists(public_path('js/admin-recipe-import-text.js')) ? filemtime(public_path('js/admin-recipe-import-text.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-supermarket-products.js') }}?v={{ file_exists(public_path('js/admin-supermarket-products.js')) ? filemtime(public_path('js/admin-supermarket-products.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-promotions.js') }}?v={{ file_exists(public_path('js/admin-promotions.js')) ? filemtime(public_path('js/admin-promotions.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-payment-methods.js') }}?v={{ file_exists(public_path('js/admin-payment-methods.js')) ? filemtime(public_path('js/admin-payment-methods.js')) : time() }}" defer></script>

@@ -2582,6 +2582,42 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'recipe-import-text')
+        <section class="rbac-layout" data-admin-recipe-import-text>
+            <div style="display:flex;flex-direction:column;gap:14px">
+                <article class="panel">
+                    <h2>Importar receta por texto</h2>
+                    <p class="muted" style="font-size:13px;margin:0 0 12px">Pegá el texto de una receta. El sistema intentará detectar el título, los ingredientes y los pasos automáticamente.</p>
+                    <textarea data-importtxt-body class="form-control" rows="16"
+                        style="width:100%;box-sizing:border-box;font-family:monospace;font-size:13px;resize:vertical"
+                        placeholder="Tarta de manzana&#10;&#10;Ingredientes:&#10;- 3 manzanas&#10;- 200g de harina&#10;- 2 huevos&#10;&#10;Preparación:&#10;1. Pelar y cortar las manzanas.&#10;2. Mezclar la harina con los huevos.&#10;3. Armar la tarta y hornear 30 min a 180°C."></textarea>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                        <button type="button" class="btn-main" data-importtxt-btn>Parsear receta</button>
+                        <button type="button" class="btn-ghost btn-sm" data-importtxt-clear>Limpiar</button>
+                        <span class="muted" data-importtxt-chars style="font-size:12px">0 / 20000</span>
+                    </div>
+                    <div data-importtxt-message style="display:none;font-size:13px;padding:8px 12px;border-radius:4px;margin-top:10px"></div>
+                    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+                        <p style="font-size:12px;font-weight:700;color:var(--muted);margin:0 0 6px">Formato sugerido:</p>
+                        <pre style="font-size:11px;color:var(--muted);background:#f6f8f9;border-radius:6px;padding:10px;margin:0;white-space:pre-wrap">Nombre de la receta
+
+Ingredientes:
+- 2 tazas de harina
+- 3 huevos
+- 100 g de azúcar
+
+Preparación:
+1. Mezclar la harina con los huevos.
+2. Agregar el azúcar y mezclar.
+3. Hornear a 180°C por 30 minutos.</pre>
+                    </div>
+                </article>
+            </div>
+            <aside class="panel" data-importtxt-detail style="align-self:start">
+                <p class="muted" style="font-size:13px">El resultado del parseo aparecerá aquí.</p>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'recipe-import')
         <section class="rbac-layout" data-admin-recipe-import>
             <div style="display:flex;flex-direction:column;gap:14px">
