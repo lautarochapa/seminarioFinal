@@ -144,6 +144,7 @@ class AdminWebScreenController extends Controller
             'demo-scenarios' => ['title' => 'Escenarios demo', 'module' => 'Docs/demo', 'description' => 'ABM demos para docente.', 'primary' => 'Nuevo escenario', 'secondary' => 'Probar ruta', 'metrics' => ['demo_scenarios'], 'panels' => ['Escenarios', 'Usuario demo', 'Rutas', 'Estado']],
             'product-reports' => ['title' => 'Reportes de productos', 'module' => 'Productos', 'description' => 'Revisión y resolución de reportes enviados por usuarios sobre errores en productos y precios.', 'primary' => 'Ver pendientes', 'secondary' => 'Ver resueltos', 'metrics' => ['products'], 'panels' => ['Pendientes', 'Resueltos', 'Filtros', 'Detalle']],
             'cities' => ['title' => 'Ciudades', 'module' => 'Geodatos', 'description' => 'ABM de ciudades habilitadas en la plataforma.', 'primary' => 'Nueva ciudad', 'secondary' => 'Ver activas', 'metrics' => [], 'panels' => ['Listado', 'Crear', 'Editar', 'Estado']],
+            'recipe-categories' => ['title' => 'Categorias de recetas', 'module' => 'Recetas', 'description' => 'ABM categorias jerarquicas de recetas (desayuno, almuerzo, cena, saludable, etc.).', 'primary' => 'Nueva categoria', 'secondary' => 'Ver arbol', 'metrics' => [], 'panels' => ['Categorias', 'Jerarquia', 'Estado', 'Arbol']],
         ];
     }
 
