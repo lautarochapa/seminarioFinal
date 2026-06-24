@@ -1318,6 +1318,35 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'admin-reports')
+        <section data-admin-reports>
+            {{-- Barra de controles --}}
+            <div class="panel" style="padding:14px;margin-bottom:14px">
+                <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px">
+                    <div>
+                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">DESDE</label>
+                        <input class="form-control" type="date" data-admin-report-from>
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">HASTA</label>
+                        <input class="form-control" type="date" data-admin-report-to>
+                    </div>
+                    <button type="button" class="btn-primary" data-admin-report-generate style="align-self:flex-end">Generar reporte</button>
+                </div>
+            </div>
+
+            {{-- Tabs --}}
+            <div data-admin-report-tabs style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
+
+            {{-- Mensajes --}}
+            <div class="alert" data-admin-report-message style="display:none;margin-bottom:10px"></div>
+
+            {{-- Contenido dinámico --}}
+            <div data-admin-report-content>
+                <p style="font-size:13px;color:#697681;text-align:center;padding:32px 0">Seleccioná un reporte y hacé clic en "Generar" para ver los datos.</p>
+            </div>
+        </section>
+
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>
