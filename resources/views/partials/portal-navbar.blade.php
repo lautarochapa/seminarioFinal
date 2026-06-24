@@ -65,6 +65,7 @@
                 ['Importar por texto', '/admin-web/recipe-import-text', 'web.admin.recipe-import-text'],
                 ['Validacion recetas', '/admin-web/imported-recipes', 'recipes.manage'],
                 ['Reportes admin', '/admin-web/admin-reports', 'web.admin.admin-reports'],
+                ['Documentacion tesis', '/admin-web/thesis-docs', 'web.admin.thesis-docs'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],
             ],

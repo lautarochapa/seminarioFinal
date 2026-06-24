@@ -1347,6 +1347,155 @@
             </div>
         </section>
 
+    @elseif($screenKey === 'thesis-docs')
+        <div data-admin-thesis-docs style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:14px">
+
+            {{-- Columna izquierda: lista de documentos --}}
+            <div>
+                <div class="panel" style="padding:14px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;gap:8px">
+                        <h2 style="margin:0;font-size:15px">Documentos</h2>
+                        <span style="font-size:11px;color:#697681" data-tdoc-count></span>
+                        <button type="button" class="btn-main" data-tdoc-new style="font-size:12px;padding:6px 13px;border-radius:999px">+ Nuevo</button>
+                    </div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+                        <select class="form-control" data-tdoc-type-filter style="font-size:12px;max-width:130px">
+                            <option value="">Todos los tipos</option>
+                            <option value="functional">Funcional</option>
+                            <option value="technical">Técnico</option>
+                            <option value="manual">Manual</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <input type="search" data-tdoc-search placeholder="Buscar..."
+                               style="flex:1;min-width:100px;padding:6px 10px;border:1px solid #dde3e8;border-radius:6px;font-size:12px;outline:none">
+                    </div>
+                    <div class="alert" data-tdoc-message style="display:none"></div>
+                    <div data-tdoc-list style="max-height:420px;overflow-y:auto">
+                        <p style="font-size:12px;color:#697681;text-align:center;padding:16px 0">Cargando...</p>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:10px">
+                        <button type="button" class="btn-ghost btn-sm" data-tdoc-prev>Anterior</button>
+                        <span style="font-size:11px;color:#697681" data-tdoc-page>1/1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-tdoc-next>Siguiente</button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Columna derecha: editor --}}
+            <div>
+                {{-- Formulario de documento --}}
+                <div class="panel" style="padding:14px;margin-bottom:14px">
+                    <h3 style="font-size:15px;font-weight:900;margin:0 0 12px" data-tdoc-form-title>Nuevo documento</h3>
+                    <div class="alert" data-tdoc-form-message style="display:none;margin-bottom:10px"></div>
+                    <form data-tdoc-form>
+                        <input type="hidden" name="id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+                            <div>
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">TÍTULO *</label>
+                                <input class="form-control" name="title" type="text" placeholder="Título del documento" required>
+                            </div>
+                            <div>
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">VERSIÓN</label>
+                                <input class="form-control" name="version" type="text" placeholder="1.0.0">
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+                            <div>
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">TIPO</label>
+                                <select class="form-control" name="type">
+                                    <option value="">Sin tipo</option>
+                                    <option value="functional">Funcional</option>
+                                    <option value="technical">Técnico</option>
+                                    <option value="manual">Manual</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">CATEGORÍA</label>
+                                <select class="form-control" name="category">
+                                    <option value="">Sin categoría</option>
+                                    <option value="scope">Alcance</option>
+                                    <option value="requirements">Requerimientos</option>
+                                    <option value="use_cases">Casos de uso</option>
+                                    <option value="architecture">Arquitectura</option>
+                                    <option value="data_model">Modelo de datos</option>
+                                    <option value="api_reference">Referencia API</option>
+                                    <option value="user_manual">Manual usuario</option>
+                                    <option value="test_plan">Plan de pruebas</option>
+                                    <option value="general">General</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">ESTADO</label>
+                                <select class="form-control" name="status">
+                                    <option value="draft">Borrador</option>
+                                    <option value="review">En revisión</option>
+                                    <option value="published">Publicado</option>
+                                    <option value="archived">Archivado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:10px">
+                            <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#697681">DESCRIPCIÓN</label>
+                            <textarea class="form-control" name="description" rows="2" placeholder="Breve descripción del documento" style="resize:vertical"></textarea>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                            <button type="submit" class="btn-main" data-tdoc-save style="font-size:13px">Guardar</button>
+                            <button type="button" class="btn-ghost" data-tdoc-new style="font-size:13px">Nuevo</button>
+                        </div>
+                    </form>
+                </div>
+
+                {{-- Secciones --}}
+                <div data-tdoc-sections-panel style="display:none;margin-bottom:14px">
+                    <div class="panel" style="padding:14px">
+                        <h3 style="font-size:14px;font-weight:900;margin:0 0 10px">Secciones</h3>
+                        <div class="alert" data-section-message style="display:none;margin-bottom:8px"></div>
+                        <div data-section-list style="max-height:220px;overflow-y:auto;margin-bottom:12px"></div>
+                        <div style="border-top:1px solid #dde3e8;padding-top:12px">
+                            <div style="font-size:12px;font-weight:700;color:#697681;margin-bottom:8px" data-section-form-title>Nueva sección</div>
+                            <form data-section-form>
+                                <input type="hidden" name="id">
+                                <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;margin-bottom:6px">
+                                    <input class="form-control" name="title" type="text" placeholder="Título de sección" required style="font-size:13px">
+                                    <input class="form-control" name="order_level" type="number" min="0" max="5" placeholder="Nivel" style="width:66px;font-size:13px" title="Nivel de indentación (0-5)">
+                                    <input class="form-control" name="order" type="number" min="1" placeholder="Orden" style="width:72px;font-size:13px">
+                                </div>
+                                <div style="margin-bottom:8px">
+                                    <textarea class="form-control" name="content" rows="4" placeholder="Contenido (texto o HTML)" style="resize:vertical;font-size:13px"></textarea>
+                                </div>
+                                <div style="display:flex;gap:6px">
+                                    <button type="submit" class="btn-main btn-sm" data-section-save style="font-size:12px">Agregar</button>
+                                    <button type="button" class="btn-ghost btn-sm" data-section-reset style="font-size:12px">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Versiones --}}
+                <div data-tdoc-sections-panel style="display:none">
+                    <div class="panel" style="padding:14px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                            <h3 style="font-size:14px;font-weight:900;margin:0">Versiones guardadas</h3>
+                            <button type="button" class="btn-ghost btn-sm" data-versions-toggle style="font-size:12px">Ver versiones</button>
+                        </div>
+                        <div data-tdoc-versions-panel style="display:none">
+                            <div class="alert" data-version-message style="display:none;margin-bottom:8px"></div>
+                            <div data-version-list style="max-height:200px;overflow-y:auto;margin-bottom:12px"></div>
+                            <form data-version-form style="border-top:1px solid #dde3e8;padding-top:10px">
+                                <div style="display:grid;grid-template-columns:auto 1fr auto;gap:6px">
+                                    <input class="form-control" name="version_number" type="text" placeholder="v1.0.1" style="width:80px;font-size:13px">
+                                    <input class="form-control" name="notes" type="text" placeholder="Notas de la versión" style="font-size:13px">
+                                    <button type="submit" class="btn-main btn-sm" data-version-save style="font-size:12px">Guardar versión</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     @elseif($screenKey === 'audit')
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>

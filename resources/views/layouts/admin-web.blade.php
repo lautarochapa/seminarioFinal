@@ -47,6 +47,7 @@
     <script src="{{ asset('js/admin-scraping-alerts.js') }}?v={{ file_exists(public_path('js/admin-scraping-alerts.js')) ? filemtime(public_path('js/admin-scraping-alerts.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-price-refresh-requests.js') }}?v={{ file_exists(public_path('js/admin-price-refresh-requests.js')) ? filemtime(public_path('js/admin-price-refresh-requests.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-reports.js') }}?v={{ file_exists(public_path('js/admin-reports.js')) ? filemtime(public_path('js/admin-reports.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-thesis-docs.js') }}?v={{ file_exists(public_path('js/admin-thesis-docs.js')) ? filemtime(public_path('js/admin-thesis-docs.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
