@@ -2045,6 +2045,96 @@
                 </article>
             </section>
         </section>
+    @elseif($screenKey === 'scraping-alerts')
+        <section data-admin-scraping-alerts>
+            <div class="alert" data-scraping-alerts-message style="display:none"></div>
+
+            <section class="grid" style="margin-bottom:14px">
+                <article class="panel">
+                    <h2>Resumen</h2>
+                    <div data-scraping-alerts-summary class="muted">Cargando reporte...</div>
+                </article>
+                <article class="panel">
+                    <h2>Por severidad</h2>
+                    <div data-scraping-alerts-severity class="muted">Cargando...</div>
+                </article>
+                <article class="panel">
+                    <h2>Por fuente</h2>
+                    <div data-scraping-alerts-source-report class="muted">Cargando...</div>
+                </article>
+                <article class="panel">
+                    <h2>Evolucion</h2>
+                    <div data-scraping-alerts-evolution class="muted">Cargando...</div>
+                </article>
+            </section>
+
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <h2>Alertas de scraping</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-alerts-status>
+                            <option value="">Todos los estados</option>
+                            <option value="open">Abiertas</option>
+                            <option value="resolved">Resueltas</option>
+                        </select>
+                        <select class="form-control" data-alerts-severity>
+                            <option value="">Todas las severidades</option>
+                            <option value="low">Baja</option>
+                            <option value="medium">Media</option>
+                            <option value="high">Alta</option>
+                            <option value="critical">Critica</option>
+                        </select>
+                        <select class="form-control" data-alerts-type>
+                            <option value="">Todos los tipos</option>
+                            <option value="parser_error">Parser error</option>
+                            <option value="network_error">Network error</option>
+                            <option value="product_not_found">Producto no encontrado</option>
+                            <option value="price_error">Error de precio</option>
+                        </select>
+                        <select class="form-control" data-alerts-source>
+                            <option value="">Todas las fuentes</option>
+                        </select>
+                        <input class="form-control" type="number" min="1" data-alerts-job placeholder="Job ID">
+                        <input class="form-control" type="date" data-alerts-from>
+                        <input class="form-control" type="date" data-alerts-to>
+                        <button type="button" class="btn-ghost" data-alerts-refresh>Actualizar</button>
+                        <span class="chip" data-alerts-count>0 alertas</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Alerta</th>
+                                    <th>Fuente</th>
+                                    <th>Job</th>
+                                    <th>Severidad</th>
+                                    <th>Estado</th>
+                                    <th>Resolucion</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-alerts-body>
+                                <tr><td colspan="7" class="muted">Cargando alertas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-alerts-prev>Anterior</button>
+                        <span class="muted" data-alerts-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-alerts-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2>Resolver alerta</h2>
+                    <div data-alert-detail class="muted">Selecciona una alerta abierta.</div>
+                    <form class="rbac-form" data-alert-resolve-form style="display:none;margin-top:14px">
+                        <textarea class="form-control" name="resolution_notes" rows="4" maxlength="1000" placeholder="Notas opcionales de resolucion"></textarea>
+                        <button type="submit" class="btn-main">Marcar como resuelta</button>
+                    </form>
+                </aside>
+            </div>
+        </section>
     @elseif($screenKey === 'cities')
         <section data-admin-cities>
             <div class="alert" data-cities-message style="display:none"></div>
