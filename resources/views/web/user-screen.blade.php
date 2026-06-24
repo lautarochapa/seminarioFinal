@@ -988,6 +988,23 @@
                         <p class="muted">Ingresá un código para ver el producto.</p>
                     </div>
                 </article>
+
+                <article class="panel" style="margin-top:12px">
+                    <h2>Agregar al stock</h2>
+                    <div class="web-tools">
+                        <select class="form-control" data-barcode-group-select>
+                            <option value="">Cargando grupo familiar...</option>
+                        </select>
+                        <select class="form-control" data-barcode-location-select>
+                            <option value="">Selecciona ubicacion</option>
+                        </select>
+                        <input class="form-control" data-barcode-quantity type="number" min="0.0001" step="0.01" value="1" aria-label="Cantidad">
+                        <button type="button" class="btn-main" data-barcode-stock-submit>Agregar stock</button>
+                    </div>
+                    <div data-barcode-stock-result style="margin-top:12px">
+                        <p class="muted">Busca o escanea un producto, elegi ubicacion y confirma la carga.</p>
+                    </div>
+                </article>
             </div>
 
             <aside class="aside-panel">
