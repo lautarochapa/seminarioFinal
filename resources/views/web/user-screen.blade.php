@@ -1370,6 +1370,135 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'supplements')
+        <section class="workspace" data-user-supplements>
+            <div>
+                {{-- Herramientas --}}
+                <div class="web-tools">
+                    <input class="form-control" type="search" data-supp-search placeholder="Buscar por nombre o marca...">
+                    <select class="form-control" data-supp-type-filter style="max-width:160px">
+                        <option value="">Todos los tipos</option>
+                        <option value="protein">Proteína</option>
+                        <option value="creatine">Creatina</option>
+                        <option value="vitamin">Vitamina</option>
+                        <option value="mineral">Mineral</option>
+                        <option value="omega">Omega / Aceite</option>
+                        <option value="preworkout">Pre-entreno</option>
+                        <option value="other">Otro</option>
+                    </select>
+                </div>
+
+                {{-- Tabla --}}
+                <article class="panel" style="padding:16px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
+                        <h2 style="margin:0;font-size:16px">Mis suplementos</h2>
+                        <span style="font-size:12px;color:#66746b" data-supp-count>0 suplementos</span>
+                    </div>
+                    <div class="alert" data-supp-message style="display:none"></div>
+                    <div style="overflow-x:auto">
+                        <table class="web-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre / Marca</th>
+                                    <th>Tipo</th>
+                                    <th>Dosis</th>
+                                    <th>Frecuencia</th>
+                                    <th>Precio unit.</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody data-supp-list>
+                                <tr><td colspan="7" style="text-align:center;color:#66746b;padding:18px">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                        <button type="button" class="btn-secondary-web btn-sm" data-supp-prev disabled>‹</button>
+                        <span style="font-size:12px;color:#66746b" data-supp-page>Pág. 1 / 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-supp-next disabled>›</button>
+                    </div>
+                </article>
+            </div>
+
+            {{-- Formulario lateral --}}
+            <aside class="aside-panel">
+                <h2 data-supp-form-title style="font-size:15px;margin-bottom:10px">Nuevo suplemento</h2>
+                <div class="alert" data-supp-form-message style="display:none"></div>
+                <form data-supp-form>
+                    <input type="hidden" name="id">
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Nombre *</label>
+                        <input class="form-control" type="text" name="name" placeholder="Ej: Whey Protein Gold Standard">
+                    </div>
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Tipo *</label>
+                        <select class="form-control" name="type">
+                            <option value="">Seleccionar...</option>
+                            <option value="protein">Proteína</option>
+                            <option value="creatine">Creatina</option>
+                            <option value="vitamin">Vitamina</option>
+                            <option value="mineral">Mineral</option>
+                            <option value="omega">Omega / Aceite</option>
+                            <option value="preworkout">Pre-entreno</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Marca</label>
+                        <input class="form-control" type="text" name="brand" placeholder="Ej: Optimum Nutrition">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+                        <div>
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Dosis</label>
+                            <input class="form-control" type="number" name="dose" min="0" step="0.01" placeholder="30">
+                        </div>
+                        <div>
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Unidad</label>
+                            <input class="form-control" type="text" name="unit" placeholder="g, mg, ml...">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Frecuencia</label>
+                        <select class="form-control" name="frequency">
+                            <option value="">Sin especificar</option>
+                            <option value="daily">Diaria</option>
+                            <option value="twice_daily">2 veces por día</option>
+                            <option value="weekly">Semanal</option>
+                            <option value="post_workout">Post-entrenamiento</option>
+                            <option value="pre_workout">Pre-entrenamiento</option>
+                            <option value="with_meals">Con comidas</option>
+                        </select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+                        <div>
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Precio unit. ($)</label>
+                            <input class="form-control" type="number" name="price_per_unit" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Stock actual</label>
+                            <input class="form-control" type="number" name="stock_quantity" min="0" step="0.01" placeholder="0">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Estado</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:14px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Notas</label>
+                        <textarea class="form-control" name="notes" rows="2" placeholder="Observaciones..." style="resize:vertical"></textarea>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button type="submit" class="btn-main" data-supp-save>Guardar</button>
+                        <button type="button" class="btn-secondary-web" data-supp-reset>Cancelar</button>
+                    </div>
+                </form>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'budget')
         <section class="workspace" data-user-budget>
             <div>

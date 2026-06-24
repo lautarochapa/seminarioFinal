@@ -107,6 +107,15 @@ class UserWebScreenController extends Controller
                 'metrics' => ['shopping_lists', 'purchases'],
                 'panels' => ['Items pendientes', 'Alternativas', 'Comparacion', 'Historial'],
             ],
+            'supplements' => [
+                'title' => 'Suplementos',
+                'module' => 'Suplementos',
+                'description' => 'Registrá y seguí tus suplementos: proteína, creatina, vitaminas y más.',
+                'primary' => 'Agregar suplemento',
+                'secondary' => 'Ver historial',
+                'metrics' => [],
+                'panels' => ['Mis suplementos', 'Tipo', 'Dosis', 'Presupuesto'],
+            ],
             'budget' => [
                 'title' => 'Presupuesto',
                 'module' => 'Presupuesto',
