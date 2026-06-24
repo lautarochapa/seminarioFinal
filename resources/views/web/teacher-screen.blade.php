@@ -60,6 +60,26 @@
                     {{-- Contenido de sección seleccionada --}}
                     <div data-section-content style="display:none"></div>
                 </div>
+
+                {{-- Panel de comentarios --}}
+                <div data-doc-comments style="display:none;margin-top:12px">
+                    <div class="panel" style="padding:14px">
+                        <h3 style="font-size:14px;font-weight:900;margin:0 0 10px">Comentarios del documento</h3>
+                        <div class="alert" data-comments-message style="display:none"></div>
+                        <div data-comments-list style="max-height:260px;overflow-y:auto;margin-bottom:14px;padding-right:4px"></div>
+                        <form data-comment-form style="border-top:1px solid #e3ded2;padding-top:12px">
+                            <div style="margin-bottom:8px">
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#716d64">SECCIÓN DE REFERENCIA (opcional)</label>
+                                <input class="form-control" type="text" name="section_reference" placeholder="Ej: 2.1 Requerimientos funcionales" style="font-size:13px">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;color:#716d64">COMENTARIO *</label>
+                                <textarea class="form-control" name="body" rows="3" placeholder="Escribí tu comentario o corrección..." style="resize:vertical;font-size:13px"></textarea>
+                            </div>
+                            <button type="submit" class="btn-main" data-comment-save style="font-size:13px">Comentar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 

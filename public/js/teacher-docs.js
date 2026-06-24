@@ -10,6 +10,8 @@
         sectionsLoading: false,
         selectedSectionId: null,
         search: '',
+        comments: [],
+        commentsLoading: false,
     };
 
     var DOC_CATEGORY_LABELS = {
@@ -263,11 +265,104 @@
                 }
                 renderDocList(root);
                 renderDocDetail(root);
+                loadComments(root, docId);
             })
             .catch(function (err) {
                 state.sectionsLoading = false;
                 renderDocDetail(root);
                 showMsg(root, 'danger', errMsg(err));
+            });
+    }
+
+    // ── Comments ──────────────────────────────────────────────────────────────
+
+    function renderComments(root) {
+        var panel = qs('[data-doc-comments]', root);
+        if (!panel) { return; }
+
+        if (!state.selectedDoc) { panel.style.display = 'none'; return; }
+        panel.style.display = '';
+
+        var listEl = qs('[data-comments-list]', root);
+        var msgEl  = qs('[data-comments-message]', root);
+        if (msgEl) { msgEl.style.display = 'none'; }
+
+        if (!listEl) { return; }
+
+        if (state.commentsLoading) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#716d64;margin:0">Cargando comentarios...</p>';
+            return;
+        }
+
+        if (!state.comments.length) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#716d64;margin:0">Sin comentarios todavía.</p>';
+            return;
+        }
+
+        listEl.innerHTML = state.comments.map(function (c) {
+            var date = c.created_at ? c.created_at.substring(0, 16).replace('T', ' ') : '';
+            var author = c.user_name || c.author || (c.user && c.user.name) || 'Docente';
+            return '<div style="padding:10px 0;border-bottom:1px solid #f0ede6">' +
+                '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+                '<span style="font-size:12px;font-weight:700">' + escapeHtml(author) + '</span>' +
+                (date ? '<span style="font-size:11px;color:#b0a898">' + escapeHtml(date) + '</span>' : '') +
+                (c.section_reference ? '<span style="font-size:10px;background:#f0ede6;color:#716d64;border-radius:999px;padding:1px 7px">§ ' + escapeHtml(c.section_reference) + '</span>' : '') +
+                '</div>' +
+                '<p style="font-size:13px;color:#24252a;margin:0;line-height:1.5">' + escapeHtml(c.body || c.content || c.text || '') + '</p>' +
+                '</div>';
+        }).join('');
+    }
+
+    function loadComments(root, docId) {
+        state.comments         = [];
+        state.commentsLoading  = true;
+        renderComments(root);
+
+        window.CCApi.request(endpoint('/api/v1/thesis-documents/' + encodeURIComponent(docId) + '/comments'))
+            .then(function (response) {
+                state.comments        = response.data || response || [];
+                state.commentsLoading = false;
+                renderComments(root);
+            })
+            .catch(function () {
+                state.commentsLoading = false;
+                renderComments(root);
+            });
+    }
+
+    function postComment(root, form) {
+        if (!state.selectedDoc) { return; }
+        var bodyEl = form.elements.body;
+        var body   = bodyEl ? bodyEl.value.trim() : '';
+        if (!body) {
+            var msgEl = qs('[data-comments-message]', root);
+            if (msgEl) { msgEl.className = 'alert alert-warning'; msgEl.textContent = 'Escribí un comentario antes de enviar.'; msgEl.style.display = 'block'; }
+            return;
+        }
+
+        var payload = { body: body };
+        var sectionRef = form.elements.section_reference;
+        if (sectionRef && sectionRef.value.trim()) { payload.section_reference = sectionRef.value.trim(); }
+
+        var saveBtn = qs('[data-comment-save]', root);
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Enviando...'; }
+        var msgEl = qs('[data-comments-message]', root);
+        if (msgEl) { msgEl.style.display = 'none'; }
+
+        window.CCApi.request(
+            endpoint('/api/v1/thesis-documents/' + encodeURIComponent(state.selectedDoc.id) + '/comments'),
+            { method: 'POST', body: payload }
+        )
+            .then(function (response) {
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Comentar'; }
+                form.reset();
+                var newComment = response.data || response;
+                state.comments.unshift(newComment);
+                renderComments(root);
+            })
+            .catch(function (err) {
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Comentar'; }
+                if (msgEl) { msgEl.className = 'alert alert-danger'; msgEl.textContent = errMsg(err); msgEl.style.display = 'block'; }
             });
     }
 
@@ -297,15 +392,26 @@
                 if (item) { selectSection(root, item.getAttribute('data-section-nav')); }
             });
         }
+
+        var commentForm = qs('[data-comment-form]', root);
+        if (commentForm) {
+            commentForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                postComment(root, commentForm);
+            });
+        }
     }
 
     function init(root, docType) {
-        state.docType       = docType;
-        state.documents     = [];
-        state.selectedDoc   = null;
-        state.sections      = [];
+        state.docType           = docType;
+        state.documents         = [];
+        state.selectedDoc       = null;
+        state.sections          = [];
         state.selectedSectionId = null;
+        state.comments          = [];
+        state.commentsLoading   = false;
         bind(root);
+        renderComments(root);
         loadDocuments(root);
         renderDocDetail(root);
     }
