@@ -3115,6 +3115,21 @@ Preparación:
             </aside>
         </section>
 
+    @elseif($screenKey === 'feature-flags')
+        <section data-admin-feature-flags>
+            <div class="panel" style="padding:14px;margin-bottom:14px">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <h2 style="margin:0;font-size:15px">Feature flags del sistema</h2>
+                    <span class="chip" data-ff-count>0 flags</span>
+                    <button type="button" class="btn-ghost" data-ff-refresh style="margin-left:auto">Actualizar</button>
+                </div>
+            </div>
+            <div class="alert" data-ff-message style="display:none;margin-bottom:12px"></div>
+            <div data-ff-container>
+                <p class="muted" style="text-align:center;padding:32px 0">Cargando feature flags...</p>
+            </div>
+        </section>
+
     @elseif($screenKey === 'settings')
         <section data-admin-settings>
             <div class="panel" style="padding:14px;margin-bottom:14px">

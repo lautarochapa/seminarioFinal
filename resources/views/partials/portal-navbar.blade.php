@@ -68,6 +68,7 @@
                 ['Documentacion tesis', '/admin-web/thesis-docs', 'web.admin.thesis-docs'],
                 ['Escenarios demo', '/admin-web/demo-scenarios', 'web.admin.demo-scenarios'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
+                ['Feature flags', '/admin-web/feature-flags', 'web.admin.feature-flags'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],
             ],
         ],
