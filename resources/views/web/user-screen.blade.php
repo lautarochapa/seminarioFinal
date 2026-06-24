@@ -1465,6 +1465,28 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'recipe-favorites')
+        <section class="workspace" data-user-fav>
+            <div style="display:flex;flex-direction:column;gap:14px">
+                <article class="panel" style="min-height:360px">
+                    <h2>Mis recetas</h2>
+                    <div data-fav-tabs class="audit-tabs"></div>
+                    <div data-fav-message style="display:none;font-size:13px;padding:7px 10px;border-radius:4px;margin-bottom:10px"></div>
+                    <div data-fav-list style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:4px">
+                        <p class="muted" style="font-size:13px">Cargando...</p>
+                    </div>
+                    <div class="catalog-pagination" style="margin-top:12px;display:none" data-fav-pagination>
+                        <button type="button" class="btn-secondary-web btn-sm" data-fav-prev disabled>Anterior</button>
+                        <span class="muted" data-fav-page>Pág 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-fav-next disabled>Siguiente</button>
+                    </div>
+                </article>
+            </div>
+            <aside class="aside-panel" data-fav-detail>
+                <p class="muted" style="font-size:13px">Seleccioná una receta para ver el detalle.</p>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'recipe-suggestions')
         <section class="workspace" data-recipe-sugg>
             <div style="display:flex;flex-direction:column;gap:14px">

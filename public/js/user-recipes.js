@@ -262,6 +262,8 @@
 
         var availabilityHtml = '<div data-availability-panel></div>';
 
+        var favActionsHtml = '<div data-fav-panel></div>';
+
         var sourceHtml = '';
         if (r.source_type === 'external' && r.sources && r.sources.length) {
             var src = r.sources[0];
@@ -301,6 +303,7 @@
             nutritionHtml +
             costHtml +
             availabilityHtml +
+            favActionsHtml +
             actionsHtml;
 
         if (window.RecipeIngredients) {
@@ -322,6 +325,10 @@
         if (window.RecipeAvailability) {
             var availPanel = qs('[data-availability-panel]', detailEl);
             if (availPanel) { window.RecipeAvailability.mount(availPanel, r.id); }
+        }
+        if (window.RecipeFavoritesActions) {
+            var favPanel = qs('[data-fav-panel]', detailEl);
+            if (favPanel) { window.RecipeFavoritesActions.mount(favPanel, r.id, r.servings || 1); }
         }
     }
 
