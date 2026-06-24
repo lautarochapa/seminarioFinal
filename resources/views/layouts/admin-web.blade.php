@@ -51,6 +51,7 @@
     <script src="{{ asset('js/admin-demo-scenarios.js') }}?v={{ file_exists(public_path('js/admin-demo-scenarios.js')) ? filemtime(public_path('js/admin-demo-scenarios.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-settings.js') }}?v={{ file_exists(public_path('js/admin-settings.js')) ? filemtime(public_path('js/admin-settings.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-feature-flags.js') }}?v={{ file_exists(public_path('js/admin-feature-flags.js')) ? filemtime(public_path('js/admin-feature-flags.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-ai-foundation.js') }}?v={{ file_exists(public_path('js/admin-ai-foundation.js')) ? filemtime(public_path('js/admin-ai-foundation.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">

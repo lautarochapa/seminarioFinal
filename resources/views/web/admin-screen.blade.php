@@ -3115,6 +3115,34 @@ Preparación:
             </aside>
         </section>
 
+    @elseif($screenKey === 'ai-foundation')
+        <div data-admin-ai-foundation>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-bottom:14px">
+
+                {{-- Estado del flag --}}
+                <div class="panel" style="padding:16px">
+                    <h2 style="font-size:15px;margin:0 0 12px">Estado del módulo IA</h2>
+                    <div data-ai-flag-panel>
+                        <p class="muted" style="text-align:center;padding:16px 0">Verificando...</p>
+                    </div>
+                </div>
+
+                {{-- Test provider --}}
+                <div class="panel" style="padding:16px">
+                    <h2 style="font-size:15px;margin:0 0 12px">Test de sugerencia <span style="font-size:11px;font-weight:400;color:#697681">(POST /admin/ai/test-suggestion)</span></h2>
+                    <div data-ai-test-panel>
+                        <p class="muted" style="font-size:13px">Cargando...</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Arquitectura --}}
+            <div class="panel" style="padding:16px">
+                <h2 style="font-size:15px;margin:0 0 12px">Arquitectura preparada</h2>
+                <div data-ai-arch-panel></div>
+            </div>
+        </div>
+
     @elseif($screenKey === 'feature-flags')
         <section data-admin-feature-flags>
             <div class="panel" style="padding:14px;margin-bottom:14px">
