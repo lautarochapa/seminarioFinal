@@ -1270,6 +1270,106 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'recipes')
+        <section class="workspace" data-user-recipes data-user-id="{{ auth()->id() }}">
+            <div style="display:flex;flex-direction:column;gap:14px">
+                <article class="panel">
+                    <div class="web-tools">
+                        <input class="form-control" type="search" data-recipes-search placeholder="Buscar receta...">
+                        <select class="form-control" style="max-width:160px" data-recipes-source-type>
+                            <option value="">Todas las fuentes</option>
+                            <option value="official">Oficiales</option>
+                            <option value="user">De usuario</option>
+                            <option value="shared">Compartidas</option>
+                            <option value="external">Externas</option>
+                        </select>
+                        <select class="form-control" style="max-width:180px" data-recipes-category>
+                            <option value="">Todas las categorías</option>
+                        </select>
+                        <button type="button" class="btn-main btn-sm" data-recipes-new>+ Nueva receta</button>
+                        <span class="chip" data-recipes-count>0 recetas</span>
+                    </div>
+                    <div class="alert" data-recipes-message style="display:none"></div>
+                    <div data-recipes-list style="display:grid;gap:10px;margin-top:10px">
+                        <p class="muted">Cargando recetas...</p>
+                    </div>
+                    <div class="catalog-pagination" style="margin-top:12px">
+                        <button type="button" class="btn-secondary-web btn-sm" data-recipes-prev>Anterior</button>
+                        <span class="muted" data-recipes-page>Pág 1</span>
+                        <button type="button" class="btn-secondary-web btn-sm" data-recipes-next>Siguiente</button>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel" style="display:flex;flex-direction:column;gap:0">
+                {{-- Detail view --}}
+                <div data-recipes-detail>
+                    <p class="muted">Seleccioná una receta para ver el detalle.</p>
+                </div>
+
+                {{-- Create / Edit form --}}
+                <div data-recipes-form-panel style="display:none">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                        <h2 style="margin:0" data-recipes-form-title>Nueva receta</h2>
+                        <button type="button" class="btn-secondary-web btn-sm" data-recipes-form-cancel>Cancelar</button>
+                    </div>
+                    <form data-recipes-form>
+                        <input type="hidden" name="id">
+                        <div style="margin-bottom:9px">
+                            <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Nombre *</label>
+                            <input class="form-control" name="name" type="text" placeholder="Nombre de la receta" required>
+                        </div>
+                        <div style="margin-bottom:9px">
+                            <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Descripción</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Descripción breve..."></textarea>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
+                            <div>
+                                <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Porciones</label>
+                                <input class="form-control" name="servings" type="number" min="1" max="9999" placeholder="4">
+                            </div>
+                            <div>
+                                <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Dificultad</label>
+                                <select class="form-control" name="difficulty">
+                                    <option value="">Sin especificar</option>
+                                    <option value="fácil">Fácil</option>
+                                    <option value="media">Media</option>
+                                    <option value="difícil">Difícil</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
+                            <div>
+                                <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Prep. (min)</label>
+                                <input class="form-control" name="prep_time_minutes" type="number" min="0" max="9999" placeholder="15">
+                            </div>
+                            <div>
+                                <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Cocción (min)</label>
+                                <input class="form-control" name="cook_time_minutes" type="number" min="0" max="9999" placeholder="30">
+                            </div>
+                        </div>
+                        <div style="margin-bottom:9px">
+                            <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Categoría</label>
+                            <select class="form-control" name="category_id" data-recipes-form-category>
+                                <option value="">Sin categoría</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:14px" data-recipes-form-status-row style="display:none">
+                            <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:4px">Estado</label>
+                            <select class="form-control" name="status">
+                                <option value="active">Activa</option>
+                                <option value="inactive">Inactiva</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar</button>
+                            <button type="button" class="btn-secondary-web" data-recipes-form-cancel-2>Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'supermarkets')
         <section class="workspace" data-user-supermarkets>
             <div>
