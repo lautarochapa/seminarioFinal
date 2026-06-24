@@ -2466,6 +2466,122 @@
                 <div data-recipe-categories-tree class="muted">Cargando arbol...</div>
             </article>
         </section>
+    @elseif($screenKey === 'official-recipes')
+        <section data-admin-official-recipes>
+            <div class="alert" data-recipes-adm-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-recipes-adm-search placeholder="Buscar por nombre...">
+                        <select class="form-control" data-recipes-adm-source-type>
+                            <option value="">Todas las fuentes</option>
+                            <option value="official">Oficial</option>
+                            <option value="user">De usuario</option>
+                            <option value="shared">Compartida</option>
+                            <option value="external">Externa</option>
+                        </select>
+                        <select class="form-control" data-recipes-adm-is-official>
+                            <option value="">Oficial: todas</option>
+                            <option value="1">Solo oficiales</option>
+                            <option value="0">No oficiales</option>
+                        </select>
+                        <select class="form-control" data-recipes-adm-status>
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-recipes-adm-refresh>Actualizar</button>
+                        <span class="chip" data-recipes-adm-count>0 recetas</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fuente</th>
+                                    <th>Categoria</th>
+                                    <th>Estado</th>
+                                    <th>Contenido</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-recipes-adm-body>
+                                <tr><td colspan="6" class="muted">Cargando recetas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-recipes-adm-prev>Anterior</button>
+                        <span class="muted" data-recipes-adm-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-recipes-adm-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    {{-- Detalle --}}
+                    <div data-recipes-adm-detail>
+                        <p class="muted">Seleccioná una receta para ver el detalle o usá el formulario para crear una nueva.</p>
+                    </div>
+
+                    {{-- Formulario crear / editar --}}
+                    <div data-recipes-adm-form-panel style="display:none">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                            <h2 style="margin:0" data-recipes-adm-form-title>Nueva receta oficial</h2>
+                            <button type="button" class="btn-ghost btn-sm" data-recipes-adm-cancel>Cancelar</button>
+                        </div>
+                        <form data-recipes-adm-form style="display:flex;flex-direction:column;gap:7px">
+                            <input type="hidden" name="id">
+                            <input class="form-control" name="name" type="text" placeholder="Nombre *" required>
+                            <textarea class="form-control" name="description" rows="2" placeholder="Descripcion"></textarea>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+                                <input class="form-control" name="servings" type="number" min="1" max="9999" placeholder="Porciones">
+                                <select class="form-control" name="difficulty">
+                                    <option value="">Dificultad</option>
+                                    <option value="fácil">Fácil</option>
+                                    <option value="media">Media</option>
+                                    <option value="difícil">Difícil</option>
+                                </select>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+                                <input class="form-control" name="prep_time_minutes" type="number" min="0" max="9999" placeholder="Prep. (min)">
+                                <input class="form-control" name="cook_time_minutes" type="number" min="0" max="9999" placeholder="Coccion (min)">
+                            </div>
+                            <select class="form-control" name="category_id" data-recipes-adm-form-category>
+                                <option value="">Sin categoria</option>
+                            </select>
+                            <select class="form-control" name="status">
+                                <option value="active">Activa</option>
+                                <option value="inactive">Inactiva</option>
+                            </select>
+                            <select class="form-control" name="source_type">
+                                <option value="official">Oficial</option>
+                                <option value="user">De usuario</option>
+                                <option value="shared">Compartida</option>
+                                <option value="external">Externa</option>
+                            </select>
+                            <input class="form-control" name="source_url" type="url" placeholder="URL fuente (externas)">
+                            <input class="form-control" name="source_site" type="text" placeholder="Sitio fuente">
+                            <input class="form-control" name="source_author" type="text" placeholder="Autor fuente">
+                            <label style="display:flex;align-items:center;gap:8px;font-size:14px">
+                                <input type="checkbox" name="is_official" value="1"> Marcar como oficial
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px;font-size:14px">
+                                <input type="checkbox" name="is_public" value="1"> Hacer publica
+                            </label>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+                                <button type="submit" class="btn-main">Guardar receta</button>
+                                <button type="button" class="btn-ghost" data-recipes-adm-cancel-2>Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {{-- Boton nueva receta (visible en estado detalle/vacio) --}}
+                    <div data-recipes-adm-new-btn-wrap style="margin-top:14px;padding-top:14px;border-top:1px solid #dde3e8">
+                        <button type="button" class="btn-main" data-recipes-adm-new>+ Nueva receta oficial</button>
+                    </div>
+                </aside>
+            </div>
+        </section>
     @else
     <section class="grid">
         @foreach($screen['panels'] as $panel)
