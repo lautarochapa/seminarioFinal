@@ -1419,6 +1419,93 @@
                         <button type="button" class="btn-secondary-web btn-sm" data-supp-next disabled>›</button>
                     </div>
                 </article>
+
+                {{-- Panel horarios --}}
+                <div data-supp-schedule-panel style="display:none;margin-top:12px">
+                    <article class="panel" style="padding:16px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
+                            <h2 data-sched-title style="margin:0;font-size:16px">Horarios</h2>
+                            <div style="display:flex;gap:6px">
+                                <button type="button" class="btn-secondary-web btn-sm" data-sched-refresh>Actualizar</button>
+                                <button type="button" class="btn-secondary-web btn-sm" data-sched-close>✕ Cerrar</button>
+                            </div>
+                        </div>
+                        <div class="alert" data-sched-message style="display:none"></div>
+
+                        {{-- Lista de horarios --}}
+                        <div data-sched-list style="margin-bottom:14px"></div>
+
+                        {{-- Formulario horario --}}
+                        <div style="border-top:1px solid #dde6df;padding-top:14px">
+                            <h3 data-sched-form-title style="font-size:13px;font-weight:900;margin:0 0 8px">Nuevo horario</h3>
+                            <div class="alert" data-sched-form-message style="display:none"></div>
+                            <form data-sched-form>
+                                <input type="hidden" name="id">
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+                                    <div>
+                                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Hora *</label>
+                                        <input class="form-control" type="time" name="time">
+                                    </div>
+                                    <div>
+                                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Días *</label>
+                                        <select class="form-control" name="day_type">
+                                            <option value="every_day">Todos los días</option>
+                                            <option value="weekdays">Días de semana</option>
+                                            <option value="weekends">Fines de semana</option>
+                                            <option value="monday">Lunes</option>
+                                            <option value="tuesday">Martes</option>
+                                            <option value="wednesday">Miércoles</option>
+                                            <option value="thursday">Jueves</option>
+                                            <option value="friday">Viernes</option>
+                                            <option value="saturday">Sábado</option>
+                                            <option value="sunday">Domingo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom:9px">
+                                    <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Dosis (sobreescribe la base)</label>
+                                    <input class="form-control" type="number" name="dose_override" min="0" step="0.01" placeholder="Dejar vacío para usar la dosis base">
+                                </div>
+                                <div style="margin-bottom:9px">
+                                    <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Estado</label>
+                                    <select class="form-control" name="active">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                </div>
+                                <div style="margin-bottom:12px">
+                                    <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Notas</label>
+                                    <input class="form-control" type="text" name="notes" placeholder="Ej: Con desayuno">
+                                </div>
+                                <div style="display:flex;gap:6px">
+                                    <button type="submit" class="btn-main btn-sm" data-sched-save>Agregar</button>
+                                    <button type="button" class="btn-secondary-web btn-sm" data-sched-reset>Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        {{-- Registro de consumo --}}
+                        <div style="border-top:1px solid #dde6df;padding-top:14px;margin-top:14px">
+                            <h3 style="font-size:13px;font-weight:900;margin:0 0 8px">Registrar consumo</h3>
+                            <div class="alert" data-log-message style="display:none"></div>
+                            <form data-log-form>
+                                <div style="margin-bottom:9px">
+                                    <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Fecha y hora</label>
+                                    <input class="form-control" type="datetime-local" name="taken_at">
+                                </div>
+                                <div style="margin-bottom:9px">
+                                    <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Dosis tomada</label>
+                                    <input class="form-control" type="number" name="dose_actual" min="0" step="0.01" placeholder="Dejar vacío para usar la dosis base">
+                                </div>
+                                <div style="margin-bottom:12px">
+                                    <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Notas</label>
+                                    <input class="form-control" type="text" name="log_notes" placeholder="Ej: Tomé con leche">
+                                </div>
+                                <button type="submit" class="btn-main btn-sm" data-log-save>Registrar consumo</button>
+                            </form>
+                        </div>
+                    </article>
+                </div>
             </div>
 
             {{-- Formulario lateral --}}
