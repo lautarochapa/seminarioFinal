@@ -1817,6 +1817,91 @@
             </aside>
         </section>
 
+    @elseif($screenKey === 'shopping-session')
+        <section data-user-shopping-session>
+            {{-- Setup --}}
+            <div data-session-setup>
+                <article class="panel" style="max-width:520px">
+                    <h2>Sesión de compra</h2>
+                    <div class="alert" data-session-message style="display:none"></div>
+                    <div style="display:grid;gap:10px">
+                        <label style="font-size:13px;font-weight:700;margin-bottom:2px">Grupo familiar</label>
+                        <select class="form-control" data-session-group>
+                            <option value="">Cargando grupos...</option>
+                        </select>
+                        <label style="font-size:13px;font-weight:700;margin-bottom:2px">Lista de compras activa</label>
+                        <select class="form-control" data-session-list>
+                            <option value="">Primero seleccioná un grupo</option>
+                        </select>
+                        <button type="button" class="btn-main" data-session-start style="margin-top:6px">Iniciar compra</button>
+                    </div>
+                </article>
+            </div>
+
+            {{-- Sesión activa --}}
+            <div data-session-active style="display:none">
+                <div style="background:#fff;border:1px solid #dde6df;border-radius:8px;padding:14px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                    <div>
+                        <div class="muted" style="font-size:11px;text-transform:uppercase;font-weight:700">Sesión activa</div>
+                        <strong data-session-title style="font-size:15px">Lista</strong>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="muted" style="font-size:11px;text-transform:uppercase;font-weight:700">Total acumulado</div>
+                        <strong data-session-total style="font-size:22px;color:#04ac85">$0.00</strong>
+                    </div>
+                </div>
+
+                <div style="display:grid;gap:12px">
+                    {{-- Escanear --}}
+                    <article class="panel">
+                        <h2 style="font-size:15px;margin-bottom:10px">Escanear producto</h2>
+                        <div class="alert" data-scan-message style="display:none"></div>
+                        <div style="display:flex;gap:8px;margin-bottom:10px">
+                            <input type="text" class="form-control" data-session-barcode
+                                placeholder="Código de barras..."
+                                inputmode="numeric"
+                                autocomplete="off"
+                                style="font-size:18px;font-weight:700;letter-spacing:2px;flex:1">
+                            <button type="button" class="btn-main" data-session-scan-btn>Buscar</button>
+                            <button type="button" class="btn-secondary-web" data-session-camera-btn title="Usar cámara" style="padding:10px 12px">📷</button>
+                        </div>
+                        <div data-session-camera-container style="display:none;border-radius:8px;overflow:hidden;background:#000;position:relative;max-width:100%;aspect-ratio:4/3">
+                            <video data-session-video autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
+                            <button type="button" data-session-camera-close
+                                style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;line-height:1">✕</button>
+                            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.4);color:#fff;font-size:12px;text-align:center;padding:6px">
+                                Apuntá la cámara al código de barras
+                            </div>
+                        </div>
+                        <div data-session-scan-result style="display:none"></div>
+                    </article>
+
+                    {{-- Items --}}
+                    <article class="panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                            <h2 style="margin:0;font-size:15px">Items de la lista</h2>
+                            <span data-session-items-count class="chip">0 pendientes</span>
+                        </div>
+                        <div data-session-items-list></div>
+                        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #dde6df;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+                            <button type="button" class="btn-secondary-web" data-session-cancel>Cancelar sesión</button>
+                            <button type="button" class="btn-main" data-session-finish>Confirmar compra</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            {{-- Finalizado --}}
+            <div data-session-done style="display:none">
+                <article class="panel" style="max-width:480px">
+                    <div data-session-summary></div>
+                    <div style="margin-top:16px">
+                        <button type="button" class="btn-main" data-session-new>Nueva sesión</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
     @elseif($screenKey === 'supermarkets')
         <section class="workspace" data-user-supermarkets>
             <div>
