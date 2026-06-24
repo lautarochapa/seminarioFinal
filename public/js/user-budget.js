@@ -32,6 +32,10 @@
         movsLoading: false,
         movSaving: false,
         movsTypeFilter: '',
+        alertsBudgetId: null,
+        alertsBudget: null,
+        alerts: [],
+        alertsLoading: false,
     };
 
     function qs(sel, root) { return (root || document).querySelector(sel); }
@@ -175,6 +179,7 @@
                 '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Resumen</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-cats="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Categorías</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-movs="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Movimientos</button>' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-budget-alerts="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Alertas</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-edit="' + escapeHtml(String(b.id)) + '">Editar</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-budget-delete="' + escapeHtml(String(b.id)) + '">Eliminar</button>' +
                 '</td>' +
@@ -919,6 +924,114 @@
             });
     }
 
+    var ALERT_SEVERITY = {
+        warning: { label: 'Advertencia', bg: '#fff3e0', color: '#b35c00', icon: '⚠' },
+        danger:  { label: 'Crítico',     bg: '#f7e7e7', color: '#b33a3a', icon: '🚨' },
+        info:    { label: 'Info',        bg: '#e7f3ff', color: '#1a5fb4', icon: 'ℹ' },
+    };
+
+    function alertsBudgetPath(extra) {
+        return groupPath('/budgets/' + encodeURIComponent(state.alertsBudgetId) + (extra || ''));
+    }
+
+    function renderAlertsPanel(root) {
+        var panel = qs('[data-budget-alerts-panel]', root);
+        if (!panel) { return; }
+        if (!state.alertsBudgetId) { panel.style.display = 'none'; return; }
+        panel.style.display = '';
+
+        var titleEl = qs('[data-budget-alerts-title]', root);
+        var listEl  = qs('[data-budget-alerts-list]', root);
+        var msgEl   = qs('[data-budget-alerts-message]', root);
+
+        if (titleEl) {
+            var b = state.alertsBudget;
+            titleEl.textContent = 'Alertas' + (b ? ' — ' + monthLabel(b) : '');
+        }
+        if (msgEl) { msgEl.style.display = 'none'; }
+        if (!listEl) { return; }
+
+        if (state.alertsLoading) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">Cargando alertas...</p>';
+            return;
+        }
+        if (!state.alerts.length) {
+            listEl.innerHTML = '<p style="font-size:13px;color:#66746b;margin:0">No hay alertas para este presupuesto.</p>';
+            return;
+        }
+
+        listEl.innerHTML = state.alerts.map(function (a) {
+            var sev = ALERT_SEVERITY[a.severity] || ALERT_SEVERITY.info;
+            var isRead = !!a.read_at;
+            var date = a.triggered_at ? a.triggered_at.substring(0, 10) : (a.created_at ? a.created_at.substring(0, 10) : '-');
+            return '<div style="border:1px solid ' + (isRead ? '#e8efe8' : sev.color) + ';border-radius:8px;padding:10px 12px;margin-bottom:8px;background:' + (isRead ? '#fafdfb' : sev.bg) + ';opacity:' + (isRead ? '0.7' : '1') + '">' +
+                '<div style="display:flex;align-items:flex-start;gap:8px">' +
+                '<span style="font-size:18px;line-height:1;flex-shrink:0">' + sev.icon + '</span>' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">' +
+                '<span style="font-size:11px;font-weight:700;color:' + sev.color + '">' + escapeHtml(sev.label) + '</span>' +
+                '<span style="font-size:11px;color:#66746b">' + escapeHtml(date) + '</span>' +
+                (isRead ? '<span style="font-size:10px;color:#66746b;background:#f0f0f0;border-radius:999px;padding:1px 7px">Leída</span>' : '') +
+                '</div>' +
+                '<div style="font-size:13px;font-weight:600;margin-bottom:4px">' + escapeHtml(a.type || '') + '</div>' +
+                '<div style="font-size:13px;color:#24252a">' + escapeHtml(a.message || '') + '</div>' +
+                (a.threshold_pct != null ? '<div style="font-size:11px;color:#66746b;margin-top:3px">Umbral: ' + escapeHtml(String(a.threshold_pct)) + '%</div>' : '') +
+                '</div>' +
+                (!isRead
+                    ? '<button type="button" class="btn-secondary-web btn-sm" data-alert-read="' + escapeHtml(String(a.id)) + '" style="flex-shrink:0;font-size:11px;white-space:nowrap">Marcar leída</button>'
+                    : '') +
+                '</div>' +
+                '</div>';
+        }).join('');
+    }
+
+    function loadAlerts(root, budgetId) {
+        var budget = state.budgets.find(function (b) { return String(b.id) === String(budgetId); });
+        if (!budget && state.currentBudget && String(state.currentBudget.id) === String(budgetId)) {
+            budget = state.currentBudget;
+        }
+        state.alertsBudgetId = budgetId;
+        state.alertsBudget   = budget || null;
+        state.alerts         = [];
+        state.alertsLoading  = true;
+        renderAlertsPanel(root);
+
+        var panel = qs('[data-budget-alerts-panel]', root);
+        if (panel) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+        window.CCApi.request(alertsBudgetPath('/alerts'))
+            .then(function (response) {
+                state.alerts        = response.data || [];
+                state.alertsLoading = false;
+                renderAlertsPanel(root);
+            })
+            .catch(function (err) {
+                state.alerts        = [];
+                state.alertsLoading = false;
+                renderAlertsPanel(root);
+                var msgEl = qs('[data-budget-alerts-message]', root);
+                if (msgEl) { msgEl.className = 'alert alert-danger'; msgEl.textContent = errMsg(err); msgEl.style.display = 'block'; }
+            });
+    }
+
+    function markAlertRead(root, alertId) {
+        if (!state.alertsBudgetId || !state.currentGroupId) { return; }
+        var btn = qs('[data-alert-read="' + alertId + '"]', root);
+        if (btn) { btn.disabled = true; }
+
+        window.CCApi.request(alertsBudgetPath('/alerts/' + encodeURIComponent(alertId) + '/read'), { method: 'PATCH' })
+            .then(function () {
+                var alert = state.alerts.find(function (a) { return String(a.id) === String(alertId); });
+                if (alert) { alert.read_at = new Date().toISOString(); }
+                renderAlertsPanel(root);
+            })
+            .catch(function (err) {
+                if (btn) { btn.disabled = false; }
+                var msgEl = qs('[data-budget-alerts-message]', root);
+                if (msgEl) { msgEl.className = 'alert alert-danger'; msgEl.textContent = errMsg(err); msgEl.style.display = 'block'; }
+            });
+    }
+
     function bind(root) {
         var groupSel = qs('[data-budget-group]', root);
         var form = qs('[data-budget-form]', root);
@@ -1056,6 +1169,23 @@
             });
         }
 
+        // Alerts panel close
+        var alertsCloseBtn = qs('[data-budget-alerts-close]', root);
+        if (alertsCloseBtn) {
+            alertsCloseBtn.addEventListener('click', function () {
+                state.alertsBudgetId = null;
+                renderAlertsPanel(root);
+            });
+        }
+
+        // Alerts refresh
+        var alertsRefreshBtn = qs('[data-alerts-refresh]', root);
+        if (alertsRefreshBtn) {
+            alertsRefreshBtn.addEventListener('click', function () {
+                if (state.alertsBudgetId) { loadAlerts(root, state.alertsBudgetId); }
+            });
+        }
+
         // Adjustment form
         var adjForm = qs('[data-budget-adj-form]', root);
         if (adjForm) {
@@ -1067,17 +1197,21 @@
 
         // Table + current card + categories list actions (delegated from root)
         root.addEventListener('click', function (event) {
-            var summBtn = event.target.closest('[data-budget-summary]');
-            var catsBtn = event.target.closest('[data-budget-cats]');
-            var movsBtn = event.target.closest('[data-budget-movs]');
-            var editBtn = event.target.closest('[data-budget-edit]');
-            var delBtn = event.target.closest('[data-budget-delete]');
+            var summBtn    = event.target.closest('[data-budget-summary]');
+            var catsBtn    = event.target.closest('[data-budget-cats]');
+            var movsBtn    = event.target.closest('[data-budget-movs]');
+            var alertsBtn  = event.target.closest('[data-budget-alerts]');
+            var alertReadBtn = event.target.closest('[data-alert-read]');
+            var editBtn    = event.target.closest('[data-budget-edit]');
+            var delBtn     = event.target.closest('[data-budget-delete]');
             var catEditBtn = event.target.closest('[data-cat-edit]');
-            var catDelBtn = event.target.closest('[data-cat-delete]');
+            var catDelBtn  = event.target.closest('[data-cat-delete]');
 
-            if (summBtn) { loadSummary(root, summBtn.getAttribute('data-budget-summary')); return; }
-            if (catsBtn) { loadCategories(root, catsBtn.getAttribute('data-budget-cats')); return; }
-            if (movsBtn) { loadMovements(root, movsBtn.getAttribute('data-budget-movs')); return; }
+            if (summBtn)      { loadSummary(root, summBtn.getAttribute('data-budget-summary')); return; }
+            if (catsBtn)      { loadCategories(root, catsBtn.getAttribute('data-budget-cats')); return; }
+            if (movsBtn)      { loadMovements(root, movsBtn.getAttribute('data-budget-movs')); return; }
+            if (alertsBtn)    { loadAlerts(root, alertsBtn.getAttribute('data-budget-alerts')); return; }
+            if (alertReadBtn) { markAlertRead(root, alertReadBtn.getAttribute('data-alert-read')); return; }
             if (catEditBtn) {
                 var cid = catEditBtn.getAttribute('data-cat-edit');
                 var cat = state.categories.find(function (c) { return String(c.id) === String(cid); });
@@ -1106,6 +1240,7 @@
         renderSummaryPanel(root);
         renderCategoriesPanel(root);
         renderMovementsPanel(root);
+        renderAlertsPanel(root);
         loadGroups(root).then(function () {
             if (state.currentGroupId) {
                 return Promise.all([loadBudgets(root), loadCurrent(root)]);

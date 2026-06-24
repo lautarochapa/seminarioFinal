@@ -1544,6 +1544,21 @@
                         </div>
                     </article>
                 </div>
+
+                {{-- Panel alertas --}}
+                <div data-budget-alerts-panel style="display:none;margin-top:12px">
+                    <article class="panel" style="padding:16px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
+                            <h2 data-budget-alerts-title style="margin:0;font-size:16px">Alertas</h2>
+                            <div style="display:flex;gap:6px">
+                                <button type="button" class="btn-secondary-web btn-sm" data-alerts-refresh>Actualizar</button>
+                                <button type="button" class="btn-secondary-web btn-sm" data-budget-alerts-close>✕ Cerrar</button>
+                            </div>
+                        </div>
+                        <div class="alert" data-budget-alerts-message style="display:none"></div>
+                        <div data-budget-alerts-list></div>
+                    </article>
+                </div>
             </div>
 
             <aside class="aside-panel">
