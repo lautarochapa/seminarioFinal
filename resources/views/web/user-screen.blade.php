@@ -29,6 +29,59 @@
             <div class="alert" data-stock-locations-message style="display:none"></div>
             <div class="family-layout">
                 <div class="family-stack">
+                    <div class="metric-row" style="margin-bottom:14px">
+                        <article class="metric">
+                            <strong data-stock-summary-total>0</strong>
+                            <span>items activos</span>
+                        </article>
+                        <article class="metric">
+                            <strong data-stock-summary-products>0</strong>
+                            <span>productos distintos</span>
+                        </article>
+                        <article class="metric">
+                            <strong data-stock-summary-expiring>0</strong>
+                            <span>proximos a vencer</span>
+                        </article>
+                        <article class="metric">
+                            <strong data-stock-value-total>ARS 0</strong>
+                            <span data-stock-value-count>0 valorizados</span>
+                        </article>
+                    </div>
+
+                    <article class="panel" style="margin-bottom:14px">
+                        <h2>Stock del hogar</h2>
+                        <div class="web-tools">
+                            <select class="form-control" data-stock-filter-location>
+                                <option value="">Todas las ubicaciones</option>
+                            </select>
+                            <input class="form-control" data-stock-filter-expiry type="date" aria-label="Vence antes de">
+                            <button type="button" class="btn-secondary-web" data-stock-refresh>Actualizar stock</button>
+                            <span class="chip" data-stock-count>0 items</span>
+                        </div>
+                        <div style="overflow:auto">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Ubicacion</th>
+                                        <th>Cantidad</th>
+                                        <th>Vencimiento</th>
+                                        <th>Precio compra</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-stock-body>
+                                    <tr><td colspan="6" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-stock-prev>Anterior</button>
+                            <span class="muted" data-stock-page>Pagina 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-stock-next>Siguiente</button>
+                        </div>
+                    </article>
+
                     <article class="panel">
                         <h2>Ubicaciones del hogar</h2>
                         <div class="web-tools">
@@ -68,6 +121,41 @@
                 </div>
 
                 <aside class="aside-panel">
+                    <h2 data-stock-item-form-title>Cargar stock</h2>
+                    <form class="family-form" data-stock-item-form>
+                        <input type="hidden" name="id">
+                        <label>Producto</label>
+                        <input class="form-control" data-stock-product-search type="search" placeholder="Buscar producto">
+                        <select class="form-control" name="product_id" required data-stock-product-select>
+                            <option value="">Cargando productos...</option>
+                        </select>
+                        <label>Ubicacion</label>
+                        <select class="form-control" name="stock_location_id" data-stock-item-location>
+                            <option value="">Sin ubicacion</option>
+                        </select>
+                        <label>Cantidad</label>
+                        <input class="form-control" name="quantity" type="number" step="0.01" min="0" required>
+                        <label>Unidad</label>
+                        <select class="form-control" name="unit_id" required data-stock-unit-select>
+                            <option value="">Cargando unidades...</option>
+                        </select>
+                        <label>Vencimiento</label>
+                        <input class="form-control" name="expiration_date" type="date">
+                        <label>Precio de compra</label>
+                        <input class="form-control" name="purchase_price" type="number" step="0.01" min="0">
+                        <label>Estado</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                            <button type="submit" class="btn-main" data-stock-item-submit>Guardar stock</button>
+                            <button type="button" class="btn-secondary-web" data-stock-item-cancel style="display:none">Cancelar</button>
+                        </div>
+                    </form>
+
+                    <hr>
+
                     <h2 data-stock-location-form-title>Nueva ubicacion</h2>
                     <form class="family-form" data-stock-location-form>
                         <input type="hidden" name="id">
