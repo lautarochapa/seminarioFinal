@@ -181,6 +181,63 @@
                         </div>
                     </article>
 
+                    <article class="panel" style="margin-bottom:14px">
+                        <h2>Reporte de desperdicio</h2>
+                        <div class="metric-row" style="margin-bottom:12px">
+                            <article class="metric">
+                                <strong data-waste-total-quantity>0</strong>
+                                <span>cantidad descartada</span>
+                            </article>
+                            <article class="metric">
+                                <strong data-waste-total-loss>ARS 0</strong>
+                                <span>perdida estimada</span>
+                            </article>
+                            <article class="metric">
+                                <strong data-waste-with-price>0</strong>
+                                <span>items valorizados</span>
+                            </article>
+                            <article class="metric">
+                                <strong data-waste-without-price>0</strong>
+                                <span>sin precio</span>
+                            </article>
+                        </div>
+                        <div class="web-tools">
+                            <select class="form-control" data-waste-product-filter>
+                                <option value="">Todos los productos</option>
+                            </select>
+                            <select class="form-control" data-waste-location-filter>
+                                <option value="">Todas las ubicaciones</option>
+                            </select>
+                            <input class="form-control" data-waste-reason-filter type="search" placeholder="Motivo">
+                            <input class="form-control" data-waste-date-from type="date" aria-label="Desde">
+                            <input class="form-control" data-waste-date-to type="date" aria-label="Hasta">
+                            <button type="button" class="btn-secondary-web" data-waste-refresh>Actualizar reporte</button>
+                        </div>
+                        <div style="overflow:auto;margin-top:12px">
+                            <table class="web-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Producto</th>
+                                        <th>Ubicacion</th>
+                                        <th>Cantidad</th>
+                                        <th>Motivo</th>
+                                        <th>Perdida estimada</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-waste-body>
+                                    <tr><td colspan="7" class="muted">Selecciona un grupo familiar.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="catalog-pagination">
+                            <button type="button" class="btn-secondary-web btn-sm" data-waste-prev>Anterior</button>
+                            <span class="muted" data-waste-page>Pagina 1</span>
+                            <button type="button" class="btn-secondary-web btn-sm" data-waste-next>Siguiente</button>
+                        </div>
+                    </article>
+
                     <article class="panel">
                         <h2>Ubicaciones del hogar</h2>
                         <div class="web-tools">

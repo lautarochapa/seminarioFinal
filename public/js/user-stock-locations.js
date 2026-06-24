@@ -20,9 +20,14 @@
         expiring: [],
         lowStock: [],
         rules: [],
+        waste: [],
+        wastePage: 1,
+        wasteLastPage: 1,
+        wasteTotals: {},
         products: [],
         units: [],
         productSearchTimer: null,
+        wasteSearchTimer: null,
         loading: false,
     };
 
@@ -178,6 +183,12 @@
             select.innerHTML = first + optionHtml;
             select.value = current;
         });
+        var wasteLocation = qs('[data-waste-location-filter]', root);
+        if (wasteLocation) {
+            var currentWasteLocation = wasteLocation.value;
+            wasteLocation.innerHTML = '<option value="">Todas las ubicaciones</option>' + optionHtml;
+            wasteLocation.value = currentWasteLocation;
+        }
     }
 
     function renderProducts(root) {
@@ -192,6 +203,14 @@
             }).join('');
             select.value = current;
         });
+        var wasteProduct = qs('[data-waste-product-filter]', root);
+        if (wasteProduct) {
+            var currentWasteProduct = wasteProduct.value;
+            wasteProduct.innerHTML = '<option value="">Todos los productos</option>' + state.products.map(function (product) {
+                return '<option value="' + product.id + '">' + escapeHtml(productLabel(product)) + '</option>';
+            }).join('');
+            wasteProduct.value = currentWasteProduct;
+        }
     }
 
     function renderUnits(root) {
@@ -461,6 +480,62 @@
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-rule-edit="' + rule.id + '">Editar</button> ' +
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-rule-delete="' + rule.id + '">Eliminar</button>' +
                 '</td>' +
+            '</tr>';
+        }).join('');
+    }
+
+    function renderWaste(root) {
+        var body = qs('[data-waste-body]', root);
+        var page = qs('[data-waste-page]', root);
+        var prev = qs('[data-waste-prev]', root);
+        var next = qs('[data-waste-next]', root);
+        var totalQuantity = qs('[data-waste-total-quantity]', root);
+        var totalLoss = qs('[data-waste-total-loss]', root);
+        var withPrice = qs('[data-waste-with-price]', root);
+        var withoutPrice = qs('[data-waste-without-price]', root);
+        var totals = state.wasteTotals || {};
+
+        if (totalQuantity) {
+            totalQuantity.textContent = totals.discarded_quantity !== undefined ? totals.discarded_quantity : 0;
+        }
+        if (totalLoss) {
+            totalLoss.textContent = formatMoney('ARS', totals.estimated_loss || 0);
+        }
+        if (withPrice) {
+            withPrice.textContent = totals.items_with_price !== undefined ? totals.items_with_price : 0;
+        }
+        if (withoutPrice) {
+            withoutPrice.textContent = totals.items_without_price !== undefined ? totals.items_without_price : 0;
+        }
+        if (page) {
+            page.textContent = 'Pagina ' + state.wastePage + ' de ' + state.wasteLastPage;
+        }
+        if (prev) {
+            prev.disabled = state.wastePage <= 1 || state.loading;
+        }
+        if (next) {
+            next.disabled = state.wastePage >= state.wasteLastPage || state.loading;
+        }
+        if (!body) {
+            return;
+        }
+        if (!state.currentGroupId) {
+            body.innerHTML = '<tr><td colspan="7" class="muted">Selecciona un grupo familiar.</td></tr>';
+            return;
+        }
+        if (!state.waste.length) {
+            body.innerHTML = '<tr><td colspan="7" class="muted">No hay desperdicio registrado para los filtros actuales.</td></tr>';
+            return;
+        }
+        body.innerHTML = state.waste.map(function (item) {
+            return '<tr>' +
+                '<td>' + escapeHtml(item.date) + '</td>' +
+                '<td><span class="chip">' + escapeHtml(movementTypeLabel(item.type)) + '</span></td>' +
+                '<td>' + escapeHtml(productLabel(item.product)) + '</td>' +
+                '<td>' + escapeHtml(locationLabel(item.location)) + '</td>' +
+                '<td>' + escapeHtml(item.quantity) + ' ' + escapeHtml(unitLabel(item.unit)) + '</td>' +
+                '<td>' + escapeHtml(item.reason) + '</td>' +
+                '<td>' + (item.estimated_loss === null || item.estimated_loss === undefined ? '-' : escapeHtml(formatMoney('ARS', item.estimated_loss))) + '</td>' +
             '</tr>';
         }).join('');
     }
@@ -866,6 +941,50 @@
             });
     }
 
+    function loadWaste(root) {
+        if (!state.currentGroupId) {
+            renderWaste(root);
+            return Promise.resolve();
+        }
+        var params = new URLSearchParams();
+        params.set('page', state.wastePage);
+        params.set('per_page', 20);
+        var product = qs('[data-waste-product-filter]', root);
+        var location = qs('[data-waste-location-filter]', root);
+        var reason = qs('[data-waste-reason-filter]', root);
+        var from = qs('[data-waste-date-from]', root);
+        var to = qs('[data-waste-date-to]', root);
+        if (product && product.value) {
+            params.set('product_id', product.value);
+        }
+        if (location && location.value) {
+            params.set('stock_location_id', location.value);
+        }
+        if (reason && reason.value.trim()) {
+            params.set('reason', reason.value.trim());
+        }
+        if (from && from.value) {
+            params.set('date_from', from.value);
+        }
+        if (to && to.value) {
+            params.set('date_to', to.value);
+        }
+        return window.CCApi.request(endpoint(state.currentGroupId, '/reports/waste') + '?' + params.toString())
+            .then(function (response) {
+                state.waste = response.data || [];
+                state.wasteTotals = response.totals || {};
+                state.wastePage = response.meta ? response.meta.current_page : 1;
+                state.wasteLastPage = response.meta ? response.meta.last_page : 1;
+                renderWaste(root);
+            })
+            .catch(function (error) {
+                state.waste = [];
+                state.wasteTotals = {};
+                renderWaste(root);
+                handleError(root, error);
+            });
+    }
+
     function loadSummary(root) {
         if (!state.currentGroupId) {
             return Promise.resolve();
@@ -903,6 +1022,7 @@
             loadExpiring(root),
             loadLowStock(root),
             loadRules(root),
+            loadWaste(root),
             loadSummary(root),
             loadValue(root),
         ]);
@@ -1197,6 +1317,14 @@
         var lowRefresh = qs('[data-stock-low-refresh]', root);
         var ruleForm = qs('[data-stock-rule-form]', root);
         var ruleCancel = qs('[data-stock-rule-cancel]', root);
+        var wasteRefresh = qs('[data-waste-refresh]', root);
+        var wasteProduct = qs('[data-waste-product-filter]', root);
+        var wasteLocation = qs('[data-waste-location-filter]', root);
+        var wasteReason = qs('[data-waste-reason-filter]', root);
+        var wasteFrom = qs('[data-waste-date-from]', root);
+        var wasteTo = qs('[data-waste-date-to]', root);
+        var wastePrev = qs('[data-waste-prev]', root);
+        var wasteNext = qs('[data-waste-next]', root);
 
         if (groupSelect) {
             groupSelect.addEventListener('change', function () {
@@ -1204,6 +1332,7 @@
                 state.locationPage = 1;
                 state.stockPage = 1;
                 state.movementPage = 1;
+                state.wastePage = 1;
                 resetLocationForm(root);
                 resetStockForm(root);
                 resetMovementForm(root);
@@ -1390,6 +1519,44 @@
             ruleCancel.addEventListener('click', function () {
                 resetRuleForm(root);
                 clearMessage(root);
+            });
+        }
+        [wasteProduct, wasteLocation, wasteFrom, wasteTo].forEach(function (filter) {
+            if (filter) {
+                filter.addEventListener('change', function () {
+                    state.wastePage = 1;
+                    loadWaste(root);
+                });
+            }
+        });
+        if (wasteReason) {
+            wasteReason.addEventListener('input', function () {
+                window.clearTimeout(state.wasteSearchTimer);
+                state.wasteSearchTimer = window.setTimeout(function () {
+                    state.wastePage = 1;
+                    loadWaste(root);
+                }, 300);
+            });
+        }
+        if (wasteRefresh) {
+            wasteRefresh.addEventListener('click', function () {
+                loadWaste(root);
+            });
+        }
+        if (wastePrev) {
+            wastePrev.addEventListener('click', function () {
+                if (state.wastePage > 1) {
+                    state.wastePage -= 1;
+                    loadWaste(root);
+                }
+            });
+        }
+        if (wasteNext) {
+            wasteNext.addEventListener('click', function () {
+                if (state.wastePage < state.wasteLastPage) {
+                    state.wastePage += 1;
+                    loadWaste(root);
+                }
             });
         }
 
