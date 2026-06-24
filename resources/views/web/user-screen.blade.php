@@ -1902,6 +1902,88 @@
             </div>
         </section>
 
+    @elseif($screenKey === 'purchases')
+        <section class="workspace" data-user-purchases>
+            <div>
+                <article class="panel">
+                    <h2>Ítems de compra</h2>
+                    <div class="alert" data-purchases-message style="display:none"></div>
+                    <div class="web-tools" style="flex-wrap:wrap;gap:8px">
+                        <select class="form-control" data-purchases-group style="max-width:200px">
+                            <option value="">Cargando grupos...</option>
+                        </select>
+                        <input class="form-control" type="number" data-purchases-id
+                            placeholder="ID de la compra..." min="1" step="1" style="max-width:180px">
+                        <button type="button" class="btn-main" data-purchases-load>Cargar ítems</button>
+                        <span class="chip" data-purchases-count>0 ítems</span>
+                    </div>
+                    <div style="overflow:auto;margin-top:10px">
+                        <table class="web-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio unit.</th>
+                                    <th>Total</th>
+                                    <th>Vencimiento</th>
+                                    <th>Stock</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-purchases-body>
+                                <tr><td colspan="7" class="muted">Ingresá el ID de una compra para ver sus ítems.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="aside-panel">
+                <h2 data-purchases-form-title>Agregar ítem</h2>
+                <div class="alert" data-purchases-form-message style="display:none"></div>
+                <form data-purchases-item-form>
+                    <input type="hidden" name="id">
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px">Producto *</label>
+                        <select class="form-control" name="product_id" data-item-product>
+                            <option value="">Seleccioná un producto</option>
+                        </select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+                        <div>
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px">Cantidad</label>
+                            <input class="form-control" type="number" name="quantity" data-item-quantity min="0" step="0.001" placeholder="0">
+                        </div>
+                        <div>
+                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px">Unidad</label>
+                            <select class="form-control" name="unit_id" data-item-unit>
+                                <option value="">Sin unidad</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px">Precio unitario</label>
+                        <input class="form-control" type="number" name="unit_price" data-item-unit-price min="0" step="0.01" placeholder="0.00">
+                        <div data-item-total-preview style="font-size:12px;color:#04ac85;font-weight:700;margin-top:4px"></div>
+                    </div>
+                    <div style="margin-bottom:9px">
+                        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:4px">Fecha de vencimiento</label>
+                        <input class="form-control" type="date" name="expiry_date">
+                    </div>
+                    <div style="margin-bottom:14px;display:flex;align-items:center;gap:8px">
+                        <input type="checkbox" name="add_to_stock" id="purchases-add-to-stock" value="1">
+                        <label for="purchases-add-to-stock" style="font-size:13px;cursor:pointer;margin:0">
+                            Ingresar al stock del hogar
+                        </label>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button type="submit" class="btn-main" data-purchases-save>Guardar</button>
+                        <button type="button" class="btn-secondary-web" data-purchases-reset>Cancelar</button>
+                    </div>
+                </form>
+            </aside>
+        </section>
+
     @elseif($screenKey === 'supermarkets')
         <section class="workspace" data-user-supermarkets>
             <div>
