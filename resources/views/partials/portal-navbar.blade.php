@@ -58,6 +58,7 @@
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
                 ['Importar recetas', '/admin-web/recipe-import', 'web.admin.recipe-import'],
                 ['Importar por texto', '/admin-web/recipe-import-text', 'web.admin.recipe-import-text'],
+                ['Validacion recetas', '/admin-web/imported-recipes', 'recipes.manage'],
                 ['Auditoria', '/admin-web/audit', 'web.admin.audit'],
                 ['Configuracion', '/admin-web/settings', 'web.admin.settings'],
             ],

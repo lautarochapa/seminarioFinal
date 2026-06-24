@@ -2645,6 +2645,107 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'imported-recipes')
+        <section data-admin-recipe-import-candidates>
+            <div class="alert" data-import-candidates-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel" style="min-width:0">
+                    <h2>Recetas pendientes</h2>
+                    <div class="admin-tools">
+                        <select class="form-control" data-import-candidates-status>
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="parsed">Parseadas</option>
+                            <option value="approved">Aprobadas</option>
+                            <option value="rejected">Rechazadas</option>
+                            <option value="recipe_created">Receta creada</option>
+                        </select>
+                        <input class="form-control" type="search" data-import-candidates-source placeholder="Fuente">
+                        <button type="button" class="btn-ghost" data-import-candidates-refresh>Actualizar</button>
+                        <span class="chip" data-import-candidates-count>0 candidatas</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Receta</th>
+                                    <th>Fuente</th>
+                                    <th>Estado</th>
+                                    <th>Contenido</th>
+                                    <th>Fechas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-import-candidates-body>
+                                <tr><td colspan="6" class="muted">Cargando candidatas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-import-candidates-prev>Anterior</button>
+                        <span class="muted" data-import-candidates-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-import-candidates-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2>Detalle y revision</h2>
+                    <div data-import-candidates-detail class="muted">Selecciona una candidata.</div>
+                </aside>
+            </div>
+
+            <section class="grid" style="margin-top:14px">
+                <article class="panel" style="grid-column:1 / -1">
+                    <h2>Editar parseo</h2>
+                    <form class="rbac-form" data-import-candidates-edit-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="raw_title" type="text" placeholder="Titulo">
+                        <textarea class="form-control" name="raw_description" rows="2" placeholder="Descripcion"></textarea>
+                        <input class="form-control" name="raw_image_url" type="url" placeholder="URL imagen">
+                        <textarea class="form-control" name="raw_ingredients_json" rows="5" placeholder="Ingredientes, uno por linea"></textarea>
+                        <textarea class="form-control" name="raw_steps_json" rows="5" placeholder="Pasos, uno por linea"></textarea>
+                        <button type="submit" class="btn-main">Guardar parseo</button>
+                    </form>
+                </article>
+
+                <article class="panel">
+                    <h2>Mapear ingrediente</h2>
+                    <form class="rbac-form" data-import-candidates-map-form>
+                        <input type="hidden" name="id">
+                        <select class="form-control" name="ingredient_index" data-import-candidates-ingredient-index required>
+                            <option value="">Ingrediente parseado</option>
+                        </select>
+                        <select class="form-control" name="ingredient_id" data-import-candidates-ingredient required>
+                            <option value="">Ingrediente del catalogo</option>
+                        </select>
+                        <select class="form-control" name="unit_id" data-import-candidates-unit required>
+                            <option value="">Unidad</option>
+                        </select>
+                        <input class="form-control" name="quantity" type="number" min="0" step="0.01" placeholder="Cantidad">
+                        <input class="form-control" name="notes" type="text" maxlength="300" placeholder="Notas">
+                        <label class="muted" style="display:flex;gap:8px;align-items:center">
+                            <input type="checkbox" name="is_optional" value="1">
+                            Opcional
+                        </label>
+                        <button type="submit" class="btn-main">Guardar mapeo</button>
+                    </form>
+                </article>
+
+                <article class="panel">
+                    <h2>Acciones</h2>
+                    <div class="admin-tools" style="justify-content:flex-start">
+                        <button type="button" class="btn-main" data-import-candidates-approve>Aprobar</button>
+                        <button type="button" class="btn-main" data-import-candidates-create>Crear receta</button>
+                    </div>
+                    <form class="rbac-form" data-import-candidates-reject-form style="margin-top:12px">
+                        <input type="hidden" name="id">
+                        <textarea class="form-control" name="reason" rows="3" maxlength="1000" placeholder="Motivo de rechazo"></textarea>
+                        <button type="submit" class="btn-ghost" style="color:var(--danger)">Rechazar</button>
+                    </form>
+                </article>
+            </section>
+        </section>
+
     @elseif($screenKey === 'recipe-import-text')
         <section class="rbac-layout" data-admin-recipe-import-text>
             <div style="display:flex;flex-direction:column;gap:14px">
