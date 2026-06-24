@@ -7,6 +7,9 @@
         lists: [],
         selectedList: null,
         mealPlans: [],
+        ingredients: [],
+        products: [],
+        units: [],
         page: 1,
         lastPage: 1,
     };
@@ -95,6 +98,11 @@
         return labels[value] || value;
     }
 
+    function itemStatusLabel(value) {
+        var labels = { pending: 'Pendiente', purchased: 'Comprado', skipped: 'Omitido', cancelled: 'Cancelado' };
+        return labels[value] || value;
+    }
+
     function unitLabel(unit) {
         if (!unit) {
             return '';
@@ -110,6 +118,14 @@
             return item.ingredient.name || ('Ingrediente #' + item.ingredient.id);
         }
         return 'Item #' + item.id;
+    }
+
+    function catalogName(item) {
+        return item.name || item.normalized_name || item.code || ('#' + item.id);
+    }
+
+    function catalogUnitName(unit) {
+        return [unit.symbol || unit.code || '', unit.name || ''].filter(Boolean).join(' - ') || ('#' + unit.id);
     }
 
     function renderGroups(root) {
@@ -133,6 +149,27 @@
         }
         if (generateSelect) {
             generateSelect.innerHTML = '<option value="">Plan para generar lista</option>' + options;
+        }
+    }
+
+    function renderItemCatalogs(root) {
+        var ingredientSelect = qs('[data-shopping-list-item-ingredient]', root);
+        var productSelect = qs('[data-shopping-list-item-product]', root);
+        var unitSelect = qs('[data-shopping-list-item-unit]', root);
+        if (ingredientSelect) {
+            ingredientSelect.innerHTML = '<option value="">Ingrediente opcional</option>' + state.ingredients.map(function (ingredient) {
+                return option(catalogName(ingredient), ingredient.id, false);
+            }).join('');
+        }
+        if (productSelect) {
+            productSelect.innerHTML = '<option value="">Producto opcional</option>' + state.products.map(function (product) {
+                return option(catalogName(product), product.id, false);
+            }).join('');
+        }
+        if (unitSelect) {
+            unitSelect.innerHTML = '<option value="">Unidad</option>' + state.units.map(function (unit) {
+                return option(catalogUnitName(unit), unit.id, false);
+            }).join('');
         }
     }
 
@@ -194,16 +231,20 @@
             return '<tr>' +
                 '<td>' + escapeHtml(itemName(item)) + '</td>' +
                 '<td>' + escapeHtml(item.quantity) + ' ' + escapeHtml(unitLabel(item.unit)) + '</td>' +
-                '<td>' + escapeHtml(statusLabel(item.status)) + '</td>' +
+                '<td>' + escapeHtml(item.estimated_price) + '</td>' +
+                '<td>' + escapeHtml(item.actual_price) + '</td>' +
+                '<td>' + escapeHtml(itemStatusLabel(item.status)) + '</td>' +
                 '<td>' + escapeHtml(item.notes) + '</td>' +
+                '<td><button type="button" class="btn-secondary-web btn-sm" data-shopping-list-item-edit="' + escapeHtml(item.id) + '">Editar</button> ' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-shopping-list-item-delete="' + escapeHtml(item.id) + '">Eliminar</button></td>' +
                 '</tr>';
-        }).join('') : '<tr><td colspan="4" class="muted">La lista no tiene items cargados.</td></tr>';
+        }).join('') : '<tr><td colspan="7" class="muted">La lista no tiene items cargados.</td></tr>';
         target.className = '';
         target.innerHTML = '<div class="table-line"><span>Lista</span><strong>#' + escapeHtml(list.id) + '</strong></div>' +
             '<div class="table-line"><span>Origen</span><strong>' + escapeHtml(sourceLabel(list.source_type)) + '</strong></div>' +
             '<div class="table-line"><span>Estado</span><strong>' + escapeHtml(statusLabel(list.status)) + '</strong></div>' +
             '<div class="table-line"><span>Total estimado</span><strong>' + escapeHtml(list.estimated_total) + '</strong></div>' +
-            '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Item</th><th>Cantidad</th><th>Estado</th><th>Notas</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+            '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Item</th><th>Cantidad</th><th>Estimado</th><th>Real</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     }
 
     function resetForm(root) {
@@ -237,6 +278,40 @@
         }
     }
 
+    function resetItemForm(root) {
+        var form = qs('[data-shopping-list-item-form]', root);
+        var title = qs('[data-shopping-list-item-form-title]', root);
+        if (!form) {
+            return;
+        }
+        form.reset();
+        form.elements.id.value = '';
+        form.elements.status.value = 'pending';
+        if (title) {
+            title.textContent = 'Agregar item';
+        }
+    }
+
+    function fillItemForm(root, item) {
+        var form = qs('[data-shopping-list-item-form]', root);
+        var title = qs('[data-shopping-list-item-form-title]', root);
+        if (!form || !item) {
+            return;
+        }
+        form.elements.id.value = item.id;
+        form.elements.ingredient_id.value = item.ingredient ? item.ingredient.id : '';
+        form.elements.product_id.value = item.product ? item.product.id : '';
+        form.elements.quantity.value = item.quantity || '';
+        form.elements.unit_id.value = item.unit ? item.unit.id : '';
+        form.elements.estimated_price.value = item.estimated_price || '';
+        form.elements.actual_price.value = item.actual_price || '';
+        form.elements.status.value = item.status || 'pending';
+        form.elements.notes.value = item.notes || '';
+        if (title) {
+            title.textContent = 'Editar item #' + item.id;
+        }
+    }
+
     function buildPayload(form) {
         var data = {
             source_type: form.elements.source_type.value,
@@ -247,6 +322,35 @@
         }
         if (form.elements.optimization_mode.value.trim()) {
             data.optimization_mode = form.elements.optimization_mode.value.trim();
+        }
+        return data;
+    }
+
+    function buildItemPayload(form) {
+        var data = {};
+        if (form.elements.ingredient_id.value) {
+            data.ingredient_id = Number(form.elements.ingredient_id.value);
+        }
+        if (form.elements.product_id.value) {
+            data.product_id = Number(form.elements.product_id.value);
+        }
+        if (form.elements.quantity.value) {
+            data.quantity = Number(form.elements.quantity.value);
+        }
+        if (form.elements.unit_id.value) {
+            data.unit_id = Number(form.elements.unit_id.value);
+        }
+        if (form.elements.estimated_price.value !== '') {
+            data.estimated_price = Number(form.elements.estimated_price.value);
+        }
+        if (form.elements.actual_price.value !== '') {
+            data.actual_price = Number(form.elements.actual_price.value);
+        }
+        if (form.elements.status.value) {
+            data.status = form.elements.status.value;
+        }
+        if (form.elements.notes.value.trim()) {
+            data.notes = form.elements.notes.value.trim();
         }
         return data;
     }
@@ -305,6 +409,23 @@
             });
     }
 
+    function readCollection(response) {
+        return response && response.data ? response.data : [];
+    }
+
+    function loadItemCatalogs(root) {
+        return Promise.all([
+            window.CCApi.request(api('/ingredients?per_page=100')).catch(function () { return { data: [] }; }),
+            window.CCApi.request(api('/products?per_page=100')).catch(function () { return { data: [] }; }),
+            window.CCApi.request(api('/units?per_page=100')).catch(function () { return { data: [] }; }),
+        ]).then(function (responses) {
+            state.ingredients = readCollection(responses[0]);
+            state.products = readCollection(responses[1]);
+            state.units = readCollection(responses[2]);
+            renderItemCatalogs(root);
+        });
+    }
+
     function loadLists(root) {
         clearMessage(root);
         if (!state.currentGroupId) {
@@ -333,6 +454,21 @@
             .then(function (response) {
                 state.selectedList = response.data || null;
                 renderDetail(root, state.selectedList);
+                resetItemForm(root);
+            })
+            .catch(function (error) {
+                handleError(root, error);
+            });
+    }
+
+    function loadItems(root) {
+        if (!state.currentGroupId || !state.selectedList) {
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/items'))
+            .then(function (response) {
+                state.selectedList.items = response.data || [];
+                renderDetail(root, state.selectedList);
             })
             .catch(function (error) {
                 handleError(root, error);
@@ -353,6 +489,7 @@
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
             resetForm(root);
+            resetItemForm(root);
             return loadLists(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -369,6 +506,7 @@
             showMessage(root, 'success', 'Lista eliminada.');
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
+            resetItemForm(root);
             return loadLists(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -392,6 +530,7 @@
             showMessage(root, 'success', 'Lista generada desde menu.');
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
+            resetItemForm(root);
             return loadLists(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -417,7 +556,45 @@
             showMessage(root, 'success', 'Lista generada desde historico.');
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
+            resetItemForm(root);
             return loadLists(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function saveItem(root, form) {
+        if (!state.currentGroupId || !state.selectedList) {
+            showMessage(root, 'warning', 'Selecciona una lista antes de cargar items.');
+            return Promise.resolve();
+        }
+        var id = form.elements.id.value;
+        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/items' + (id ? '/' + encodeURIComponent(id) : '')), {
+            method: id ? 'PATCH' : 'POST',
+            body: buildItemPayload(form),
+        }).then(function () {
+            showMessage(root, 'success', id ? 'Item actualizado.' : 'Item agregado.');
+            resetItemForm(root);
+            return loadItems(root).then(function () {
+                return loadLists(root);
+            });
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function deleteItem(root, id) {
+        if (!state.currentGroupId || !state.selectedList || !id || !window.confirm('Eliminar este item?')) {
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/items/' + encodeURIComponent(id)), {
+            method: 'DELETE',
+        }).then(function () {
+            showMessage(root, 'success', 'Item eliminado.');
+            resetItemForm(root);
+            return loadItems(root).then(function () {
+                return loadLists(root);
+            });
         }).catch(function (error) {
             handleError(root, error);
         });
@@ -426,6 +603,7 @@
     function bind(root) {
         var groupSelect = qs('[data-shopping-list-group]', root);
         var form = qs('[data-shopping-list-form]', root);
+        var itemForm = qs('[data-shopping-list-item-form]', root);
         var generatePlanForm = qs('[data-shopping-list-generate-plan-form]', root);
         var generateHistoryForm = qs('[data-shopping-list-generate-history-form]', root);
         ['[data-shopping-list-status]', '[data-shopping-list-source]'].forEach(function (selector) {
@@ -444,6 +622,7 @@
                 state.selectedList = null;
                 renderDetail(root, null);
                 resetForm(root);
+                resetItemForm(root);
                 loadMealPlans(root).then(function () {
                     return loadLists(root);
                 });
@@ -473,6 +652,15 @@
                 saveList(root, form);
             });
         }
+        if (itemForm) {
+            itemForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                saveItem(root, itemForm);
+            });
+        }
+        qs('[data-shopping-list-item-reset]', root).addEventListener('click', function () {
+            resetItemForm(root);
+        });
         if (generatePlanForm) {
             generatePlanForm.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -500,11 +688,26 @@
                 if (list) {
                     state.selectedList = list;
                     renderDetail(root, list);
+                    resetItemForm(root);
                     fillForm(root, list);
                 }
             }
             if (remove) {
                 deleteList(root, remove.getAttribute('data-shopping-list-delete'));
+            }
+        });
+        qs('[data-shopping-list-detail]', root).addEventListener('click', function (event) {
+            var edit = event.target.closest('[data-shopping-list-item-edit]');
+            var remove = event.target.closest('[data-shopping-list-item-delete]');
+            if (edit && state.selectedList) {
+                var editId = edit.getAttribute('data-shopping-list-item-edit');
+                var item = (state.selectedList.items || []).find(function (candidate) {
+                    return String(candidate.id) === String(editId);
+                });
+                fillItemForm(root, item);
+            }
+            if (remove) {
+                deleteItem(root, remove.getAttribute('data-shopping-list-item-delete'));
             }
         });
     }
@@ -515,6 +718,8 @@
             return;
         }
         bind(root);
-        loadGroups(root);
+        loadItemCatalogs(root).then(function () {
+            return loadGroups(root);
+        });
     });
 })(window, document);

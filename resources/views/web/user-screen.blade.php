@@ -1466,6 +1466,36 @@
                             <button type="button" class="btn-secondary-web" data-shopping-list-reset>Limpiar</button>
                         </div>
                     </form>
+
+                    <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+
+                    <h2 data-shopping-list-item-form-title>Agregar item</h2>
+                    <form class="family-form" data-shopping-list-item-form>
+                        <input type="hidden" name="id">
+                        <select class="form-control" name="ingredient_id" data-shopping-list-item-ingredient>
+                            <option value="">Ingrediente opcional</option>
+                        </select>
+                        <select class="form-control" name="product_id" data-shopping-list-item-product>
+                            <option value="">Producto opcional</option>
+                        </select>
+                        <input class="form-control" name="quantity" type="number" min="0.0001" step="0.0001" placeholder="Cantidad" required>
+                        <select class="form-control" name="unit_id" data-shopping-list-item-unit required>
+                            <option value="">Unidad</option>
+                        </select>
+                        <input class="form-control" name="estimated_price" type="number" min="0" step="0.01" placeholder="Precio estimado">
+                        <input class="form-control" name="actual_price" type="number" min="0" step="0.01" placeholder="Precio real">
+                        <select class="form-control" name="status">
+                            <option value="pending">Pendiente</option>
+                            <option value="purchased">Comprado</option>
+                            <option value="skipped">Omitido</option>
+                            <option value="cancelled">Cancelado</option>
+                        </select>
+                        <textarea class="form-control" name="notes" rows="3" maxlength="1000" placeholder="Notas"></textarea>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar item</button>
+                            <button type="button" class="btn-secondary-web" data-shopping-list-item-reset>Limpiar</button>
+                        </div>
+                    </form>
                 </aside>
             </div>
         </section>
