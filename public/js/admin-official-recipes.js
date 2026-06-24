@@ -223,6 +223,8 @@
 
         var nutritionHtml = '<div data-nutrition-panel></div>';
 
+        var costHtml = '<div data-cost-panel></div>';
+
         var sourceHtml = '';
         if (r.sources && r.sources.length) {
             var src = r.sources[0];
@@ -253,6 +255,7 @@
             ingredientsHtml +
             stepsHtml +
             nutritionHtml +
+            costHtml +
             editBtn;
 
         if (window.RecipeIngredients) {
@@ -266,6 +269,10 @@
         if (window.RecipeNutrition) {
             var nutrPanel = detailEl.querySelector('[data-nutrition-panel]');
             if (nutrPanel) { window.RecipeNutrition.mount(nutrPanel, r.id, !r.deleted_at); }
+        }
+        if (window.RecipeCost) {
+            var costPanel = detailEl.querySelector('[data-cost-panel]');
+            if (costPanel) { window.RecipeCost.mount(costPanel, r.id, !r.deleted_at); }
         }
     }
 
