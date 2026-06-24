@@ -124,12 +124,16 @@
 
     function renderMealPlans(root) {
         var select = qs('[data-shopping-list-plan]', root);
-        if (!select) {
-            return;
-        }
-        select.innerHTML = '<option value="">Plan asociado opcional</option>' + state.mealPlans.map(function (plan) {
+        var generateSelect = qs('[data-shopping-list-generate-plan]', root);
+        var options = state.mealPlans.map(function (plan) {
             return option('#' + plan.id + ' - ' + text(plan.start_date) + ' / ' + text(plan.end_date), plan.id, false);
         }).join('');
+        if (select) {
+            select.innerHTML = '<option value="">Plan asociado opcional</option>' + options;
+        }
+        if (generateSelect) {
+            generateSelect.innerHTML = '<option value="">Plan para generar lista</option>' + options;
+        }
     }
 
     function renderLists(root, meta) {
@@ -371,9 +375,59 @@
         });
     }
 
+    function generateFromMealPlan(root, form) {
+        if (!state.currentGroupId) {
+            showMessage(root, 'warning', 'Selecciona un grupo familiar.');
+            return Promise.resolve();
+        }
+        var mealPlanId = form.elements.meal_plan_id.value;
+        if (!mealPlanId) {
+            showMessage(root, 'warning', 'Selecciona un plan para generar la lista.');
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/shopping-lists/generate-from-meal-plan'), {
+            method: 'POST',
+            body: { meal_plan_id: Number(mealPlanId) },
+        }).then(function (response) {
+            showMessage(root, 'success', 'Lista generada desde menu.');
+            state.selectedList = response.data || null;
+            renderDetail(root, state.selectedList);
+            return loadLists(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function generateFromHistory(root, form) {
+        if (!state.currentGroupId) {
+            showMessage(root, 'warning', 'Selecciona un grupo familiar.');
+            return Promise.resolve();
+        }
+        var data = {};
+        if (form.elements.date_from.value) {
+            data.date_from = form.elements.date_from.value;
+        }
+        if (form.elements.date_to.value) {
+            data.date_to = form.elements.date_to.value;
+        }
+        return window.CCApi.request(groupPath('/shopping-lists/generate-from-history'), {
+            method: 'POST',
+            body: data,
+        }).then(function (response) {
+            showMessage(root, 'success', 'Lista generada desde historico.');
+            state.selectedList = response.data || null;
+            renderDetail(root, state.selectedList);
+            return loadLists(root);
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
     function bind(root) {
         var groupSelect = qs('[data-shopping-list-group]', root);
         var form = qs('[data-shopping-list-form]', root);
+        var generatePlanForm = qs('[data-shopping-list-generate-plan-form]', root);
+        var generateHistoryForm = qs('[data-shopping-list-generate-history-form]', root);
         ['[data-shopping-list-status]', '[data-shopping-list-source]'].forEach(function (selector) {
             var field = qs(selector, root);
             if (field) {
@@ -417,6 +471,18 @@
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
                 saveList(root, form);
+            });
+        }
+        if (generatePlanForm) {
+            generatePlanForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                generateFromMealPlan(root, generatePlanForm);
+            });
+        }
+        if (generateHistoryForm) {
+            generateHistoryForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                generateFromHistory(root, generateHistoryForm);
             });
         }
         qs('[data-shopping-list-body]', root).addEventListener('click', function (event) {

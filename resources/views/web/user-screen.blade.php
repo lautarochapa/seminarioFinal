@@ -1428,6 +1428,21 @@
                 </div>
 
                 <aside class="panel">
+                    <h2>Generar lista</h2>
+                    <form class="family-form" data-shopping-list-generate-plan-form>
+                        <select class="form-control" name="meal_plan_id" data-shopping-list-generate-plan required>
+                            <option value="">Plan para generar lista</option>
+                        </select>
+                        <button type="submit" class="btn-main">Generar desde menu</button>
+                    </form>
+                    <form class="family-form" data-shopping-list-generate-history-form style="margin-top:14px">
+                        <input class="form-control" name="date_from" type="date" aria-label="Desde">
+                        <input class="form-control" name="date_to" type="date" aria-label="Hasta">
+                        <button type="submit" class="btn-secondary-web">Generar desde historico</button>
+                    </form>
+
+                    <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+
                     <h2 data-shopping-list-form-title>Crear lista</h2>
                     <form class="family-form" data-shopping-list-form>
                         <input type="hidden" name="id">
