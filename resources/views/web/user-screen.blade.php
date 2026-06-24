@@ -1478,6 +1478,29 @@
                             <button type="button" class="btn-secondary-web" data-meal-plan-reset>Limpiar</button>
                         </div>
                     </form>
+
+                    <h2 style="margin-top:18px" data-meal-plan-item-form-title>Agregar comida al calendario</h2>
+                    <form class="family-form" data-meal-plan-item-form>
+                        <input type="hidden" name="item_id">
+                        <input class="form-control" name="date" type="date" required>
+                        <select class="form-control" name="meal_type_id" data-meal-plan-item-meal-type required>
+                            <option value="">Tipo de comida</option>
+                        </select>
+                        <select class="form-control" name="recipe_id" data-meal-plan-item-recipe>
+                            <option value="">Receta opcional</option>
+                        </select>
+                        <input class="form-control" name="free_meal_description" type="text" maxlength="500" placeholder="Comida libre o descripcion">
+                        <input class="form-control" name="servings_total" type="number" min="0" step="0.1" placeholder="Porciones">
+                        <textarea class="form-control" name="notes" rows="2" maxlength="1000" placeholder="Notas"></textarea>
+                        <label class="checkbox-card" style="margin-bottom:9px">
+                            <input type="checkbox" name="is_eating_out" value="1">
+                            <span>Comer afuera</span>
+                        </label>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Guardar comida</button>
+                            <button type="button" class="btn-secondary-web" data-meal-plan-item-reset>Limpiar comida</button>
+                        </div>
+                    </form>
                 </aside>
             </div>
         </section>

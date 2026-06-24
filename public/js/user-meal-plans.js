@@ -78,16 +78,26 @@
 
     function renderOptions(root) {
         var mealType = qs('[data-meal-plan-meal-type]', root);
+        var itemMealType = qs('[data-meal-plan-item-meal-type]', root);
         var recipe = qs('[data-meal-plan-recipe]', root);
-        if (mealType) {
-            mealType.innerHTML = '<option value="">Tipo de comida</option>' + state.mealTypes.map(function (item) {
+        var itemRecipe = qs('[data-meal-plan-item-recipe]', root);
+        var mealTypeOptions = '<option value="">Tipo de comida</option>' + state.mealTypes.map(function (item) {
                 return option(item.name, item.id, false);
-            }).join('');
+        }).join('');
+        var recipeOptions = '<option value="">Receta opcional</option>' + state.recipes.map(function (item) {
+                return option(item.name || item.nombre || ('Receta #' + item.id), item.id, false);
+        }).join('');
+        if (mealType) {
+            mealType.innerHTML = mealTypeOptions;
+        }
+        if (itemMealType) {
+            itemMealType.innerHTML = mealTypeOptions;
         }
         if (recipe) {
-            recipe.innerHTML = '<option value="">Receta opcional</option>' + state.recipes.map(function (item) {
-                return option(item.name || item.nombre || ('Receta #' + item.id), item.id, false);
-            }).join('');
+            recipe.innerHTML = recipeOptions;
+        }
+        if (itemRecipe) {
+            itemRecipe.innerHTML = recipeOptions;
         }
     }
 
@@ -175,14 +185,16 @@
                 '<td>' + escapeHtml(itemTitle(item)) + '</td>' +
                 '<td>' + escapeHtml(item.servings_total) + '</td>' +
                 '<td>' + escapeHtml(item.status) + '</td>' +
+                '<td><button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-edit="' + escapeHtml(item.id) + '">Editar</button> ' +
+                '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-delete="' + escapeHtml(item.id) + '">Eliminar</button></td>' +
                 '</tr>';
-        }).join('') : '<tr><td colspan="5" class="muted">El plan no tiene comidas cargadas.</td></tr>';
+        }).join('') : '<tr><td colspan="6" class="muted">El plan no tiene comidas cargadas.</td></tr>';
 
         target.className = '';
         target.innerHTML = '<div class="table-line"><span>Periodo</span><strong>' + escapeHtml(periodLabel(plan.period_type)) + '</strong></div>' +
             '<div class="table-line"><span>Rango</span><strong>' + escapeHtml(plan.start_date) + ' / ' + escapeHtml(plan.end_date) + '</strong></div>' +
             '<div class="table-line"><span>Modo</span><strong>' + escapeHtml(plan.mode) + '</strong></div>' +
-            '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Fecha</th><th>Comida</th><th>Detalle</th><th>Porciones</th><th>Estado</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+            '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Fecha</th><th>Comida</th><th>Detalle</th><th>Porciones</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     }
 
     function resetForm(root) {
@@ -196,6 +208,22 @@
         form.elements.period_type.value = 'weekly';
         if (title) {
             title.textContent = 'Crear plan';
+        }
+    }
+
+    function resetItemForm(root) {
+        var form = qs('[data-meal-plan-item-form]', root);
+        var title = qs('[data-meal-plan-item-form-title]', root);
+        if (!form) {
+            return;
+        }
+        form.reset();
+        form.elements.item_id.value = '';
+        if (state.selectedPlan && state.selectedPlan.start_date) {
+            form.elements.date.value = state.selectedPlan.start_date;
+        }
+        if (title) {
+            title.textContent = 'Agregar comida al calendario';
         }
     }
 
@@ -229,6 +257,46 @@
         if (title) {
             title.textContent = 'Editar plan #' + plan.id;
         }
+    }
+
+    function fillItemForm(root, item) {
+        var form = qs('[data-meal-plan-item-form]', root);
+        var title = qs('[data-meal-plan-item-form-title]', root);
+        if (!form || !item) {
+            return;
+        }
+        form.elements.item_id.value = item.id || '';
+        form.elements.date.value = item.date || '';
+        form.elements.meal_type_id.value = item.meal_type_id || '';
+        form.elements.recipe_id.value = item.recipe_id || '';
+        form.elements.free_meal_description.value = item.free_meal_description || '';
+        form.elements.servings_total.value = item.servings_total || '';
+        form.elements.notes.value = item.notes || '';
+        form.elements.is_eating_out.checked = !!item.is_eating_out;
+        if (title) {
+            title.textContent = 'Editar comida #' + item.id;
+        }
+    }
+
+    function buildItemPayload(form) {
+        var data = {
+            date: form.elements.date.value,
+            meal_type_id: Number(form.elements.meal_type_id.value),
+            is_eating_out: form.elements.is_eating_out.checked,
+        };
+        if (form.elements.recipe_id.value) {
+            data.recipe_id = Number(form.elements.recipe_id.value);
+        }
+        if (form.elements.free_meal_description.value.trim()) {
+            data.free_meal_description = form.elements.free_meal_description.value.trim();
+        }
+        if (form.elements.servings_total.value !== '') {
+            data.servings_total = Number(form.elements.servings_total.value);
+        }
+        if (form.elements.notes.value.trim()) {
+            data.notes = form.elements.notes.value.trim();
+        }
+        return data;
     }
 
     function buildPayload(form) {
@@ -350,10 +418,49 @@
             .then(function (response) {
                 state.selectedPlan = response.data || null;
                 renderDetail(root, state.selectedPlan);
+                resetItemForm(root);
             })
             .catch(function (error) {
                 handleError(root, error);
             });
+    }
+
+    function saveItem(root, form) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            showMessage(root, 'warning', 'Selecciona un plan para agregar comidas.');
+            return Promise.resolve();
+        }
+        var itemId = form.elements.item_id.value;
+        var path = '/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/items' + (itemId ? '/' + encodeURIComponent(itemId) : '');
+        return window.CCApi.request(groupPath(path), {
+            method: itemId ? 'PATCH' : 'POST',
+            body: buildItemPayload(form),
+        }).then(function () {
+            showMessage(root, 'success', itemId ? 'Comida actualizada.' : 'Comida agregada.');
+            resetItemForm(root);
+            return loadPlan(root, state.selectedPlan.id).then(function () {
+                return loadPlans(root);
+            });
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function deleteItem(root, itemId) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id || !itemId || !window.confirm('Eliminar esta comida del plan?')) {
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/items/' + encodeURIComponent(itemId)), {
+            method: 'DELETE',
+        }).then(function () {
+            showMessage(root, 'success', 'Comida eliminada.');
+            resetItemForm(root);
+            return loadPlan(root, state.selectedPlan.id).then(function () {
+                return loadPlans(root);
+            });
+        }).catch(function (error) {
+            handleError(root, error);
+        });
     }
 
     function savePlan(root, form) {
@@ -458,7 +565,9 @@
     function bind(root) {
         var groupSelect = qs('[data-meal-plan-group]', root);
         var form = qs('[data-meal-plan-form]', root);
+        var itemForm = qs('[data-meal-plan-item-form]', root);
         var generateForm = qs('[data-meal-plan-generate-form]', root);
+        var detail = qs('[data-meal-plan-detail]', root);
         ['[data-meal-plan-period]', '[data-meal-plan-status]', '[data-meal-plan-from]', '[data-meal-plan-to]'].forEach(function (selector) {
             var field = qs(selector, root);
             if (field) {
@@ -474,6 +583,7 @@
                 state.page = 1;
                 state.selectedPlan = null;
                 renderDetail(root, null);
+                resetItemForm(root);
                 loadPlans(root);
             });
         }
@@ -495,10 +605,19 @@
         qs('[data-meal-plan-reset]', root).addEventListener('click', function () {
             resetForm(root);
         });
+        qs('[data-meal-plan-item-reset]', root).addEventListener('click', function () {
+            resetItemForm(root);
+        });
         if (form) {
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
                 savePlan(root, form);
+            });
+        }
+        if (itemForm) {
+            itemForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                saveItem(root, itemForm);
             });
         }
         if (generateForm) {
@@ -529,12 +648,31 @@
                     state.selectedPlan = plan;
                     renderDetail(root, plan);
                     fillForm(root, plan);
+                    resetItemForm(root);
                 }
             }
             if (remove) {
                 deletePlan(root, remove.getAttribute('data-meal-plan-delete'));
             }
         });
+        if (detail) {
+            detail.addEventListener('click', function (event) {
+                var editItem = event.target.closest('[data-meal-plan-item-edit]');
+                var deleteItemButton = event.target.closest('[data-meal-plan-item-delete]');
+                if (editItem) {
+                    var itemId = editItem.getAttribute('data-meal-plan-item-edit');
+                    var item = ((state.selectedPlan || {}).items || []).find(function (candidate) {
+                        return String(candidate.id) === String(itemId);
+                    });
+                    if (item) {
+                        fillItemForm(root, item);
+                    }
+                }
+                if (deleteItemButton) {
+                    deleteItem(root, deleteItemButton.getAttribute('data-meal-plan-item-delete'));
+                }
+            });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
