@@ -9,6 +9,8 @@
         selectedItem: null,
         portions: [],
         incompatibilities: [],
+        shoppingPreview: [],
+        generatedShoppingList: null,
         members: [],
         mealTypes: [],
         recipes: [],
@@ -292,6 +294,65 @@
         }).join('');
         panel.className = '';
         panel.innerHTML = '<div style="overflow:auto"><table class="web-table"><thead><tr><th>Tipo</th><th>Severidad</th><th>Mensaje</th><th>Item</th><th>Estado</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }
+
+    function unitLabel(unit) {
+        if (!unit) {
+            return '-';
+        }
+        return unit.symbol || unit.code || unit.name || ('Unidad #' + unit.id);
+    }
+
+    function recipeSourcesLabel(sources) {
+        if (!sources || !sources.length) {
+            return '-';
+        }
+        return sources.map(function (source) {
+            return source.name || source.nombre || source.recipe_name || source;
+        }).join(', ');
+    }
+
+    function renderShoppingPreview(root) {
+        var panel = qs('[data-meal-plan-shopping-preview-panel]', root);
+        if (!panel) {
+            return;
+        }
+        if (!state.selectedPlan) {
+            panel.className = 'muted';
+            panel.textContent = 'Selecciona un plan para calcular faltantes.';
+            return;
+        }
+        if (state.generatedShoppingList) {
+            panel.className = '';
+            panel.innerHTML = '<div class="table-line"><span>Lista generada</span><strong>#' + escapeHtml(state.generatedShoppingList.id) + ' - ' + escapeHtml(state.generatedShoppingList.status) + '</strong></div>' +
+                '<p class="muted" style="margin-top:8px">La lista fue generada desde el plan seleccionado.</p>' + renderShoppingPreviewTable();
+            return;
+        }
+        if (!state.shoppingPreview.length) {
+            panel.className = 'muted';
+            panel.textContent = 'No hay faltantes calculados para este plan.';
+            return;
+        }
+        panel.className = '';
+        panel.innerHTML = renderShoppingPreviewTable();
+    }
+
+    function renderShoppingPreviewTable() {
+        if (!state.shoppingPreview.length) {
+            return '<p class="muted" style="margin-top:8px">No hay ingredientes faltantes.</p>';
+        }
+        var rows = state.shoppingPreview.map(function (item) {
+            var ingredient = item.ingredient || {};
+            return '<tr>' +
+                '<td>' + escapeHtml(ingredient.name || ingredient.nombre || ('Ingrediente #' + ingredient.id)) + '</td>' +
+                '<td>' + escapeHtml(item.missing_quantity) + '</td>' +
+                '<td>' + escapeHtml(item.required_quantity) + '</td>' +
+                '<td>' + escapeHtml(unitLabel(item.unit)) + '</td>' +
+                '<td>' + escapeHtml(recipeSourcesLabel(item.recipe_sources)) + '</td>' +
+                '<td>' + (item.incomplete ? '<span class="chip">Datos incompletos</span>' : '<span class="muted">OK</span>') + '</td>' +
+                '</tr>';
+        }).join('');
+        return '<div style="overflow:auto"><table class="web-table"><thead><tr><th>Ingrediente</th><th>Falta</th><th>Requerido</th><th>Unidad</th><th>Recetas</th><th>Estado</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     }
 
     function resetForm(root) {
@@ -584,9 +645,12 @@
                 state.selectedItem = null;
                 state.portions = [];
                 state.incompatibilities = [];
+                state.shoppingPreview = [];
+                state.generatedShoppingList = null;
                 renderDetail(root, state.selectedPlan);
                 renderPortions(root);
                 renderIncompatibilities(root);
+                renderShoppingPreview(root);
                 resetItemForm(root);
                 resetPortionForm(root);
                 return loadIncompatibilities(root);
@@ -629,6 +693,74 @@
             state.incompatibilities = response.data || [];
             renderIncompatibilities(root);
             showMessage(root, 'success', state.incompatibilities.length ? 'Alertas actualizadas.' : 'No se detectaron incompatibilidades.');
+        }).catch(function (error) {
+            handleError(root, error);
+        }).finally(function () {
+            if (button) {
+                button.disabled = false;
+            }
+        });
+    }
+
+    function loadShoppingPreview(root) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            state.shoppingPreview = [];
+            state.generatedShoppingList = null;
+            renderShoppingPreview(root);
+            return Promise.resolve();
+        }
+        var button = qs('[data-meal-plan-shopping-preview]', root);
+        if (button) {
+            button.disabled = true;
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/shopping-list-preview'))
+            .then(function (response) {
+                state.shoppingPreview = response.data || [];
+                state.generatedShoppingList = null;
+                renderShoppingPreview(root);
+                showMessage(root, 'success', state.shoppingPreview.length ? 'Faltantes calculados.' : 'No hay faltantes para comprar.');
+            })
+            .catch(function (error) {
+                state.shoppingPreview = [];
+                state.generatedShoppingList = null;
+                renderShoppingPreview(root);
+                handleError(root, error);
+            })
+            .finally(function () {
+                if (button) {
+                    button.disabled = false;
+                }
+            });
+    }
+
+    function generateShoppingList(root) {
+        if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
+            showMessage(root, 'warning', 'Selecciona un plan para generar la lista.');
+            return Promise.resolve();
+        }
+        if (!window.confirm('Generar lista de compras desde este plan?')) {
+            return Promise.resolve();
+        }
+        var button = qs('[data-meal-plan-shopping-generate]', root);
+        if (button) {
+            button.disabled = true;
+        }
+        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/generate-shopping-list'), {
+            method: 'POST',
+        }).then(function (response) {
+            state.generatedShoppingList = response.data || null;
+            state.shoppingPreview = (state.generatedShoppingList && state.generatedShoppingList.items ? state.generatedShoppingList.items.map(function (item) {
+                return {
+                    ingredient: item.ingredient,
+                    missing_quantity: item.quantity,
+                    required_quantity: item.quantity,
+                    unit: item.unit,
+                    recipe_sources: [],
+                    incomplete: false,
+                };
+            }) : state.shoppingPreview);
+            renderShoppingPreview(root);
+            showMessage(root, 'success', 'Lista de compras generada.');
         }).catch(function (error) {
             handleError(root, error);
         }).finally(function () {
@@ -806,7 +938,10 @@
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
             state.incompatibilities = [];
+            state.shoppingPreview = [];
+            state.generatedShoppingList = null;
             renderIncompatibilities(root);
+            renderShoppingPreview(root);
             resetForm(root);
             return loadPlans(root);
         }).catch(function (error) {
@@ -831,7 +966,10 @@
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
             state.incompatibilities = [];
+            state.shoppingPreview = [];
+            state.generatedShoppingList = null;
             renderIncompatibilities(root);
+            renderShoppingPreview(root);
             return loadPlans(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -853,6 +991,9 @@
             showMessage(root, 'success', 'Plan aprobado.');
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
+            state.shoppingPreview = [];
+            state.generatedShoppingList = null;
+            renderShoppingPreview(root);
             return loadIncompatibilities(root).then(function () {
                 return loadPlans(root);
             });
@@ -875,7 +1016,10 @@
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
             state.incompatibilities = [];
+            state.shoppingPreview = [];
+            state.generatedShoppingList = null;
             renderIncompatibilities(root);
+            renderShoppingPreview(root);
             return loadPlans(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -892,8 +1036,11 @@
             showMessage(root, 'success', 'Plan eliminado.');
             state.selectedPlan = null;
             state.incompatibilities = [];
+            state.shoppingPreview = [];
+            state.generatedShoppingList = null;
             renderDetail(root, null);
             renderIncompatibilities(root);
+            renderShoppingPreview(root);
             return loadPlans(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -925,10 +1072,13 @@
                 state.selectedItem = null;
                 state.portions = [];
                 state.incompatibilities = [];
+                state.shoppingPreview = [];
+                state.generatedShoppingList = null;
                 state.members = [];
                 renderDetail(root, null);
                 renderPortions(root);
                 renderIncompatibilities(root);
+                renderShoppingPreview(root);
                 resetItemForm(root);
                 resetPortionForm(root);
                 loadMembers(root).then(function () {
@@ -993,6 +1143,12 @@
         qs('[data-meal-plan-check-incompatibilities]', root).addEventListener('click', function () {
             checkIncompatibilities(root);
         });
+        qs('[data-meal-plan-shopping-preview]', root).addEventListener('click', function () {
+            loadShoppingPreview(root);
+        });
+        qs('[data-meal-plan-shopping-generate]', root).addEventListener('click', function () {
+            generateShoppingList(root);
+        });
         qs('[data-meal-plan-body]', root).addEventListener('click', function (event) {
             var show = event.target.closest('[data-meal-plan-show]');
             var edit = event.target.closest('[data-meal-plan-edit]');
@@ -1010,6 +1166,9 @@
                     renderDetail(root, plan);
                     fillForm(root, plan);
                     resetItemForm(root);
+                    state.shoppingPreview = [];
+                    state.generatedShoppingList = null;
+                    renderShoppingPreview(root);
                     loadIncompatibilities(root);
                 }
             }

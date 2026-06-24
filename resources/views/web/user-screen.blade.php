@@ -1436,6 +1436,17 @@
                     </article>
 
                     <article class="panel">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+                            <h2 style="margin:0">Vista previa de compra</h2>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                <button type="button" class="btn-secondary-web btn-sm" data-meal-plan-shopping-preview>Calcular faltantes</button>
+                                <button type="button" class="btn-main btn-sm" data-meal-plan-shopping-generate>Generar lista</button>
+                            </div>
+                        </div>
+                        <div data-meal-plan-shopping-preview-panel class="muted" style="margin-top:12px">Selecciona un plan para calcular faltantes.</div>
+                    </article>
+
+                    <article class="panel">
                         <h2 data-meal-plan-portions-title>Porciones por persona</h2>
                         <div data-meal-plan-portions-panel class="muted">Selecciona una comida para gestionar porciones.</div>
                     </article>
