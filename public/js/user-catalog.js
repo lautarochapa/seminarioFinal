@@ -746,5 +746,25 @@
         loadFilters(root);
         fetchProducts(root, 1);
         bind(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                switchTab(root, 'products');
+                var inp = qs('[data-catalog-products-search]', root);
+                if (inp) { inp.focus(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                switchTab(root, 'ingredients');
+                var inp = qs('[data-catalog-ingredients-search]', root);
+                if (inp) { inp.focus(); }
+            });
+        }
     });
 })(window, document);

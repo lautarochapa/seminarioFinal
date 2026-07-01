@@ -10,8 +10,8 @@
             <p class="lead">{{ $screen['description'] }}</p>
         </div>
         <div class="actions">
-            <a href="#" class="btn-main">{{ $screen['primary'] }}</a>
-            <a href="#" class="btn-ghost">{{ $screen['secondary'] }}</a>
+            <a href="#" class="btn-main" data-screen-primary-action>{{ $screen['primary'] }}</a>
+            <a href="#" class="btn-ghost" data-screen-secondary-action>{{ $screen['secondary'] }}</a>
         </div>
     </section>
 

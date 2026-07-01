@@ -444,5 +444,23 @@
         bind(root);
         loadSelectors(root);
         initMap(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var loadBtn = qs('[data-branches-load]', root);
+                if (loadBtn) { loadBtn.click(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var nearbyBtn = qs('[data-branches-nearby-btn]', root);
+                if (nearbyBtn) { nearbyBtn.click(); }
+            });
+        }
     });
 })(window, document);

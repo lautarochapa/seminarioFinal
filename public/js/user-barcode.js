@@ -458,5 +458,22 @@
         }
         bind(root);
         loadGroups(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var inp = qs('[data-barcode-code-input]', root);
+                if (inp) { inp.focus(); inp.select(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = '/web/catalog';
+            });
+        }
     });
 })(window, document);

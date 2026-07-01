@@ -7,21 +7,33 @@ class AddAiFoundationAdminPermission extends Migration
 {
     public function up()
     {
-        $permId = DB::table('permissions')->insertGetId([
-            'code'        => 'web.admin.ai-foundation',
-            'description' => 'Acceso al panel de arquitectura IA',
-            'created_at'  => now(),
-            'updated_at'  => now(),
-        ]);
+        $now = now();
 
-        $roles = DB::table('roles')->whereIn('code', ['super_admin'])->pluck('id');
-        foreach ($roles as $roleId) {
-            DB::table('role_permissions')->insert([
-                'role_id'       => $roleId,
-                'permission_id' => $permId,
-                'created_at'    => now(),
-                'updated_at'    => now(),
-            ]);
+        DB::table('permissions')->updateOrInsert(
+            ['code' => 'web.admin.ai-foundation'],
+            [
+                'code'        => 'web.admin.ai-foundation',
+                'module'      => 'web.admin',
+                'action'      => 'access',
+                'description' => 'Acceso al panel de arquitectura IA',
+                'status'      => 'active',
+            ]
+        );
+
+        $permId = DB::table('permissions')->where('code', 'web.admin.ai-foundation')->value('id');
+
+        if (! $permId) {
+            return;
+        }
+
+        foreach (['super_admin'] as $roleCode) {
+            $roleId = DB::table('roles')->where('code', $roleCode)->value('id');
+            if ($roleId) {
+                DB::table('role_permissions')->updateOrInsert(
+                    ['role_id' => $roleId, 'permission_id' => $permId],
+                    ['created_at' => $now]
+                );
+            }
         }
     }
 

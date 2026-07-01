@@ -235,5 +235,26 @@
         bind(root);
         loadCatalog(root);
         loadSelected(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var form = qs('[data-user-payment-form]', root);
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = form.querySelector('select,input:not([type=hidden])');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = '/web/supermarkets';
+            });
+        }
     });
 })(window, document);

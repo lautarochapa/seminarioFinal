@@ -7,21 +7,33 @@ class AddSupplementsUserPermission extends Migration
 {
     public function up()
     {
-        $permId = DB::table('permissions')->insertGetId([
-            'code'        => 'web.user.supplements',
-            'description' => 'Acceso a pantalla de suplementos del usuario',
-            'created_at'  => now(),
-            'updated_at'  => now(),
-        ]);
+        $now = now();
 
-        $roles = DB::table('roles')->whereIn('code', ['user', 'super_admin'])->pluck('id');
-        foreach ($roles as $roleId) {
-            DB::table('role_permissions')->insert([
-                'role_id'       => $roleId,
-                'permission_id' => $permId,
-                'created_at'    => now(),
-                'updated_at'    => now(),
-            ]);
+        DB::table('permissions')->updateOrInsert(
+            ['code' => 'web.user.supplements'],
+            [
+                'code'        => 'web.user.supplements',
+                'module'      => 'web.user',
+                'action'      => 'access',
+                'description' => 'Acceso a pantalla de suplementos del usuario',
+                'status'      => 'active',
+            ]
+        );
+
+        $permId = DB::table('permissions')->where('code', 'web.user.supplements')->value('id');
+
+        if (! $permId) {
+            return;
+        }
+
+        foreach (['user', 'super_admin'] as $roleCode) {
+            $roleId = DB::table('roles')->where('code', $roleCode)->value('id');
+            if ($roleId) {
+                DB::table('role_permissions')->updateOrInsert(
+                    ['role_id' => $roleId, 'permission_id' => $permId],
+                    ['created_at' => $now]
+                );
+            }
         }
     }
 

@@ -120,7 +120,7 @@
     }
 
     function loadObjectivesCatalog() {
-        return window.CCApi.request('/catalog/objectives')
+        return window.CCApi.request('/api/v1/catalog/objectives')
             .then(function (response) {
                 state.objectivesCatalog = response.data || [];
                 renderObjectiveCatalog();
@@ -128,7 +128,7 @@
     }
 
     function loadUserObjectives(form) {
-        return window.CCApi.request('/users/me/objectives')
+        return window.CCApi.request('/api/v1/users/me/objectives')
             .then(function (response) {
                 state.userObjectives = response.data || [];
                 renderUserObjectives(form, state.userObjectives);
@@ -154,21 +154,21 @@
     }
 
     function loadProfile(form) {
-        return window.CCApi.request('/users/me/profile')
+        return window.CCApi.request('/api/v1/users/me/profile')
             .then(function (response) {
                 fillProfile(form, response.data || {});
             });
     }
 
     function loadPrioritySettings(form) {
-        return window.CCApi.request('/users/me/priority-settings')
+        return window.CCApi.request('/api/v1/users/me/priority-settings')
             .then(function (response) {
                 fillPrioritySettings(form, response.data || {});
             });
     }
 
     function loadMeasurements(form) {
-        return window.CCApi.request('/users/me/body-measurements?per_page=20')
+        return window.CCApi.request('/api/v1/users/me/body-measurements?per_page=20')
             .then(function (response) {
                 state.measurements = response.data || [];
                 renderMeasurements(form, state.measurements);
@@ -176,7 +176,7 @@
     }
 
     function loadConsents(form) {
-        return window.CCApi.request('/users/me/consents')
+        return window.CCApi.request('/api/v1/users/me/consents')
             .then(function (response) {
                 var data = response.data || {};
                 state.consents = data.consents || {};
@@ -544,7 +544,7 @@
             clearFeedback(form, '[data-profile-error]', '[data-profile-message]');
             setLoading(form, true);
 
-            window.CCApi.request('/users/me/profile', {
+            window.CCApi.request('/api/v1/users/me/profile', {
                 method: 'PATCH',
                 body: profilePayload(form),
             }).then(function (payload) {
@@ -565,7 +565,7 @@
             setLoading(form, true);
 
             var assignmentId = valueOf(form, 'assignment_id');
-            var endpoint = '/users/me/objectives' + (assignmentId ? '/' + assignmentId : '');
+            var endpoint = '/api/v1/users/me/objectives' + (assignmentId ? '/' + assignmentId : '');
             var method = assignmentId ? 'PATCH' : 'POST';
 
             window.CCApi.request(endpoint, {
@@ -613,7 +613,7 @@
             }
 
             if (deleteId) {
-                window.CCApi.request('/users/me/objectives/' + deleteId, { method: 'DELETE' })
+                window.CCApi.request('/api/v1/users/me/objectives/' + deleteId, { method: 'DELETE' })
                     .then(function () {
                         showMessage(form, '[data-user-objective-message]', 'success', 'Objetivo eliminado correctamente.');
                         resetUserObjectiveForm(form);
@@ -695,7 +695,7 @@
             clearFeedback(form, '[data-priority-error]', '[data-priority-message]');
             setLoading(form, true);
 
-            window.CCApi.request('/users/me/priority-settings', {
+            window.CCApi.request('/api/v1/users/me/priority-settings', {
                 method: 'PATCH',
                 body: priorityPayload(form),
             }).then(function (payload) {
@@ -716,7 +716,7 @@
             setLoading(form, true);
 
             var method = state.editingMeasurementId ? 'PATCH' : 'POST';
-            var endpoint = '/users/me/body-measurements' + (state.editingMeasurementId ? '/' + state.editingMeasurementId : '');
+            var endpoint = '/api/v1/users/me/body-measurements' + (state.editingMeasurementId ? '/' + state.editingMeasurementId : '');
 
             window.CCApi.request(endpoint, {
                 method: method,
@@ -763,7 +763,7 @@
             }
 
             if (deleteId) {
-                window.CCApi.request('/users/me/body-measurements/' + deleteId, {
+                window.CCApi.request('/api/v1/users/me/body-measurements/' + deleteId, {
                     method: 'DELETE',
                 }).then(function () {
                     showMessage(form, '[data-measurement-message]', 'success', 'Medicion eliminada correctamente.');
@@ -784,7 +784,7 @@
             clearFeedback(form, '[data-consents-error]', '[data-consents-message]');
             setLoading(form, true);
 
-            window.CCApi.request('/users/me/consents', {
+            window.CCApi.request('/api/v1/users/me/consents', {
                 method: 'PATCH',
                 body: consentsPayload(form),
             }).then(function (payload) {
@@ -838,5 +838,25 @@
         }).catch(function () {
             showMessage(profileForm, '[data-profile-message]', 'warning', 'No se pudo cargar toda la informacion del perfil desde la API.');
         });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                profileForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                var first = profileForm.querySelector('input:not([type=hidden]),select,textarea');
+                if (first) { first.focus(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                objectivesForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                var first = objectivesForm.querySelector('input:not([type=hidden]),select,textarea');
+                if (first) { first.focus(); }
+            });
+        }
     });
 })(window, document);

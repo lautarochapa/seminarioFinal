@@ -7,19 +7,31 @@ class AddShoppingSessionUserPermission extends Migration
 {
     public function up()
     {
+        $now = now();
+
         DB::table('permissions')->updateOrInsert(
             ['code' => 'web.user.shopping-session'],
-            ['code' => 'web.user.shopping-session', 'description' => 'Pantalla sesión de compra mobile']
+            [
+                'code'        => 'web.user.shopping-session',
+                'module'      => 'web.user',
+                'action'      => 'access',
+                'description' => 'Pantalla sesión de compra mobile',
+                'status'      => 'active',
+            ]
         );
 
-        $permission = DB::table('permissions')->where('code', 'web.user.shopping-session')->first();
+        $permId = DB::table('permissions')->where('code', 'web.user.shopping-session')->value('id');
+
+        if (! $permId) {
+            return;
+        }
 
         foreach (['user', 'super_admin'] as $roleCode) {
-            $role = DB::table('roles')->where('code', $roleCode)->first();
-            if ($role && $permission) {
+            $roleId = DB::table('roles')->where('code', $roleCode)->value('id');
+            if ($roleId) {
                 DB::table('role_permissions')->updateOrInsert(
-                    ['role_id' => $role->id, 'permission_id' => $permission->id],
-                    ['role_id' => $role->id, 'permission_id' => $permission->id]
+                    ['role_id' => $roleId, 'permission_id' => $permId],
+                    ['created_at' => $now]
                 );
             }
         }

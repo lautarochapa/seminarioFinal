@@ -174,5 +174,22 @@
         if (!root || !window.CCApi) { return; }
         bind(root);
         loadChains(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var refreshBtn = qs('[data-supermarkets-refresh]', root);
+                if (refreshBtn) { refreshBtn.click(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = '/web/catalog';
+            });
+        }
     });
 })(window, document);

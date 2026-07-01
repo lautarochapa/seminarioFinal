@@ -71,7 +71,7 @@
             params.set('include_deleted', '1');
         }
 
-        return window.CCApi.request('/admin/objectives?' + params.toString()).then(function (response) {
+        return window.CCApi.request('/api/v1/admin/objectives?' + params.toString()).then(function (response) {
             state.objectives = response.data || [];
             renderObjectives(root, response.meta || {});
         }).catch(function (error) {
@@ -134,7 +134,7 @@
 
             var id = form.elements.id.value;
             var method = id ? 'PATCH' : 'POST';
-            var endpoint = '/admin/objectives' + (id ? '/' + id : '');
+            var endpoint = '/api/v1/admin/objectives' + (id ? '/' + id : '');
 
             window.CCApi.request(endpoint, { method: method, body: formData(form) })
                 .then(function () {
@@ -166,7 +166,7 @@
             }
 
             if (deleteId) {
-                window.CCApi.request('/admin/objectives/' + deleteId, { method: 'DELETE' })
+                window.CCApi.request('/api/v1/admin/objectives/' + deleteId, { method: 'DELETE' })
                     .then(function () {
                         showMessage(root, 'success', 'Objetivo eliminado correctamente.');
                         return fetchObjectives(root);
@@ -175,7 +175,7 @@
             }
 
             if (restoreId) {
-                window.CCApi.request('/admin/objectives/' + restoreId + '/restore', { method: 'PATCH' })
+                window.CCApi.request('/api/v1/admin/objectives/' + restoreId + '/restore', { method: 'PATCH' })
                     .then(function () {
                         showMessage(root, 'success', 'Objetivo restaurado correctamente.');
                         return fetchObjectives(root);

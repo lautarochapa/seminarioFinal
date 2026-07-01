@@ -1234,5 +1234,31 @@
         }
         bind(root);
         Promise.all([loadCatalogs(root), loadGroups(root)]);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var form = qs('[data-meal-plan-item-form]', root);
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = form.querySelector('input:not([type=hidden]),select,textarea');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var form = qs('[data-meal-plan-generate-form]', root);
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = form.querySelector('input:not([type=hidden]),select,textarea');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
     });
 })(window, document);

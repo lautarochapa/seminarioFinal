@@ -1,4 +1,4 @@
-(function (window, document) {
+﻿(function (window, document) {
     'use strict';
 
     var state = {
@@ -362,5 +362,26 @@
         fetchCategories(root, 1).then(function () {
             return fetchTree(root);
         });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                resetForm(root);
+                var form = qs('[data-ingredient-category-form]', root);
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = form.querySelector('input:not([type=hidden]),select,textarea');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                showMessage(root, 'info', 'Accion no disponible en esta version.');
+            });
+        }
     });
 })(window, document);

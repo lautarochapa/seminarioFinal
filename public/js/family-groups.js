@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    var API = '/api/v1';
+
     var state = {
         groups: [],
         currentGroupId: null,
@@ -68,7 +70,7 @@
     }
 
     function loadCities(root) {
-        return window.CCApi.request('/cities')
+        return window.CCApi.request(API + '/cities')
             .then(function (response) {
                 state.cities = response.data || [];
                 var select = qs('[data-family-city-select]', root);
@@ -87,7 +89,7 @@
     function loadGroups(root) {
         clearMessage(root);
 
-        return window.CCApi.request('/family-groups')
+        return window.CCApi.request(API + '/family-groups')
             .then(function (response) {
                 state.groups = response.data || [];
                 if (!state.currentGroupId && state.groups.length) {
@@ -117,7 +119,7 @@
             return Promise.resolve();
         }
 
-        return window.CCApi.request('/family-groups/' + state.currentGroupId + '/members')
+        return window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/members')
             .then(function (response) {
                 renderMembers(root, response.data || []);
             })
@@ -131,7 +133,7 @@
             return Promise.resolve();
         }
 
-        return window.CCApi.request('/family-groups/' + state.currentGroupId + '/preferences')
+        return window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/preferences')
             .then(function (response) {
                 fillPreferences(root, response.data || {});
             })
@@ -262,7 +264,7 @@
             event.preventDefault();
             clearMessage(root);
             var form = event.currentTarget;
-            window.CCApi.request('/family-groups', { method: 'POST', body: formData(form) })
+            window.CCApi.request(API + '/family-groups', { method: 'POST', body: formData(form) })
                 .then(function (response) {
                     form.reset();
                     state.currentGroupId = response.data.id;
@@ -277,7 +279,7 @@
             if (!requireGroup(root)) {
                 return;
             }
-            window.CCApi.request('/family-groups/' + state.currentGroupId, { method: 'PATCH', body: formData(event.currentTarget) })
+            window.CCApi.request(API + '/family-groups/' + state.currentGroupId, { method: 'PATCH', body: formData(event.currentTarget) })
                 .then(function () {
                     showMessage(root, 'success', 'Grupo actualizado correctamente.');
                     return loadGroups(root);
@@ -289,7 +291,7 @@
             if (!requireGroup(root)) {
                 return;
             }
-            window.CCApi.request('/family-groups/' + state.currentGroupId, { method: 'DELETE' })
+            window.CCApi.request(API + '/family-groups/' + state.currentGroupId, { method: 'DELETE' })
                 .then(function () {
                     state.currentGroupId = null;
                     showMessage(root, 'success', 'Grupo desactivado correctamente.');
@@ -304,7 +306,7 @@
                 return;
             }
             var form = event.currentTarget;
-            window.CCApi.request('/family-groups/' + state.currentGroupId + '/members', { method: 'POST', body: formData(form) })
+            window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/members', { method: 'POST', body: formData(form) })
                 .then(function () {
                     form.reset();
                     showMessage(root, 'success', 'Miembro agregado correctamente.');
@@ -319,7 +321,7 @@
                 return;
             }
             var form = event.currentTarget;
-            window.CCApi.request('/family-groups/' + state.currentGroupId + '/invitations', { method: 'POST', body: formData(form) })
+            window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/invitations', { method: 'POST', body: formData(form) })
                 .then(function (response) {
                     form.reset();
                     showMessage(root, 'success', 'Invitacion creada. ID: ' + response.data.id);
@@ -331,7 +333,7 @@
             event.preventDefault();
             var form = event.currentTarget;
             var data = formData(form);
-            window.CCApi.request('/family-groups/invitations/' + data.invitation_id + '/accept', { method: 'POST' })
+            window.CCApi.request(API + '/family-groups/invitations/' + data.invitation_id + '/accept', { method: 'POST' })
                 .then(function () {
                     form.reset();
                     showMessage(root, 'success', 'Invitacion aceptada correctamente.');
@@ -347,7 +349,7 @@
             }
             var data = formData(event.currentTarget);
             data.allow_auto_stock_discount = event.currentTarget.elements.allow_auto_stock_discount.checked;
-            window.CCApi.request('/family-groups/' + state.currentGroupId + '/preferences', { method: 'PATCH', body: data })
+            window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/preferences', { method: 'PATCH', body: data })
                 .then(function () {
                     showMessage(root, 'success', 'Preferencias actualizadas correctamente.');
                     return loadPreferences(root);
@@ -363,7 +365,7 @@
                 }
                 var memberId = target.getAttribute('data-member-save');
                 var role = qs('[data-member-role="' + memberId + '"]', root).value;
-                window.CCApi.request('/family-groups/' + state.currentGroupId + '/members/' + memberId, {
+                window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/members/' + memberId, {
                     method: 'PATCH',
                     body: { role: role },
                 })
@@ -378,7 +380,7 @@
                 if (!requireGroup(root)) {
                     return;
                 }
-                window.CCApi.request('/family-groups/' + state.currentGroupId + '/members/' + target.getAttribute('data-member-remove'), { method: 'DELETE' })
+                window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/members/' + target.getAttribute('data-member-remove'), { method: 'DELETE' })
                     .then(function () {
                         showMessage(root, 'success', 'Miembro quitado correctamente.');
                         return loadMembers(root);
@@ -396,5 +398,29 @@
 
         bind(root);
         loadCities(root).then(function () { loadGroups(root); });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var createForm = qs('[data-family-create-form]', root);
+                if (createForm) {
+                    createForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = createForm.querySelector('input:not([type=hidden]),select');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var editForm = qs('[data-family-edit-form]', root);
+                if (editForm) {
+                    editForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
     });
 })(window, document);

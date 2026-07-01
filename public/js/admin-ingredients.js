@@ -435,5 +435,26 @@
         }).then(function () {
             return fetchPublicIngredients(root);
         });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                resetForm(root);
+                var form = qs('[data-ingredient-form]', root);
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = form.querySelector('input:not([type=hidden]),select,textarea');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                showMessage(root, 'info', 'La importacion masiva no esta disponible en esta version.');
+            });
+        }
     });
 })(window, document);

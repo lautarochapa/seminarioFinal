@@ -235,5 +235,24 @@
                     });
             }
         });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                var first = form.querySelector('input:not([type=hidden]),select');
+                if (first) { first.focus(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var list = qs('[data-professional-links-list]', root);
+                if (list) { list.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        }
     });
 })(window, document);

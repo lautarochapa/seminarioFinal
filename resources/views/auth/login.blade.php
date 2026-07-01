@@ -141,6 +141,20 @@
                                 </tbody>
                             </table>
                         </div>
+                        <p class="text-muted" style="margin-top:12px;margin-bottom:6px;">Usuario administrador local — contraseña: <strong>password123</strong></p>
+                        <table class="table table-sm" style="margin-bottom:0;">
+                            <tbody>
+                                <tr>
+                                    <td>Admin local</td>
+                                    <td><code>admin@cccontrol.test</code></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-link" style="color:rgba(4,172,133, 1);" data-demo-login data-demo-email="admin@cccontrol.test" data-demo-password="password123">
+                                            Usar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

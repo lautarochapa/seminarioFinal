@@ -652,5 +652,26 @@
         renderPersonalTabs(root);
         renderPersonalContent(root);
         loadGroups(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var toggleBtn = qs('[data-report-export-toggle]', root);
+                if (toggleBtn) { toggleBtn.click(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var fromInput = qs('[data-report-from]', root);
+                if (fromInput) {
+                    fromInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    fromInput.focus();
+                }
+            });
+        }
     });
 })(window, document);

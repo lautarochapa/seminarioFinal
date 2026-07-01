@@ -455,4 +455,187 @@ class ScrapingTest extends TestCase
         $this->assertNotNull($price);
         $this->assertEquals('450.00', $price->price);
     }
+
+    public function test_fuente_no_disponible_marca_job_como_fallido()
+    {
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'changomas']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(202);
+
+        $jobId = $response->json('data.id');
+        $this->assertDatabaseHas('scraping_jobs', [
+            'id'     => $jobId,
+            'status' => 'failed',
+        ]);
+
+        $this->assertDatabaseHas('scraping_alerts', [
+            'scraping_job_id' => $jobId,
+            'alert_type'      => 'source_unavailable',
+            'severity'        => 'high',
+        ]);
+    }
+
+    public function test_fuente_sin_adaptador_falla_job()
+    {
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'fuente_sin_adaptador']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(202);
+
+        $jobId = $response->json('data.id');
+        $this->assertDatabaseHas('scraping_jobs', [
+            'id'     => $jobId,
+            'status' => 'failed',
+        ]);
+    }
+
+    public function test_respuesta_http_error_falla_job()
+    {
+        Http::fake(['*' => Http::response('Internal Server Error', 500)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(202);
+
+        $jobId = $response->json('data.id');
+        $job   = \App\ScrapingJob::find($jobId);
+
+        $this->assertEquals('completed', $job->status);
+        $this->assertEquals(0, $job->total_found);
+        $this->assertEquals(0, $job->total_pending_review);
+    }
+
+    public function test_respuesta_vacia_completa_job_sin_candidatos()
+    {
+        $fixture = json_encode(json_decode(
+            file_get_contents(__DIR__ . '/fixtures/carrefour_empty.json'),
+            true
+        ));
+        Http::fake(['*' => Http::response($fixture, 200)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(202);
+
+        $jobId = $response->json('data.id');
+        $this->assertDatabaseHas('scraping_jobs', [
+            'id'          => $jobId,
+            'status'      => 'completed',
+            'total_found' => 0,
+        ]);
+
+        $candidates = \App\ScrapedProductCandidate::where('scraping_job_id', $jobId)->count();
+        $this->assertEquals(0, $candidates);
+    }
+
+    public function test_producto_incompleto_se_descarta_del_parser()
+    {
+        $parser   = new \App\Scraping\Parsers\CarrefourParser();
+        $fixture  = json_decode(
+            file_get_contents(__DIR__ . '/fixtures/carrefour_incomplete_product.json'),
+            true
+        );
+        $products = $parser->parse($fixture);
+
+        $this->assertCount(0, $products);
+    }
+
+    public function test_precio_identico_no_crea_nuevo_registro()
+    {
+        $fixture = json_encode($this->fixtureJson());
+        Http::fake(['*' => Http::response($fixture, 200)]);
+
+        $admin  = $this->admin();
+        $chain  = $this->chain();
+        $city   = $this->city();
+        $branch = $this->branch($chain, $city);
+
+        $sp = $this->supermarketProduct($branch, [
+            'supermarket_chain_id'  => $chain->id,
+            'external_sku'          => 'sku001',
+            'external_product_id'   => 'p001',
+        ]);
+
+        SupermarketProductPrice::create([
+            'supermarket_product_id' => $sp->id,
+            'price'                  => 450.00,
+            'currency'               => 'ARS',
+            'source'                 => 'scraper',
+            'scraped_at'             => now(),
+            'valid_from'             => now(),
+            'status'                 => 'active',
+        ]);
+
+        $source = $this->source(['code' => 'carrefour']);
+
+        $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id'             => $source->id,
+            'supermarket_chain_id'  => $chain->id,
+            'supermarket_branch_id' => $branch->id,
+        ])->assertStatus(202);
+
+        $priceCount = SupermarketProductPrice::where('supermarket_product_id', $sp->id)->count();
+        $this->assertEquals(1, $priceCount, 'No debe crearse un segundo registro con precio identico');
+    }
+
+    public function test_cancel_job_running_marca_cancel_requested()
+    {
+        $admin  = $this->admin();
+        $source = $this->source();
+
+        $job = ScrapingJob::create([
+            'source_id'    => $source->id,
+            'job_type'     => 'product_prices',
+            'requested_by' => $admin->id,
+            'status'       => 'running',
+            'started_at'   => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->postJson("/api/v1/admin/scraping/jobs/{$job->id}/cancel");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.status', 'cancel_requested');
+
+        $this->assertDatabaseHas('scraping_jobs', [
+            'id'     => $job->id,
+            'status' => 'cancel_requested',
+        ]);
+    }
+
+    public function test_job_inexistente_retorna_404()
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->getJson('/api/v1/admin/scraping/jobs/999999')
+            ->assertStatus(404)
+            ->assertJsonPath('error.code', 'SCRAPING_JOB_NOT_FOUND');
+    }
+
+    public function test_fuente_inexistente_retorna_404()
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => 999999,
+        ])->assertStatus(422);
+    }
 }

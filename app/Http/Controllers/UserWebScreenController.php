@@ -45,7 +45,10 @@ class UserWebScreenController extends Controller
     {
         return [
             'family_groups' => FamilyGroup::count(),
-            'stock_items' => StockItem::count(),
+            'stock_items' => StockItem::whereIn('family_group_id', function ($q) {
+                $q->select('family_group_id')->from('family_group_members')
+                    ->where('user_id', auth()->id())->where('status', 'active');
+            })->where('status', 'active')->count(),
             'stock_alerts' => StockAlert::where('status', '!=', 'resolved')->count(),
             'recipes' => Recipe::count(),
             'meal_plans' => MealPlan::count(),
@@ -89,6 +92,33 @@ class UserWebScreenController extends Controller
                 'metrics' => ['recipes'],
                 'panels' => ['Buscador avanzado', 'Mis recetas', 'Recetas oficiales', 'Compartidas'],
             ],
+            'recipe-search' => [
+                'title' => 'Buscar recetas',
+                'module' => 'Recetas',
+                'description' => 'Buscador avanzado de recetas por nombre, categoria, tags, dificultad y tiempo de preparacion.',
+                'primary' => 'Nueva busqueda',
+                'secondary' => 'Ver todas',
+                'metrics' => ['recipes'],
+                'panels' => ['Resultados', 'Filtros', 'Detalle', 'Tags'],
+            ],
+            'recipe-favorites' => [
+                'title' => 'Favoritos y cocinadas',
+                'module' => 'Recetas',
+                'description' => 'Recetas guardadas como favoritas y registro de recetas cocinadas con porciones y fecha.',
+                'primary' => 'Ver favoritas',
+                'secondary' => 'Ver cocinadas',
+                'metrics' => ['recipes'],
+                'panels' => ['Favoritas', 'Cocinadas', 'Detalle', 'Historial'],
+            ],
+            'recipe-suggestions' => [
+                'title' => 'Recomendaciones',
+                'module' => 'Recetas',
+                'description' => 'Sugerencias personalizadas segun stock disponible, presupuesto, vencimientos y objetivos.',
+                'primary' => 'Ver sugerencias',
+                'secondary' => 'Cambiar grupo',
+                'metrics' => ['recipes'],
+                'panels' => ['Sugerencias', 'Disponibles', 'Por vencer', 'Por presupuesto'],
+            ],
             'planning' => [
                 'title' => 'Planificacion',
                 'module' => 'Meal plan',
@@ -106,6 +136,24 @@ class UserWebScreenController extends Controller
                 'secondary' => 'Comparar supermercados',
                 'metrics' => ['shopping_lists', 'purchases'],
                 'panels' => ['Items pendientes', 'Alternativas', 'Comparacion', 'Historial'],
+            ],
+            'shopping-session' => [
+                'title' => 'Sesion de compra',
+                'module' => 'Compras',
+                'description' => 'Recorrido mobile para escanear productos, marcar items comprados y confirmar la compra.',
+                'primary' => 'Iniciar compra',
+                'secondary' => 'Ver listas',
+                'metrics' => ['shopping_lists', 'purchases'],
+                'panels' => ['Seleccion de lista', 'Escaneo', 'Items comprados', 'Confirmacion'],
+            ],
+            'purchases' => [
+                'title' => 'Compras realizadas',
+                'module' => 'Compras',
+                'description' => 'Ver items de compras realizadas, agregar items manualmente y confirmar compras por grupo familiar.',
+                'primary' => 'Cargar compra',
+                'secondary' => 'Ver sesiones',
+                'metrics' => ['purchases'],
+                'panels' => ['Items', 'Confirmar', 'Agregar item', 'Stock'],
             ],
             'notifications' => [
                 'title' => 'Notificaciones',

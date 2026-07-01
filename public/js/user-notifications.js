@@ -356,5 +356,23 @@
         loadNotifications(root);
         loadUnreadCount(root);
         loadPreferences(root);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var readAllBtn = qs('[data-notif-read-all]', root);
+                if (readAllBtn) { readAllBtn.click(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var prefsGrid = qs('[data-prefs-grid]', root);
+                if (prefsGrid) { prefsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        }
     });
 })(window, document);

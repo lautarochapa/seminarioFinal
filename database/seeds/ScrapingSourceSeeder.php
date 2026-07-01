@@ -7,39 +7,36 @@ class ScrapingSourceSeeder extends Seeder
 {
     public function run()
     {
-        $barilocheId = DB::table('cities')
-            ->where('name', 'San Carlos de Bariloche')
-            ->where('province', 'Rio Negro')
-            ->value('id');
+        $cityId = DB::table('cities')->value('id');
 
         $sources = [
             [
-                'code' => 'carrefour_bariloche',
-                'name' => 'Carrefour Bariloche',
-                'type' => 'supermarket',
+                'code'     => 'carrefour',
+                'name'     => 'Carrefour',
+                'type'     => 'web_scraper',
                 'base_url' => 'https://www.carrefour.com.ar',
-                'city_id' => $barilocheId,
+                'city_id'  => $cityId,
             ],
             [
-                'code' => 'changomas_bariloche',
-                'name' => 'ChangoMas Bariloche',
-                'type' => 'supermarket',
+                'code'     => 'changomas',
+                'name'     => 'ChangoMas',
+                'type'     => 'web_scraper',
                 'base_url' => 'https://www.masonline.com.ar',
-                'city_id' => $barilocheId,
+                'city_id'  => $cityId,
             ],
             [
-                'code' => 'la_anonima_bariloche',
-                'name' => 'La Anonima Bariloche',
-                'type' => 'supermarket',
+                'code'     => 'la_anonima',
+                'name'     => 'La Anonima',
+                'type'     => 'web_scraper',
                 'base_url' => 'https://www.laanonima.com.ar',
-                'city_id' => $barilocheId,
+                'city_id'  => $cityId,
             ],
             [
-                'code' => 'cookpad_argentina',
-                'name' => 'Cookpad Argentina',
-                'type' => 'recipe',
+                'code'     => 'cookpad',
+                'name'     => 'Cookpad Argentina',
+                'type'     => 'web_scraper',
                 'base_url' => 'https://cookpad.com/ar',
-                'city_id' => null,
+                'city_id'  => null,
             ],
         ];
 

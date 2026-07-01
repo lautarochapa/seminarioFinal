@@ -7,19 +7,31 @@ class AddPurchasesUserPermission extends Migration
 {
     public function up()
     {
+        $now = now();
+
         DB::table('permissions')->updateOrInsert(
             ['code' => 'web.user.purchases'],
-            ['code' => 'web.user.purchases', 'description' => 'Pantalla ítems de compra real']
+            [
+                'code'        => 'web.user.purchases',
+                'module'      => 'web.user',
+                'action'      => 'access',
+                'description' => 'Pantalla ítems de compra real',
+                'status'      => 'active',
+            ]
         );
 
-        $permission = DB::table('permissions')->where('code', 'web.user.purchases')->first();
+        $permId = DB::table('permissions')->where('code', 'web.user.purchases')->value('id');
+
+        if (! $permId) {
+            return;
+        }
 
         foreach (['user', 'super_admin'] as $roleCode) {
-            $role = DB::table('roles')->where('code', $roleCode)->first();
-            if ($role && $permission) {
+            $roleId = DB::table('roles')->where('code', $roleCode)->value('id');
+            if ($roleId) {
                 DB::table('role_permissions')->updateOrInsert(
-                    ['role_id' => $role->id, 'permission_id' => $permission->id],
-                    ['role_id' => $role->id, 'permission_id' => $permission->id]
+                    ['role_id' => $roleId, 'permission_id' => $permId],
+                    ['created_at' => $now]
                 );
             }
         }

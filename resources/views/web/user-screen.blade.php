@@ -10,8 +10,8 @@
             <p class="lead">{{ $screen['description'] }}</p>
         </div>
         <div class="actions">
-            <a href="#" class="btn-main">{{ $screen['primary'] }}</a>
-            <a href="#" class="btn-secondary-web">{{ $screen['secondary'] }}</a>
+            <a href="#" class="btn-main" data-screen-primary-action>{{ $screen['primary'] }}</a>
+            <a href="#" class="btn-secondary-web" data-screen-secondary-action>{{ $screen['secondary'] }}</a>
         </div>
     </section>
 
@@ -1261,9 +1261,7 @@
             </div>
 
             <aside class="aside-panel" style="display:flex;flex-direction:column;gap:12px;min-height:300px">
-                <div data-branches-map style="height:220px;border-radius:8px;background:#e8efeb;display:flex;align-items:center;justify-content:center;overflow:hidden">
-                    <span class="muted" style="font-size:13px">El mapa aparecerá aquí</span>
-                </div>
+                <div data-branches-map style="height:220px;border-radius:8px;overflow:hidden;position:relative"></div>
                 <div data-branches-detail>
                     <p class="muted" style="font-size:13px">Seleccioná una sucursal para ver el detalle.</p>
                 </div>
@@ -2687,5 +2685,26 @@
             <p class="muted" style="margin-top:14px">Esta vista queda lista como pantalla web de usuario para conectar formularios, tablas, filtros, graficos y acciones reales.</p>
         </aside>
     </section>
+
+    @if($screenKey === 'dashboard')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var primary = document.querySelector('[data-screen-primary-action]');
+        if (primary) {
+            primary.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = '/web/stock';
+            });
+        }
+        var secondary = document.querySelector('[data-screen-secondary-action]');
+        if (secondary) {
+            secondary.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = '/web/planning';
+            });
+        }
+    });
+    </script>
+    @endif
     @endif
 @endsection

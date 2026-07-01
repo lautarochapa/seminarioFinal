@@ -731,5 +731,19 @@
         loadItemCatalogs(root).then(function () {
             return loadGroups(root);
         });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+                resetForm(root);
+                var form = qs('[data-shopping-list-form]', root);
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    var first = form.querySelector('select,input:not([type=hidden])');
+                    if (first) { first.focus(); }
+                }
+            });
+        }
     });
 })(window, document);

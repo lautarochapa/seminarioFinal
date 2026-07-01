@@ -105,6 +105,15 @@
         return '<span class="chip' + danger + '">' + escapeHtml(status) + '</span>';
     }
 
+    function sourceTypeChip(source) {
+        if (!source) { return ''; }
+        var type = source.type || '';
+        if (type === 'web_scraper') {
+            return '<span class="chip" style="background:#e7f0ff;color:#2f80ed;font-size:11px">REAL</span>';
+        }
+        return '<span class="chip" style="background:#f5f5f5;color:#888;font-size:11px">' + escapeHtml(type || 'otro') + '</span>';
+    }
+
     function money(value) {
         if (value === null || value === undefined || value === '') {
             return '-';
@@ -217,7 +226,7 @@
             var isFinal = candidate.review_status === 'approved' || candidate.review_status === 'rejected';
             return '<tr>' +
                 '<td><strong>' + escapeHtml(candidate.raw_name) + '</strong><br><span class="muted">' + escapeHtml(candidate.raw_brand || 'Sin marca') + '</span><br><span class="muted">' + safeLink(candidate.raw_product_url, candidate.external_product_id || 'Ver origen') + '</span></td>' +
-                '<td>' + escapeHtml(candidate.source ? candidate.source.name : candidate.source_id) + '<br><span class="muted">Job #' + escapeHtml(candidate.scraping_job_id) + '</span></td>' +
+                '<td>' + escapeHtml(candidate.source ? candidate.source.name : candidate.source_id) + ' ' + sourceTypeChip(candidate.source) + '<br><span class="muted">Job #' + escapeHtml(candidate.scraping_job_id) + '</span></td>' +
                 '<td>' + escapeHtml(money(candidate.raw_price)) + '<br><span class="muted">' + escapeHtml(candidate.raw_unit_price) + '</span></td>' +
                 '<td>' + statusChip(candidate.review_status) + '</td>' +
                 '<td><span class="muted">' + escapeHtml(product) + '</span><br><span class="muted">' + escapeHtml(ingredient) + '</span></td>' +

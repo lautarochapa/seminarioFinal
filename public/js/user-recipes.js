@@ -527,5 +527,26 @@
         loadCategories(root);
         bind(root);
         loadRecipes(root, 1);
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var newBtn = qs('[data-recipes-new]', root);
+                if (newBtn) { newBtn.click(); }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var search = qs('[data-recipes-search]', root);
+                if (search) {
+                    search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    search.focus();
+                }
+            });
+        }
     });
 })(window, document);
