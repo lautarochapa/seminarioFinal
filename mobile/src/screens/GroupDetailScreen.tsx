@@ -11,12 +11,14 @@ import { useFamilyGroupDetail } from '@/hooks/useFamilyGroupDetail';
 import { useAuth } from '@/auth/AuthContext';
 import { familyGroupsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
+import { AppHeader } from '@/components/AppHeader';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
 import { SectionHeader } from '@/components/SectionHeader';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { FormError } from '@/components/FormError';
+import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 
@@ -56,6 +58,7 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
   if (error && !group) {
     return (
       <View style={styles.fill}>
+        <AppHeader title="Detalle del grupo" showBack onBack={goBackOrHome} />
         <ErrorState
           message={friendlyMessage(error)}
           traceId={error.traceId}
@@ -96,6 +99,8 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
   }
 
   return (
+    <View style={styles.fill}>
+      <AppHeader title={group.name} subtitle="Detalle del grupo" showBack onBack={goBackOrHome} />
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.content}
@@ -184,6 +189,7 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
         </>
       ) : null}
     </ScrollView>
+    </View>
   );
 }
 

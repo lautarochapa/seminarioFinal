@@ -1,22 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { familyGroupsApi } from '@/api/endpoints';
+import { productsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import type { FamilyGroup } from '@/types/familyGroup';
+import type { ProductDetail } from '@/types/product';
 import type { NormalizedError } from '@/types/api';
 
-interface FamilyGroupsState {
-  data: FamilyGroup[];
+interface ProductDetailState {
+  data: ProductDetail | null;
   loading: boolean;
   error: NormalizedError | null;
   refresh: () => void;
 }
 
-interface UseFamilyGroupsOptions {
-  onLoaded?: (groups: FamilyGroup[]) => void;
-}
-
-export function useFamilyGroups(options?: UseFamilyGroupsOptions): FamilyGroupsState {
-  const [data, setData] = useState<FamilyGroup[]>([]);
+export function useProductDetail(id: number): ProductDetailState {
+  const [data, setData] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<NormalizedError | null>(null);
   const [version, setVersion] = useState(0);
@@ -30,11 +26,10 @@ export function useFamilyGroups(options?: UseFamilyGroupsOptions): FamilyGroupsS
     setError(null);
     /* eslint-enable react-hooks/set-state-in-effect */
 
-    familyGroupsApi.list().then((res) => {
+    productsApi.get(id).then((res) => {
       if (!cancelled) {
         setData(res.data);
         setLoading(false);
-        options?.onLoaded?.(res.data);
       }
     }).catch((err: unknown) => {
       if (!cancelled) {
@@ -48,8 +43,7 @@ export function useFamilyGroups(options?: UseFamilyGroupsOptions): FamilyGroupsS
     });
 
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [version]);
+  }, [id, version]);
 
   return { data, loading, error, refresh };
 }

@@ -43,10 +43,27 @@ describe('secureStorage.setUser / getUser', () => {
 });
 
 describe('secureStorage.clearAll', () => {
-  it('removes both token and user', async () => {
+  it('removes token, user and selected group id', async () => {
     await secureStorage.clearAll();
     expect(mockDel).toHaveBeenCalledWith('cc_access_token');
     expect(mockDel).toHaveBeenCalledWith('cc_user');
-    expect(mockDel).toHaveBeenCalledTimes(2);
+    expect(mockDel).toHaveBeenCalledWith('cc_selected_group_id');
+    expect(mockDel).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('secureStorage.selectedGroupId', () => {
+  it('stores and retrieves a numeric group id', async () => {
+    mockGet.mockResolvedValueOnce('42');
+    await secureStorage.setSelectedGroupId(42);
+    const id = await secureStorage.getSelectedGroupId();
+    expect(mockSet).toHaveBeenCalledWith('cc_selected_group_id', '42');
+    expect(id).toBe(42);
+  });
+
+  it('returns null when no id is stored', async () => {
+    mockGet.mockResolvedValueOnce(null);
+    const id = await secureStorage.getSelectedGroupId();
+    expect(id).toBeNull();
   });
 });

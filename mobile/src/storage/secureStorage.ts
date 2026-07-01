@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 const KEYS = {
   ACCESS_TOKEN: 'cc_access_token',
   USER: 'cc_user',
+  SELECTED_GROUP_ID: 'cc_selected_group_id',
 } as const;
 
 async function set(key: string, value: string): Promise<void> {
@@ -38,7 +39,23 @@ export const secureStorage = {
   async removeUser(): Promise<void> {
     await remove(KEYS.USER);
   },
+  async setSelectedGroupId(id: number): Promise<void> {
+    await set(KEYS.SELECTED_GROUP_ID, String(id));
+  },
+  async getSelectedGroupId(): Promise<number | null> {
+    const raw = await get(KEYS.SELECTED_GROUP_ID);
+    if (!raw) return null;
+    const n = parseInt(raw, 10);
+    return isNaN(n) ? null : n;
+  },
+  async removeSelectedGroupId(): Promise<void> {
+    await remove(KEYS.SELECTED_GROUP_ID);
+  },
   async clearAll(): Promise<void> {
-    await Promise.all([remove(KEYS.ACCESS_TOKEN), remove(KEYS.USER)]);
+    await Promise.all([
+      remove(KEYS.ACCESS_TOKEN),
+      remove(KEYS.USER),
+      remove(KEYS.SELECTED_GROUP_ID),
+    ]);
   },
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   RefreshControl,
   ScrollView,
@@ -11,6 +11,7 @@ import { useFamilyGroups } from '@/hooks/useFamilyGroups';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { familyGroupsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
+import { AppHeader } from '@/components/AppHeader';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
 import { EmptyState } from '@/components/EmptyState';
@@ -18,13 +19,20 @@ import { FeatureCard } from '@/components/FeatureCard';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { FormError } from '@/components/FormError';
+import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
+import type { FamilyGroup } from '@/types/familyGroup';
 import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 
 export function FamilyGroupsScreen() {
-  const { data, loading, error, refresh } = useFamilyGroups();
-  const { selectGroup, selectedGroup } = useFamilyGroupContext();
+  const { selectGroup, selectedGroup, restoreGroup } = useFamilyGroupContext();
   const router = useRouter();
+
+  const handleGroupsLoaded = useCallback((groups: FamilyGroup[]) => {
+    restoreGroup(groups);
+  }, [restoreGroup]);
+
+  const { data, loading, error, refresh } = useFamilyGroups({ onLoaded: handleGroupsLoaded });
 
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
@@ -35,6 +43,7 @@ export function FamilyGroupsScreen() {
   if (error && data.length === 0) {
     return (
       <View style={styles.fill}>
+        <AppHeader title="Grupos familiares" showBack onBack={goBackOrHome} />
         <ErrorState
           message={friendlyMessage(error)}
           traceId={error.traceId}
@@ -80,6 +89,8 @@ export function FamilyGroupsScreen() {
   }
 
   return (
+    <View style={styles.fill}>
+      <AppHeader title="Grupos familiares" showBack onBack={goBackOrHome} />
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.content}
@@ -154,6 +165,7 @@ export function FamilyGroupsScreen() {
         />
       ) : null}
     </ScrollView>
+    </View>
   );
 }
 

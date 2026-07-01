@@ -1,40 +1,41 @@
 import { useCallback, useEffect, useState } from 'react';
-import { familyGroupsApi } from '@/api/endpoints';
+import { stockLocationsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import type { FamilyGroup } from '@/types/familyGroup';
+import type { StockLocation } from '@/types/stock';
 import type { NormalizedError } from '@/types/api';
 
-interface FamilyGroupsState {
-  data: FamilyGroup[];
+interface StockLocationsState {
+  data: StockLocation[];
   loading: boolean;
   error: NormalizedError | null;
   refresh: () => void;
 }
 
-interface UseFamilyGroupsOptions {
-  onLoaded?: (groups: FamilyGroup[]) => void;
-}
-
-export function useFamilyGroups(options?: UseFamilyGroupsOptions): FamilyGroupsState {
-  const [data, setData] = useState<FamilyGroup[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useStockLocations(groupId: number | null): StockLocationsState {
+  const [data, setData] = useState<StockLocation[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<NormalizedError | null>(null);
   const [version, setVersion] = useState(0);
 
   const refresh = useCallback(() => setVersion((v) => v + 1), []);
 
   useEffect(() => {
-    let cancelled = false;
     /* eslint-disable react-hooks/set-state-in-effect */
+    if (groupId === null) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
     setLoading(true);
     setError(null);
     /* eslint-enable react-hooks/set-state-in-effect */
 
-    familyGroupsApi.list().then((res) => {
+    stockLocationsApi.list(groupId).then((res) => {
       if (!cancelled) {
-        setData(res.data);
+        setData(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
-        options?.onLoaded?.(res.data);
       }
     }).catch((err: unknown) => {
       if (!cancelled) {
@@ -48,8 +49,7 @@ export function useFamilyGroups(options?: UseFamilyGroupsOptions): FamilyGroupsS
     });
 
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [version]);
+  }, [groupId, version]);
 
   return { data, loading, error, refresh };
 }

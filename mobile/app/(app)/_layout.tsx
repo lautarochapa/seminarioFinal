@@ -57,20 +57,60 @@ export default function AppLayout() {
           ),
         }}
       />
+
+      {/* Stack screens — hidden from tab bar */}
       <Tabs.Screen
         name="groups/index"
         options={{
           href: null,
-          title: 'Grupos familiares',
+          headerShown: false,
           tabBarStyle: { display: 'none' },
+          title: 'Grupos familiares',
         }}
       />
       <Tabs.Screen
         name="groups/[id]"
         options={{
           href: null,
-          title: 'Detalle del grupo',
+          headerShown: false,
           tabBarStyle: { display: 'none' },
+          title: 'Detalle del grupo',
+        }}
+      />
+      <Tabs.Screen
+        name="products/[id]"
+        options={{
+          href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          title: 'Producto',
+        }}
+      />
+      <Tabs.Screen
+        name="stock/create"
+        options={{
+          href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          title: 'Agregar al stock',
+        }}
+      />
+      <Tabs.Screen
+        name="stock/[id]/index"
+        options={{
+          href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          title: 'Detalle de stock',
+        }}
+      />
+      <Tabs.Screen
+        name="stock/[id]/edit"
+        options={{
+          href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          title: 'Editar stock',
         }}
       />
     </Tabs>
