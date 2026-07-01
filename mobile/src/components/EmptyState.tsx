@@ -1,25 +1,39 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppButton } from './AppButton';
-import { COLORS, FONT_SIZE, SPACING } from '@/utils/theme';
+import { COLORS, FONT, RADIUS, SPACING } from '@/utils/theme';
+
+type EmptyIcon =
+  | 'home-outline'
+  | 'basket-outline'
+  | 'package-variant-closed'
+  | 'clipboard-list-outline'
+  | 'chef-hat'
+  | 'account-group-outline'
+  | 'pot-outline';
 
 interface EmptyStateProps {
   message: string;
+  icon?: EmptyIcon;
   actionTitle?: string;
   onAction?: () => void;
 }
 
-export function EmptyState({ message, actionTitle, onAction }: EmptyStateProps) {
+export function EmptyState({
+  message,
+  icon = 'clipboard-list-outline',
+  actionTitle,
+  onAction,
+}: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>📭</Text>
+      <View style={styles.iconWrap}>
+        <MaterialCommunityIcons name={icon} size={40} color={COLORS.primary} />
+      </View>
       <Text style={styles.message}>{message}</Text>
       {actionTitle && onAction ? (
-        <AppButton
-          title={actionTitle}
-          onPress={onAction}
-          style={styles.button}
-        />
+        <AppButton title={actionTitle} onPress={onAction} style={styles.button} />
       ) : null}
     </View>
   );
@@ -33,17 +47,23 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
     gap: SPACING.md,
   },
-  icon: {
-    fontSize: 48,
+  iconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: RADIUS.xl,
+    backgroundColor: COLORS.primarySurface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.sm,
   },
   message: {
-    fontSize: FONT_SIZE.md,
+    fontSize: FONT.bodySize,
     color: COLORS.textSecondary,
     textAlign: 'center',
+    lineHeight: FONT.bodyLineHeight,
   },
   button: {
     marginTop: SPACING.sm,
-    alignSelf: 'center',
     paddingHorizontal: SPACING.xl,
   },
 });

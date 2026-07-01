@@ -21,8 +21,10 @@ export function useFamilyGroups(): FamilyGroupsState {
 
   useEffect(() => {
     let cancelled = false;
+    /* eslint-disable react-hooks/set-state-in-effect */
     setLoading(true);
     setError(null);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     familyGroupsApi.list().then((res) => {
       if (!cancelled) {

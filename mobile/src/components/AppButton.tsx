@@ -1,64 +1,66 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  type TouchableOpacityProps,
+  type ViewStyle,
 } from 'react-native';
-import { COLORS, FONT_SIZE, RADIUS, SPACING, TOUCH_TARGET } from '@/utils/theme';
+import { COLORS, FONT, RADIUS, SPACING, TOUCH_TARGET } from '@/utils/theme';
 
-interface AppButtonProps extends TouchableOpacityProps {
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+
+interface AppButtonProps {
   title: string;
+  onPress?: () => void;
   loading?: boolean;
-  variant?: 'primary' | 'outline' | 'ghost';
+  disabled?: boolean;
+  variant?: ButtonVariant;
+  style?: ViewStyle;
+  fullWidth?: boolean;
+  accessibilityLabel?: string;
 }
 
 export function AppButton({
   title,
+  onPress,
   loading = false,
+  disabled = false,
   variant = 'primary',
-  disabled,
   style,
-  ...rest
+  fullWidth = false,
+  accessibilityLabel,
 }: AppButtonProps) {
   const isDisabled = disabled || loading;
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
-      accessibilityLabel={title}
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
+    <Pressable
+      onPress={onPress}
       disabled={isDisabled}
-      style={[
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? title}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      style={({ pressed }) => [
         styles.base,
-        variant === 'primary' && styles.primary,
-        variant === 'outline' && styles.outline,
-        variant === 'ghost' && styles.ghost,
+        variantStyle[variant],
+        pressed && !isDisabled && pressedStyle[variant],
         isDisabled && styles.disabled,
+        fullWidth && styles.fullWidth,
         style,
       ]}
-      {...rest}
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'primary' ? '#fff' : COLORS.primary}
+          color={variant === 'primary' || variant === 'danger' ? '#fff' : COLORS.primary}
           size="small"
         />
       ) : (
-        <Text
-          style={[
-            styles.text,
-            variant === 'primary' && styles.textPrimary,
-            variant === 'outline' && styles.textOutline,
-            variant === 'ghost' && styles.textGhost,
-            isDisabled && styles.textDisabled,
-          ]}
-        >
+        <Text style={[styles.text, textStyle[variant], isDisabled && styles.textDisabled]}>
           {title}
         </Text>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -67,37 +69,51 @@ const styles = StyleSheet.create({
     minHeight: TOUCH_TARGET,
     borderRadius: RADIUS.md,
     paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'flex-start',
   },
-  primary: {
-    backgroundColor: COLORS.primary,
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: COLORS.primary,
-  },
-  ghost: {
-    backgroundColor: 'transparent',
+  fullWidth: {
+    alignSelf: 'stretch',
   },
   disabled: {
     opacity: 0.5,
   },
   text: {
-    fontSize: FONT_SIZE.md,
-    fontWeight: '600',
-  },
-  textPrimary: {
-    color: '#fff',
-  },
-  textOutline: {
-    color: COLORS.primary,
-  },
-  textGhost: {
-    color: COLORS.primary,
+    fontSize: FONT.buttonSize,
+    fontWeight: FONT.buttonWeight,
+    letterSpacing: 0.1,
   },
   textDisabled: {
-    color: COLORS.disabled,
+    opacity: 0.7,
   },
 });
+
+const variantStyle: Record<ButtonVariant, object> = {
+  primary: { backgroundColor: COLORS.primary },
+  secondary: { backgroundColor: COLORS.dark },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+  },
+  ghost: { backgroundColor: 'transparent' },
+  danger: { backgroundColor: COLORS.error },
+};
+
+const pressedStyle: Record<ButtonVariant, object> = {
+  primary: { backgroundColor: COLORS.primaryDark },
+  secondary: { backgroundColor: '#3A3B40' },
+  outline: { backgroundColor: COLORS.primarySurface },
+  ghost: { backgroundColor: COLORS.borderLight },
+  danger: { backgroundColor: '#B91C1C' },
+};
+
+const textStyle: Record<ButtonVariant, object> = {
+  primary: { color: '#fff' },
+  secondary: { color: '#fff' },
+  outline: { color: COLORS.primary },
+  ghost: { color: COLORS.primary },
+  danger: { color: '#fff' },
+};

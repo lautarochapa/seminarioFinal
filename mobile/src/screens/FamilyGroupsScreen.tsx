@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -15,16 +14,16 @@ import { ApiError } from '@/api/client';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
 import { EmptyState } from '@/components/EmptyState';
-import { ListItem } from '@/components/ListItem';
+import { FeatureCard } from '@/components/FeatureCard';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { FormError } from '@/components/FormError';
 import { friendlyMessage } from '@/utils/errorParser';
-import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
+import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 
 export function FamilyGroupsScreen() {
   const { data, loading, error, refresh } = useFamilyGroups();
-  const { selectGroup } = useFamilyGroupContext();
+  const { selectGroup, selectedGroup } = useFamilyGroupContext();
   const router = useRouter();
 
   const [creating, setCreating] = useState(false);
@@ -40,6 +39,7 @@ export function FamilyGroupsScreen() {
           message={friendlyMessage(error)}
           traceId={error.traceId}
           onRetry={refresh}
+          type="server"
         />
       </View>
     );
@@ -90,21 +90,28 @@ export function FamilyGroupsScreen() {
     >
       {data.length === 0 ? (
         <EmptyState
+          icon="account-group-outline"
           message="Todavía no pertenecés a un grupo familiar."
           actionTitle="Crear grupo"
           onAction={() => setCreating(true)}
         />
       ) : (
-        <>
-          {data.map((group) => (
-            <ListItem
-              key={group.id}
-              title={group.name}
-              subtitle={group.default_address ?? group.status}
-              onPress={() => handleSelect(group.id)}
-            />
-          ))}
-        </>
+        <View style={styles.list}>
+          {data.map((group) => {
+            const isSelected = selectedGroup?.id === group.id;
+            return (
+              <FeatureCard
+                key={group.id}
+                icon={isSelected ? 'account-group' : 'account-group-outline'}
+                title={group.name}
+                subtitle={group.default_address ?? (group.status === 'active' ? 'Activo' : group.status)}
+                onPress={() => handleSelect(group.id)}
+                iconBg={isSelected ? COLORS.primarySurface : COLORS.surfaceElevated}
+                iconColor={isSelected ? COLORS.primary : COLORS.textSecondary}
+              />
+            );
+          })}
+        </View>
       )}
 
       {creating ? (
@@ -136,7 +143,7 @@ export function FamilyGroupsScreen() {
             />
           </View>
         </View>
-      ) : data.length > 0 ? null : null}
+      ) : null}
 
       {!creating && data.length > 0 ? (
         <AppButton
@@ -160,6 +167,10 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     flexGrow: 1,
     paddingBottom: SPACING.xxl,
+    gap: SPACING.md,
+  },
+  list: {
+    gap: SPACING.md,
   },
   createCard: {
     backgroundColor: COLORS.surface,
@@ -167,11 +178,11 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    marginTop: SPACING.md,
+    ...SHADOW.sm,
   },
   createTitle: {
-    fontSize: FONT_SIZE.md,
-    fontWeight: '600',
+    fontSize: FONT.subtitleSize,
+    fontWeight: FONT.subtitleWeight,
     color: COLORS.textPrimary,
     marginBottom: SPACING.md,
   },
@@ -184,6 +195,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createOther: {
-    marginTop: SPACING.lg,
+    alignSelf: 'center',
   },
 });

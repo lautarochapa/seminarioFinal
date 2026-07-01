@@ -1,5 +1,4 @@
 // Global test setup for jest-expo
-
 // Mock expo-secure-store
 jest.mock('expo-secure-store', () => ({
   setItemAsync: jest.fn().mockResolvedValue(undefined),

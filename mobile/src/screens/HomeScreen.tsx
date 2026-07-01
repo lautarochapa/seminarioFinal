@@ -1,74 +1,158 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/auth/AuthContext';
-import { ScreenContainer } from '@/components/ScreenContainer';
-import { AppButton } from '@/components/AppButton';
-import { ListItem } from '@/components/ListItem';
-import { COLORS, FONT_SIZE, SPACING } from '@/utils/theme';
+import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
+import { AppLogo } from '@/components/AppLogo';
+import { FeatureCard } from '@/components/FeatureCard';
+import { COLORS, FONT, RADIUS, SPACING } from '@/utils/theme';
 
 export function HomeScreen() {
-  const { user, logout, isLoading } = useAuth();
+  const { user } = useAuth();
+  const { selectedGroup } = useFamilyGroupContext();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
-  const displayName = user ? `${user.name} ${user.lastname}`.trim() : '';
+  const displayName = user
+    ? (user.name || user.lastname ? `${user.name} ${user.lastname}`.trim() : user.email)
+    : '';
+
+  const initials = user
+    ? `${(user.name || '?').charAt(0)}${(user.lastname || '').charAt(0)}`.toUpperCase()
+    : '?';
 
   return (
-    <ScreenContainer scroll>
-      <View style={styles.greeting}>
-        <Text style={styles.logo}>🌿</Text>
-        <Text style={styles.hello}>Hola, {displayName || user?.email || ''}</Text>
-        <Text style={styles.sub}>CocinaComidaControl</Text>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Dark brand header — paddingTop adapts to safe-area top inset */}
+      <View style={[styles.header, { paddingTop: insets.top + SPACING.sm }]}>
+        <View style={styles.headerTop}>
+          <AppLogo variant="small" inverted />
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initials}</Text>
+          </View>
+        </View>
+
+        <Text style={styles.greeting}>
+          Hola, <Text style={styles.greetingName}>{displayName}</Text>
+        </Text>
+
+        {selectedGroup ? (
+          <View style={styles.groupChip}>
+            <Text style={styles.groupChipText} numberOfLines={1}>
+              {selectedGroup.name}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
-      <View style={styles.section}>
-        <ListItem
+      {/* Feature list */}
+      <View style={styles.featureList}>
+        <FeatureCard
+          icon="account-circle-outline"
           title="Mi perfil"
-          subtitle="Ver y editar datos personales"
-          onPress={() => router.push('/(app)/profile')}
+          subtitle="Datos personales, objetivos y preferencias"
+          onPress={() => router.navigate('/(app)/profile')}
+          iconBg={COLORS.primarySurface}
+          iconColor={COLORS.primary}
         />
-        <ListItem
+        <FeatureCard
+          icon="account-group-outline"
           title="Grupos familiares"
-          subtitle="Gestionar tu grupo y miembros"
+          subtitle="Familia y miembros del hogar"
           onPress={() => router.push('/(app)/groups')}
+          iconBg={COLORS.infoLight}
+          iconColor={COLORS.info}
+        />
+        <FeatureCard
+          icon="book-open-outline"
+          title="Catálogo"
+          subtitle="Productos e ingredientes disponibles"
+          onPress={() => router.navigate('/(app)/catalog')}
+          iconBg={COLORS.successLight}
+          iconColor={COLORS.success}
+        />
+        <FeatureCard
+          icon="package-variant-closed"
+          title="Stock del hogar"
+          subtitle="Control de inventario y vencimientos"
+          onPress={() => router.navigate('/(app)/stock')}
+          iconBg={COLORS.warningLight}
+          iconColor={COLORS.warning}
         />
       </View>
-
-      <View style={styles.logout}>
-        <AppButton
-          title="Cerrar sesión"
-          variant="outline"
-          onPress={logout}
-          loading={isLoading}
-        />
-      </View>
-    </ScreenContainer>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  greeting: {
+  scroll: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  content: {
+    flexGrow: 1,
+    paddingBottom: SPACING.xxl,
+  },
+  header: {
+    backgroundColor: COLORS.dark,
+    // paddingTop is set inline via insets.top + SPACING.sm
+    paddingBottom: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    borderBottomLeftRadius: RADIUS.xl,
+    borderBottomRightRadius: RADIUS.xl,
+    gap: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  headerTop: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: SPACING.xl,
-    gap: SPACING.xs,
+    justifyContent: 'space-between',
+    marginBottom: SPACING.sm,
   },
-  logo: {
-    fontSize: 48,
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  hello: {
-    fontSize: FONT_SIZE.xl,
+  avatarText: {
+    fontSize: FONT.labelSize,
     fontWeight: '700',
-    color: COLORS.textPrimary,
+    color: '#fff',
   },
-  sub: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
+  greeting: {
+    fontSize: FONT.titleSize,
+    fontWeight: '400',
+    color: 'rgba(255,255,255,0.8)',
   },
-  section: {
-    gap: SPACING.xs,
-    marginTop: SPACING.lg,
+  greetingName: {
+    fontWeight: FONT.titleWeight,
+    color: '#fff',
   },
-  logout: {
-    marginTop: SPACING.xl,
+  groupChip: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(4,172,133,0.25)',
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 3,
+    maxWidth: '80%',
+  },
+  groupChipText: {
+    fontSize: FONT.captionSize,
+    color: COLORS.primaryLight,
+    fontWeight: '600',
+  },
+  featureList: {
+    paddingHorizontal: SPACING.md,
+    gap: SPACING.md,
   },
 });

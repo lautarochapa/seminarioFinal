@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { profileApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { friendlyMessage } from '@/utils/errorParser';
 import type { Profile } from '@/types/profile';
 import type { NormalizedError } from '@/types/api';
 
@@ -22,8 +21,10 @@ export function useProfile(): ProfileState {
 
   useEffect(() => {
     let cancelled = false;
+    /* eslint-disable react-hooks/set-state-in-effect */
     setLoading(true);
     setError(null);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     profileApi.get().then((res) => {
       if (!cancelled) {

@@ -5,17 +5,18 @@ import {
   TextInput,
   View,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { PasswordInput } from '@/components/PasswordInput';
 import { FormError } from '@/components/FormError';
+import { AppLogo } from '@/components/AppLogo';
 import { useAuth } from '@/auth/AuthContext';
 import { ApiError } from '@/api/client';
 import { validateLoginForm } from '@/validation/loginSchema';
 import { ENV } from '@/config/env';
-import { COLORS, FONT_SIZE, SPACING } from '@/utils/theme';
+import { COLORS, FONT, RADIUS, SPACING } from '@/utils/theme';
 
 function loginErrorMessage(err: ApiError): string {
   switch (err.normalized.status) {
@@ -39,7 +40,7 @@ export function LoginScreen() {
   const [retryAfter, setRetryAfter] = useState<number | null>(null);
   const passwordRef = useRef<TextInput>(null);
 
-  const canSubmit = !isLoading && (retryAfter === null);
+  const canSubmit = !isLoading && retryAfter === null;
 
   async function handleSubmit() {
     setGeneralError(null);
@@ -87,13 +88,15 @@ export function LoginScreen() {
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
+      {/* Brand header */}
       <View style={styles.header}>
-        <Text style={styles.logo}>🌿</Text>
-        <Text style={styles.appName}>CocinaComidaControl</Text>
-        <Text style={styles.tagline}>Tu cocina, tu presupuesto, tu familia.</Text>
+        <AppLogo variant="large" inverted />
       </View>
 
-      <View style={styles.form}>
+      {/* Form card */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Iniciar sesión</Text>
+
         <FormError message={generalError} />
 
         <AppInput
@@ -125,6 +128,7 @@ export function LoginScreen() {
           onPress={handleSubmit}
           loading={isLoading}
           disabled={!canSubmit}
+          fullWidth
           style={styles.button}
         />
       </View>
@@ -132,27 +136,22 @@ export function LoginScreen() {
       {ENV.SHOW_DEMO_USERS ? (
         <View style={styles.demo}>
           <Text style={styles.demoTitle}>— Usuarios demo —</Text>
-          <TouchableOpacity
-            style={styles.demoRow}
-            onPress={() => fillDemo('usuario@cccontrol.test', '12345678')}
-          >
-            <Text style={styles.demoEmail}>usuario@cccontrol.test</Text>
-            <Text style={styles.demoHint}>contraseña: 12345678</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.demoRow}
-            onPress={() => fillDemo('superadmin@cccontrol.test', '12345678')}
-          >
-            <Text style={styles.demoEmail}>superadmin@cccontrol.test</Text>
-            <Text style={styles.demoHint}>contraseña: 12345678</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.demoRow}
-            onPress={() => fillDemo('admin@cccontrol.test', 'password123')}
-          >
-            <Text style={styles.demoEmail}>admin@cccontrol.test</Text>
-            <Text style={styles.demoHint}>contraseña: password123</Text>
-          </TouchableOpacity>
+          {[
+            { email: 'usuario@cccontrol.test', password: '12345678' },
+            { email: 'superadmin@cccontrol.test', password: '12345678' },
+            { email: 'admin@cccontrol.test', password: 'password123' },
+          ].map((u) => (
+            <Pressable
+              key={u.email}
+              style={styles.demoRow}
+              onPress={() => fillDemo(u.email, u.password)}
+              accessibilityRole="button"
+              accessibilityLabel={`Usar demo ${u.email}`}
+            >
+              <Text style={styles.demoEmail}>{u.email}</Text>
+              <Text style={styles.demoHint}>contraseña: {u.password}</Text>
+            </Pressable>
+          ))}
         </View>
       ) : null}
     </ScrollView>
@@ -162,61 +161,67 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xxl,
-    paddingBottom: SPACING.xxl,
     backgroundColor: COLORS.background,
   },
   header: {
+    backgroundColor: COLORS.dark,
     alignItems: 'center',
-    marginBottom: SPACING.xxl,
+    justifyContent: 'center',
+    paddingTop: SPACING.xxxl,
+    paddingBottom: SPACING.xxl,
+    paddingHorizontal: SPACING.lg,
+    borderBottomLeftRadius: RADIUS.xl,
+    borderBottomRightRadius: RADIUS.xl,
   },
-  logo: {
-    fontSize: 56,
-    marginBottom: SPACING.sm,
-  },
-  appName: {
-    fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
-    color: COLORS.primary,
-    marginBottom: SPACING.xs,
-  },
-  tagline: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
-  },
-  form: {
+  card: {
+    margin: SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
     gap: SPACING.xs,
+    shadowColor: '#1C2422',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.09,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  cardTitle: {
+    fontSize: FONT.titleSize,
+    fontWeight: FONT.titleWeight,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.sm,
   },
   button: {
     marginTop: SPACING.sm,
   },
   demo: {
-    marginTop: SPACING.xxl,
+    marginHorizontal: SPACING.lg,
+    marginBottom: SPACING.xxl,
     padding: SPACING.md,
-    backgroundColor: '#FFF9C4',
-    borderRadius: 10,
+    backgroundColor: COLORS.warningLight,
+    borderRadius: RADIUS.md,
     borderWidth: 1,
     borderColor: '#F9A825',
     gap: SPACING.sm,
   },
   demoTitle: {
-    fontSize: FONT_SIZE.xs,
+    fontSize: FONT.captionSize,
     color: '#6D4C41',
     textAlign: 'center',
     fontWeight: '700',
     textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   demoRow: {
     paddingVertical: SPACING.xs,
   },
   demoEmail: {
-    fontSize: FONT_SIZE.sm,
+    fontSize: FONT.labelSize,
     color: COLORS.primary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   demoHint: {
-    fontSize: FONT_SIZE.xs,
+    fontSize: FONT.captionSize,
     color: COLORS.textSecondary,
   },
 });

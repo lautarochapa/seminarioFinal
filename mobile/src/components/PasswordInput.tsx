@@ -1,5 +1,6 @@
 import React, { forwardRef, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, TextInput } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppInput } from './AppInput';
 import { COLORS, TOUCH_TARGET } from '@/utils/theme';
 import type { TextInputProps } from 'react-native';
@@ -7,10 +8,11 @@ import type { TextInputProps } from 'react-native';
 interface PasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   label?: string;
   error?: string;
+  hint?: string;
 }
 
 export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(
-  function PasswordInput({ label = 'Contraseña', error, ...rest }, ref) {
+  function PasswordInput({ label = 'Contraseña', error, hint, ...rest }, ref) {
     const [visible, setVisible] = useState(false);
 
     return (
@@ -19,19 +21,25 @@ export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(
           ref={ref}
           label={label}
           error={error}
+          hint={hint}
           secureTextEntry={!visible}
           autoCapitalize="none"
           autoCorrect={false}
           {...rest}
         />
-        <TouchableOpacity
+        <Pressable
           style={styles.toggle}
           onPress={() => setVisible((v) => !v)}
           accessibilityLabel={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
           accessibilityRole="button"
+          hitSlop={8}
         >
-          <Text style={styles.toggleText}>{visible ? 'Ocultar' : 'Mostrar'}</Text>
-        </TouchableOpacity>
+          <MaterialCommunityIcons
+            name={visible ? 'eye-off-outline' : 'eye-outline'}
+            size={20}
+            color={COLORS.textSecondary}
+          />
+        </Pressable>
       </View>
     );
   },
@@ -40,14 +48,9 @@ export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(
 const styles = StyleSheet.create({
   toggle: {
     position: 'absolute',
-    right: 12,
-    top: 28,
-    minHeight: TOUCH_TARGET,
+    right: 14,
+    top: 32,
+    height: TOUCH_TARGET - 8,
     justifyContent: 'center',
-  },
-  toggleText: {
-    fontSize: 13,
-    color: COLORS.primary,
-    fontWeight: '500',
   },
 });

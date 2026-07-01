@@ -1,12 +1,14 @@
 import React from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useProfile } from '@/hooks/useProfile';
+import { useAuth } from '@/auth/AuthContext';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { SectionHeader } from '@/components/SectionHeader';
+import { AppButton } from '@/components/AppButton';
 import { friendlyMessage } from '@/utils/errorParser';
-import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
+import { COLORS, FONT, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
 
 function Row({ label, value }: { label: string; value: string | number | null | undefined }) {
   if (value === null || value === undefined || value === '') return null;
@@ -34,6 +36,19 @@ const GENDER_LABELS: Record<string, string> = {
 
 export function ProfileScreen() {
   const { data, loading, error, refresh } = useProfile();
+  const { logout, isLoading: logoutLoading } = useAuth();
+
+  function confirmLogout() {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Querés cerrar la sesión actual?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Cerrar sesión', style: 'destructive', onPress: logout },
+      ],
+      { cancelable: true },
+    );
+  }
 
   if (loading && !data) return <LoadingScreen message="Cargando perfil..." />;
   if (error && !data) {
@@ -43,6 +58,7 @@ export function ProfileScreen() {
           message={friendlyMessage(error)}
           traceId={error.traceId}
           onRetry={refresh}
+          type="server"
         />
       </ScreenContainer>
     );
@@ -56,14 +72,16 @@ export function ProfileScreen() {
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} tintColor={COLORS.primary} />}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>
-          {data.name.charAt(0).toUpperCase()}{data.lastname.charAt(0).toUpperCase()}
-        </Text>
+      {/* Avatar header */}
+      <View style={styles.avatarSection}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>
+            {data.name.charAt(0).toUpperCase()}{data.lastname.charAt(0).toUpperCase()}
+          </Text>
+        </View>
+        <Text style={styles.name}>{data.name} {data.lastname}</Text>
+        <Text style={styles.email}>{data.email}</Text>
       </View>
-
-      <Text style={styles.name}>{data.name} {data.lastname}</Text>
-      <Text style={styles.email}>{data.email}</Text>
 
       <SectionHeader title="Datos personales" />
       <View style={styles.card}>
@@ -92,6 +110,17 @@ export function ProfileScreen() {
           </View>
         </>
       ) : null}
+
+      {/* Logout at bottom */}
+      <View style={styles.logoutSection}>
+        <AppButton
+          title="Cerrar sesión"
+          variant="danger"
+          onPress={confirmLogout}
+          loading={logoutLoading}
+          fullWidth
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -105,34 +134,35 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     paddingBottom: SPACING.xxl,
   },
+  avatarSection: {
+    alignItems: 'center',
+    paddingVertical: SPACING.lg,
+    gap: SPACING.xs,
+  },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 88,
+    height: 88,
+    borderRadius: RADIUS.full,
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center',
-    marginTop: SPACING.lg,
     marginBottom: SPACING.sm,
   },
   avatarText: {
-    fontSize: 28,
+    fontSize: FONT_SIZE.xxl,
     fontWeight: '700',
     color: '#fff',
   },
   name: {
-    fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
+    fontSize: FONT.titleSize,
+    fontWeight: FONT.titleWeight,
     color: COLORS.textPrimary,
     textAlign: 'center',
-    marginBottom: SPACING.xs,
   },
   email: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.textSecondary,
     textAlign: 'center',
-    marginBottom: SPACING.lg,
   },
   card: {
     backgroundColor: COLORS.surface,
@@ -165,5 +195,11 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
     color: COLORS.textPrimary,
     lineHeight: 20,
+  },
+  logoutSection: {
+    marginTop: SPACING.lg,
+    paddingTop: SPACING.lg,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
   },
 });

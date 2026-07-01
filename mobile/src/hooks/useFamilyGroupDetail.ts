@@ -23,8 +23,10 @@ export function useFamilyGroupDetail(id: number): GroupDetailState {
 
   useEffect(() => {
     let cancelled = false;
+    /* eslint-disable react-hooks/set-state-in-effect */
     setLoading(true);
     setError(null);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     Promise.all([familyGroupsApi.get(id), familyGroupsApi.members(id)])
       .then(([groupRes, membersRes]) => {

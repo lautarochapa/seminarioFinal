@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFamilyGroupDetail } from '@/hooks/useFamilyGroupDetail';
 import { useAuth } from '@/auth/AuthContext';
 import { familyGroupsApi } from '@/api/endpoints';
@@ -17,9 +17,8 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { FormError } from '@/components/FormError';
-import { ListItem } from '@/components/ListItem';
 import { friendlyMessage } from '@/utils/errorParser';
-import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
+import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 
 interface GroupDetailScreenProps {
   groupId: number;
@@ -34,6 +33,12 @@ const ROLE_LABELS: Record<string, string> = {
   owner: 'Propietario',
   admin: 'Administrador',
   member: 'Miembro',
+};
+
+const ROLE_COLORS: Record<string, string> = {
+  owner: COLORS.primary,
+  admin: COLORS.info,
+  member: COLORS.textSecondary,
 };
 
 export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
@@ -55,6 +60,7 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
           message={friendlyMessage(error)}
           traceId={error.traceId}
           onRetry={refresh}
+          type="server"
         />
       </View>
     );
@@ -98,9 +104,15 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
       }
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.header}>
+      {/* Group header */}
+      <View style={styles.groupHeader}>
+        <View style={styles.groupIconWrap}>
+          <MaterialCommunityIcons name="account-group" size={32} color={COLORS.primary} />
+        </View>
         <Text style={styles.groupName}>{group.name}</Text>
-        <Text style={styles.status}>{STATUS_LABELS[group.status] ?? group.status}</Text>
+        <View style={styles.statusBadge}>
+          <Text style={styles.statusText}>{STATUS_LABELS[group.status] ?? group.status}</Text>
+        </View>
       </View>
 
       {group.default_address ? (
@@ -112,16 +124,26 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
 
       <SectionHeader title={`Miembros (${members.length})`} />
       <View style={styles.membersCard}>
-        {members.map((m) => (
-          <View key={m.id} style={styles.memberRow}>
+        {members.map((m, index) => (
+          <View
+            key={m.id}
+            style={[
+              styles.memberRow,
+              index < members.length - 1 && styles.memberRowBorder,
+            ]}
+          >
             <View style={styles.memberAvatar}>
               <Text style={styles.memberInitial}>{m.name.charAt(0).toUpperCase()}</Text>
             </View>
             <View style={styles.memberInfo}>
               <Text style={styles.memberName}>{m.name}</Text>
-              <Text style={styles.memberEmail}>{m.email}</Text>
+              <Text style={styles.memberEmail} numberOfLines={1}>{m.email}</Text>
             </View>
-            <Text style={styles.memberRole}>{ROLE_LABELS[m.role] ?? m.role}</Text>
+            <View style={[styles.roleBadge, { borderColor: ROLE_COLORS[m.role] ?? COLORS.border }]}>
+              <Text style={[styles.roleText, { color: ROLE_COLORS[m.role] ?? COLORS.textSecondary }]}>
+                {ROLE_LABELS[m.role] ?? m.role}
+              </Text>
+            </View>
           </View>
         ))}
       </View>
@@ -131,7 +153,10 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
           <SectionHeader title="Invitar miembro" />
           <View style={styles.inviteCard}>
             {inviteSuccess ? (
-              <Text style={styles.successText}>✓ Invitación enviada.</Text>
+              <View style={styles.successRow}>
+                <MaterialCommunityIcons name="check-circle-outline" size={18} color={COLORS.success} />
+                <Text style={styles.successText}>Invitación enviada.</Text>
+              </View>
             ) : null}
             <FormError message={inviteError} />
             <AppInput
@@ -150,6 +175,7 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
               title="Enviar invitación"
               onPress={handleInvite}
               loading={inviting}
+              fullWidth
             />
             <Text style={styles.inviteNote}>
               En desarrollo el email puede estar en el log del servidor.
@@ -171,19 +197,36 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     paddingBottom: SPACING.xxl,
   },
-  header: {
+  groupHeader: {
     alignItems: 'center',
     paddingVertical: SPACING.lg,
-    gap: SPACING.xs,
+    gap: SPACING.sm,
+  },
+  groupIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: RADIUS.xl,
+    backgroundColor: COLORS.primarySurface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.xs,
   },
   groupName: {
-    fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
+    fontSize: FONT.titleSize,
+    fontWeight: FONT.titleWeight,
     color: COLORS.textPrimary,
     textAlign: 'center',
   },
-  status: {
-    fontSize: FONT_SIZE.sm,
+  statusBadge: {
+    backgroundColor: COLORS.primarySurface,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+  },
+  statusText: {
+    fontSize: FONT.captionSize,
     color: COLORS.primary,
     fontWeight: '600',
   },
@@ -195,12 +238,14 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     marginBottom: SPACING.md,
     gap: SPACING.xs,
+    ...SHADOW.sm,
   },
   cardLabel: {
     fontSize: FONT_SIZE.xs,
     color: COLORS.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.6,
+    fontWeight: '600',
   },
   cardValue: {
     fontSize: FONT_SIZE.md,
@@ -213,19 +258,22 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     marginBottom: SPACING.md,
     overflow: 'hidden',
+    ...SHADOW.sm,
   },
   memberRow: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
     gap: SPACING.sm,
   },
+  memberRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.borderLight,
+  },
   memberAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: RADIUS.full,
     backgroundColor: COLORS.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
@@ -237,6 +285,7 @@ const styles = StyleSheet.create({
   },
   memberInfo: {
     flex: 1,
+    gap: 2,
   },
   memberName: {
     fontSize: FONT_SIZE.sm,
@@ -247,9 +296,14 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xs,
     color: COLORS.textSecondary,
   },
-  memberRole: {
-    fontSize: FONT_SIZE.xs,
-    color: COLORS.primary,
+  roleBadge: {
+    borderWidth: 1,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+  },
+  roleText: {
+    fontSize: 11,
     fontWeight: '600',
   },
   inviteCard: {
@@ -259,17 +313,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     gap: SPACING.sm,
+    ...SHADOW.sm,
   },
-  inviteNote: {
-    fontSize: FONT_SIZE.xs,
-    color: COLORS.textHint,
-    textAlign: 'center',
+  successRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    paddingVertical: SPACING.xs,
   },
   successText: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.success,
     fontWeight: '500',
+  },
+  inviteNote: {
+    fontSize: FONT_SIZE.xs,
+    color: COLORS.textHint,
     textAlign: 'center',
-    paddingVertical: SPACING.sm,
   },
 });
