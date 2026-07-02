@@ -151,6 +151,63 @@ export function HomeScreen() {
           iconBg={COLORS.successLight}
           iconColor={COLORS.primaryDark}
         />
+        <Text style={styles.sectionTitle}>Supermercados</Text>
+        <FeatureCard
+          icon="storefront-outline"
+          title="Supermercados"
+          subtitle="Cadenas disponibles"
+          onPress={() => router.push('/(app)/supermarkets' as never)}
+          iconBg={COLORS.primarySurface}
+          iconColor={COLORS.primary}
+        />
+        <FeatureCard
+          icon="map-marker-radius-outline"
+          title="Sucursales y mapa"
+          subtitle="Cercania, servicios y ubicacion"
+          onPress={() => router.push('/(app)/branches' as never)}
+          iconBg={COLORS.infoLight}
+          iconColor={COLORS.info}
+        />
+        <FeatureCard
+          icon="cart-percent"
+          title="Comparar precios"
+          subtitle="Mejor precio por producto"
+          onPress={() => router.push('/(app)/price-comparison' as never)}
+          iconBg={COLORS.warningLight}
+          iconColor={COLORS.warning}
+        />
+        <FeatureCard
+          icon="ticket-percent-outline"
+          title="Promociones"
+          subtitle="Beneficios por sucursal"
+          onPress={() => router.push('/(app)/promotions' as never)}
+          iconBg={COLORS.errorLight}
+          iconColor={COLORS.error}
+        />
+        <FeatureCard
+          icon="credit-card-outline"
+          title="Metodos de pago"
+          subtitle="Catalogo de medios disponibles"
+          onPress={() => router.push('/(app)/payment-methods' as never)}
+          iconBg={COLORS.successLight}
+          iconColor={COLORS.primaryDark}
+        />
+        <FeatureCard
+          icon="bell-outline"
+          title="Notificaciones"
+          subtitle="Alertas y preferencias"
+          onPress={() => router.push('/(app)/notifications' as never)}
+          iconBg={COLORS.infoLight}
+          iconColor={COLORS.info}
+        />
+        <FeatureCard
+          icon="chart-box-outline"
+          title="Reportes"
+          subtitle="Gastos, stock y desperdicio"
+          onPress={() => router.push('/(app)/reports' as never)}
+          iconBg={COLORS.primarySurface}
+          iconColor={COLORS.primary}
+        />
       </View>
     </ScrollView>
   );

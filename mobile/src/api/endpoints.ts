@@ -51,6 +51,21 @@ import type {
   GenerateShoppingListResult,
 } from '@/types/recipe';
 import type { MealPlan, MealPlanEntry, MealPlanFilters } from '@/types/mealPlan';
+import type {
+  BranchFilters,
+  City,
+  CurrentPrice,
+  Notification,
+  NotificationPreferences,
+  PaymentMethod,
+  PriceComparison,
+  PriceHistoryEntry,
+  Promotion,
+  ReportPeriod,
+  SupermarketBranch,
+  SupermarketChain,
+  SupermarketProduct,
+} from '@/types/retail';
 
 export const authApi = {
   login(payload: LoginRequest): Promise<LoginResponse> {
@@ -88,7 +103,7 @@ export const familyGroupsApi = {
   },
 };
 
-function toQueryString(params: Record<string, unknown>): string {
+export function toQueryString(params: Record<string, unknown>): string {
   const parts: string[] = [];
   Object.entries(params).forEach(([k, v]) => {
     if (v !== undefined && v !== null && v !== '') {
@@ -300,3 +315,135 @@ export const mealPlansApi = {
 };
 
 export const planningApi = mealPlansApi;
+
+export const supermarketsApi = {
+  list(): Promise<ApiResponse<SupermarketChain[]>> {
+    return apiClient.get<ApiResponse<SupermarketChain[]>>('/api/v1/supermarkets');
+  },
+  get(id: number): Promise<ApiResponse<SupermarketChain>> {
+    return apiClient.get<ApiResponse<SupermarketChain>>(`/api/v1/supermarkets/${id}`);
+  },
+};
+
+export const citiesApi = {
+  list(): Promise<PaginatedResponse<City>> {
+    return apiClient.get<PaginatedResponse<City>>('/api/v1/cities?per_page=100');
+  },
+};
+
+export const branchesApi = {
+  list(filters?: BranchFilters): Promise<ApiResponse<SupermarketBranch[]>> {
+    const qs = toQueryString((filters ?? {}) as unknown as Record<string, unknown>);
+    return apiClient.get<ApiResponse<SupermarketBranch[]>>(`/api/v1/supermarket-branches${qs}`);
+  },
+  get(id: number): Promise<ApiResponse<SupermarketBranch>> {
+    return apiClient.get<ApiResponse<SupermarketBranch>>(`/api/v1/supermarket-branches/${id}`);
+  },
+  nearby(payload: { lat: number; lng: number; radius: number }): Promise<ApiResponse<SupermarketBranch[]>> {
+    const qs = toQueryString(payload as unknown as Record<string, unknown>);
+    return apiClient.get<ApiResponse<SupermarketBranch[]>>(`/api/v1/supermarket-branches/nearby${qs}`);
+  },
+  products(id: number, filters?: { search?: string; page?: number; per_page?: number }): Promise<PaginatedResponse<SupermarketProduct>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<SupermarketProduct>>(`/api/v1/supermarket-branches/${id}/products${qs}`);
+  },
+  promotions(id: number): Promise<ApiResponse<Promotion[]>> {
+    return apiClient.get<ApiResponse<Promotion[]>>(`/api/v1/supermarket-branches/${id}/promotions`);
+  },
+};
+
+export const pricesApi = {
+  byProduct(productId: number): Promise<ApiResponse<SupermarketProduct[]>> {
+    return apiClient.get<ApiResponse<SupermarketProduct[]>>(`/api/v1/products/${productId}/supermarket-prices`);
+  },
+  bestPrice(productId: number): Promise<ApiResponse<SupermarketProduct | null>> {
+    return apiClient.get<ApiResponse<SupermarketProduct | null>>(`/api/v1/products/${productId}/best-price`);
+  },
+  compare(productId: number): Promise<PriceComparison> {
+    return Promise.all([this.byProduct(productId), this.bestPrice(productId)])
+      .then(([prices, best]) => ({
+        product_id: productId,
+        prices: prices.data,
+        best: best.data,
+        partial_errors: [],
+      }));
+  },
+  history(_supermarketProductId: number): Promise<ApiResponse<PriceHistoryEntry[]>> {
+    return Promise.resolve({ data: [], trace_id: '', message: 'No hay endpoint publico de historial de precios.' });
+  },
+};
+
+export const promotionsApi = {
+  byBranch(branchId: number): Promise<ApiResponse<Promotion[]>> {
+    return branchesApi.promotions(branchId);
+  },
+};
+
+export const paymentMethodsApi = {
+  list(): Promise<ApiResponse<PaymentMethod[]>> {
+    return apiClient.get<ApiResponse<PaymentMethod[]>>('/api/v1/payment-methods');
+  },
+  userMethods(): Promise<ApiResponse<PaymentMethod[]>> {
+    return apiClient.get<ApiResponse<PaymentMethod[]>>('/api/v1/users/me/payment-methods');
+  },
+};
+
+export const notificationsApi = {
+  list(filters?: { type?: string; status?: string; channel?: string; page?: number; per_page?: number }): Promise<PaginatedResponse<Notification>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<Notification>>(`/api/v1/notifications${qs}`);
+  },
+  unreadCount(): Promise<ApiResponse<{ unread_count: number }>> {
+    return apiClient.get<ApiResponse<{ unread_count: number }>>('/api/v1/notifications/unread-count');
+  },
+  markAsRead(id: number): Promise<ApiResponse<Notification>> {
+    return apiClient.patch<ApiResponse<Notification>>(`/api/v1/notifications/${id}/read`);
+  },
+  markAllAsRead(): Promise<ApiResponse<{ marked_count: number }>> {
+    return apiClient.patch<ApiResponse<{ marked_count: number }>>('/api/v1/notifications/read-all');
+  },
+  preferences(): Promise<ApiResponse<NotificationPreferences>> {
+    return apiClient.get<ApiResponse<NotificationPreferences>>('/api/v1/users/me/notification-preferences');
+  },
+  updatePreferences(preferences: NotificationPreferences): Promise<ApiResponse<NotificationPreferences>> {
+    return apiClient.patch<ApiResponse<NotificationPreferences>>('/api/v1/users/me/notification-preferences', { preferences });
+  },
+};
+
+export const reportsApi = {
+  stock(groupId: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/stock`);
+  },
+  stockValue(groupId: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/stock-value`);
+  },
+  waste(groupId: number, period?: ReportPeriod): Promise<ApiResponse<Record<string, unknown>>> {
+    const qs = toQueryString(periodToDates(period));
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/waste${qs}`);
+  },
+  purchases(groupId: number, period?: ReportPeriod): Promise<ApiResponse<Record<string, unknown>>> {
+    const qs = toQueryString(periodToDates(period));
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/purchases${qs}`);
+  },
+  budget(groupId: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/budget`);
+  },
+  budgetVsActual(groupId: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/budget-vs-actual`);
+  },
+};
+
+function periodToDates(period?: ReportPeriod): Record<string, string> {
+  if (!period) return {};
+  const now = new Date();
+  const from = new Date(now);
+  if (period === 'year') from.setMonth(now.getMonth() - 12);
+  else if (period === 'quarter') from.setMonth(now.getMonth() - 3);
+  else from.setMonth(now.getMonth() - 1);
+  return {
+    date_from: from.toISOString().slice(0, 10),
+    date_to: now.toISOString().slice(0, 10),
+  };
+}
+
+export type { CurrentPrice };

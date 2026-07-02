@@ -8,10 +8,19 @@ type EmptyIcon =
   | 'home-outline'
   | 'basket-outline'
   | 'package-variant-closed'
+  | 'package-variant'
   | 'clipboard-list-outline'
   | 'chef-hat'
   | 'account-group-outline'
-  | 'pot-outline';
+  | 'pot-outline'
+  | 'store-search-outline'
+  | 'map-marker-off-outline'
+  | 'ticket-percent-outline'
+  | 'credit-card-off-outline'
+  | 'bell-off-outline'
+  | 'cart-outline'
+  | 'currency-usd-off'
+  | 'chart-box-outline';
 
 interface EmptyStateProps {
   message: string;

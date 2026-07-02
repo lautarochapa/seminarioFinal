@@ -187,6 +187,44 @@ export default function AppLayout() {
         name="meal-plans/[id]"
         options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de meal plan' }}
       />
+
+      {/* Supermarkets, prices, notifications and reports */}
+      <Tabs.Screen
+        name="supermarkets"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Supermercados' }}
+      />
+      <Tabs.Screen
+        name="supermarkets/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de supermercado' }}
+      />
+      <Tabs.Screen
+        name="branches"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Sucursales' }}
+      />
+      <Tabs.Screen
+        name="branches/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de sucursal' }}
+      />
+      <Tabs.Screen
+        name="price-comparison"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Comparacion de precios' }}
+      />
+      <Tabs.Screen
+        name="promotions"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Promociones' }}
+      />
+      <Tabs.Screen
+        name="payment-methods"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Metodos de pago' }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Notificaciones' }}
+      />
+      <Tabs.Screen
+        name="reports"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Reportes' }}
+      />
     </Tabs>
   );
 }
