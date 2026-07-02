@@ -157,6 +157,36 @@ export default function AppLayout() {
         name="budgets/[id]"
         options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de presupuesto' }}
       />
+
+      {/* Recipes and planning */}
+      <Tabs.Screen
+        name="recipes"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Recetas' }}
+      />
+      <Tabs.Screen
+        name="recipes/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de receta' }}
+      />
+      <Tabs.Screen
+        name="recipe-favorites"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Favoritos' }}
+      />
+      <Tabs.Screen
+        name="recipe-suggestions"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Sugerencias' }}
+      />
+      <Tabs.Screen
+        name="planning"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Planificación' }}
+      />
+      <Tabs.Screen
+        name="meal-plans/index"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Meal plans' }}
+      />
+      <Tabs.Screen
+        name="meal-plans/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de meal plan' }}
+      />
     </Tabs>
   );
 }

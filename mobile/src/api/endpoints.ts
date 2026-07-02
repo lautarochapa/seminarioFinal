@@ -41,6 +41,16 @@ import type {
   BudgetFilters,
 } from '@/types/budget';
 import type { Unit } from '@/types/unit';
+import type {
+  RecipeCategory,
+  RecipeDetail,
+  RecipeFavorite,
+  RecipeFilters,
+  RecipeSummary,
+  RecipeSuggestion,
+  GenerateShoppingListResult,
+} from '@/types/recipe';
+import type { MealPlan, MealPlanEntry, MealPlanFilters } from '@/types/mealPlan';
 
 export const authApi = {
   login(payload: LoginRequest): Promise<LoginResponse> {
@@ -233,3 +243,60 @@ export const budgetsApi = {
     return apiClient.get<ApiResponse<BudgetProjection>>(`/api/v1/family-groups/${groupId}/budgets/${budgetId}/projection`);
   },
 };
+
+export const recipesApi = {
+  list(filters?: RecipeFilters): Promise<PaginatedResponse<RecipeSummary>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<RecipeSummary>>(`/api/v1/recipes${qs}`);
+  },
+  search(filters?: RecipeFilters): Promise<PaginatedResponse<RecipeSummary>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<RecipeSummary>>(`/api/v1/recipes/search${qs}`);
+  },
+  get(id: number): Promise<ApiResponse<RecipeDetail>> {
+    return apiClient.get<ApiResponse<RecipeDetail>>(`/api/v1/recipes/${id}`);
+  },
+  categories(): Promise<PaginatedResponse<RecipeCategory>> {
+    return apiClient.get<PaginatedResponse<RecipeCategory>>('/api/v1/recipe-categories?per_page=100');
+  },
+};
+
+export const recipeFavoritesApi = {
+  list(): Promise<PaginatedResponse<RecipeFavorite>> {
+    return apiClient.get<PaginatedResponse<RecipeFavorite>>('/api/v1/users/me/favorite-recipes?per_page=100');
+  },
+  add(recipeId: number): Promise<ApiResponse<RecipeFavorite>> {
+    return apiClient.post<ApiResponse<RecipeFavorite>>(`/api/v1/recipes/${recipeId}/favorite`);
+  },
+  remove(recipeId: number): Promise<void> {
+    return apiClient.delete<void>(`/api/v1/recipes/${recipeId}/favorite`);
+  },
+};
+
+export const recipeSuggestionsApi = {
+  list(groupId?: number | null): Promise<PaginatedResponse<RecipeSuggestion>> {
+    const qs = toQueryString({ family_group_id: groupId || undefined, per_page: 20 });
+    return apiClient.get<PaginatedResponse<RecipeSuggestion>>(`/api/v1/recipes/suggestions${qs}`);
+  },
+  available(groupId: number): Promise<PaginatedResponse<RecipeSuggestion>> {
+    return apiClient.get<PaginatedResponse<RecipeSuggestion>>(`/api/v1/family-groups/${groupId}/recipes/available?per_page=20`);
+  },
+};
+
+export const mealPlansApi = {
+  list(groupId: number, filters?: MealPlanFilters): Promise<PaginatedResponse<MealPlan>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<MealPlan>>(`/api/v1/family-groups/${groupId}/meal-plans${qs}`);
+  },
+  get(groupId: number, planId: number): Promise<ApiResponse<MealPlan>> {
+    return apiClient.get<ApiResponse<MealPlan>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}`);
+  },
+  entries(groupId: number, planId: number): Promise<ApiResponse<MealPlanEntry[]>> {
+    return apiClient.get<ApiResponse<MealPlanEntry[]>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items`);
+  },
+  generateShoppingList(groupId: number, planId: number): Promise<ApiResponse<GenerateShoppingListResult>> {
+    return apiClient.post<ApiResponse<GenerateShoppingListResult>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/generate-shopping-list`);
+  },
+};
+
+export const planningApi = mealPlansApi;

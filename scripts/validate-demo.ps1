@@ -15,6 +15,8 @@ $php    = 'C:\xampp\php74\php.exe'
 $root   = Split-Path $PSScriptRoot -Parent
 $errors = [System.Collections.Generic.List[string]]::new()
 $passed = 0
+$artisan = Join-Path $root 'artisan'
+$demoEval = Join-Path $root 'scripts\demo-eval.php'
 
 function Pass([string]$msg) {
     Write-Host "  [PASS] $msg" -ForegroundColor Green
@@ -31,6 +33,15 @@ function Section([string]$title) {
     Write-Host "── $title ──────────────────────────────────────" -ForegroundColor Cyan
 }
 
+function Invoke-TinkerValue([string]$expression) {
+    $raw = & $php $demoEval $expression 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        return ''
+    }
+
+    return (($raw | ForEach-Object { "$_" }) -join "`n").Trim()
+}
+
 # ── 1. PHP availability ──────────────────────────────────────────────────────
 Section "PHP"
 
@@ -44,7 +55,6 @@ if (Test-Path $php) {
 # ── 2. Laravel bootstrap ─────────────────────────────────────────────────────
 Section "Laravel"
 
-$artisan = Join-Path $root 'artisan'
 if (Test-Path $artisan) {
     $lver = & $php $artisan --version 2>$null
     if ($LASTEXITCODE -eq 0) {
@@ -59,8 +69,8 @@ if (Test-Path $artisan) {
 # ── 3. Database connection ────────────────────────────────────────────────────
 Section "Database connection"
 
-$dbCheck = & $php $artisan tinker --execute="echo DB::connection()->getPdo() ? 'ok' : 'fail';" 2>&1
-if ($dbCheck -match 'ok') {
+$dbCheck = Invoke-TinkerValue "DB::connection()->getPdo() ? 'ok' : 'fail'"
+if ($dbCheck -eq 'ok') {
     Pass "Database connection OK"
 } else {
     Fail "Database connection FAILED. Check .env DB settings."
@@ -82,8 +92,8 @@ $demoEmails = @(
 )
 
 foreach ($email in $demoEmails) {
-    $exists = & $php $artisan tinker --execute="echo DB::table('users')->where('email','$email')->exists() ? 'yes' : 'no';" 2>&1
-    if ($exists -match 'yes') {
+    $exists = Invoke-TinkerValue "DB::table('users')->where('email','$email')->exists() ? 'yes' : 'no'"
+    if ($exists -eq 'yes') {
         Pass "User: $email"
     } else {
         Fail "Missing user: $email"
@@ -97,20 +107,20 @@ $adminEmail = 'admin@cccontrol.test'
 $adminLabel = $adminEmail   # avoid @foo literal in double-quoted strings below
 
 # exists + active
-$r = & $php $artisan tinker --execute="echo DB::table('users')->where('email','$adminEmail')->where('status','active')->exists() ? 'yes' : 'no';" 2>&1
-if ($r -match 'yes') { Pass "$adminLabel active" } else { Fail "$adminLabel missing or inactive" }
+$r = Invoke-TinkerValue "DB::table('users')->where('email','$adminEmail')->where('status','active')->exists() ? 'yes' : 'no'"
+if ($r -eq 'yes') { Pass "$adminLabel active" } else { Fail "$adminLabel missing or inactive" }
 
 # password hash valid
-$r = & $php $artisan tinker --execute="echo (App\User::where('email','$adminEmail')->count() && Hash::check('password123',App\User::where('email','$adminEmail')->value('password'))) ? 'yes' : 'no';" 2>&1
-if ($r -match 'yes') { Pass "$adminLabel password hash valid (password123)" } else { Fail "$adminLabel password hash INVALID for 'password123'" }
+$r = Invoke-TinkerValue "(App\User::where('email','$adminEmail')->count() && Hash::check('password123',App\User::where('email','$adminEmail')->value('password'))) ? 'yes' : 'no'"
+if ($r -eq 'yes') { Pass "$adminLabel password hash valid (password123)" } else { Fail "$adminLabel password hash INVALID for 'password123'" }
 
 # role super_admin
-$r = & $php $artisan tinker --execute="echo DB::table('roles')->join('user_roles','roles.id','=','user_roles.role_id')->where('user_roles.user_id',App\User::where('email','$adminEmail')->value('id'))->where('roles.code','super_admin')->exists() ? 'yes' : 'no';" 2>&1
-if ($r -match 'yes') { Pass "$adminLabel has role super_admin" } else { Fail "$adminLabel MISSING role super_admin" }
+$r = Invoke-TinkerValue "DB::table('roles')->join('user_roles','roles.id','=','user_roles.role_id')->where('user_roles.user_id',App\User::where('email','$adminEmail')->value('id'))->where('roles.code','super_admin')->exists() ? 'yes' : 'no'"
+if ($r -eq 'yes') { Pass "$adminLabel has role super_admin" } else { Fail "$adminLabel MISSING role super_admin" }
 
 # web.admin.dashboard permission
-$r = & $php $artisan tinker --execute="echo DB::table('permissions')->join('role_permissions','permissions.id','=','role_permissions.permission_id')->join('user_roles','user_roles.role_id','=','role_permissions.role_id')->where('user_roles.user_id',App\User::where('email','$adminEmail')->value('id'))->where('permissions.code','web.admin.dashboard')->exists() ? 'yes' : 'no';" 2>&1
-if ($r -match 'yes') { Pass "$adminLabel has web.admin.dashboard" } else { Fail "$adminLabel MISSING web.admin.dashboard" }
+$r = Invoke-TinkerValue "DB::table('permissions')->join('role_permissions','permissions.id','=','role_permissions.permission_id')->join('user_roles','user_roles.role_id','=','role_permissions.role_id')->where('user_roles.user_id',App\User::where('email','$adminEmail')->value('id'))->where('permissions.code','web.admin.dashboard')->exists() ? 'yes' : 'no'"
+if ($r -eq 'yes') { Pass "$adminLabel has web.admin.dashboard" } else { Fail "$adminLabel MISSING web.admin.dashboard" }
 
 # login API
 $loginBody = "{`"email`":`"$adminEmail`",`"password`":`"password123`"}"
@@ -166,8 +176,8 @@ Section "Roles"
 
 $expectedRoles = @('user','dietologist','catalog_admin','supermarket_admin','recipe_admin','teacher','super_admin','system_jobs')
 foreach ($role in $expectedRoles) {
-    $exists = & $php $artisan tinker --execute="echo DB::table('roles')->where('code','$role')->exists() ? 'yes' : 'no';" 2>&1
-    if ($exists -match 'yes') {
+    $exists = Invoke-TinkerValue "DB::table('roles')->where('code','$role')->exists() ? 'yes' : 'no'"
+    if ($exists -eq 'yes') {
         Pass "Role: $role"
     } else {
         Fail "Missing role: $role"
@@ -190,8 +200,8 @@ $criticalPerms = @(
 )
 
 foreach ($perm in $criticalPerms) {
-    $exists = & $php $artisan tinker --execute="echo DB::table('permissions')->where('code','$perm')->exists() ? 'yes' : 'no';" 2>&1
-    if ($exists -match 'yes') {
+    $exists = Invoke-TinkerValue "DB::table('permissions')->where('code','$perm')->exists() ? 'yes' : 'no'"
+    if ($exists -eq 'yes') {
         Pass "Permission: $perm"
     } else {
         Fail "Missing permission: $perm"
@@ -222,8 +232,8 @@ $dataChecks = @{
 
 foreach ($label in $dataChecks.Keys) {
     $expr   = $dataChecks[$label]
-    $result = & $php $artisan tinker --execute="echo $expr;" 2>&1
-    if ($result -match 'yes') {
+    $result = Invoke-TinkerValue $expr
+    if ($result -eq 'yes') {
         Pass "Data: $label"
     } else {
         Fail "Missing data: $label"

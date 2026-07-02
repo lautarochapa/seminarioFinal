@@ -52,6 +52,7 @@ export function HomeScreen() {
 
       {/* Feature list */}
       <View style={styles.featureList}>
+        <Text style={styles.sectionTitle}>Mi hogar</Text>
         <FeatureCard
           icon="account-circle-outline"
           title="Mi perfil"
@@ -68,6 +69,7 @@ export function HomeScreen() {
           iconBg={COLORS.infoLight}
           iconColor={COLORS.info}
         />
+        <Text style={styles.sectionTitle}>Cocina</Text>
         <FeatureCard
           icon="book-open-outline"
           title="Catálogo"
@@ -76,6 +78,47 @@ export function HomeScreen() {
           iconBg={COLORS.successLight}
           iconColor={COLORS.success}
         />
+        <FeatureCard
+          icon="silverware-fork-knife"
+          title="Recetas"
+          subtitle="Buscar, guardar y cocinar recetas"
+          onPress={() => router.push('/(app)/recipes' as never)}
+          iconBg={COLORS.primarySurface}
+          iconColor={COLORS.primary}
+        />
+        <FeatureCard
+          icon="heart-outline"
+          title="Favoritos"
+          subtitle="Tus recetas guardadas"
+          onPress={() => router.push('/(app)/recipe-favorites' as never)}
+          iconBg={COLORS.errorLight}
+          iconColor={COLORS.error}
+        />
+        <FeatureCard
+          icon="lightbulb-outline"
+          title="Sugerencias"
+          subtitle="Ideas segun tu hogar"
+          onPress={() => router.push('/(app)/recipe-suggestions' as never)}
+          iconBg={COLORS.infoLight}
+          iconColor={COLORS.info}
+        />
+        <FeatureCard
+          icon="calendar-month-outline"
+          title="Planificacion"
+          subtitle="Semana, comidas y meal plans"
+          onPress={() => router.push('/(app)/planning' as never)}
+          iconBg={COLORS.warningLight}
+          iconColor={COLORS.warning}
+        />
+        <FeatureCard
+          icon="calendar-text-outline"
+          title="Meal plans"
+          subtitle="Planes familiares y aprobados"
+          onPress={() => router.push('/(app)/meal-plans' as never)}
+          iconBg={COLORS.successLight}
+          iconColor={COLORS.primaryDark}
+        />
+        <Text style={styles.sectionTitle}>Compras</Text>
         <FeatureCard
           icon="package-variant-closed"
           title="Stock del hogar"
@@ -178,5 +221,12 @@ const styles = StyleSheet.create({
   featureList: {
     paddingHorizontal: SPACING.md,
     gap: SPACING.md,
+  },
+  sectionTitle: {
+    fontSize: FONT.labelSize,
+    fontWeight: '800',
+    color: COLORS.textSecondary,
+    marginTop: SPACING.sm,
+    textTransform: 'uppercase',
   },
 });
