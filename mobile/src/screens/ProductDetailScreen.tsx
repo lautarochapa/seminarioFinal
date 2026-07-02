@@ -121,7 +121,7 @@ export function ProductDetailScreen({ productId }: ProductDetailScreenProps) {
             <AppButton
               title="Seleccionar grupo"
               variant="outline"
-              onPress={() => router.push('/(app)/groups')}
+              onPress={() => router.push('/(app)/groups' as never)}
             />
           </View>
         )}

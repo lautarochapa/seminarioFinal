@@ -81,7 +81,7 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
             setDeleting(true);
             try {
               await stockApi.delete(groupId, item.id);
-              router.replace('/(app)/stock');
+              router.replace('/(app)/stock' as never);
             } catch (err) {
               let msg = 'Error al eliminar.';
               if (err instanceof ApiError) {

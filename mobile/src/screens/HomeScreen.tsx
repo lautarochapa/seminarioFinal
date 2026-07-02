@@ -56,7 +56,7 @@ export function HomeScreen() {
           icon="account-circle-outline"
           title="Mi perfil"
           subtitle="Datos personales, objetivos y preferencias"
-          onPress={() => router.navigate('/(app)/profile')}
+          onPress={() => router.navigate('/(app)/profile' as never)}
           iconBg={COLORS.primarySurface}
           iconColor={COLORS.primary}
         />
@@ -64,7 +64,7 @@ export function HomeScreen() {
           icon="account-group-outline"
           title="Grupos familiares"
           subtitle="Familia y miembros del hogar"
-          onPress={() => router.push('/(app)/groups')}
+          onPress={() => router.push('/(app)/groups' as never)}
           iconBg={COLORS.infoLight}
           iconColor={COLORS.info}
         />
@@ -72,7 +72,7 @@ export function HomeScreen() {
           icon="book-open-outline"
           title="Catálogo"
           subtitle="Productos e ingredientes disponibles"
-          onPress={() => router.navigate('/(app)/catalog')}
+          onPress={() => router.navigate('/(app)/catalog' as never)}
           iconBg={COLORS.successLight}
           iconColor={COLORS.success}
         />
@@ -80,9 +80,33 @@ export function HomeScreen() {
           icon="package-variant-closed"
           title="Stock del hogar"
           subtitle="Control de inventario y vencimientos"
-          onPress={() => router.navigate('/(app)/stock')}
+          onPress={() => router.navigate('/(app)/stock' as never)}
           iconBg={COLORS.warningLight}
           iconColor={COLORS.warning}
+        />
+        <FeatureCard
+          icon="cart-outline"
+          title="Listas de compras"
+          subtitle="Organizá las compras del grupo"
+          onPress={() => router.push('/(app)/shopping-lists' as never)}
+          iconBg={COLORS.primarySurface}
+          iconColor={COLORS.primaryDark}
+        />
+        <FeatureCard
+          icon="receipt"
+          title="Historial de compras"
+          subtitle="Compras realizadas y totales"
+          onPress={() => router.push('/(app)/purchases' as never)}
+          iconBg={COLORS.infoLight}
+          iconColor={COLORS.info}
+        />
+        <FeatureCard
+          icon="cash-multiple"
+          title="Presupuesto"
+          subtitle="Control de gastos y proyección"
+          onPress={() => router.push('/(app)/budgets' as never)}
+          iconBg={COLORS.successLight}
+          iconColor={COLORS.primaryDark}
         />
       </View>
     </ScrollView>

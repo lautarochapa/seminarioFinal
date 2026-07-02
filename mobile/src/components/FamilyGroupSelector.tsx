@@ -32,7 +32,7 @@ export function FamilyGroupSelector() {
     return (
       <Pressable
         style={styles.emptyBtn}
-        onPress={() => router.push('/(app)/groups')}
+        onPress={() => router.push('/(app)/groups' as never)}
         accessibilityRole="button"
         accessibilityLabel="Crear grupo familiar"
       >
@@ -67,7 +67,7 @@ export function FamilyGroupSelector() {
   return (
     <Pressable
       style={styles.selected}
-      onPress={() => router.push('/(app)/groups')}
+      onPress={() => router.push('/(app)/groups' as never)}
       accessibilityRole="button"
       accessibilityLabel={`Grupo activo: ${selectedGroup.name}. Tocar para cambiar.`}
     >

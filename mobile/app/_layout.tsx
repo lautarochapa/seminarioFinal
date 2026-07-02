@@ -16,9 +16,9 @@ function NavigationGuard() {
     const inAuthGroup = segments[0] === '(auth)';
 
     if (state === 'unauthenticated' && !inAuthGroup) {
-      router.replace('/(auth)/login');
+      router.replace('/(auth)/login' as never);
     } else if (state === 'authenticated' && inAuthGroup) {
-      router.replace('/(app)');
+      router.replace('/(app)' as never);
     }
   }, [state, segments, router]);
 

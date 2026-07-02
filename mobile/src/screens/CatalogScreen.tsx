@@ -77,7 +77,7 @@ export function CatalogScreen() {
   const renderItem = useCallback(({ item }: { item: ProductSummary }) => (
     <ProductCard
       item={item}
-      onPress={() => router.push({ pathname: '/(app)/products/[id]', params: { id: String(item.id) } })}
+      onPress={() => router.push({ pathname: '/(app)/products/[id]' as never, params: { id: String(item.id) } })}
     />
   ), [router]);
 

@@ -101,7 +101,7 @@ export function StockScreen() {
           icon="account-group-outline"
           message="Seleccioná un grupo familiar para ver el stock."
           actionTitle="Ver grupos"
-          onAction={() => router.push('/(app)/groups')}
+          onAction={() => router.push('/(app)/groups' as never)}
         />
       ) : loading && data.length === 0 ? (
         <View style={styles.loadingWrap}>
@@ -126,7 +126,7 @@ export function StockScreen() {
             <AppButton
               title="Agregar"
               variant="outline"
-              onPress={() => router.push('/(app)/stock/create')}
+              onPress={() => router.push('/(app)/stock/create' as never)}
               style={styles.addBtn}
             />
           </View>
@@ -141,7 +141,7 @@ export function StockScreen() {
                 icon="package-variant-closed"
                 message="Sin items en el stock de este grupo."
                 actionTitle="Agregar item"
-                onAction={() => router.push('/(app)/stock/create')}
+                onAction={() => router.push('/(app)/stock/create' as never)}
               />
             }
             onEndReached={handleEndReached}

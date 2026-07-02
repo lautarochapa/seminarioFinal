@@ -96,7 +96,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="stock/[id]/index"
+        name="stock/[id]"
         options={{
           href: null,
           headerShown: false,
@@ -112,6 +112,50 @@ export default function AppLayout() {
           tabBarStyle: { display: 'none' },
           title: 'Editar stock',
         }}
+      />
+
+      {/* Shopping lists */}
+      <Tabs.Screen
+        name="shopping-lists/index"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Listas de compras' }}
+      />
+      <Tabs.Screen
+        name="shopping-lists/create"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Nueva lista' }}
+      />
+      <Tabs.Screen
+        name="shopping-lists/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de lista' }}
+      />
+      <Tabs.Screen
+        name="shopping-lists/[id]/edit"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Editar lista' }}
+      />
+
+      {/* Shopping session */}
+      <Tabs.Screen
+        name="shopping-session/[listId]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Sesión de compra' }}
+      />
+
+      {/* Purchases */}
+      <Tabs.Screen
+        name="purchases/index"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Historial de compras' }}
+      />
+      <Tabs.Screen
+        name="purchases/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de compra' }}
+      />
+
+      {/* Budgets */}
+      <Tabs.Screen
+        name="budgets/index"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Presupuesto' }}
+      />
+      <Tabs.Screen
+        name="budgets/[id]"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Detalle de presupuesto' }}
       />
     </Tabs>
   );

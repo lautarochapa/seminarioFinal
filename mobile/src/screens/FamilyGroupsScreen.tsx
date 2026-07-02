@@ -84,7 +84,7 @@ export function FamilyGroupsScreen() {
     const group = data.find((g) => g.id === id);
     if (group) {
       selectGroup(group);
-      router.push(`/(app)/groups/${id}`);
+      router.push(`/(app)/groups/${id}` as never);
     }
   }
 

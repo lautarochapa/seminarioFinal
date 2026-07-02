@@ -47,7 +47,8 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
   const [productName, setProductName] = useState<string>(prefilledProductName ?? '');
   const [locationId, setLocationId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState('');
-  const [unitSymbol, setUnitSymbol] = useState('');
+  const [unitId, setUnitId] = useState<number | null>(null);
+  const [unitDisplay, setUnitDisplay] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
   const [purchasePrice, setPurchasePrice] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -77,9 +78,12 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
   const handleSelectProduct = useCallback((p: ProductSummary) => {
     setProductId(p.id);
     setProductName(p.name);
-    if (p.unit?.symbol) setUnitSymbol(p.unit.symbol);
+    if (p.unit) {
+      setUnitId(p.unit.id);
+      setUnitDisplay(p.unit.symbol || p.unit.code || p.unit.name);
+    }
     setProductModalVisible(false);
-    setFieldErrors((e) => ({ ...e, product_id: '' }));
+    setFieldErrors((e) => ({ ...e, product_id: '', unit_id: '' }));
   }, []);
 
   async function handleSubmit() {
@@ -88,7 +92,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
     if (!quantity || isNaN(Number(quantity)) || Number(quantity) < 0) {
       errors.quantity = 'Ingresá una cantidad válida.';
     }
-    if (!unitSymbol.trim()) errors.unit_id = 'Ingresá una unidad.';
+    if (!unitId) errors.unit_id = 'El producto seleccionado no tiene unidad. Elegí otro.';
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -104,11 +108,11 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
         product_id: productId!,
         stock_location_id: locationId,
         quantity: Number(quantity),
-        unit_id: 0, // backend resolves by unit symbol via product default
+        unit_id: unitId!,
         expiration_date: expirationDate || null,
         purchase_price: purchasePrice ? Number(purchasePrice) : null,
       });
-      router.replace('/(app)/stock');
+      router.replace('/(app)/stock' as never);
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.normalized.status === 422 && Object.keys(err.normalized.fieldErrors).length > 0) {
@@ -222,13 +226,19 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
             error={fieldErrors.quantity}
           />
 
-          <AppInput
-            label="Unidad"
-            value={unitSymbol}
-            onChangeText={setUnitSymbol}
-            placeholder="kg, L, un..."
-            hint="Se usará la unidad del producto si está disponible."
-          />
+          {unitDisplay ? (
+            <View style={styles.readonlyField}>
+              <Text style={styles.label}>Unidad</Text>
+              <Text style={styles.readonlyValue}>{unitDisplay}</Text>
+            </View>
+          ) : productId ? (
+            <View style={styles.readonlyField}>
+              <Text style={styles.label}>Unidad</Text>
+              <Text style={[styles.readonlyValue, { color: COLORS.error }]}>
+                {fieldErrors.unit_id || 'Producto sin unidad. Elegí otro producto.'}
+              </Text>
+            </View>
+          ) : null}
 
           <AppInput
             label="Fecha de vencimiento"
@@ -395,6 +405,19 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   submitBtn: { marginTop: SPACING.sm },
+  readonlyField: {
+    backgroundColor: COLORS.surfaceElevated,
+    borderRadius: RADIUS.sm,
+    padding: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: SPACING.xs,
+  },
+  readonlyValue: {
+    fontSize: FONT.bodySize,
+    color: COLORS.textPrimary,
+    fontWeight: '500',
+  },
   // Modal
   modal: { flex: 1, backgroundColor: COLORS.background },
   modalHeader: {

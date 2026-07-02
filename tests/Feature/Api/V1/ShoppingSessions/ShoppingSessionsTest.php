@@ -203,12 +203,13 @@ class ShoppingSessionsTest extends TestCase
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
         $item->update(['status' => 'purchased']);
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
             ->assertStatus(200)
             ->assertJsonPath('data.status', 'finished');
 
         $this->assertTrue(Purchase::where('shopping_list_id', $list->id)->exists());
+        $this->assertSame(Purchase::where('shopping_list_id', $list->id)->latest('id')->value('id'), $response->json('data.purchase_id'));
 
         $this->actingAs($user)
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
