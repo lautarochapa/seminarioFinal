@@ -163,6 +163,23 @@ class ScrapingRepository
 
     public function createCandidate(array $data): ScrapedProductCandidate
     {
+        $query = ScrapedProductCandidate::where('scraping_job_id', $data['scraping_job_id'])
+            ->where('source_id', $data['source_id']);
+
+        if (!empty($data['external_product_id'])) {
+            $existing = (clone $query)->where('external_product_id', $data['external_product_id'])->first();
+            if ($existing) {
+                return $existing;
+            }
+        }
+
+        if (!empty($data['raw_product_url'])) {
+            $existing = (clone $query)->where('raw_product_url', $data['raw_product_url'])->first();
+            if ($existing) {
+                return $existing;
+            }
+        }
+
         return ScrapedProductCandidate::create($data);
     }
 

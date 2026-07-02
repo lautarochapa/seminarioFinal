@@ -10,4 +10,6 @@ class ScrapingResult
     public int $pagesScraped = 0;
     public bool $successful = false;
     public ?string $errorMessage = null;
+    public string $finalReason = 'completed';
+    public array $metrics = [];
 }

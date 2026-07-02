@@ -14,12 +14,26 @@ use App\ScrapingSource;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class RecipeScrapingTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+        config([
+            'scraping.recipe_request_delay_ms' => 0,
+            'scraping.retry_backoff_seconds' => [0, 0],
+            'scraping.limits.recipe_max_pages' => 10,
+            'scraping.limits.recipe_max_items' => 200,
+        ]);
+    }
 
     private function adminUser(): User
     {
@@ -184,17 +198,23 @@ class RecipeScrapingTest extends TestCase
         $recipeUrl  = 'https://cookpad.com/ar/recetas/123456';
 
         Http::fake([
-            $listingUrl => Http::response($this->cookpadListingHtml(), 200),
-            $recipeUrl  => Http::response($this->recipeHtml('Milanesa napolitana'), 200),
+            '*busca/recetas*' => Http::response($this->cookpadListingHtml(), 200),
+            '*recetas/123456*'  => Http::response($this->recipeHtml('Milanesa napolitana'), 200),
         ]);
 
         $scrapingRepo = app(\App\Repositories\Scraping\ScrapingRepository::class);
         $scraper      = app(CookpadRecipeScraper::class);
         $handler      = new RunRecipeScrapingJob($job->id);
-        $handler->handle($scrapingRepo, $scraper);
+        $handler->handle(
+            $scrapingRepo,
+            $scraper,
+            app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class),
+            app(\App\Services\Scraping\UrlSecurityValidator::class)
+        );
 
         $job->refresh();
-        $this->assertEquals('completed', $job->status);
+        $this->assertEquals('completed', $job->status, (string) $job->error_message);
         $this->assertGreaterThanOrEqual(1, $job->total_found);
         $this->assertDatabaseHas('imported_recipe_candidates', [
             'source_url'  => $recipeUrl,
@@ -224,15 +244,56 @@ class RecipeScrapingTest extends TestCase
         ]);
 
         Http::fake([
-            'https://cookpad.com/ar/busca/recetas?page=1' => Http::response($this->cookpadListingHtml(), 200),
-            'https://cookpad.com/ar/recetas/123456'        => Http::response($this->recipeHtml(), 200),
+            '*busca/recetas*' => Http::response($this->cookpadListingHtml(), 200),
+            '*recetas/123456*' => Http::response($this->recipeHtml(), 200),
         ]);
 
         $scrapingRepo = app(\App\Repositories\Scraping\ScrapingRepository::class);
         $scraper      = app(CookpadRecipeScraper::class);
         $handler      = new RunRecipeScrapingJob($job->id);
-        $handler->handle($scrapingRepo, $scraper);
+        $handler->handle(
+            $scrapingRepo,
+            $scraper,
+            app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class),
+            app(\App\Services\Scraping\UrlSecurityValidator::class)
+        );
 
+        $this->assertEquals(1, ImportedRecipeCandidate::where('source_url', 'https://cookpad.com/ar/recetas/123456')->count());
+    }
+
+    public function test_urls_duplicadas_de_recetas_no_se_descargan_dos_veces()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+
+        $job = ScrapingJob::create([
+            'source_id'       => $source->id,
+            'job_type'        => 'recipe_scraping',
+            'status'          => 'pending',
+            'requested_by'    => $user->id,
+            'parameters_json' => ['max_pages' => 1],
+        ]);
+
+        $listing = '<html><body>'
+            . '<a href="https://cookpad.com/ar/recetas/123456?utm_source=test#frag">A</a>'
+            . '<a href="/ar/recetas/123456">B</a>'
+            . '</body></html>';
+
+        Http::fake([
+            '*busca/recetas*' => Http::response($listing, 200),
+            '*recetas/123456*' => Http::response($this->recipeHtml(), 200),
+        ]);
+
+        (new RunRecipeScrapingJob($job->id))->handle(
+            app(\App\Repositories\Scraping\ScrapingRepository::class),
+            app(CookpadRecipeScraper::class),
+            app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class),
+            app(\App\Services\Scraping\UrlSecurityValidator::class)
+        );
+
+        Http::assertSentCount(2);
         $this->assertEquals(1, ImportedRecipeCandidate::where('source_url', 'https://cookpad.com/ar/recetas/123456')->count());
     }
 

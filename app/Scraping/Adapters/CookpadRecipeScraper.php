@@ -6,15 +6,29 @@ use App\ScrapingJob;
 use App\ScrapingSource;
 use App\Scraping\DTOs\RecipeScrapingResult;
 use App\Scraping\DTOs\ScrapedRecipeDTO;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\Scraping\ScrapingHttpClient;
+use App\Services\Scraping\ScrapingHttpException;
+use App\Services\Scraping\ScrapingMetrics;
+use App\Services\Scraping\ScrapingRateLimiter;
+use App\Services\Scraping\UrlSecurityValidator;
 
 class CookpadRecipeScraper
 {
-    const TIMEOUT_SECONDS = 15;
     const MAX_REDIRECTS   = 3;
     const RECIPES_PER_PAGE = 20;
     const MAX_BODY_BYTES   = 2 * 1024 * 1024;
+
+    private $http;
+    private $rateLimiter;
+    private $urlValidator;
+
+    public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator)
+    {
+        $this->http = $http;
+        $this->rateLimiter = $rateLimiter;
+        $this->urlValidator = $urlValidator;
+    }
 
     public function isAvailable(): bool
     {
@@ -24,30 +38,52 @@ class CookpadRecipeScraper
     public function scrape(ScrapingSource $source, ScrapingJob $job): RecipeScrapingResult
     {
         $result   = new RecipeScrapingResult();
-        $maxPages = (int) (($job->parameters_json['max_pages'] ?? 1));
+        $metrics  = new ScrapingMetrics();
+        $requestedMaxPages = (int) (($job->parameters_json['max_pages'] ?? 1));
+        $maxPages = min($requestedMaxPages, (int) config('scraping.limits.recipe_max_pages', 10));
+        $maxRecipes = (int) config('scraping.limits.recipe_max_items', 200);
         $baseUrl  = rtrim($source->base_url ?? 'https://cookpad.com/ar', '/');
+        $seenUrls = [];
 
         for ($page = 1; $page <= $maxPages; $page++) {
             if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
+                $result->finalReason = 'cancelled';
                 break;
             }
 
             $listingUrl = $baseUrl . '/busca/recetas?page=' . $page;
-            $html       = $this->fetchHtml($listingUrl);
+            $html       = $this->fetchHtml($source->code, $listingUrl, $metrics, true);
 
             if ($html === null) {
                 $result->errorMessage = 'Failed to fetch listing page ' . $page;
+                $result->finalReason = 'listing_fetch_failed';
                 break;
             }
 
             $recipeLinks = $this->extractRecipeLinks($html, $baseUrl);
+            $result->pagesScraped++;
+            $metrics->increment('pages_processed');
 
             foreach ($recipeLinks as $recipeUrl) {
                 if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
+                    $result->finalReason = 'cancelled';
                     break 2;
                 }
 
-                $recipeHtml = $this->fetchHtml($recipeUrl);
+                try {
+                    $recipeUrl = $this->urlValidator->normalizeHttpUrl($recipeUrl, $baseUrl, true);
+                } catch (\Throwable $e) {
+                    $metrics->increment('items_skipped_duplicate');
+                    continue;
+                }
+
+                if (isset($seenUrls[$recipeUrl])) {
+                    $metrics->increment('items_skipped_duplicate');
+                    continue;
+                }
+                $seenUrls[$recipeUrl] = true;
+
+                $recipeHtml = $this->fetchHtml($source->code, $recipeUrl, $metrics, true);
                 if ($recipeHtml === null) {
                     continue;
                 }
@@ -56,15 +92,33 @@ class CookpadRecipeScraper
                 if ($dto !== null) {
                     $result->recipes[]  = $dto;
                     $result->totalFound++;
+                    $metrics->increment('items_found');
+                } else {
+                    $metrics->increment('parse_errors');
                 }
+
+                if ($result->totalFound >= $maxRecipes) {
+                    $result->finalReason = 'max_items_reached';
+                    break 2;
+                }
+
+                $this->rateLimiter->pauseForRecipe();
             }
 
             if (count($recipeLinks) < self::RECIPES_PER_PAGE) {
                 break;
             }
+
+            if ($page < $maxPages) {
+                $this->rateLimiter->pauseForRecipe();
+            }
         }
 
-        $result->successful = true;
+        if ($result->finalReason === 'completed' && $maxPages > 0 && $result->pagesScraped >= $maxPages) {
+            $result->finalReason = 'max_pages_reached';
+        }
+        $result->successful = $result->errorMessage === null;
+        $result->metrics = $metrics->all();
         return $result;
     }
 
@@ -187,23 +241,23 @@ class CookpadRecipeScraper
         return null;
     }
 
-    private function fetchHtml(string $url): ?string
+    private function fetchHtml(string $sourceCode, string $url, ScrapingMetrics $metrics, bool $validateUrl): ?string
     {
         try {
-            $response = Http::withOptions([
-                'allow_redirects' => ['max' => self::MAX_REDIRECTS],
-                'timeout'         => self::TIMEOUT_SECONDS,
-                'headers'         => [
-                    'User-Agent' => 'Mozilla/5.0 (compatible; SeminarioFinalBot/1.0)',
-                    'Accept'     => 'text/html,application/xhtml+xml',
-                ],
-            ])->get($url);
-
-            if (!$response->successful()) {
-                return null;
-            }
+            $response = $this->http->getHtml($sourceCode, $url, $metrics, [
+                'validate_url' => $validateUrl,
+                'require_supported_source' => true,
+            ]);
 
             return $response->body();
+        } catch (ScrapingHttpException $e) {
+            Log::warning('cookpad_scraper_fetch_error', [
+                'url' => mb_substr($url, 0, 300),
+                'status_code' => $e->statusCode(),
+                'retry_after_seconds' => $e->retryAfterSeconds(),
+                'error' => mb_substr($e->getMessage(), 0, 200),
+            ]);
+            return null;
         } catch (\Throwable $e) {
             Log::warning('cookpad_scraper_fetch_error', ['url' => $url, 'error' => mb_substr($e->getMessage(), 0, 200)]);
             return null;

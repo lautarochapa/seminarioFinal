@@ -8,6 +8,7 @@ use App\Role;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class RecipeImportUrlTest extends TestCase
@@ -16,6 +17,13 @@ class RecipeImportUrlTest extends TestCase
 
     const SUPPORTED_URL  = 'https://allrecipes.com/recipe/123/pasta';
     const UNSUPPORTED_URL = 'https://unknownsite.xyz/recipe/pasta';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+    }
 
     private function recipeHtmlFixture(string $title = 'Pasta al Pesto'): string
     {
@@ -87,6 +95,45 @@ class RecipeImportUrlTest extends TestCase
             ->postJson('/api/v1/admin/recipes/import/url', ['url' => self::UNSUPPORTED_URL])
             ->assertStatus(422)
             ->assertJsonPath('error.code', 'RECIPE_IMPORT_UNSUPPORTED_SOURCE');
+    }
+
+    public function test_url_con_credenciales_embebidas_retorna_422()
+    {
+        $user = $this->adminUser();
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/admin/recipes/import/url', ['url' => 'https://user:pass@allrecipes.com/recipe/123/pasta'])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'RECIPE_IMPORT_INVALID_URL');
+    }
+
+    public function test_url_se_normaliza_removiendo_fragmentos_y_tracking()
+    {
+        $url = self::SUPPORTED_URL . '?utm_source=test&keep=1#section';
+        Http::fake(['https://allrecipes.com/recipe/123/pasta?keep=1' => Http::response($this->recipeHtmlFixture(), 200)]);
+
+        $user = $this->adminUser();
+        $this->actingAs($user)
+            ->postJson('/api/v1/admin/recipes/import/url', ['url' => $url])
+            ->assertStatus(201);
+
+        $this->assertDatabaseHas('imported_recipe_candidates', [
+            'source_url' => 'https://allrecipes.com/recipe/123/pasta?keep=1',
+            'status' => 'parsed',
+        ]);
+    }
+
+    public function test_redirect_hacia_ip_privada_es_bloqueado_por_ssrf()
+    {
+        Http::fake([
+            self::SUPPORTED_URL => Http::response('', 302, ['Location' => 'http://127.0.0.1/internal']),
+        ]);
+
+        $user = $this->adminUser();
+        $this->actingAs($user)
+            ->postJson('/api/v1/admin/recipes/import/url', ['url' => self::SUPPORTED_URL])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'RECIPE_IMPORT_SSRF_BLOCKED');
     }
 
     public function test_importacion_valida_crea_candidata_con_datos()

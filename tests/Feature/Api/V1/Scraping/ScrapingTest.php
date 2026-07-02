@@ -17,6 +17,7 @@ use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -24,6 +25,19 @@ use Tests\TestCase;
 class ScrapingTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+        config([
+            'scraping.request_delay_ms' => 0,
+            'scraping.recipe_request_delay_ms' => 0,
+            'scraping.retry_backoff_seconds' => [0, 0],
+            'scraping.lock_ttl_seconds' => 60,
+        ]);
+    }
 
     private function admin()
     {
@@ -501,6 +515,7 @@ class ScrapingTest extends TestCase
     public function test_respuesta_http_error_falla_job()
     {
         Http::fake(['*' => Http::response('Internal Server Error', 500)]);
+        config(['scraping.max_retries' => 0]);
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
@@ -514,7 +529,7 @@ class ScrapingTest extends TestCase
         $jobId = $response->json('data.id');
         $job   = \App\ScrapingJob::find($jobId);
 
-        $this->assertEquals('completed', $job->status);
+        $this->assertEquals('failed', $job->status);
         $this->assertEquals(0, $job->total_found);
         $this->assertEquals(0, $job->total_pending_review);
     }
@@ -637,5 +652,208 @@ class ScrapingTest extends TestCase
         $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
             'source_id' => 999999,
         ])->assertStatus(422);
+    }
+
+    public function test_lock_ocupado_omite_ejecucion_sin_dejar_running()
+    {
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+        $job = ScrapingJob::create([
+            'source_id' => $source->id,
+            'job_type' => 'product_prices',
+            'requested_by' => $admin->id,
+            'status' => 'pending',
+        ]);
+
+        $guard = app(\App\Services\Scraping\ScrapingExecutionGuard::class);
+        $this->assertTrue($guard->acquire('carrefour'));
+
+        try {
+            (new RunScrapingJob($job->id))->handle(
+                app(\App\Repositories\Scraping\ScrapingRepository::class),
+                app(\App\Scraping\ScraperResolver::class),
+                app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+                app(\App\Services\Scraping\ScrapingCircuitBreaker::class)
+            );
+        } finally {
+            $guard->release();
+        }
+
+        $job->refresh();
+        $this->assertEquals('pending', $job->status);
+        $this->assertDatabaseHas('scraping_job_logs', [
+            'scraping_job_id' => $job->id,
+            'level' => 'warning',
+        ]);
+    }
+
+    public function test_http_429_registra_rate_limit_y_no_continua_paginas()
+    {
+        config(['scraping.max_retries' => 2]);
+        Http::fake(['*' => Http::response('Too Many Requests', 429, ['Retry-After' => '7'])]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+            'max_pages' => 3,
+        ]);
+
+        $response->assertStatus(202);
+        Http::assertSentCount(1);
+
+        $job = ScrapingJob::find($response->json('data.id'));
+        $this->assertEquals('failed', $job->status);
+        $this->assertStringContainsString('Rate limit', $job->error_message);
+        $this->assertDatabaseHas('scraping_alerts', [
+            'scraping_job_id' => $job->id,
+            'alert_type' => 'rate_limited',
+        ]);
+    }
+
+    public function test_http_403_detiene_y_abre_circuito_sin_reintentar()
+    {
+        Http::fake(['*' => Http::response('Forbidden', 403)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(202);
+        Http::assertSentCount(1);
+
+        $job = ScrapingJob::find($response->json('data.id'));
+        $this->assertEquals('failed', $job->status);
+        $this->assertTrue(app(\App\Services\Scraping\ScrapingCircuitBreaker::class)->isOpen('carrefour'));
+    }
+
+    public function test_http_500_reintenta_solo_lo_configurado()
+    {
+        config(['scraping.max_retries' => 2]);
+        Http::fake(['*' => Http::response('Internal Server Error', 500)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ])->assertStatus(202);
+
+        Http::assertSentCount(3);
+    }
+
+    public function test_circuit_breaker_abierto_evita_nuevas_ejecuciones()
+    {
+        config([
+            'scraping.max_retries' => 0,
+            'scraping.circuit_breaker.max_errors' => 1,
+            'scraping.circuit_breaker.cooldown_seconds' => 60,
+        ]);
+        Http::fake(['*' => Http::response('Internal Server Error', 500)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ])->assertStatus(202);
+
+        Queue::fake();
+        $second = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $second->assertStatus(202);
+        $job = ScrapingJob::find($second->json('data.id'));
+        (new RunScrapingJob($job->id))->handle(
+            app(\App\Repositories\Scraping\ScrapingRepository::class),
+            app(\App\Scraping\ScraperResolver::class),
+            app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class)
+        );
+
+        $job->refresh();
+        $this->assertEquals('failed', $job->status);
+        $this->assertStringContainsString('Circuit breaker abierto', $job->error_message);
+    }
+
+    public function test_circuit_breaker_cierra_despues_del_cooldown()
+    {
+        $breaker = app(\App\Services\Scraping\ScrapingCircuitBreaker::class);
+
+        $breaker->open('carrefour', 1);
+        $this->assertTrue($breaker->isOpen('carrefour'));
+
+        sleep(2);
+
+        $this->assertFalse($breaker->isOpen('carrefour'));
+    }
+
+    public function test_scraping_respeta_limite_max_pages()
+    {
+        config(['scraping.limits.supermarket_max_pages' => 1]);
+        Http::fake(['*' => Http::response(json_encode($this->fixtureJson()), 200)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+            'max_pages' => 10,
+        ]);
+
+        $response->assertStatus(202);
+        Http::assertSentCount(1);
+    }
+
+    public function test_scraping_respeta_limite_max_items()
+    {
+        config(['scraping.limits.supermarket_max_items' => 1]);
+        Http::fake(['*' => Http::response(json_encode($this->fixtureJson()), 200)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(202);
+        $this->assertEquals(1, \App\ScrapedProductCandidate::where('scraping_job_id', $response->json('data.id'))->count());
+    }
+
+    public function test_reintento_del_mismo_job_no_duplica_candidatos()
+    {
+        Http::fake(['*' => Http::response(json_encode($this->fixtureJson()), 200)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+        $job = ScrapingJob::create([
+            'source_id' => $source->id,
+            'job_type' => 'product_prices',
+            'requested_by' => $admin->id,
+            'status' => 'pending',
+        ]);
+
+        $handler = new RunScrapingJob($job->id);
+        $handler->handle(
+            app(\App\Repositories\Scraping\ScrapingRepository::class),
+            app(\App\Scraping\ScraperResolver::class),
+            app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class)
+        );
+        $job->update(['status' => 'pending', 'finished_at' => null]);
+        $handler->handle(
+            app(\App\Repositories\Scraping\ScrapingRepository::class),
+            app(\App\Scraping\ScraperResolver::class),
+            app(\App\Services\Scraping\ScrapingExecutionGuard::class),
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class)
+        );
+
+        $this->assertEquals(2, \App\ScrapedProductCandidate::where('scraping_job_id', $job->id)->count());
     }
 }

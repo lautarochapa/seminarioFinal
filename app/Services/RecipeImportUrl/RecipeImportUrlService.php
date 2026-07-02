@@ -6,6 +6,7 @@ use App\AuditLog;
 use App\Exceptions\RecipeImportUrl\RecipeImportUrlException;
 use App\ImportedRecipeCandidate;
 use App\Repositories\RecipeImportUrl\RecipeImportUrlRepository;
+use App\Services\Scraping\UrlSecurityValidator;
 use App\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -36,11 +37,13 @@ class RecipeImportUrlService
 
     private RecipeImportUrlRepository $repo;
     private RecipeUrlParser            $parser;
+    private UrlSecurityValidator       $urlValidator;
 
-    public function __construct(RecipeImportUrlRepository $repo, RecipeUrlParser $parser)
+    public function __construct(RecipeImportUrlRepository $repo, RecipeUrlParser $parser, UrlSecurityValidator $urlValidator)
     {
         $this->repo   = $repo;
         $this->parser = $parser;
+        $this->urlValidator = $urlValidator;
     }
 
     public function import(User $user, string $rawUrl, string $ip, string $userAgent): ImportedRecipeCandidate
@@ -49,11 +52,8 @@ class RecipeImportUrlService
             throw RecipeImportUrlException::forbidden();
         }
 
-        $url = $this->validateUrl($rawUrl);
-
+        $url = $this->urlValidator->normalizeHttpUrl($rawUrl, null, true);
         $host = parse_url($url, PHP_URL_HOST);
-        $this->assertNotSsrf($host);
-        $this->assertSupportedSource($host);
 
         if ($this->repo->findByUrl($url)) {
             throw RecipeImportUrlException::duplicateUrl();
@@ -131,65 +131,34 @@ class RecipeImportUrlService
         return $candidate->fresh();
     }
 
-    private function validateUrl(string $raw): string
-    {
-        $url = filter_var(trim($raw), FILTER_VALIDATE_URL);
-        if (!$url) {
-            throw RecipeImportUrlException::invalidUrl();
-        }
-
-        $scheme = strtolower(parse_url($url, PHP_URL_SCHEME) ?? '');
-        if (!in_array($scheme, ['http', 'https'], true)) {
-            throw RecipeImportUrlException::invalidUrl();
-        }
-
-        return $url;
-    }
-
-    private function assertNotSsrf(string $host): void
-    {
-        $lower = strtolower($host);
-
-        foreach (self::BLOCKED_HOSTS as $blocked) {
-            if ($lower === $blocked) {
-                throw RecipeImportUrlException::ssrfBlocked();
-            }
-        }
-
-        foreach (self::BLOCKED_IP_PATTERNS as $pattern) {
-            if (preg_match($pattern, $lower)) {
-                throw RecipeImportUrlException::ssrfBlocked();
-            }
-        }
-
-        // Resolve host and check resolved IP
-        $ip = @gethostbyname($host);
-        if ($ip && $ip !== $host) {
-            foreach (self::BLOCKED_IP_PATTERNS as $pattern) {
-                if (preg_match($pattern, $ip)) {
-                    throw RecipeImportUrlException::ssrfBlocked();
-                }
-            }
-        }
-    }
-
-    private function assertSupportedSource(string $host): void
-    {
-        if (!SupportedSourceRegistry::isSupported($host)) {
-            throw RecipeImportUrlException::unsupportedSource();
-        }
-    }
-
     private function fetch(string $url): string
     {
-        $response = Http::withOptions([
-            'allow_redirects' => ['max' => self::MAX_REDIRECTS],
-            'timeout'         => self::TIMEOUT_SECONDS,
-            'headers'         => [
-                'User-Agent' => 'Mozilla/5.0 (compatible; SeminarioFinalBot/1.0)',
-                'Accept'     => 'text/html,application/xhtml+xml',
-            ],
-        ])->get($url);
+        $currentUrl = $url;
+        $redirects = 0;
+
+        while (true) {
+            $response = Http::withHeaders([
+                'User-Agent' => config('scraping.user_agent', 'ComidaControlBot/1.0'),
+                'Accept' => 'text/html,application/xhtml+xml',
+            ])
+                ->timeout((int) config('scraping.timeout_seconds', self::TIMEOUT_SECONDS))
+                ->withOptions([
+                    'allow_redirects' => false,
+                    'connect_timeout' => (int) config('scraping.connect_timeout_seconds', 5),
+                ])
+                ->get($currentUrl);
+
+            if ($response->status() >= 300 && $response->status() < 400 && $response->header('Location')) {
+                $redirects++;
+                if ($redirects > self::MAX_REDIRECTS) {
+                    throw RecipeImportUrlException::fetchFailed('Too many redirects');
+                }
+                $currentUrl = $this->urlValidator->normalizeHttpUrl($response->header('Location'), $currentUrl, true);
+                continue;
+            }
+
+            break;
+        }
 
         if (!$response->successful()) {
             throw RecipeImportUrlException::fetchFailed('HTTP ' . $response->status());
