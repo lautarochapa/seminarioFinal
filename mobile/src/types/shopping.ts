@@ -2,7 +2,7 @@ export interface ShoppingList {
   id: number;
   family_group_id: number;
   meal_plan_id: number | null;
-  source_type: 'manual' | 'meal_plan' | 'history';
+  source_type: 'manual' | 'meal_plan' | 'history' | 'recipe';
   status: 'draft' | 'active' | 'completed' | 'cancelled';
   estimated_total: number | null;
   optimization_mode: string | null;
@@ -72,6 +72,29 @@ export interface ShoppingSessionScan {
   price: number | null;
   scan_result: string;
   created_at: string;
+}
+
+export interface StockUpdateWarning {
+  shopping_list_item_id: number | null;
+  reason: string;
+}
+
+export interface StockUpdateResult {
+  purchase_id: number;
+  stock_created_count: number;
+  stock_updated_count: number;
+  stock_skipped_count: number;
+  stock_warnings: StockUpdateWarning[];
+}
+
+export interface ShoppingSessionFinishRequest {
+  stock_location_id?: number | null;
+}
+
+export interface ShoppingSessionFinishResult {
+  data: ShoppingSession;
+  summary: StockUpdateResult;
+  trace_id: string;
 }
 
 export interface ShoppingListFilters {

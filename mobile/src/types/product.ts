@@ -50,6 +50,8 @@ export interface ProductSummary {
 
 export type ProductDetail = ProductSummary;
 
+export type BarcodeLookupResult = ProductDetail;
+
 export interface ProductFilters {
   search?: string;
   page?: number;

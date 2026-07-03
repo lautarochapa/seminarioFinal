@@ -144,6 +144,11 @@ class PromotionService
         return $this->repo->forBranch($branchId, $filters);
     }
 
+    public function catalog(array $filters)
+    {
+        return $this->repo->catalogActive($filters);
+    }
+
     private function auditPayload($promotion): array
     {
         return [

@@ -4,6 +4,7 @@ namespace App\Services\SupermarketProducts;
 
 use App\AuditLog;
 use App\Exceptions\Ingredients\IngredientException;
+use App\Repositories\Products\ProductRepository;
 use App\Repositories\SupermarketProducts\SupermarketProductRepository;
 use App\SupermarketBranch;
 use App\SupermarketProduct;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\DB;
 class SupermarketProductService
 {
     private $repo;
+    private $products;
 
-    public function __construct(SupermarketProductRepository $repo)
+    public function __construct(SupermarketProductRepository $repo, ProductRepository $products)
     {
         $this->repo = $repo;
+        $this->products = $products;
     }
 
     public function list(array $filters)
@@ -208,6 +211,13 @@ class SupermarketProductService
 
             return $price;
         });
+    }
+
+    public function productPriceHistory(int $productId, array $filters = [])
+    {
+        $this->products->findPublicOrFail($productId);
+
+        return $this->repo->priceHistoryForProduct($productId, $filters);
     }
 
     public function bestPrice(int $productId)

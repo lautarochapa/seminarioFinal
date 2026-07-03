@@ -1,13 +1,32 @@
 import { ENV } from '@/config/env';
 import { sessionStorage } from '@/storage/sessionStorage';
+import { offlineCache } from '@/storage/offlineCache';
 import {
   makeNetworkError,
   makeTimeoutError,
   parseApiError,
 } from '@/utils/errorParser';
+import { getNetworkState, reportRequestFailure, reportRequestSuccess } from '@/utils/networkStatus';
 import type { NormalizedError } from '@/types/api';
 
 const TIMEOUT_MS = 15_000;
+const GET_RETRY_DELAYS_MS = [500, 1500];
+
+// Only cache reads for screens that explicitly need last-known-good data offline.
+const CACHEABLE_GET_PREFIXES = [
+  '/api/v1/users/me/profile',
+  '/api/v1/family-groups',
+  '/api/v1/products',
+  '/api/v1/notifications',
+];
+
+function isCacheableGet(path: string): boolean {
+  return CACHEABLE_GET_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 let onUnauthorized: (() => void) | null = null;
 let unauthorizedInFlight = false;
@@ -47,34 +66,89 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(
+function makeOfflineError(): ApiError {
+  return new ApiError({
+    status: 0,
+    code: 'OFFLINE',
+    message: 'Sin conexión. Esta acción requiere conectarse a internet.',
+    fieldErrors: {},
+    traceId: '',
+    isNetworkError: true,
+    isTimeoutError: false,
+  });
+}
+
+async function attemptFetch(
   method: string,
-  path: string,
-  body?: unknown,
-  options: { skipAuth?: boolean } = {},
-): Promise<T> {
+  url: string,
+  headers: Record<string, string>,
+  body: unknown,
+): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-  const url = `${ENV.API_URL}${path}`;
-  const headers = await buildHeaders(!options.skipAuth);
-
-  let response: Response;
   try {
-    response = await fetch(url, {
+    const response = await fetch(url, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
+    reportRequestSuccess();
+    return response;
   } catch (err: unknown) {
-    clearTimeout(timeoutId);
+    reportRequestFailure();
     if (err instanceof Error && err.name === 'AbortError') {
       throw new ApiError(makeTimeoutError());
     }
     throw new ApiError(makeNetworkError());
   } finally {
     clearTimeout(timeoutId);
+  }
+}
+
+async function fetchWithGetRetry(
+  method: string,
+  url: string,
+  headers: Record<string, string>,
+  body: unknown,
+): Promise<Response> {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await attemptFetch(method, url, headers, body);
+    } catch (err) {
+      if (attempt >= GET_RETRY_DELAYS_MS.length) throw err;
+      await delay(GET_RETRY_DELAYS_MS[attempt]);
+    }
+  }
+}
+
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  options: { skipAuth?: boolean } = {},
+): Promise<T> {
+  const isSafe = method === 'GET';
+
+  if (!isSafe && getNetworkState() === 'offline') {
+    throw makeOfflineError();
+  }
+
+  const url = `${ENV.API_URL}${path}`;
+  const headers = await buildHeaders(!options.skipAuth);
+  const cacheable = isSafe && isCacheableGet(path);
+
+  let response: Response;
+  try {
+    response = isSafe
+      ? await fetchWithGetRetry(method, url, headers, body)
+      : await attemptFetch(method, url, headers, body);
+  } catch (err) {
+    if (cacheable) {
+      const cached = await offlineCache.read<T>(path);
+      if (cached) return cached.data;
+    }
+    throw err;
   }
 
   if (response.status === 204) {
@@ -89,7 +163,11 @@ async function request<T>(
     throw new ApiError(normalized);
   }
 
-  return response.json() as Promise<T>;
+  const parsed = (await response.json()) as T;
+  if (cacheable) {
+    void offlineCache.write(path, parsed);
+  }
+  return parsed;
 }
 
 export const apiClient = {

@@ -1,3 +1,5 @@
+import type { ShoppingList } from './shopping';
+
 export interface RecipeCategory {
   id: number;
   name: string;
@@ -89,4 +91,46 @@ export interface GenerateShoppingListResult {
   shopping_list_id?: number | null;
   created_items_count?: number | null;
   missing_ingredients?: unknown[];
+}
+
+export interface RecipeShoppingListRequest {
+  servings?: number;
+  shopping_list_id?: number;
+  supermarket_branch_id?: number;
+  supermarket_chain_id?: number;
+}
+
+export interface RecipeShoppingListUnmappedIngredient {
+  ingredient_id: number | null;
+  ingredient_name: string | null;
+  reason: string;
+}
+
+export type PriceSource = 'branch' | 'chain' | 'group_history' | 'best_available' | null;
+
+export interface GeneratedShoppingListItem {
+  shopping_list_item_id: number;
+  ingredient_id: number | null;
+  product_id: number | null;
+  requested_quantity: number;
+  requested_unit_id: number;
+  purchase_quantity: number;
+  purchase_unit_id: number;
+  estimated_unit_price: number | null;
+  estimated_subtotal: number | null;
+  price_source: PriceSource;
+  price_updated_at: string | null;
+  supermarket_branch_id: number | null;
+  supermarket_chain_id: number | null;
+}
+
+export interface RecipeShoppingListResult {
+  shopping_list: ShoppingList;
+  items_added: number;
+  items_skipped_duplicate: number;
+  unmapped_ingredients: RecipeShoppingListUnmappedIngredient[];
+  priced_items: GeneratedShoppingListItem[];
+  estimated_total: number;
+  items_without_price: number;
+  warnings: string[];
 }

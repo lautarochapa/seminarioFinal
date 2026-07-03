@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -36,13 +37,14 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { list, items, loading, error, refresh } = useShoppingListDetail(groupId, listId);
-  const { finishing, error: sessionError, finishSession } = useShoppingSession(groupId);
+  const { finishing, error: sessionError, finishSession, finishSummary } = useShoppingSession(groupId);
 
   const [itemSync, setItemSync] = useState<Record<number, {
     saving?: boolean;
     saved?: boolean;
     error?: NormalizedError;
   }>>({});
+  const [priceDrafts, setPriceDrafts] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (!list) return;
@@ -96,6 +98,44 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
     }
   }
 
+  async function handleSavePrice(item: ShoppingListItem) {
+    if (!groupId) return;
+    const draft = priceDrafts[item.id];
+    if (draft === undefined) return;
+    const parsed = draft.trim() === '' ? null : Number(draft);
+    if (parsed !== null && (isNaN(parsed) || parsed < 0)) return;
+
+    setItemSync((current) => ({ ...current, [item.id]: { saving: true, saved: false, error: undefined } }));
+    try {
+      await shoppingListItemsApi.update(groupId, listId, item.id, { actual_price: parsed });
+      await refresh();
+      setItemSync((current) => ({ ...current, [item.id]: { saving: false, saved: true, error: undefined } }));
+      setTimeout(() => {
+        setItemSync((current) => {
+          const next = { ...current };
+          if (next[item.id]?.saved) delete next[item.id];
+          return next;
+        });
+      }, 1800);
+    } catch (err: unknown) {
+      const fallback: NormalizedError = {
+        status: 0, code: 'NETWORK_ERROR', message: 'No se pudo guardar el precio.',
+        fieldErrors: {}, traceId: '', isNetworkError: true, isTimeoutError: false,
+      };
+      setItemSync((current) => ({
+        ...current,
+        [item.id]: { saving: false, saved: false, error: err instanceof ApiError ? err.normalized : fallback },
+      }));
+    }
+  }
+
+  function finishSummaryMessage(summary: NonNullable<ReturnType<typeof useShoppingSession>['finishSummary']>): string {
+    const parts = [`${summary.stock_created_count} producto(s) agregados al stock`];
+    if (summary.stock_updated_count > 0) parts.push(`${summary.stock_updated_count} actualizados en stock`);
+    if (summary.stock_skipped_count > 0) parts.push(`${summary.stock_skipped_count} no se pudieron agregar`);
+    return parts.join('\n');
+  }
+
   async function handleFinish() {
     Alert.alert(
       'Finalizar compra',
@@ -107,16 +147,20 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
           onPress: async () => {
             const result = await finishSession(sessionId);
             if (result) {
-              Alert.alert('Listo', 'Sesión finalizada.', [{
-                text: 'OK',
-                onPress: () => {
-                  if (result.purchase_id) {
-                    router.replace({ pathname: '/(app)/purchases/[id]' as never, params: { id: String(result.purchase_id) } });
-                  } else {
-                    goBackOrHome();
-                  }
-                },
-              }]);
+              Alert.alert(
+                'Compra finalizada',
+                finishSummary ? finishSummaryMessage(finishSummary) : 'Sesión finalizada.',
+                [{
+                  text: 'OK',
+                  onPress: () => {
+                    if (result.purchase_id) {
+                      router.replace({ pathname: '/(app)/purchases/[id]' as never, params: { id: String(result.purchase_id) } });
+                    } else {
+                      goBackOrHome();
+                    }
+                  },
+                }],
+              );
             } else if (sessionError) {
               Alert.alert('Error', sessionError.message ?? 'No se pudo finalizar.');
             }
@@ -159,15 +203,16 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => {
           const sync = itemSync[item.id];
+          const priceDraft = priceDrafts[item.id] ?? (item.actual_price !== null ? String(item.actual_price) : '');
           return (
-            <Pressable
-              style={({ pressed }) => [styles.itemCard, pressed && { opacity: 0.7 }, sync?.error && styles.itemCardError]}
-              onPress={() => handleToggle(item)}
-              accessibilityRole="checkbox"
-              accessibilityLabel={item.product?.name ?? 'item'}
-              disabled={Boolean(sync?.saving)}
-            >
-              <View style={styles.checkWrap}>
+            <View style={[styles.itemCard, sync?.error && styles.itemCardError]}>
+              <Pressable
+                style={styles.checkWrap}
+                onPress={() => handleToggle(item)}
+                accessibilityRole="checkbox"
+                accessibilityLabel={`Marcar ${item.product?.name ?? item.ingredient?.name ?? 'item'} como ${item.status === 'purchased' ? 'pendiente' : 'comprado'}`}
+                disabled={Boolean(sync?.saving)}
+              >
                 {sync?.saving ? (
                   <ActivityIndicator size="small" color={COLORS.primary} />
                 ) : (
@@ -177,14 +222,35 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
                     color={item.status === 'purchased' ? COLORS.success : COLORS.textHint}
                   />
                 )}
-              </View>
+              </Pressable>
               <View style={styles.itemBody}>
                 <Text style={[styles.itemName, item.status === 'purchased' && styles.strikethrough]} numberOfLines={2}>
                   {item.product?.name ?? item.ingredient?.name ?? 'Item'}
                 </Text>
                 <Text style={styles.itemMeta}>
                   {item.quantity} {item.unit?.symbol ?? ''}
+                  {item.estimated_price !== null ? ` · Estimado: $${item.estimated_price}` : ' · Sin precio estimado'}
                 </Text>
+                <View style={styles.priceRow}>
+                  <TextInput
+                    style={styles.priceInput}
+                    value={priceDraft}
+                    onChangeText={(text) => setPriceDrafts((current) => ({ ...current, [item.id]: text }))}
+                    placeholder="Precio real"
+                    placeholderTextColor={COLORS.textHint}
+                    keyboardType="decimal-pad"
+                    accessibilityLabel={`Precio real de ${item.product?.name ?? item.ingredient?.name ?? 'item'}`}
+                  />
+                  <Pressable
+                    onPress={() => handleSavePrice(item)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Guardar precio real"
+                    style={styles.priceSaveBtn}
+                    disabled={Boolean(sync?.saving)}
+                  >
+                    <MaterialCommunityIcons name="content-save-outline" size={20} color={COLORS.primary} />
+                  </Pressable>
+                </View>
                 {sync?.saving ? <Text style={styles.syncSaving}>Guardando...</Text> : null}
                 {sync?.saved ? <Text style={styles.syncSaved}>Guardado</Text> : null}
                 {sync?.error ? (
@@ -205,7 +271,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
                 ) : null}
               </View>
               <StatusBadge status={item.status} />
-            </Pressable>
+            </View>
           );
         }}
         contentContainerStyle={styles.list}
@@ -254,6 +320,18 @@ const styles = StyleSheet.create({
   itemName: { fontSize: FONT.bodySize, fontWeight: '600', color: COLORS.textPrimary },
   strikethrough: { textDecorationLine: 'line-through', color: COLORS.textHint },
   itemMeta: { fontSize: FONT_SIZE.xs, color: COLORS.textSecondary },
+  priceRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.xs, marginTop: 4 },
+  priceInput: {
+    flex: 1,
+    minHeight: 36,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACING.sm,
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.textPrimary,
+  },
+  priceSaveBtn: { padding: SPACING.xs, minWidth: TOUCH_TARGET - 12, minHeight: TOUCH_TARGET - 12, alignItems: 'center', justifyContent: 'center' },
   syncSaving: { fontSize: FONT_SIZE.xs, color: COLORS.primary, fontWeight: '600' },
   syncSaved: { fontSize: FONT_SIZE.xs, color: COLORS.success, fontWeight: '600' },
   itemErrorBox: { marginTop: SPACING.xs, gap: 4 },

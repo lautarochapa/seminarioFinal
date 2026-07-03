@@ -22,7 +22,12 @@ function totalMinutes(recipe: RecipeSummary): number | null {
 export function RecipeCard({ recipe, favorite = false, favoriteLoading = false, onPress, onToggleFavorite, badge }: Props) {
   const minutes = totalMinutes(recipe);
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]} onPress={onPress}>
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={recipe.name}
+    >
       <View style={styles.thumb}>
         <MaterialCommunityIcons name="silverware-fork-knife" size={28} color={COLORS.primary} />
       </View>

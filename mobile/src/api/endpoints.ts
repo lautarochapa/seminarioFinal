@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { LoginRequest, LoginResponse, MeResponse } from '@/types/auth';
+import type { LoginRequest, LoginResponse, MeResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
 import type { Profile } from '@/types/profile';
 import type {
@@ -26,6 +26,8 @@ import type {
   ShoppingSession,
   ShoppingSessionScan,
   ShoppingListFilters,
+  ShoppingSessionFinishRequest,
+  ShoppingSessionFinishResult,
 } from '@/types/shopping';
 import type {
   Purchase,
@@ -49,8 +51,11 @@ import type {
   RecipeSummary,
   RecipeSuggestion,
   GenerateShoppingListResult,
+  RecipeShoppingListRequest,
+  RecipeShoppingListResult,
 } from '@/types/recipe';
 import type { MealPlan, MealPlanEntry, MealPlanFilters } from '@/types/mealPlan';
+import { normalizeRecipeSuggestions } from '@/utils/recipeSuggestions';
 import type {
   BranchFilters,
   City,
@@ -60,7 +65,9 @@ import type {
   PaymentMethod,
   PriceComparison,
   PriceHistoryEntry,
+  PriceHistoryFilters,
   Promotion,
+  PromotionFilters,
   ReportPeriod,
   SupermarketBranch,
   SupermarketChain,
@@ -70,6 +77,9 @@ import type {
 export const authApi = {
   login(payload: LoginRequest): Promise<LoginResponse> {
     return apiClient.post<LoginResponse>('/api/v1/auth/login', payload, { skipAuth: true });
+  },
+  register(payload: RegisterRequest): Promise<RegisterResponse> {
+    return apiClient.post<RegisterResponse>('/api/v1/auth/register', payload, { skipAuth: true });
   },
   me(): Promise<MeResponse> {
     return apiClient.get<MeResponse>('/api/v1/auth/me');
@@ -198,8 +208,8 @@ export const shoppingSessionsApi = {
   update(groupId: number, sessionId: number, payload: { supermarket_branch_id?: number | null }): Promise<ApiResponse<ShoppingSession>> {
     return apiClient.patch<ApiResponse<ShoppingSession>>(`/api/v1/family-groups/${groupId}/shopping-sessions/${sessionId}`, payload);
   },
-  finish(groupId: number, sessionId: number): Promise<ApiResponse<ShoppingSession>> {
-    return apiClient.post<ApiResponse<ShoppingSession>>(`/api/v1/family-groups/${groupId}/shopping-sessions/${sessionId}/finish`);
+  finish(groupId: number, sessionId: number, payload?: ShoppingSessionFinishRequest): Promise<ShoppingSessionFinishResult> {
+    return apiClient.post<ShoppingSessionFinishResult>(`/api/v1/family-groups/${groupId}/shopping-sessions/${sessionId}/finish`, payload ?? {});
   },
   scan(groupId: number, sessionId: number, payload: { barcode: string; quantity?: number; price?: number | null }): Promise<ApiResponse<ShoppingSessionScan>> {
     return apiClient.post<ApiResponse<ShoppingSessionScan>>(`/api/v1/family-groups/${groupId}/shopping-sessions/${sessionId}/scan`, payload);
@@ -291,10 +301,17 @@ export const recipeFavoritesApi = {
 export const recipeSuggestionsApi = {
   list(groupId?: number | null): Promise<PaginatedResponse<RecipeSuggestion>> {
     const qs = toQueryString({ family_group_id: groupId || undefined, per_page: 20 });
-    return apiClient.get<PaginatedResponse<RecipeSuggestion>>(`/api/v1/recipes/suggestions${qs}`);
+    return apiClient.get<unknown>(`/api/v1/recipes/suggestions${qs}`)
+      .then((payload) => normalizeRecipeSuggestions(payload).response);
+  },
+  listWithDiagnostics(groupId?: number | null): Promise<{ response: PaginatedResponse<RecipeSuggestion>; invalidCount: number }> {
+    const qs = toQueryString({ family_group_id: groupId || undefined, per_page: 20 });
+    return apiClient.get<unknown>(`/api/v1/recipes/suggestions${qs}`)
+      .then((payload) => normalizeRecipeSuggestions(payload));
   },
   available(groupId: number): Promise<PaginatedResponse<RecipeSuggestion>> {
-    return apiClient.get<PaginatedResponse<RecipeSuggestion>>(`/api/v1/family-groups/${groupId}/recipes/available?per_page=20`);
+    return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/available?per_page=20`)
+      .then((payload) => normalizeRecipeSuggestions(payload).response);
   },
 };
 
@@ -368,14 +385,25 @@ export const pricesApi = {
         partial_errors: [],
       }));
   },
-  history(_supermarketProductId: number): Promise<ApiResponse<PriceHistoryEntry[]>> {
-    return Promise.resolve({ data: [], trace_id: '', message: 'No hay endpoint publico de historial de precios.' });
+  history(productId: number, filters?: PriceHistoryFilters): Promise<PaginatedResponse<PriceHistoryEntry>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<PriceHistoryEntry>>(`/api/v1/products/${productId}/price-history${qs}`);
   },
 };
 
 export const promotionsApi = {
   byBranch(branchId: number): Promise<ApiResponse<Promotion[]>> {
     return branchesApi.promotions(branchId);
+  },
+  global(filters?: PromotionFilters): Promise<PaginatedResponse<Promotion>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<Promotion>>(`/api/v1/promotions${qs}`);
+  },
+};
+
+export const recipeShoppingListApi = {
+  generate(groupId: number, recipeId: number, payload?: RecipeShoppingListRequest): Promise<ApiResponse<RecipeShoppingListResult>> {
+    return apiClient.post<ApiResponse<RecipeShoppingListResult>>(`/api/v1/family-groups/${groupId}/recipes/${recipeId}/shopping-list`, payload ?? {});
   },
 };
 

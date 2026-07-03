@@ -13,6 +13,7 @@ use App\ShoppingList;
 use App\ShoppingSession;
 use App\ShoppingSessionScan;
 use App\StockItem;
+use App\StockLocation;
 use App\StockMovement;
 use App\SupermarketBranch;
 use App\User;
@@ -126,7 +127,7 @@ class ShoppingSessionService
         });
     }
 
-    public function finish(User $user, int $groupId, int $sessionId, string $ip, string $ua): ShoppingSession
+    public function finish(User $user, int $groupId, int $sessionId, array $data, string $ip, string $ua): array
     {
         $this->assertMember($user, $groupId);
         $session = $this->findSession($groupId, $sessionId);
@@ -137,16 +138,21 @@ class ShoppingSessionService
 
         $this->assertActive($session);
 
-        return DB::transaction(function () use ($user, $groupId, $session, $ip, $ua) {
+        if (isset($data['stock_location_id']) && !$this->activeStockLocationExists($groupId, (int) $data['stock_location_id'])) {
+            throw new FamilyGroupException('STOCK_LOCATION_NOT_FOUND', 'La ubicacion de stock no existe para este grupo.', 422);
+        }
+
+        return DB::transaction(function () use ($user, $groupId, $session, $data, $ip, $ua) {
             $old = $this->payload($session);
             $scans = $session->scans()->where('scan_result', 'matched')->get();
-            $actualTotal = $scans->reduce(function ($carry, $scan) {
-                if ($scan->price === null || $scan->quantity === null) {
-                    return $carry;
-                }
 
-                return $carry + ((float) $scan->price * (float) $scan->quantity);
-            }, 0.0);
+            $stockLocationId = $data['stock_location_id'] ?? $this->defaultStockLocationId($groupId);
+
+            $stockCreated = 0;
+            $stockUpdated = 0;
+            $stockSkipped = 0;
+            $warnings = [];
+            $purchasedTotal = 0.0;
 
             $purchase = Purchase::create([
                 'family_group_id' => $groupId,
@@ -154,34 +160,73 @@ class ShoppingSessionService
                 'supermarket_branch_id' => $session->supermarket_branch_id,
                 'user_id' => $user->id,
                 'purchase_date' => now()->toDateString(),
-                'actual_total' => $actualTotal,
+                'estimated_total' => 0,
+                'actual_total' => 0,
                 'status' => 'confirmed',
             ]);
 
+            $actualTotal = 0.0;
+
             foreach ($scans as $scan) {
-                if (!$scan->shoppingListItem || !$scan->product_id) {
+                $item = $scan->shoppingListItem;
+                $quantity = (float) ($scan->quantity ?: ($item->quantity ?? 0));
+
+                if (!$item || !$scan->product_id || $quantity <= 0) {
+                    $stockSkipped++;
+                    $warnings[] = [
+                        'shopping_list_item_id' => $item->id ?? null,
+                        'reason' => !$scan->product_id
+                            ? 'ITEM_WITHOUT_PRODUCT'
+                            : ($quantity <= 0 ? 'ZERO_QUANTITY' : 'ITEM_NOT_FOUND'),
+                    ];
                     continue;
                 }
 
-                $item = $scan->shoppingListItem;
-                $stock = StockItem::create([
-                    'family_group_id' => $groupId,
-                    'product_id' => $scan->product_id,
-                    'stock_location_id' => null,
-                    'quantity' => $scan->quantity ?: $item->quantity,
-                    'unit_id' => $item->unit_id,
-                    'purchase_date' => now()->toDateString(),
-                    'estimated_purchase_price' => $scan->price,
-                    'status' => 'active',
-                ]);
+                if ($scan->price !== null && $scan->quantity !== null) {
+                    $actualTotal += (float) $scan->price * (float) $scan->quantity;
+                }
+                $purchasedTotal += (float) ($item->estimated_price ?? 0) * $quantity;
+
+                $existingStock = StockItem::where('family_group_id', $groupId)
+                    ->where('product_id', $scan->product_id)
+                    ->where('unit_id', $item->unit_id)
+                    ->where('status', 'active')
+                    ->whereNull('deleted_at')
+                    ->where(function ($q) use ($stockLocationId) {
+                        $stockLocationId === null ? $q->whereNull('stock_location_id') : $q->where('stock_location_id', $stockLocationId);
+                    })
+                    ->whereNull('expiration_date')
+                    ->first();
+
+                if ($existingStock) {
+                    $existingStock->quantity = (float) $existingStock->quantity + $quantity;
+                    if ($scan->price !== null) {
+                        $existingStock->estimated_purchase_price = $scan->price;
+                    }
+                    $existingStock->save();
+                    $stock = $existingStock;
+                    $stockUpdated++;
+                } else {
+                    $stock = StockItem::create([
+                        'family_group_id' => $groupId,
+                        'product_id' => $scan->product_id,
+                        'stock_location_id' => $stockLocationId,
+                        'quantity' => $quantity,
+                        'unit_id' => $item->unit_id,
+                        'purchase_date' => now()->toDateString(),
+                        'estimated_purchase_price' => $scan->price,
+                        'status' => 'active',
+                    ]);
+                    $stockCreated++;
+                }
 
                 StockMovement::create([
                     'family_group_id' => $groupId,
                     'stock_item_id' => $stock->id,
                     'product_id' => $scan->product_id,
                     'movement_type' => 'entry',
-                    'quantity' => $stock->quantity,
-                    'unit_id' => $stock->unit_id,
+                    'quantity' => $quantity,
+                    'unit_id' => $item->unit_id,
                     'reason' => 'shopping_session',
                     'related_purchase_id' => $purchase->id,
                     'created_by' => $user->id,
@@ -190,13 +235,17 @@ class ShoppingSessionService
                 PurchaseItem::create([
                     'purchase_id' => $purchase->id,
                     'product_id' => $scan->product_id,
-                    'quantity' => $stock->quantity,
-                    'unit_id' => $stock->unit_id,
+                    'quantity' => $quantity,
+                    'unit_id' => $item->unit_id,
                     'unit_price' => $scan->price,
-                    'total_price' => $scan->price !== null ? (float) $scan->price * (float) $stock->quantity : null,
+                    'total_price' => $scan->price !== null ? (float) $scan->price * $quantity : null,
                     'created_stock_item_id' => $stock->id,
                 ]);
             }
+
+            $purchase->estimated_total = $purchasedTotal;
+            $purchase->actual_total = $actualTotal;
+            $purchase->save();
 
             $session->status = 'finished';
             $session->finished_at = now();
@@ -209,8 +258,36 @@ class ShoppingSessionService
             $session = $session->fresh(['shoppingList', 'branch']);
             $this->audit($user->id, 'shopping_session.finished', $session->id, $old, $this->payload($session), $ip, $ua);
 
-            return $session;
+            return [
+                'session' => $session,
+                'summary' => [
+                    'purchase_id' => $purchase->id,
+                    'stock_created_count' => $stockCreated,
+                    'stock_updated_count' => $stockUpdated,
+                    'stock_skipped_count' => $stockSkipped,
+                    'stock_warnings' => $warnings,
+                ],
+            ];
         });
+    }
+
+    private function activeStockLocationExists(int $groupId, int $locationId): bool
+    {
+        return StockLocation::where('id', $locationId)
+            ->where('family_group_id', $groupId)
+            ->where('status', 'active')
+            ->whereNull('deleted_at')
+            ->exists();
+    }
+
+    private function defaultStockLocationId(int $groupId): ?int
+    {
+        $locations = StockLocation::where('family_group_id', $groupId)
+            ->where('status', 'active')
+            ->whereNull('deleted_at')
+            ->pluck('id');
+
+        return $locations->count() === 1 ? (int) $locations->first() : null;
     }
 
     private function assertMember(User $user, int $groupId): void

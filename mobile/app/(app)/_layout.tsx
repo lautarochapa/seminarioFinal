@@ -225,6 +225,14 @@ export default function AppLayout() {
         name="reports"
         options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Reportes' }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Ajustes' }}
+      />
+      <Tabs.Screen
+        name="barcode-scanner"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' }, title: 'Escanear código' }}
+      />
     </Tabs>
   );
 }

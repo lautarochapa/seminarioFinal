@@ -100,14 +100,15 @@ class SupermarketChainRepository
 
     public function allActive()
     {
-        return SupermarketChain::where('status', 'active')
+        return SupermarketChain::withCount('branches')
+            ->where('status', 'active')
             ->orderBy('name', 'asc')
             ->get();
     }
 
     public function findActiveOrFail($id)
     {
-        $chain = SupermarketChain::where('id', $id)->where('status', 'active')->first();
+        $chain = SupermarketChain::withCount('branches')->where('id', $id)->where('status', 'active')->first();
 
         if (! $chain) {
             throw new IngredientException('CHAIN_NOT_FOUND', 'La cadena solicitada no existe.', 404);

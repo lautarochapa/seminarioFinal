@@ -161,6 +161,35 @@ class SupermarketProductRepository
             ->paginate($perPage);
     }
 
+    public function priceHistoryForProduct(int $productId, array $filters = [])
+    {
+        $query = SupermarketProductPrice::query()
+            ->whereHas('supermarketProduct', function ($q) use ($productId, $filters) {
+                $q->where('product_id', $productId)->where('status', 'active');
+
+                if (! empty($filters['chain_id'])) {
+                    $q->where('supermarket_chain_id', (int) $filters['chain_id']);
+                }
+
+                if (! empty($filters['branch_id'])) {
+                    $q->where('supermarket_branch_id', (int) $filters['branch_id']);
+                }
+            })
+            ->with(['supermarketProduct.branch', 'supermarketProduct.branch.chain']);
+
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('scraped_at', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('scraped_at', '<=', $filters['date_to']);
+        }
+
+        $perPage = min(max((int) ($filters['per_page'] ?? 20), 1), 100);
+
+        return $query->orderByDesc('scraped_at')->orderByDesc('id')->paginate($perPage);
+    }
+
     public function currentActivePrice(int $supermarketProductId)
     {
         return SupermarketProductPrice::where('supermarket_product_id', $supermarketProductId)
@@ -189,6 +218,58 @@ class SupermarketProductRepository
     {
         $price->valid_to = now();
         $price->save();
+    }
+
+    public function currentPriceAtBranch(int $productId, int $branchId)
+    {
+        $sp = SupermarketProduct::where('product_id', $productId)
+            ->where('supermarket_branch_id', $branchId)
+            ->where('status', 'active')
+            ->with(['prices' => function ($q) {
+                $q->where('status', 'active')
+                    ->whereNull('valid_to')
+                    ->orderByDesc('scraped_at')
+                    ->orderByDesc('id');
+            }])
+            ->get()
+            ->map(function ($sp) {
+                $sp->current_price = $sp->prices->first();
+                return $sp;
+            })
+            ->first(function ($sp) {
+                return $sp->current_price !== null;
+            });
+
+        return $sp ? $sp->current_price : null;
+    }
+
+    public function bestPriceInChain(int $productId, int $chainId)
+    {
+        $supermarketProducts = SupermarketProduct::where('product_id', $productId)
+            ->where('supermarket_chain_id', $chainId)
+            ->where('status', 'active')
+            ->with(['prices' => function ($q) {
+                $q->where('status', 'active')
+                    ->whereNull('valid_to')
+                    ->orderByDesc('scraped_at')
+                    ->orderByDesc('id');
+            }])
+            ->get()
+            ->map(function ($sp) {
+                $sp->current_price = $sp->prices->first();
+                return $sp;
+            })
+            ->filter(function ($sp) {
+                return $sp->current_price !== null;
+            });
+
+        if ($supermarketProducts->isEmpty()) {
+            return null;
+        }
+
+        return $supermarketProducts->sortBy(function ($sp) {
+            return (float) $sp->current_price->price;
+        })->first()->current_price;
     }
 
     public function bestPriceForProduct(int $productId)

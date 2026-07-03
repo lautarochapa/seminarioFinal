@@ -176,6 +176,40 @@ class SupermarketsTest extends TestCase
             ->assertJsonPath('data.website_url', 'https://www.changomas.com.ar');
     }
 
+    //  catálogo expone branches_count y logo_url (null hasta que exista columna)
+    public function test_catalogo_expone_branches_count_y_logo_url()
+    {
+        $chain = $this->chain(['name' => 'Vea']);
+        $city  = \App\City::create([
+            'name'     => 'City ' . uniqid(),
+            'province' => 'Prov Test',
+            'country'  => 'Argentina',
+            'status'   => 'active',
+        ]);
+
+        \App\SupermarketBranch::create([
+            'supermarket_chain_id' => $chain->id,
+            'city_id'              => $city->id,
+            'name'                 => 'Sucursal 1',
+            'address'              => 'Calle 1',
+            'status'               => 'active',
+        ]);
+        \App\SupermarketBranch::create([
+            'supermarket_chain_id' => $chain->id,
+            'city_id'              => $city->id,
+            'name'                 => 'Sucursal 2',
+            'address'              => 'Calle 2',
+            'status'               => 'active',
+        ]);
+
+        $response = $this->actingAs(factory(User::class)->create())
+            ->getJson('/api/v1/supermarkets/' . $chain->id);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.branches_count', 2)
+            ->assertJsonPath('data.logo_url', null);
+    }
+
     // auditoría registrada
     public function test_auditoria_registrada()
     {

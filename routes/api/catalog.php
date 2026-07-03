@@ -145,6 +145,7 @@ Route::delete('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\
     ->middleware('permission:catalog.manage');
 
 Route::get('supermarket-branches/{id}/promotions', [\App\Http\Controllers\Api\V1\Promotions\BranchPromotionController::class, 'index']);
+Route::get('promotions', [\App\Http\Controllers\Api\V1\Promotions\PromotionCatalogController::class, 'index']);
 
 // Supermarket products — admin and catalog
 Route::get('admin/supermarket-products', [\App\Http\Controllers\Api\V1\SupermarketProducts\AdminSupermarketProductController::class, 'index'])
@@ -168,6 +169,7 @@ Route::get('supermarket-branches/{id}/products', [\App\Http\Controllers\Api\V1\S
 
 Route::get('products/{productId}/best-price',         [\App\Http\Controllers\Api\V1\SupermarketProducts\ProductPriceController::class, 'bestPrice']);
 Route::get('products/{productId}/supermarket-prices', [\App\Http\Controllers\Api\V1\SupermarketProducts\ProductPriceController::class, 'supermarketPrices']);
+Route::get('products/{productId}/price-history',      [\App\Http\Controllers\Api\V1\SupermarketProducts\ProductPriceController::class, 'priceHistory']);
 
 // Supermarket branches — admin and catalog
 Route::get('admin/supermarket-branches', [\App\Http\Controllers\Api\V1\SupermarketBranches\AdminSupermarketBranchController::class, 'index'])

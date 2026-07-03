@@ -9,6 +9,9 @@ export function PriceHistoryRow({ item }: { item: PriceHistoryEntry }) {
   return (
     <View style={styles.row}>
       <Text style={styles.price}>{formatMoney(item.price, item.currency)}</Text>
+      {item.chain || item.branch ? (
+        <Text style={styles.meta}>{item.chain?.name || 'Cadena'} · {item.branch?.name || 'Sucursal'}</Text>
+      ) : null}
       <Text style={styles.meta}>Desde {formatDate(item.valid_from)} hasta {formatDate(item.valid_to)}</Text>
       <DataOriginBadge origin={item.source} />
     </View>

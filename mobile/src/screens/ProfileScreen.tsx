@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/auth/AuthContext';
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -35,6 +36,7 @@ const GENDER_LABELS: Record<string, string> = {
 };
 
 export function ProfileScreen() {
+  const router = useRouter();
   const { data, loading, error, refresh } = useProfile();
   const { logout, isLoading: logoutLoading } = useAuth();
 
@@ -111,8 +113,15 @@ export function ProfileScreen() {
         </>
       ) : null}
 
-      {/* Logout at bottom */}
+      {/* Settings and logout at bottom */}
       <View style={styles.logoutSection}>
+        <AppButton
+          title="Ajustes"
+          variant="outline"
+          onPress={() => router.push('/(app)/settings' as never)}
+          fullWidth
+          style={styles.settingsBtn}
+        />
         <AppButton
           title="Cerrar sesión"
           variant="danger"
@@ -201,5 +210,9 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.lg,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+    gap: SPACING.sm,
+  },
+  settingsBtn: {
+    marginBottom: 0,
   },
 });

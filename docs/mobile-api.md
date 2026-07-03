@@ -339,6 +339,254 @@ En desarrollo, el cliente mobile puede mostrar el `trace_id` al usuario para fac
 
 ---
 
+## Compras y sesiones
+
+### Finalizar sesión de compra
+
+```
+POST /api/v1/family-groups/{groupId}/shopping-sessions/{sessionId}/finish
+```
+
+**Requiere Authorization Bearer.**
+
+Comportamiento verificado en backend:
+- crea una `Purchase` confirmada;
+- crea `PurchaseItem` para scans matcheados;
+- crea stock y movimientos de stock;
+- marca la sesión como `finished`;
+- marca la lista como `completed`;
+- una segunda finalización devuelve `409 SHOPPING_SESSION_ALREADY_FINISHED`.
+
+**Respuesta 200:**
+```json
+{
+  "data": {
+    "id": 10,
+    "shopping_list_id": 1,
+    "family_group_id": 5,
+    "user_id": 1,
+    "supermarket_branch_id": null,
+    "purchase_id": 123,
+    "started_at": "2026-07-01T19:00:00+00:00",
+    "finished_at": "2026-07-01T19:30:00+00:00",
+    "status": "finished"
+  },
+  "trace_id": "uuid"
+}
+```
+
+> Mobile debe navegar a `/(app)/purchases/{purchase_id}` cuando `purchase_id` esté presente. No debe crear una Purchase duplicada.
+
+---
+
+## Convención Expo Router
+
+En Expo Router, un archivo físico:
+
+```text
+app/(app)/shopping-lists/[id].tsx
+```
+
+se registra en `Stack.Screen`/`Tabs.Screen` como:
+
+```text
+shopping-lists/[id]
+```
+
+No registrar:
+
+```text
+shopping-lists/[id]/index
+```
+
+Para carpetas con `index.tsx`, como:
+
+```text
+app/(app)/stock/[id]/index.tsx
+```
+
+el nombre registrado esperado para el detalle es:
+
+```text
+stock/[id]
+```
+
+---
+
+## Supermercados Mobile
+
+Endpoints consumidos:
+
+- `GET /api/v1/supermarkets`
+- `GET /api/v1/supermarkets/{id}`
+- `GET /api/v1/supermarket-branches`
+- `GET /api/v1/supermarket-branches/{id}`
+- `GET /api/v1/supermarket-branches/nearby?lat={lat}&lng={lng}&radius={km}`
+- `GET /api/v1/supermarket-branches/{id}/products`
+- `GET /api/v1/supermarket-branches/{id}/promotions`
+- `GET /api/v1/products/{productId}/supermarket-prices`
+- `GET /api/v1/products/{productId}/best-price`
+- `GET /api/v1/products/{productId}/price-history?chain_id=&branch_id=&date_from=&date_to=&per_page=`
+- `GET /api/v1/promotions?chain_id=&branch_id=&product_id=&payment_method_id=&day=&active=&per_page=`
+- `GET /api/v1/payment-methods`
+- `GET /api/v1/notifications`
+- `GET /api/v1/notifications/unread-count`
+- `PATCH /api/v1/notifications/{id}/read`
+- `PATCH /api/v1/notifications/read-all`
+- `GET /api/v1/users/me/notification-preferences`
+- `PATCH /api/v1/users/me/notification-preferences`
+- `GET /api/v1/family-groups/{id}/reports/stock`
+- `GET /api/v1/family-groups/{id}/reports/stock-value`
+- `GET /api/v1/family-groups/{id}/reports/waste`
+- `GET /api/v1/family-groups/{id}/reports/purchases`
+- `GET /api/v1/family-groups/{id}/reports/budget-vs-actual`
+
+Campos reales usados:
+
+- Cadenas: `id`, `name`, `website_url`, `status`.
+- Sucursales: `id`, `name`, `address`, `latitude`, `longitude`, `opening_hours`, `delivery_available`, `pickup_available`, `status`, `chain`, `city`, `distance_km`.
+- Productos por sucursal: `product`, `branch`, `current_price`, `source_name`, `last_scraped_at`, `status`.
+- Precios: `price`, `currency`, `scraped_at/captured_at`, `valid_from`, `valid_to`, `source`, `status`.
+- Promociones: `name`, `description`, `discount_type`, `discount_value`, `valid_from`, `valid_to`, `day_of_week`, `requires_payment_method`, `status`.
+
+Ubicacion y mapa:
+
+- `expo-location` se instala con `npx expo install expo-location` para Expo SDK 57.
+- `react-native-maps` se instala con `npx expo install react-native-maps` para SDK 57.
+- La app no solicita ubicacion al abrir. La pantalla de sucursales solicita permiso solo al tocar `Usar mi ubicacion`.
+- Se manejan permiso denegado, permiso bloqueado, servicios apagados, timeout, ubicacion no disponible y sucursales sin coordenadas.
+- Si no hay coordenadas, se conserva la lista funcional.
+
+Origen de datos:
+
+- Precios muestran `Origen: manual`, `Origen: scraping` o `Origen: demo` segun `current_price.source` y metadatos disponibles.
+- Promociones no exponen origen en el Resource publico actual; mobile las etiqueta como demo cuando no existe otro campo contractual.
+- Para scraping se muestran fuente (`source_name`) y fecha (`last_scraped_at` / `scraped_at`) cuando estan disponibles.
+
+Errores parciales:
+
+- Comparacion de precios consume `supermarket-prices` y `best-price` por separado desde `pricesApi.compare`.
+- Si una fuente parcial falla, la UI conserva resultados disponibles cuando existan y expone el mensaje de error.
+- Precios vencidos con `valid_to` no se destacan como vigentes.
+
+Bloqueos contractuales detectados:
+
+- `GET /api/v1/supermarkets` expone `branches_count` (real, vía `withCount`), pero `logo_url` siempre es `null`: la tabla `supermarket_chains` no tiene columna de logo. Ver `Requerimientos de base de datos` más abajo.
+- `PromotionResource` no expone tope (`cap`) ni condiciones estructuradas de la promoción (solo `discount_type`, `discount_value`, `day_of_week`, `requires_payment_method`, y ahora `payment_methods[]` cuando la promoción los tiene asociados).
+
+### Requerimientos de base de datos
+
+```text
+- Tabla: supermarket_chains
+- Cambio requerido: agregar logo_url (string nullable)
+- Motivo: exponer logo de cadena en catálogo mobile/web
+- Bloquea: SupermarketChainResource.logo_url (actualmente siempre null)
+```
+
+### Historial de precios (implementado)
+
+```http
+GET /api/v1/products/{productId}/price-history?chain_id=&branch_id=&date_from=&date_to=&per_page=
+```
+
+Paginado. Devuelve `price`, `currency`, `captured_at`, `valid_from`, `valid_to`, `is_current`, `status`, `source`, `chain`, `branch`. Consumido por `pricesApi.history()` y mostrado en `PriceComparisonScreen` (lista simple, sin gráficos) vía `usePriceHistory`.
+
+### Promociones globales (implementado)
+
+```http
+GET /api/v1/promotions?chain_id=&branch_id=&product_id=&payment_method_id=&day=&active=&per_page=
+```
+
+Por defecto solo devuelve promociones vigentes (`active` implícito `true`); `active=false` incluye vencidas/futuras. Consumido por `promotionsApi.global()` y mostrado en `PromotionsScreen` (tab "Todas" además del tab histórico "Por sucursal").
+
+## Recetas Mobile
+
+### Listado y búsqueda
+
+```http
+GET /api/v1/recipes
+GET /api/v1/recipes/search
+GET /api/v1/recipes/{id}
+GET /api/v1/recipe-categories
+GET /api/v1/recipe-tags
+```
+
+La app mobile usa estos campos cuando están presentes:
+- `name`
+- `description`
+- `prep_time_minutes`
+- `cook_time_minutes`
+- `servings`
+- `category`
+- `tags`
+- `ingredients`
+- `steps`
+- `images`
+
+### Favoritos
+
+```http
+GET    /api/v1/users/me/favorite-recipes
+POST   /api/v1/recipes/{id}/favorite
+DELETE /api/v1/recipes/{id}/favorite
+```
+
+Mobile persiste favoritos en backend y revierte la UI si falla el cambio optimista.
+
+### Sugerencias
+
+```http
+GET /api/v1/recipes/suggestions?family_group_id={id}
+GET /api/v1/family-groups/{id}/recipes/available
+GET /api/v1/family-groups/{id}/recipes/almost-available
+GET /api/v1/family-groups/{id}/recipes/by-expiring-stock
+GET /api/v1/family-groups/{id}/recipes/by-budget
+GET /api/v1/family-groups/{id}/recipes/by-objectives
+```
+
+Mobile muestra el motivo solo si la API lo entrega.
+
+### Generar lista desde receta (implementado)
+
+```http
+POST /api/v1/family-groups/{groupId}/recipes/{recipeId}/shopping-list
+Body: { "servings"?: number, "shopping_list_id"?: number }
+```
+
+- Si no se envía `shopping_list_id`, crea una lista nueva (`source_type: "recipe"`) y responde `201`.
+- Si se envía `shopping_list_id`, reutiliza esa lista (debe pertenecer al grupo y no estar `completed`; si está cerrada devuelve `409 SHOPPING_LIST_CLOSED`) y responde `200`.
+- Calcula faltantes contra stock del grupo, convierte unidades cuando hay `UnitConversion` disponible, evita duplicados (`items_skipped_duplicate`), e informa ingredientes sin unidad/ingrediente resolubles en `unmapped_ingredients`.
+- Respuesta: `{ shopping_list, items_added, items_skipped_duplicate, unmapped_ingredients, warnings }`.
+
+Consumido por `recipeShoppingListApi.generate()` desde el botón "Generar lista de compras" en `RecipeDetailScreen`, que navega a la lista resultante y muestra un resumen (`GenerationSummary`).
+
+La generación desde meal plan sigue disponible por separado:
+
+```http
+POST /api/v1/family-groups/{id}/meal-plans/{planId}/generate-shopping-list
+```
+
+---
+
+## Planning y Meal Plans
+
+```http
+GET    /api/v1/family-groups/{id}/meal-plans
+POST   /api/v1/family-groups/{id}/meal-plans
+GET    /api/v1/family-groups/{id}/meal-plans/{planId}
+PATCH  /api/v1/family-groups/{id}/meal-plans/{planId}
+DELETE /api/v1/family-groups/{id}/meal-plans/{planId}
+GET    /api/v1/family-groups/{id}/meal-plans/{planId}/items
+POST   /api/v1/family-groups/{id}/meal-plans/{planId}/items
+PATCH  /api/v1/family-groups/{id}/meal-plans/{planId}/items/{itemId}
+DELETE /api/v1/family-groups/{id}/meal-plans/{planId}/items/{itemId}
+POST   /api/v1/family-groups/{id}/meal-plans/{planId}/generate-shopping-list
+```
+
+Mobile muestra `period_type`, `start_date`, `end_date`, `mode`, `status` e `items`. Las acciones profesionales quedan sujetas a permisos y endpoints profesionales separados.
+
+---
+
 ## Credenciales demo (solo desarrollo local)
 
 | Email | Contraseña | Rol |
@@ -369,3 +617,50 @@ El backend tiene CORS completamente abierto para `/api/*`:
 - `allowed_origins: ['*']`
 - `allowed_methods: ['*']`
 - No se requiere configuración adicional en el cliente mobile.
+
+---
+
+## Manejo de red y modo offline
+
+Implementado sin dependencias nativas de conectividad (no hay `NetInfo`): `src/utils/networkStatus.ts` es un store en memoria con 3 estados (`online` / `offline` / `reconnecting`) alimentado por los resultados reales de `fetch` en `src/api/client.ts`, más un heartbeat cada 10s mientras no está `online`.
+
+- Banner global (`OfflineBanner`) en `app/_layout.tsx`, visible en toda la app (login incluido).
+- Reintentos automáticos solo en `GET` (hasta 2 reintentos con backoff 500ms/1500ms). `POST/PATCH/PUT/DELETE` nunca se reintentan solos.
+- Mutaciones bloqueadas de inmediato (sin llamar a `fetch`) cuando el estado es `offline`, devolviendo un `ApiError` con `code: 'OFFLINE'`; las pantallas conservan el formulario y muestran el mensaje sin perder los datos ingresados.
+- Cache mínima de último contenido exitoso (`src/storage/offlineCache.ts`, sobre `@react-native-async-storage/async-storage`) para lecturas `GET` de: perfil (`/users/me/profile`), grupos familiares y sus sub-recursos (`/family-groups/**`, incluye stock y listas de compras), catálogo de productos (`/products`) y notificaciones (`/notifications`). Si el `fetch` falla, se devuelve la última respuesta cacheada en vez de propagar el error.
+- La cache se limpia completamente al cerrar sesión o al expirar el token (`AuthContext.clearSession`).
+
+## Seguridad mobile
+
+- Token de sesión y grupo familiar activo se guardan únicamente en `expo-secure-store` (`src/storage/secureStorage.ts`). Nunca en `AsyncStorage`.
+- `AsyncStorage` se usa solo para la cache no sensible descripta arriba.
+- Al cerrar sesión (`AuthContext.clearSession`) se limpia: token, usuario, grupo activo y toda la cache offline.
+- `src/config/env.ts` falla al iniciar (`throw`) si `EXPO_PUBLIC_API_URL` usa `http://` fuera de desarrollo (`!__DEV__`), salvo que se declare explícitamente `EXPO_PUBLIC_ALLOW_INSECURE_API=true` para un entorno interno.
+- No se loguea `Authorization`, tokens ni contraseñas en ningún punto del cliente.
+
+## Pantallas de error global
+
+- `src/components/ErrorBoundary.tsx`: envuelve `<Slot />` en `app/_layout.tsx`. Ante un error de render de React muestra una pantalla con "Reintentar" y "Volver a inicio", sin dejar la pantalla en blanco.
+- `app/+not-found.tsx`: ruta 404 de Expo Router para cualquier deep link o ruta inválida, con link para volver a inicio.
+- Errores de red/servidor por pantalla siguen usando `ErrorState` (ya existente) con reintento y `trace_id` visible.
+
+## Ajustes (`/(app)/settings`)
+
+Accesible desde Perfil. Incluye: grupo familiar activo (con acceso para cambiarlo), preferencias de notificaciones (reutiliza `useNotificationPreferences`), versión de la app, ambiente y diagnóstico (`API URL`, ids) solo en desarrollo, información de soporte, política de privacidad marcada como pendiente de publicación, y cerrar sesión.
+
+## Notificaciones push
+
+No implementadas: el backend no tiene infraestructura de device tokens (no existen columnas/tablas `device_token`/`push_token` ni endpoints para registrarlos). Solo se implementaron notificaciones internas (listado, badge, marcar leída/todas, preferencias, navegación al recurso relacionado según `type` — ver `src/utils/notificationNavigation.ts`).
+
+```text
+Requerimientos de base de datos:
+- Tabla: device_tokens (nueva)
+- Columnas sugeridas: id, user_id, token, platform, created_at, updated_at
+- Motivo: registrar tokens de Expo push por dispositivo/usuario
+- Bloquea: registro y envío de push notifications reales desde mobile
+
+- Tabla: notifications
+- Cambio requerido: agregar entity_type (string nullable) y entity_id (bigint nullable)
+- Motivo: permitir deep-link a un recurso específico (ej. una lista de compras puntual), no solo a la sección
+- Bloquea: navegación exacta al recurso; actualmente solo navega a la sección según `type`
+```

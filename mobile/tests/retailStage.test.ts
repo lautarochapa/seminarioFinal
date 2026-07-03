@@ -75,8 +75,15 @@ describe('retail mobile stage', () => {
     expect(read('src/hooks/useNearbyBranches.ts')).toContain('LOCATION_TIMEOUT');
   });
 
-  it('documents unsupported public price history endpoint as blocked', () => {
+  it('uses the real public price history endpoint', () => {
     const endpoints = read('src/api/endpoints.ts');
-    expect(endpoints).toContain('No hay endpoint publico de historial de precios.');
+    expect(endpoints).toContain('/api/v1/products/${productId}/price-history');
+    expect(endpoints).not.toContain('No hay endpoint publico de historial de precios.');
+  });
+
+  it('exposes the global promotions endpoint', () => {
+    const endpoints = read('src/api/endpoints.ts');
+    expect(endpoints).toContain("apiClient.get<PaginatedResponse<Promotion>>(`/api/v1/promotions");
+    expect(fs.existsSync(path.join(root, 'src/hooks/useGlobalPromotions.ts'))).toBe(true);
   });
 });

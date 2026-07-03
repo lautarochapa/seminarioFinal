@@ -1,4 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
+import { apiClient, ApiError } from '../src/api/client';
+import { __resetNetworkStateForTests, getNetworkState, reportRequestFailure } from '../src/utils/networkStatus';
 
 // We test api/client indirectly through fetch mocks
 const mockFetch = jest.fn();
@@ -8,6 +10,7 @@ const mockGetToken = SecureStore.getItemAsync as jest.Mock;
 
 beforeEach(() => {
   jest.clearAllMocks();
+  __resetNetworkStateForTests();
 });
 
 describe('apiClient Bearer token', () => {
@@ -19,7 +22,6 @@ describe('apiClient Bearer token', () => {
       json: async () => ({ data: { test: true }, trace_id: 'x' }),
     });
 
-    const { apiClient } = require('../src/api/client');
     await apiClient.get('/api/v1/test');
 
     const callArgs = mockFetch.mock.calls[0];
@@ -34,7 +36,6 @@ describe('apiClient Bearer token', () => {
       json: async () => ({ data: {}, trace_id: 'x' }),
     });
 
-    const { apiClient } = require('../src/api/client');
     await apiClient.post('/api/v1/auth/login', { email: 'x', password: 'y' }, { skipAuth: true });
 
     const callArgs = mockFetch.mock.calls[0];
@@ -54,15 +55,13 @@ describe('apiClient Bearer token', () => {
       }),
     });
 
-    const { apiClient, ApiError } = require('../src/api/client');
     await expect(apiClient.get('/api/v1/protected')).rejects.toThrow(ApiError);
   });
 
   it('throws ApiError with isNetworkError on fetch failure', async () => {
-    mockGetToken.mockResolvedValueOnce(null);
-    mockFetch.mockRejectedValueOnce(new TypeError('Network request failed'));
+    mockGetToken.mockResolvedValue(null);
+    mockFetch.mockRejectedValue(new TypeError('Network request failed'));
 
-    const { apiClient, ApiError } = require('../src/api/client');
     try {
       await apiClient.get('/api/v1/test');
       fail('should have thrown');
@@ -70,7 +69,7 @@ describe('apiClient Bearer token', () => {
       expect(err).toBeInstanceOf(ApiError);
       expect((err as InstanceType<typeof ApiError>).normalized.isNetworkError).toBe(true);
     }
-  });
+  }, 10000);
 
   it('returns undefined on 204', async () => {
     mockGetToken.mockResolvedValueOnce('token');
@@ -80,7 +79,6 @@ describe('apiClient Bearer token', () => {
       headers: new Headers(),
     });
 
-    const { apiClient } = require('../src/api/client');
     const result = await apiClient.post('/api/v1/auth/logout');
     expect(result).toBeUndefined();
   });
@@ -100,7 +98,6 @@ describe('apiClient 429 handling', () => {
       }),
     });
 
-    const { apiClient, ApiError } = require('../src/api/client');
     try {
       await apiClient.post('/api/v1/auth/login', {}, { skipAuth: true });
       fail('should throw');
@@ -109,5 +106,65 @@ describe('apiClient 429 handling', () => {
       expect((err as InstanceType<typeof ApiError>).normalized.status).toBe(429);
       expect((err as InstanceType<typeof ApiError>).normalized.retryAfter).toBe(60);
     }
+  });
+});
+
+describe('apiClient network resilience', () => {
+  it('retries a GET after one transient network failure and succeeds', async () => {
+    mockGetToken.mockResolvedValue(null);
+    mockFetch
+      .mockRejectedValueOnce(new TypeError('Network request failed'))
+      .mockRejectedValueOnce(new TypeError('Heartbeat failed'))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: { ok: true }, trace_id: 'x' }),
+      });
+
+    const result = await apiClient.get('/api/v1/test');
+
+    expect(result).toEqual({ data: { ok: true }, trace_id: 'x' });
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+  }, 10000);
+
+  it('does not retry mutating requests on failure', async () => {
+    mockGetToken.mockResolvedValue(null);
+    mockFetch.mockRejectedValue(new TypeError('Network request failed'));
+
+    await expect(apiClient.post('/api/v1/family-groups', {})).rejects.toBeInstanceOf(ApiError);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('blocks a mutation immediately once the network state is offline, without calling fetch', async () => {
+    mockGetToken.mockResolvedValue(null);
+    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    // reportRequestFailure() moves 'online' -> 'reconnecting' and fires a background
+    // heartbeat fetch; make that heartbeat fail too so the state settles on 'offline'.
+    mockFetch.mockRejectedValue(new TypeError('Network request failed'));
+    reportRequestFailure();
+    await flush();
+    await flush();
+
+    expect(getNetworkState()).toBe('offline');
+
+    mockFetch.mockClear();
+    await expect(apiClient.post('/api/v1/family-groups', {})).rejects.toMatchObject({
+      normalized: { code: 'OFFLINE', isNetworkError: true },
+    });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('marks the network back online after a successful request', async () => {
+    mockGetToken.mockResolvedValue(null);
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: {}, trace_id: 'x' }),
+    });
+    await apiClient.get('/api/v1/test');
+
+    expect(getNetworkState()).toBe('online');
   });
 });

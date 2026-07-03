@@ -286,4 +286,86 @@ class PromotionsTest extends TestCase
         $this->assertContains($cadenaPromo->id, $ids);
         $this->assertNotContains($sucursalPromo->id, $ids);
     }
+
+    public function test_catalogo_global_sin_autenticacion_retorna_401()
+    {
+        $this->getJson('/api/v1/promotions')->assertStatus(401);
+    }
+
+    public function test_catalogo_global_devuelve_solo_vigentes_por_defecto()
+    {
+        $user  = $this->regularUser();
+        $chain = $this->chain();
+
+        $vigente = $this->promotion($chain, [
+            'name'       => 'Vigente',
+            'valid_from' => Carbon::now()->subDay()->toDateString(),
+            'valid_to'   => Carbon::now()->addDays(30)->toDateString(),
+        ]);
+
+        $vencida = $this->promotion($chain, [
+            'name'     => 'Vencida',
+            'valid_to' => Carbon::now()->subDay()->toDateString(),
+        ]);
+
+        $inactiva = $this->promotion($chain, ['name' => 'Inactiva', 'status' => 'inactive']);
+
+        $response = $this->actingAs($user)->getJson('/api/v1/promotions');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data', 'meta', 'links', 'trace_id']);
+
+        $ids = collect($response->json('data'))->pluck('id')->all();
+        $this->assertContains($vigente->id, $ids);
+        $this->assertNotContains($vencida->id, $ids);
+        $this->assertNotContains($inactiva->id, $ids);
+    }
+
+    public function test_catalogo_global_filtra_por_cadena()
+    {
+        $user   = $this->regularUser();
+        $chainA = $this->chain();
+        $chainB = $this->chain();
+
+        $promoA = $this->promotion($chainA, ['name' => 'Promo A']);
+        $this->promotion($chainB, ['name' => 'Promo B']);
+
+        $response = $this->actingAs($user)->getJson('/api/v1/promotions?chain_id=' . $chainA->id);
+
+        $response->assertStatus(200);
+        $ids = collect($response->json('data'))->pluck('id')->all();
+        $this->assertEquals([$promoA->id], $ids);
+    }
+
+    public function test_catalogo_global_filtra_por_dia()
+    {
+        $user  = $this->regularUser();
+        $chain = $this->chain();
+
+        $lunes = $this->promotion($chain, ['name' => 'Solo lunes', 'day_of_week' => 1]);
+        $this->promotion($chain, ['name' => 'Solo martes', 'day_of_week' => 2]);
+
+        $response = $this->actingAs($user)->getJson('/api/v1/promotions?day=1');
+
+        $response->assertStatus(200);
+        $ids = collect($response->json('data'))->pluck('id')->all();
+        $this->assertContains($lunes->id, $ids);
+    }
+
+    public function test_catalogo_global_active_false_incluye_vencidas()
+    {
+        $user  = $this->regularUser();
+        $chain = $this->chain();
+
+        $vencida = $this->promotion($chain, [
+            'name'     => 'Vencida',
+            'valid_to' => Carbon::now()->subDay()->toDateString(),
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/api/v1/promotions?active=false');
+
+        $response->assertStatus(200);
+        $ids = collect($response->json('data'))->pluck('id')->all();
+        $this->assertContains($vencida->id, $ids);
+    }
 }

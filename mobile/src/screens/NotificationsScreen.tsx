@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppButton } from '@/components/AppButton';
 import { AppHeader } from '@/components/AppHeader';
@@ -15,6 +16,7 @@ import { goBackOrHome } from '@/utils/navigation';
 import { COLORS, FONT, RADIUS, SPACING } from '@/utils/theme';
 
 export function NotificationsScreen() {
+  const router = useRouter();
   const [showPrefs, setShowPrefs] = useState(false);
   const notifications = useNotifications();
   const prefs = useNotificationPreferences();
@@ -58,7 +60,13 @@ export function NotificationsScreen() {
         <FlatList
           data={notifications.data}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <NotificationCard item={item} onRead={() => !item.read_at && notifications.markAsRead(item.id)} />}
+          renderItem={({ item }) => (
+            <NotificationCard
+              item={item}
+              onRead={() => !item.read_at && notifications.markAsRead(item.id)}
+              onNavigate={(route) => router.push(route as never)}
+            />
+          )}
           ListEmptyComponent={<EmptyState icon="bell-off-outline" message="No hay notificaciones." />}
           contentContainerStyle={styles.list}
         />

@@ -15,6 +15,9 @@ use App\ShoppingList;
 use App\ShoppingListItem;
 use App\ShoppingSession;
 use App\ShoppingSessionScan;
+use App\StockItem;
+use App\StockLocation;
+use App\StockMovement;
 use App\SupermarketBranch;
 use App\SupermarketChain;
 use App\UnitMeasure;
@@ -215,6 +218,132 @@ class ShoppingSessionsTest extends TestCase
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
             ->assertStatus(409)
             ->assertJsonPath('error.code', 'SHOPPING_SESSION_ALREADY_FINISHED');
+    }
+
+    public function test_finish_creates_stock_item_for_matched_scan()
+    {
+        [$user, $group, $list, $item, $product] = $this->context();
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('summary.stock_created_count', 1);
+        $response->assertJsonPath('summary.stock_updated_count', 0);
+        $this->assertDatabaseHas('stock_items', [
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'quantity' => 2,
+            'status' => 'active',
+        ]);
+        $this->assertTrue(StockMovement::where('product_id', $product->id)->where('movement_type', 'entry')->exists());
+    }
+
+    public function test_finish_increments_existing_stock_for_same_product_and_unit()
+    {
+        [$user, $group, $list, $item, $product, $unit] = $this->context();
+        StockItem::create([
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'stock_location_id' => null,
+            'quantity' => 5,
+            'unit_id' => $unit->id,
+            'status' => 'active',
+        ]);
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 3, 'price' => 100, 'scan_result' => 'matched']);
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('summary.stock_created_count', 0);
+        $response->assertJsonPath('summary.stock_updated_count', 1);
+        $this->assertDatabaseHas('stock_items', [
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'quantity' => 8,
+        ]);
+        $this->assertSame(1, StockItem::where('product_id', $product->id)->count());
+    }
+
+    public function test_finish_skips_scan_without_product_with_warning()
+    {
+        [$user, $group, $list, $item] = $this->context();
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '000', 'product_id' => null, 'shopping_list_item_id' => $item->id, 'quantity' => 1, 'scan_result' => 'matched']);
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('summary.stock_created_count', 0);
+        $response->assertJsonPath('summary.stock_skipped_count', 1);
+        $this->assertSame('ITEM_WITHOUT_PRODUCT', $response->json('summary.stock_warnings.0.reason'));
+        $this->assertDatabaseCount('stock_items', 0);
+    }
+
+    public function test_finish_skips_zero_quantity_scan()
+    {
+        [$user, $group, $list, $item, $product] = $this->context();
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 0, 'scan_result' => 'matched']);
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('summary.stock_skipped_count', 1);
+        $this->assertSame('ZERO_QUANTITY', $response->json('summary.stock_warnings.0.reason'));
+        $this->assertDatabaseCount('stock_items', 0);
+    }
+
+    public function test_finish_uses_single_group_location_as_default()
+    {
+        [$user, $group, $list, $item, $product] = $this->context();
+        $location = StockLocation::create(['family_group_id' => $group->id, 'name' => 'Alacena', 'type' => 'pantry', 'status' => 'active']);
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('stock_items', [
+            'product_id' => $product->id,
+            'stock_location_id' => $location->id,
+        ]);
+    }
+
+    public function test_finish_rejects_invalid_stock_location()
+    {
+        [$user, $group, $list, $item, $product] = $this->context();
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish', ['stock_location_id' => 999999])
+            ->assertStatus(422);
+    }
+
+    public function test_finish_computes_estimated_and_actual_purchase_totals()
+    {
+        [$user, $group, $list, $item, $product] = $this->context();
+        $item->update(['estimated_price' => 90]);
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('purchases', [
+            'shopping_list_id' => $list->id,
+            'estimated_total' => 180,
+            'actual_total' => 200,
+        ]);
     }
 
     public function test_writes_are_audited()

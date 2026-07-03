@@ -15,8 +15,17 @@ export function PeriodSelector({ value, onChange }: { value: ReportPeriod; onCha
       {OPTIONS.map((option) => {
         const selected = value === option.value;
         return (
-          <Pressable key={option.value} onPress={() => onChange(option.value)} style={[styles.btn, selected && styles.selected]}>
-            <Text style={[styles.text, selected && styles.selectedText]}>{option.label}</Text>
+          <Pressable
+            key={option.value}
+            onPress={() => onChange(option.value)}
+            style={[styles.btn, selected && styles.selected]}
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
+            accessibilityLabel={option.label}
+          >
+            <Text style={[styles.text, selected && styles.selectedText]}>
+              {selected ? '✓ ' : ''}{option.label}
+            </Text>
           </Pressable>
         );
       })}

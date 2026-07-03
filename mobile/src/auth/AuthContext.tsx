@@ -8,7 +8,8 @@ import React, {
 import { authApi } from '@/api/endpoints';
 import { ApiError, registerUnauthorizedHandler } from '@/api/client';
 import { sessionStorage } from '@/storage/sessionStorage';
-import type { AuthState, AuthUser, LoginRequest } from '@/types/auth';
+import { offlineCache } from '@/storage/offlineCache';
+import type { AuthState, AuthUser, LoginRequest, RegisterRequest } from '@/types/auth';
 
 interface AuthContextValue {
   state: AuthState;
@@ -16,6 +17,7 @@ interface AuthContextValue {
   isLoading: boolean;
   error: string | null;
   login: (payload: LoginRequest) => Promise<void>;
+  register: (payload: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
   refreshCurrentUser: () => Promise<void>;
@@ -67,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const clearSession = useCallback(async () => {
     await sessionStorage.clear();
+    await offlineCache.clearAll();
     dispatch({ type: 'UNAUTHENTICATED' });
   }, []);
 
@@ -121,6 +124,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'AUTHENTICATED', user: res.data });
   }, []);
 
+  const register = useCallback(async (payload: RegisterRequest) => {
+    dispatch({ type: 'LOADING' });
+    const res = await authApi.register(payload);
+    await sessionStorage.save({
+      accessToken: res.token.access_token,
+      user: {
+        id: res.data.id,
+        name: res.data.name,
+        lastname: res.data.lastname,
+        email: res.data.email,
+        roles: res.data.roles,
+        permissions: res.data.permissions,
+      },
+    });
+    dispatch({ type: 'AUTHENTICATED', user: res.data });
+  }, []);
+
   const logout = useCallback(async () => {
     dispatch({ type: 'LOADING' });
     try {
@@ -148,7 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ state, user, isLoading, error, login, logout, restoreSession, refreshCurrentUser }}
+      value={{ state, user, isLoading, error, login, register, logout, restoreSession, refreshCurrentUser }}
     >
       {children}
     </AuthContext.Provider>

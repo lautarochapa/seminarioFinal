@@ -1,22 +1,67 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
+import { EstimatedPriceRow } from '@/components/EstimatedPriceRow';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { ProductMappingWarning } from '@/components/ProductMappingWarning';
 import { RecipeIngredientRow } from '@/components/RecipeIngredientRow';
 import { RecipeStep } from '@/components/RecipeStep';
 import { FavoriteButton } from '@/components/FavoriteButton';
+import { ShoppingGenerationSummary } from '@/components/ShoppingGenerationSummary';
+import { SupermarketSelector } from '@/components/SupermarketSelector';
+import { BranchSelector } from '@/components/BranchSelector';
+import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useRecipeDetail } from '@/hooks/useRecipeDetail';
 import { useRecipeFavorites } from '@/hooks/useRecipeFavorites';
+import { recipeShoppingListApi } from '@/api/endpoints';
+import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '@/utils/theme';
+import type { RecipeShoppingListResult } from '@/types/recipe';
 
 export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
+  const router = useRouter();
+  const { selectedGroup } = useFamilyGroupContext();
+  const groupId = selectedGroup?.id ?? null;
   const { data, loading, error, refresh } = useRecipeDetail(recipeId);
   const favorites = useRecipeFavorites();
+  const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState<RecipeShoppingListResult | null>(null);
+  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
+  const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
+
+  function handleSelectChain(chainId: number | null) {
+    setSelectedChainId(chainId);
+    setSelectedBranchId(null);
+  }
+
+  async function handleGenerateList() {
+    if (!groupId) return;
+    setGenerating(true);
+    setResult(null);
+    try {
+      const res = await recipeShoppingListApi.generate(groupId, recipeId, {
+        supermarket_chain_id: selectedChainId ?? undefined,
+        supermarket_branch_id: selectedBranchId ?? undefined,
+      });
+      setResult(res.data);
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.normalized.message : 'No se pudo generar la lista desde la receta.';
+      Alert.alert('Error', msg);
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  function handleOpenList() {
+    if (!result) return;
+    router.push({ pathname: '/(app)/shopping-lists/[id]' as never, params: { id: String(result.shopping_list.id) } });
+  }
 
   if (loading) return <LoadingScreen message="Cargando receta..." />;
   if (error) {
@@ -37,6 +82,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   }
 
   const minutes = (data.prep_time_minutes ?? 0) + (data.cook_time_minutes ?? 0);
+  const listItems = result?.shopping_list.items ?? [];
 
   return (
     <View style={styles.fill}>
@@ -68,8 +114,63 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
           {data.steps && data.steps.length > 0 ? data.steps.map((step) => <RecipeStep key={step.step_number} step={step} />) : <Text style={styles.emptyText}>Sin pasos cargados.</Text>}
         </View>
 
-        <AppButton title="Generar lista desde receta" disabled fullWidth />
-        <Text style={styles.blocked}>No hay endpoint directo para generar lista desde receta. El backend expone generación desde meal plan.</Text>
+        {groupId ? (
+          <>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Generar lista de compras</Text>
+              <Text style={styles.hint}>Elegí un supermercado (opcional) para estimar precios más precisos.</Text>
+              <SupermarketSelector selectedChainId={selectedChainId} onSelect={handleSelectChain} />
+              {selectedChainId ? (
+                <BranchSelector chainId={selectedChainId} selectedBranchId={selectedBranchId} onSelect={setSelectedBranchId} />
+              ) : null}
+              <AppButton
+                title={generating ? 'Generando...' : 'Generar lista de compras'}
+                onPress={handleGenerateList}
+                loading={generating}
+                fullWidth
+                style={styles.generateBtn}
+              />
+            </View>
+
+            {result ? (
+              <>
+                <ShoppingGenerationSummary
+                  itemsAdded={result.items_added}
+                  estimatedTotal={result.estimated_total}
+                  itemsWithoutPrice={result.items_without_price}
+                  itemsUnmapped={result.unmapped_ingredients.length}
+                />
+
+                {result.priced_items.length > 0 ? (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Items agregados</Text>
+                    {result.priced_items.map((priced) => {
+                      const listItem = listItems.find((li) => li.id === priced.shopping_list_item_id);
+                      const name = listItem?.product?.name ?? listItem?.ingredient?.name ?? 'Item';
+                      return <EstimatedPriceRow key={priced.shopping_list_item_id} item={priced} name={name} unitSymbol={listItem?.unit?.symbol} />;
+                    })}
+                  </View>
+                ) : null}
+
+                {result.unmapped_ingredients.length > 0 ? (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>No mapeados</Text>
+                    {result.unmapped_ingredients.map((item, idx) => (
+                      <ProductMappingWarning key={`${item.ingredient_id}-${idx}`} item={item} />
+                    ))}
+                  </View>
+                ) : null}
+
+                <AppButton title="Abrir lista" onPress={handleOpenList} fullWidth />
+              </>
+            ) : null}
+          </>
+        ) : (
+          <View style={styles.noGroup}>
+            <Text style={styles.blocked}>Seleccioná un grupo familiar para generar una lista desde esta receta.</Text>
+            <AppButton title="Seleccionar grupo" variant="outline" onPress={() => router.push('/(app)/groups' as never)} />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -84,8 +185,11 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm },
   meta: { fontSize: FONT.captionSize, color: COLORS.textSecondary, fontWeight: '600' },
   tags: { fontSize: FONT.captionSize, color: COLORS.primaryDark },
-  section: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, ...SHADOW.sm },
-  sectionTitle: { fontSize: FONT.subtitleSize, fontWeight: '700', color: COLORS.textPrimary, marginBottom: SPACING.sm },
+  section: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, gap: SPACING.sm, ...SHADOW.sm },
+  sectionTitle: { fontSize: FONT.subtitleSize, fontWeight: '700', color: COLORS.textPrimary },
+  hint: { fontSize: FONT.captionSize, color: COLORS.textSecondary },
   emptyText: { color: COLORS.textHint },
   blocked: { fontSize: FONT.captionSize, color: COLORS.textSecondary, textAlign: 'center' },
+  noGroup: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, gap: SPACING.sm, alignItems: 'center', ...SHADOW.sm },
+  generateBtn: { marginTop: SPACING.xs },
 });

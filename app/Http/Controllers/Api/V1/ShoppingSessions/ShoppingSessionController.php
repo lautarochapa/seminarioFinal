@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\ShoppingSessions;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\ShoppingSessions\FinishShoppingSessionRequest;
 use App\Http\Requests\Api\V1\ShoppingSessions\ScanShoppingSessionRequest;
 use App\Http\Requests\Api\V1\ShoppingSessions\UpdateShoppingSessionRequest;
 use App\Http\Resources\Api\V1\ShoppingSessions\ShoppingSessionResource;
@@ -44,10 +45,13 @@ class ShoppingSessionController extends Controller
         ], 201);
     }
 
-    public function finish(Request $request, int $id, int $sessionId): JsonResponse
+    public function finish(FinishShoppingSessionRequest $request, int $id, int $sessionId): JsonResponse
     {
+        $result = $this->service->finish($request->user(), $id, $sessionId, $request->validated(), $request->ip(), $request->userAgent() ?? '');
+
         return response()->json([
-            'data' => new ShoppingSessionResource($this->service->finish($request->user(), $id, $sessionId, $request->ip(), $request->userAgent() ?? '')),
+            'data' => new ShoppingSessionResource($result['session']),
+            'summary' => $result['summary'],
             'trace_id' => $request->attributes->get('trace_id'),
         ]);
     }

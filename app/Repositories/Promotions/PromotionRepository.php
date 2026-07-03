@@ -85,6 +85,53 @@ class PromotionRepository
         return $promotion->fresh(['chain', 'branch']);
     }
 
+    public function catalogActive(array $filters = [])
+    {
+        $query = Promotion::with(['chain', 'branch', 'paymentMethods'])->where('status', 'active');
+
+        if (! empty($filters['chain_id'])) {
+            $query->where('supermarket_chain_id', (int) $filters['chain_id']);
+        }
+
+        if (! empty($filters['branch_id'])) {
+            $query->where('supermarket_branch_id', (int) $filters['branch_id']);
+        }
+
+        if (! empty($filters['payment_method_id'])) {
+            $query->whereHas('paymentMethods', function ($q) use ($filters) {
+                $q->where('payment_methods.id', (int) $filters['payment_method_id']);
+            });
+        }
+
+        if (! empty($filters['product_id'])) {
+            $query->whereHas('prices.supermarketProduct', function ($q) use ($filters) {
+                $q->where('product_id', (int) $filters['product_id']);
+            });
+        }
+
+        if (isset($filters['day']) && $filters['day'] !== '') {
+            $query->where(function ($q) use ($filters) {
+                $q->whereNull('day_of_week')
+                    ->orWhere('day_of_week', (int) $filters['day']);
+            });
+        }
+
+        $active = ! isset($filters['active']) || filter_var($filters['active'], FILTER_VALIDATE_BOOLEAN);
+        if ($active) {
+            $query->where(function ($q) {
+                $q->whereNull('valid_from')
+                    ->orWhere('valid_from', '<=', now());
+            })->where(function ($q) {
+                $q->whereNull('valid_to')
+                    ->orWhere('valid_to', '>=', now());
+            });
+        }
+
+        $perPage = min(max((int) ($filters['per_page'] ?? 20), 1), 100);
+
+        return $query->orderByDesc('valid_from')->orderByDesc('id')->paginate($perPage);
+    }
+
     public function forBranch(int $branchId, array $filters = [])
     {
         $branch = SupermarketBranch::find($branchId);

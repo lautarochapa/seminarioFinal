@@ -38,9 +38,13 @@ describe('recipes, planning and meal plans mobile integration', () => {
     expect(endpoints).toContain('/generate-shopping-list');
   });
 
-  it('documents direct recipe shopping-list generation as blocked in UI', () => {
-    const detail = read(path.join('src', 'screens', 'RecipeDetailScreen.tsx'));
+  it('generates a shopping list directly from a recipe via the real endpoint', () => {
+    const endpoints = read(path.join('src', 'api', 'endpoints.ts'));
+    expect(endpoints).toContain('/api/v1/family-groups/${groupId}/recipes/${recipeId}/shopping-list');
+    expect(endpoints).toContain('recipeShoppingListApi');
 
-    expect(detail).toContain('No hay endpoint directo para generar lista desde receta');
+    const detail = read(path.join('src', 'screens', 'RecipeDetailScreen.tsx'));
+    expect(detail).toContain('recipeShoppingListApi.generate');
+    expect(detail).not.toContain('No hay endpoint directo para generar lista desde receta');
   });
 });

@@ -12,11 +12,27 @@ import { useRecipeSuggestions } from '@/hooks/useRecipeSuggestions';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, SPACING } from '@/utils/theme';
+import type { RecipeSuggestion } from '@/types/recipe';
 
 export function RecipeSuggestionsScreen() {
   const router = useRouter();
   const { selectedGroup } = useFamilyGroupContext();
-  const { data, loading, error, refresh } = useRecipeSuggestions(selectedGroup?.id ?? null);
+  const { data, invalidCount, loading, error, refresh } = useRecipeSuggestions(selectedGroup?.id ?? null);
+  const emptyMessage = invalidCount > 0
+    ? 'La respuesta contiene datos invalidos. Reintentá en unos segundos.'
+    : 'No hay sugerencias disponibles.';
+
+  const keyExtractor = (item: RecipeSuggestion) => `recipe-${item.recipe.id}`;
+  const renderSuggestion = ({ item }: { item: RecipeSuggestion }) => {
+    if (!item.recipe?.id) return null;
+    return (
+      <RecipeCard
+        recipe={item.recipe}
+        badge={item.reason ?? 'Sugerida'}
+        onPress={() => router.push({ pathname: '/(app)/recipes/[id]' as never, params: { id: String(item.recipe.id) } })}
+      />
+    );
+  };
 
   return (
     <View style={styles.fill}>
@@ -27,12 +43,12 @@ export function RecipeSuggestionsScreen() {
       ) : (
         <FlatList
           data={data}
-          keyExtractor={(item) => String(item.recipe.id)}
-          renderItem={({ item }) => <RecipeCard recipe={item.recipe} badge={item.reason ?? 'Sugerida'} onPress={() => router.push({ pathname: '/(app)/recipes/[id]' as never, params: { id: String(item.recipe.id) } })} />}
+          keyExtractor={keyExtractor}
+          renderItem={renderSuggestion}
           contentContainerStyle={styles.list}
           onRefresh={refresh}
           refreshing={loading}
-          ListEmptyComponent={<EmptyState icon="chef-hat" message="No hay sugerencias disponibles." />}
+          ListEmptyComponent={<EmptyState icon="chef-hat" message={emptyMessage} actionTitle={invalidCount > 0 ? 'Reintentar' : undefined} onAction={invalidCount > 0 ? refresh : undefined} />}
         />
       )}
     </View>

@@ -4,6 +4,8 @@ export interface SupermarketChain {
   id: number;
   name: string;
   website_url: string | null;
+  logo_url: string | null;
+  branches_count?: number;
   status: string;
   created_at?: string;
   updated_at?: string;
@@ -93,6 +95,17 @@ export interface PriceSourceError {
 export interface PriceHistoryEntry extends CurrentPrice {
   id: number;
   source: DataOrigin;
+  chain?: Pick<SupermarketChain, 'id' | 'name'> | null;
+  branch?: Pick<SupermarketBranch, 'id' | 'name' | 'address'> | null;
+}
+
+export interface PriceHistoryFilters {
+  chain_id?: number;
+  branch_id?: number;
+  date_from?: string;
+  date_to?: string;
+  page?: number;
+  per_page?: number;
 }
 
 export interface Promotion {
@@ -110,9 +123,21 @@ export interface Promotion {
   status: string;
   chain?: Pick<SupermarketChain, 'id' | 'name'> | null;
   branch?: Pick<SupermarketBranch, 'id' | 'name' | 'address'> | null;
+  payment_methods?: { id: number; name: string; type: string }[];
   created_at?: string;
   updated_at?: string;
   deleted_at?: string | null;
+}
+
+export interface PromotionFilters {
+  chain_id?: number;
+  branch_id?: number;
+  product_id?: number;
+  payment_method_id?: number;
+  day?: number;
+  active?: boolean;
+  page?: number;
+  per_page?: number;
 }
 
 export interface PaymentMethod {

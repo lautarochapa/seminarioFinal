@@ -7,6 +7,7 @@ Route::get('family-groups/{id}/shopping-lists',                                 
 Route::post('family-groups/{id}/shopping-lists',                                       [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'store']);
 Route::post('family-groups/{id}/shopping-lists/generate-from-meal-plan',               [\App\Http\Controllers\Api\V1\ShoppingListGeneration\ShoppingListGenerationController::class, 'fromMealPlan']);
 Route::post('family-groups/{id}/shopping-lists/generate-from-history',                 [\App\Http\Controllers\Api\V1\ShoppingListGeneration\ShoppingListGenerationController::class, 'fromHistory']);
+Route::post('family-groups/{id}/recipes/{recipeId}/shopping-list',                     [\App\Http\Controllers\Api\V1\RecipeShoppingList\RecipeShoppingListController::class, 'store']);
 
 // Shopping list {listId} sub-resources — specific before wildcard
 Route::post('family-groups/{id}/shopping-lists/{listId}/start-session',                [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'start']);

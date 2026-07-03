@@ -7,7 +7,13 @@ export function MealSlotCard({ entry, onPress }: { entry: MealPlanEntry; onPress
   const title = entry.meal_type?.name ?? 'Comida';
   const recipeName = entry.recipe?.name ?? entry.recipe?.nombre ?? entry.free_meal_description;
   return (
-    <Pressable style={styles.card} onPress={onPress} disabled={!onPress}>
+    <Pressable
+      style={styles.card}
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityLabel={`${title}: ${recipeName || 'sin receta asignada'}`}
+    >
       <Text style={styles.slot}>{title}</Text>
       <Text style={styles.recipe} numberOfLines={2}>{recipeName || 'Sin receta asignada'}</Text>
       <Text style={styles.status}>{entry.status}</Text>

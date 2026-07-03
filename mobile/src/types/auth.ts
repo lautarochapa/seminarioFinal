@@ -38,6 +38,16 @@ export interface LoginResponse {
   trace_id: string;
 }
 
+export interface RegisterRequest {
+  name: string;
+  lastname?: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export type RegisterResponse = LoginResponse;
+
 export interface MeResponse {
   data: AuthUser;
   token_payload: Record<string, unknown>;

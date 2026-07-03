@@ -64,6 +64,7 @@ export function makeTimeoutError(): NormalizedError {
 }
 
 export function friendlyMessage(error: NormalizedError): string {
+  if (error.code === 'OFFLINE') return 'Sin conexión. Esta acción se podrá reintentar cuando vuelva la conexión.';
   if (error.isNetworkError) return 'No se pudo conectar al servidor. Verificá tu conexión.';
   if (error.isTimeoutError) return 'La solicitud tardó demasiado. Intentá de nuevo.';
   switch (error.status) {

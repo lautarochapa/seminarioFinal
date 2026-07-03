@@ -9,7 +9,12 @@ import type { SupermarketBranch } from '@/types/retail';
 
 export function BranchCard({ item, onPress }: { item: SupermarketBranch; onPress: () => void }) {
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.name}, ${item.chain?.name || 'cadena sin informar'}`}
+    >
       <View style={styles.top}>
         <View style={styles.icon}>
           <MaterialCommunityIcons name="map-marker-outline" size={22} color={COLORS.primary} />

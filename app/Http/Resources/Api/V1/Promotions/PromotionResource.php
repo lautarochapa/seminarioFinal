@@ -34,6 +34,15 @@ class PromotionResource extends JsonResource
                     'address' => $this->branch->address,
                 ] : null;
             }),
+            'payment_methods'         => $this->whenLoaded('paymentMethods', function () {
+                return $this->paymentMethods->map(function ($pm) {
+                    return [
+                        'id'   => $pm->id,
+                        'name' => $pm->name,
+                        'type' => $pm->type,
+                    ];
+                })->values();
+            }),
             'created_at'              => $this->created_at,
             'updated_at'              => $this->updated_at,
             'deleted_at'              => $this->deleted_at,

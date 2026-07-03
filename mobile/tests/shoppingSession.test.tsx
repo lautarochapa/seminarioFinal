@@ -27,7 +27,7 @@ describe('ShoppingSessionScreen item sync regression', () => {
     const screen = fs.readFileSync(screenPath, 'utf8');
     const hook = fs.readFileSync(hookPath, 'utf8');
 
-    expect(hook).toContain('async function finishSession(sessionId?: number)');
+    expect(hook).toContain('async function finishSession(sessionId?: number, stockLocationId?: number | null)');
     expect(hook).toContain('const id = sessionId ?? session?.id');
     expect(screen).toContain('finishSession(sessionId)');
     expect(screen).toContain('result.purchase_id');

@@ -7,6 +7,26 @@ use App\PurchaseItem;
 
 class PurchaseItemRepository
 {
+    public function lastPriceForProductInGroup(int $productId, int $groupId): ?array
+    {
+        $row = PurchaseItem::query()
+            ->join('purchases', 'purchases.id', '=', 'purchase_items.purchase_id')
+            ->where('purchases.family_group_id', $groupId)
+            ->where('purchase_items.product_id', $productId)
+            ->whereNotNull('purchase_items.unit_price')
+            ->whereNull('purchases.deleted_at')
+            ->orderByDesc('purchases.purchase_date')
+            ->orderByDesc('purchase_items.id')
+            ->select(['purchase_items.unit_price', 'purchases.purchase_date'])
+            ->first();
+
+        if (! $row) {
+            return null;
+        }
+
+        return ['price' => (float) $row->unit_price, 'updated_at' => (string) $row->purchase_date];
+    }
+
     public function listForPurchase(int $purchaseId)
     {
         return PurchaseItem::where('purchase_id', $purchaseId)

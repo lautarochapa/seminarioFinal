@@ -12,7 +12,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
@@ -22,10 +22,11 @@ import { FamilyGroupSelector } from '@/components/FamilyGroupSelector';
 import { EmptyState } from '@/components/EmptyState';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useStockLocations } from '@/hooks/useStockLocations';
-import { stockApi } from '@/api/endpoints';
+import { stockApi, productsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { useProducts } from '@/hooks/useProducts';
+import { consumePendingScanResult } from '@/utils/barcodeScanResult';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { ProductSummary } from '@/types/product';
 import type { StockLocation } from '@/types/stock';
@@ -85,6 +86,29 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
     setProductModalVisible(false);
     setFieldErrors((e) => ({ ...e, product_id: '', unit_id: '' }));
   }, []);
+
+  // Picks up the product resolved by the barcode scanner screen (if any) without
+  // losing the fields the user already filled in on this screen.
+  useFocusEffect(
+    useCallback(() => {
+      const pending = consumePendingScanResult();
+      if (!pending) return;
+
+      setProductId(pending.productId);
+      setProductName(pending.productName);
+      setFieldErrors((e) => ({ ...e, product_id: '' }));
+
+      productsApi.get(pending.productId)
+        .then((res) => {
+          if (res.data.unit) {
+            setUnitId(res.data.unit.id);
+            setUnitDisplay(res.data.unit.symbol || res.data.unit.code || res.data.unit.name);
+            setFieldErrors((e) => ({ ...e, unit_id: '' }));
+          }
+        })
+        .catch(() => { /* el usuario puede completar la unidad buscando el producto manualmente */ });
+    }, []),
+  );
 
   async function handleSubmit() {
     const errors: Record<string, string> = {};
@@ -181,6 +205,15 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
             {fieldErrors.product_id ? (
               <Text style={styles.fieldError}>{fieldErrors.product_id}</Text>
             ) : null}
+            <Pressable
+              style={styles.scanBtn}
+              onPress={() => router.push('/(app)/barcode-scanner' as never)}
+              accessibilityRole="button"
+              accessibilityLabel="Escanear código de barras"
+            >
+              <MaterialCommunityIcons name="barcode-scan" size={18} color={COLORS.primary} />
+              <Text style={styles.scanBtnText}>Escanear código</Text>
+            </Pressable>
           </View>
 
           {/* Location */}
@@ -371,6 +404,19 @@ const styles = StyleSheet.create({
   fieldError: {
     fontSize: FONT_SIZE.xs,
     color: COLORS.error,
+  },
+  scanBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    alignSelf: 'flex-start',
+    minHeight: TOUCH_TARGET - 8,
+    paddingVertical: SPACING.xs,
+  },
+  scanBtnText: {
+    color: COLORS.primary,
+    fontWeight: '700',
+    fontSize: FONT_SIZE.sm,
   },
   hintText: {
     fontSize: FONT_SIZE.xs,

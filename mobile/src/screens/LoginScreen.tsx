@@ -7,11 +7,13 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { PasswordInput } from '@/components/PasswordInput';
 import { FormError } from '@/components/FormError';
 import { AppLogo } from '@/components/AppLogo';
+import { AuthFooterLink } from '@/components/AuthFooterLink';
 import { useAuth } from '@/auth/AuthContext';
 import { ApiError } from '@/api/client';
 import { validateLoginForm } from '@/validation/loginSchema';
@@ -32,6 +34,7 @@ function loginErrorMessage(err: ApiError): string {
 }
 
 export function LoginScreen() {
+  const router = useRouter();
   const { login, isLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -132,6 +135,12 @@ export function LoginScreen() {
           style={styles.button}
         />
       </View>
+
+      <AuthFooterLink
+        prompt="¿No tenés cuenta?"
+        actionLabel="Crear cuenta"
+        onPress={() => router.push('/(auth)/register' as never)}
+      />
 
       {ENV.SHOW_DEMO_USERS ? (
         <View style={styles.demo}>
