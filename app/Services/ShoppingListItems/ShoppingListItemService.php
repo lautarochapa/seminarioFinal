@@ -64,6 +64,8 @@ class ShoppingListItemService
         $this->validateReferences($merged);
         $this->assertNoDuplicate($list->id, $merged['ingredient_id'] ?? null, $merged['product_id'] ?? null, (int) $merged['unit_id'], $item->id);
 
+        $fields = $this->applyManualPriceInvalidation($item, $fields);
+
         $updated = $this->items->update($item, $fields);
         $new = $this->payload($updated);
 
@@ -108,6 +110,35 @@ class ShoppingListItemService
         }
 
         return $item;
+    }
+
+    /**
+     * When the user manually changes the product or unit of an item that carries a
+     * generated price estimation, that estimation no longer describes what's being
+     * bought (different product/packaging => different price), so it's invalidated
+     * rather than left silently wrong. A quantity-only edit keeps the existing
+     * per-unit price and source, since the subtotal is always recomputed live from
+     * price * quantity (never persisted), so it can't become incoherent.
+     */
+    private function applyManualPriceInvalidation(ShoppingListItem $item, array $fields): array
+    {
+        $productChanged = array_key_exists('product_id', $fields) && (int) $fields['product_id'] !== (int) $item->product_id;
+        $unitChanged = array_key_exists('unit_id', $fields) && (int) $fields['unit_id'] !== (int) $item->unit_id;
+
+        if (! $productChanged && ! $unitChanged) {
+            return $fields;
+        }
+
+        if (! array_key_exists('estimated_price', $fields)) {
+            $fields['estimated_price'] = null;
+        }
+
+        $fields['price_source'] = 'manual';
+        $fields['price_updated_at'] = now();
+        $fields['supermarket_chain_id'] = null;
+        $fields['supermarket_branch_id'] = null;
+
+        return $fields;
     }
 
     private function payloadFromInput(array $data): array
@@ -155,6 +186,9 @@ class ShoppingListItemService
             'actual_price' => $item->actual_price,
             'status' => $item->status,
             'notes' => $item->notes,
+            'price_source' => $item->price_source,
+            'supermarket_chain_id' => $item->supermarket_chain_id,
+            'supermarket_branch_id' => $item->supermarket_branch_id,
         ];
     }
 

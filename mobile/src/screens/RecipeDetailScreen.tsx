@@ -152,6 +152,18 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
                   </View>
                 ) : null}
 
+                {result.substitutions.length > 0 ? (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Sustituciones</Text>
+                    {result.substitutions.map((sub, idx) => (
+                      <Text key={`${sub.original_ingredient_id}-${idx}`} style={styles.hint}>
+                        Se usará {sub.resolved_ingredient_name ?? 'un sustituto'} como reemplazo
+                        {sub.reason ? ` (${sub.reason})` : ''}.
+                      </Text>
+                    ))}
+                  </View>
+                ) : null}
+
                 {result.unmapped_ingredients.length > 0 ? (
                   <View style={styles.section}>
                     <Text style={styles.sectionTitle}>No mapeados</Text>

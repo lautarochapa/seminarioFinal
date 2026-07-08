@@ -64,6 +64,7 @@ class RecipeShoppingListService
             $unmapped = [];
             $warnings = [];
             $priced = [];
+            $substitutions = [];
             $estimatedTotal = 0.0;
             $itemsWithoutPrice = 0;
 
@@ -104,15 +105,28 @@ class RecipeShoppingListService
                     continue;
                 }
 
-                $resolvedProductId = $specificProductId ?? $this->resolveDefaultProduct($ingredientId);
+                $resolvedIngredientId = $ingredientId;
+                $missingQtyForProduct = $missingQty;
 
-                $purchaseQuantity = $missingQty;
+                if ($specificProductId) {
+                    $resolvedProductId = $specificProductId;
+                } else {
+                    [$resolvedProductId, $substitution] = $this->resolveProductForIngredient($ingredientId);
+                    if ($substitution !== null) {
+                        $missingQtyForProduct = round($missingQty * $substitution['conversion_factor'], 4);
+                        $resolvedIngredientId = $substitution['target_ingredient_id'];
+                        $substitutions[] = $substitution['warning_payload'];
+                        $warnings[] = "Se usara '{$substitution['target_ingredient_name']}' como reemplazo de '{$ri->ingredient->name}'" . ($substitution['reason'] ? " ({$substitution['reason']})" : '') . '.';
+                    }
+                }
+
+                $purchaseQuantity = $missingQtyForProduct;
                 $purchaseUnitId = $unitId;
                 $priceInfo = ['unit_price' => null, 'source' => null, 'updated_at' => null, 'branch_id' => null, 'chain_id' => null];
                 $packages = null;
 
                 if ($resolvedProductId) {
-                    [$packages, $purchaseUnitId, $packagingWarning] = $this->resolvePackaging($resolvedProductId, $missingQty, $unitId, $ingredientId);
+                    [$packages, $purchaseUnitId, $packagingWarning] = $this->resolvePackaging($resolvedProductId, $missingQtyForProduct, $unitId, $resolvedIngredientId);
                     if ($packagingWarning) {
                         $warnings[] = $packagingWarning;
                     }
@@ -128,14 +142,20 @@ class RecipeShoppingListService
                 }
 
                 $item = $this->items->create([
-                    'shopping_list_id' => $list->id,
-                    'ingredient_id'    => $resolvedProductId ? null : $ingredientId,
-                    'product_id'       => $resolvedProductId,
-                    'quantity'         => $purchaseQuantity,
-                    'unit_id'          => $purchaseUnitId,
-                    'estimated_price'  => $priceInfo['unit_price'],
-                    'status'           => 'pending',
-                    'notes'            => 'Generado desde receta #' . $recipe->id,
+                    'shopping_list_id'       => $list->id,
+                    'ingredient_id'          => $resolvedProductId ? null : $ingredientId,
+                    'product_id'             => $resolvedProductId,
+                    'quantity'               => $purchaseQuantity,
+                    'unit_id'                => $purchaseUnitId,
+                    'estimated_price'        => $priceInfo['unit_price'],
+                    'status'                 => 'pending',
+                    'notes'                  => 'Generado desde receta #' . $recipe->id,
+                    'price_source'           => $priceInfo['source'],
+                    'price_updated_at'       => $priceInfo['updated_at'],
+                    'supermarket_chain_id'   => $priceInfo['chain_id'],
+                    'supermarket_branch_id'  => $priceInfo['branch_id'],
+                    'source_type'            => 'recipe_generation',
+                    'source_id'              => $recipe->id,
                 ]);
 
                 $itemsAdded++;
@@ -191,6 +211,7 @@ class RecipeShoppingListService
                 'estimated_total'         => round($estimatedTotal, 2),
                 'items_without_price'     => $itemsWithoutPrice,
                 'warnings'                => $warnings,
+                'substitutions'           => $substitutions,
             ];
         });
     }
@@ -284,6 +305,55 @@ class RecipeShoppingListService
             ->where('is_active', true)
             ->orderBy('id')
             ->value('id');
+    }
+
+    /**
+     * Resolves a purchasable product for a generic (non specific_product_id) recipe
+     * ingredient, following an explicit priority: (1) a product directly linked to the
+     * ingredient, (2) failing that, the first active ingredient_equivalences substitute
+     * that itself has a linked product. A substitution is never applied silently: when
+     * used, it's reported back via the returned payload so the caller can warn the user
+     * and the mobile UI can show "se usara X en vez de Y".
+     *
+     * @return array{0: int|null, 1: array{target_ingredient_id:int,target_ingredient_name:string,conversion_factor:float,reason:?string,warning_payload:array}|null}
+     */
+    private function resolveProductForIngredient(int $ingredientId): array
+    {
+        $direct = $this->resolveDefaultProduct($ingredientId);
+        if ($direct) {
+            return [$direct, null];
+        }
+
+        $equivalences = \App\IngredientEquivalence::with('targetIngredient')
+            ->where('source_ingredient_id', $ingredientId)
+            ->where('status', 'active')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($equivalences as $eq) {
+            $substituteProductId = $this->resolveDefaultProduct((int) $eq->target_ingredient_id);
+            if (! $substituteProductId) {
+                continue;
+            }
+
+            $targetName = $eq->targetIngredient ? $eq->targetIngredient->name : null;
+
+            return [$substituteProductId, [
+                'target_ingredient_id'   => (int) $eq->target_ingredient_id,
+                'target_ingredient_name' => $targetName,
+                'conversion_factor'      => (float) $eq->conversion_factor,
+                'reason'                 => $eq->reason,
+                'warning_payload'        => [
+                    'original_ingredient_id'   => $ingredientId,
+                    'resolved_ingredient_id'   => (int) $eq->target_ingredient_id,
+                    'resolved_ingredient_name' => $targetName,
+                    'substitution_used'        => true,
+                    'reason'                   => $eq->reason,
+                ],
+            ]];
+        }
+
+        return [null, null];
     }
 
     /**

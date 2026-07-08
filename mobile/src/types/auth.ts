@@ -48,6 +48,27 @@ export interface RegisterRequest {
 
 export type RegisterResponse = LoginResponse;
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  data: { message: string };
+  trace_id: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export interface ResetPasswordResponse {
+  data: { message: string };
+  trace_id: string;
+}
+
 export interface MeResponse {
   data: AuthUser;
   token_payload: Record<string, unknown>;

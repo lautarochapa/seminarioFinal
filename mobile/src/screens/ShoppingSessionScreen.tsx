@@ -20,9 +20,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useShoppingListDetail } from '@/hooks/useShoppingListDetail';
 import { useShoppingSession } from '@/hooks/useShoppingSession';
-import { shoppingListItemsApi } from '@/api/endpoints';
+import { shoppingListItemsApi, budgetsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
+import { formatMoney } from '@/utils/retail';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { NormalizedError } from '@/types/api';
 import type { ShoppingListItem } from '@/types/shopping';
@@ -136,6 +137,19 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
     return parts.join('\n');
   }
 
+  async function budgetImpactMessage(): Promise<string | null> {
+    if (!groupId) return null;
+    try {
+      const res = await budgetsApi.current(groupId);
+      const budget = res.data;
+      if (!budget || budget.used_amount === undefined || budget.available_amount === undefined) return null;
+      return `Presupuesto actualizado\nGastado este mes: ${formatMoney(budget.used_amount)}\nDisponible: ${formatMoney(budget.available_amount)}`;
+    } catch {
+      // El presupuesto es informativo; si falla la consulta no debe bloquear el cierre de la compra.
+      return null;
+    }
+  }
+
   async function handleFinish() {
     Alert.alert(
       'Finalizar compra',
@@ -147,9 +161,12 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
           onPress: async () => {
             const result = await finishSession(sessionId);
             if (result) {
+              const budgetLine = await budgetImpactMessage();
+              const parts = [finishSummary ? finishSummaryMessage(finishSummary) : 'Sesión finalizada.'];
+              if (budgetLine) parts.push(budgetLine);
               Alert.alert(
                 'Compra finalizada',
-                finishSummary ? finishSummaryMessage(finishSummary) : 'Sesión finalizada.',
+                parts.join('\n\n'),
                 [{
                   text: 'OK',
                   onPress: () => {

@@ -31,8 +31,9 @@
 
 ## Permisos
 
-- [ ] Android: solo se declaran los permisos usados (`ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION` — ubicación para sucursales cercanas). No hay cámara ni notificaciones push declaradas porque no están implementadas.
+- [ ] Android: solo se declaran los permisos usados (`ACCESS_COARSE_LOCATION`/`ACCESS_FINE_LOCATION` para sucursales cercanas, `CAMERA` para el escáner de código de barras). No hay permisos de notificaciones push declarados porque no están implementadas.
 - [ ] El plugin `expo-location` tiene el mensaje de permiso en español revisado en `app.json`.
+- [ ] El plugin `expo-camera` tiene el mensaje de permiso en español revisado en `app.json`; probar el flujo cuando el usuario deniega el permiso (debe caer al ingreso manual del código, no romper la pantalla).
 
 ## Íconos y splash
 
@@ -64,6 +65,37 @@
 - [ ] Ajustes → cambiar grupo, preferencias de notificaciones, cerrar sesión.
 
 > Este flujo requiere verificación manual en emulador o dispositivo real — los tests automatizados no reemplazan la prueba visual.
+
+## Flujo obligatorio de prueba física (cierre de MVP)
+
+Ejecutar este flujo completo en al menos un Android real antes de declarar el MVP validado. El emulador solo sirve como fallback documentado si no hay dispositivo real disponible (dejar constancia explícita del motivo).
+
+| Paso | Resultado esperado | Android real | Emulador | Estado | Evidencia | Observaciones |
+|---|---|---|---|---|---|---|
+| Instalar APK | Se instala sin errores, ícono/nombre/splash correctos | | | Pendiente | | |
+| Crear cuenta | Registro exitoso, sesión iniciada automáticamente | | | Pendiente | | |
+| Cerrar y abrir app | La sesión persiste (no vuelve a login) | | | Pendiente | | |
+| Recuperar contraseña | Mensaje neutral, email de reset recibido, deep link abre `ResetPasswordScreen` con token/email precargados | | | Pendiente | | Verificar también token vencido/inválido |
+| Crear grupo | Grupo creado y seleccionado como activo | | | Pendiente | | |
+| Escanear producto | Cámara abre, código detectado, producto mostrado o mensaje "no encontrado" | | | Pendiente | | Probar también con permiso de cámara denegado (debe ofrecer ingreso manual) |
+| Agregar stock | Item agregado a stock del grupo | | | Pendiente | | |
+| Generar lista desde receta | Lista creada con items faltantes calculados correctamente | | | Pendiente | | Probar una receta con stock parcial en otra unidad (ej. receta en gramos, stock en kg) |
+| Ver equivalencias / sustituciones | Si el ingrediente no tiene producto propio pero hay un sustituto configurado, se muestra el aviso "Se usará X como reemplazo de Y" | | | Pendiente | | |
+| Ver precio estimado | Cada item muestra precio unitario, origen del precio (badge) y subtotal; ítems sin precio muestran "Sin precio disponible" (nunca "$0") | | | Pendiente | | |
+| Cerrar y abrir lista | Se puede salir de la pantalla de la lista y volver a entrar | | | Pendiente | | |
+| Confirmar que precio persiste | Al reabrir la lista, el precio y su origen son los mismos que al generar, aunque el precio de mercado haya cambiado mientras tanto | | | Pendiente | | |
+| Iniciar compra | Sesión de compra creada, items pendientes visibles | | | Pendiente | | |
+| Ingresar precio real | Precio real guardado por item, sin bloquear el resto del flujo | | | Pendiente | | |
+| Finalizar | Resumen muestra stock creado/actualizado/omitidos y el presupuesto actualizado ("Gastado este mes"/"Disponible") si existe un presupuesto para el período | | | Pendiente | | |
+| Ver stock | Los productos comprados aparecen agregados o incrementados en stock | | | Pendiente | | |
+| Ver purchase | La compra muestra precios reales y total correcto | | | Pendiente | | |
+| Ver presupuesto actualizado | El resumen de presupuesto refleja el gasto de la compra recién finalizada | | | Pendiente | | |
+| Probar offline | Sin conexión: banner visible, lecturas cacheadas disponibles, mutaciones bloqueadas con mensaje claro (no hay cola offline) | | | Pendiente | | |
+| Probar permisos | Denegar cámara/ubicación no rompe la app; se puede seguir usando el resto de las funciones | | | Pendiente | | |
+| Logout | Limpia token, usuario, grupo activo y cache offline; vuelve a login | | | Pendiente | | |
+| Login nuevamente | Login exitoso post-logout, estado limpio (sin datos de la sesión anterior) | | | Pendiente | | |
+
+> Estado del MVP mientras este flujo siga en `Pendiente`: **MVP AUTOMÁTICAMENTE VALIDADO — PENDIENTE QA FÍSICA**. No usar "MVP FUNCIONALMENTE CERRADO" hasta completar esta tabla en un dispositivo real.
 
 ## APK
 

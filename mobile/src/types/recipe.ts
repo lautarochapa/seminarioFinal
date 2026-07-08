@@ -124,6 +124,14 @@ export interface GeneratedShoppingListItem {
   supermarket_chain_id: number | null;
 }
 
+export interface RecipeIngredientSubstitution {
+  original_ingredient_id: number;
+  resolved_ingredient_id: number;
+  resolved_ingredient_name: string | null;
+  substitution_used: boolean;
+  reason: string | null;
+}
+
 export interface RecipeShoppingListResult {
   shopping_list: ShoppingList;
   items_added: number;
@@ -133,4 +141,5 @@ export interface RecipeShoppingListResult {
   estimated_total: number;
   items_without_price: number;
   warnings: string[];
+  substitutions: RecipeIngredientSubstitution[];
 }

@@ -3,14 +3,15 @@ import { StyleSheet, Text, View } from 'react-native';
 import { COLORS, FONT, RADIUS } from '@/utils/theme';
 import type { PriceSource } from '@/types/recipe';
 
-const LABELS: Record<NonNullable<PriceSource>, string> = {
+const LABELS: Record<string, string> = {
   branch: 'Precio de la sucursal',
   chain: 'Mejor precio de la cadena',
   group_history: 'Último precio pagado',
   best_available: 'Mejor precio disponible',
+  manual: 'Precio manual',
 };
 
-export function PriceSourceBadge({ source }: { source: PriceSource }) {
+export function PriceSourceBadge({ source }: { source: PriceSource | 'manual' | null }) {
   if (!source) {
     return (
       <View style={[styles.badge, styles.none]}>
@@ -21,7 +22,7 @@ export function PriceSourceBadge({ source }: { source: PriceSource }) {
 
   return (
     <View style={styles.badge}>
-      <Text style={styles.text}>{LABELS[source]}</Text>
+      <Text style={styles.text}>{LABELS[source] ?? source}</Text>
     </View>
   );
 }

@@ -258,6 +258,101 @@ class RecipeShoppingListTest extends TestCase
         ]);
     }
 
+    public function test_stock_parcial_en_otra_unidad_descuenta_cantidad_normalizada()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $kilos  = $this->unit('kg');
+        $recipe = $this->recipe(['servings' => 1]);
+
+        $ing  = $this->ingredient($grams);
+        $prod = $this->product($ing, $grams); // net_quantity = 100g, package_unit_id = g
+        $this->addIngredient($recipe, $ing, $grams, 750.0);
+
+        UnitConversion::create([
+            'from_unit_id' => $kilos->id,
+            'to_unit_id'   => $grams->id,
+            'ingredient_id' => null,
+            'factor'       => 1000,
+            'status'       => 'active',
+        ]);
+        $this->stockItem($group, $prod, $kilos, 0.5); // 0.5kg = 500g en stock
+
+        $response = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id));
+
+        $response->assertStatus(201)->assertJsonPath('data.items_added', 1);
+
+        // Requerido 750g, disponible 500g (0.5kg normalizado) -> faltan 250g -> 3 paquetes de 100g.
+        $listId = $response->json('data.shopping_list.id');
+        $this->assertDatabaseHas('shopping_list_items', [
+            'shopping_list_id' => $listId,
+            'product_id'       => $prod->id,
+            'quantity'         => 3.0000,
+        ]);
+    }
+
+    public function test_usa_sustituto_configurado_cuando_el_ingrediente_no_tiene_producto_propio()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+
+        $harinaComun = $this->ingredient($grams); // sin producto propio
+        $harinaIntegral = $this->ingredient($grams);
+        $prodSustituto = $this->product($harinaIntegral, $grams);
+        $this->addIngredient($recipe, $harinaComun, $grams, 100.0);
+
+        \App\IngredientEquivalence::create([
+            'source_ingredient_id' => $harinaComun->id,
+            'target_ingredient_id' => $harinaIntegral->id,
+            'equivalence_type'     => 'substitute',
+            'conversion_factor'    => 1.0,
+            'reason'               => 'Sustituto habitual',
+            'status'               => 'active',
+        ]);
+
+        $response = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id));
+
+        $response->assertStatus(201);
+        $this->assertEquals($prodSustituto->id, $response->json('data.priced_items.0.product_id'));
+
+        $substitution = $response->json('data.substitutions.0');
+        $this->assertEquals($harinaComun->id, $substitution['original_ingredient_id']);
+        $this->assertEquals($harinaIntegral->id, $substitution['resolved_ingredient_id']);
+        $this->assertTrue($substitution['substitution_used']);
+        $this->assertNotEmpty($response->json('data.warnings'));
+    }
+
+    public function test_no_usa_sustituto_cuando_el_ingrediente_ya_tiene_producto_propio()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+
+        $ing = $this->ingredient($grams);
+        $prod = $this->product($ing, $grams);
+        $otroIng = $this->ingredient($grams);
+        $this->product($otroIng, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+
+        \App\IngredientEquivalence::create([
+            'source_ingredient_id' => $ing->id,
+            'target_ingredient_id' => $otroIng->id,
+            'equivalence_type'     => 'substitute',
+            'conversion_factor'    => 1.0,
+            'status'               => 'active',
+        ]);
+
+        $response = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id));
+
+        $response->assertStatus(201);
+        $this->assertEquals($prod->id, $response->json('data.priced_items.0.product_id'));
+        $this->assertEmpty($response->json('data.substitutions'));
+    }
+
     public function test_ingrediente_sin_producto_no_bloquea_generacion()
     {
         $user   = factory(User::class)->create();
@@ -582,5 +677,117 @@ class RecipeShoppingListTest extends TestCase
         $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id), [
             'supermarket_branch_id' => 999999,
         ])->assertStatus(422);
+    }
+
+    public function test_metadata_de_precio_persiste_en_shopping_list_items()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+
+        $chain  = $this->chain();
+        $branch = $this->branch($chain);
+        $this->priceAt($prod, $branch, 1000.0);
+
+        $response = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id), [
+            'supermarket_branch_id' => $branch->id,
+        ]);
+        $response->assertStatus(201);
+        $itemId = $response->json('data.priced_items.0.shopping_list_item_id');
+
+        $this->assertDatabaseHas('shopping_list_items', [
+            'id' => $itemId,
+            'price_source' => 'branch',
+            'supermarket_branch_id' => $branch->id,
+            'source_type' => 'recipe_generation',
+            'source_id' => $recipe->id,
+        ]);
+        $row = \App\ShoppingListItem::find($itemId);
+        $this->assertNotNull($row->price_updated_at);
+    }
+
+    public function test_metadata_de_precio_vuelve_en_resource_al_consultar_lista()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+
+        $chain  = $this->chain();
+        $branch = $this->branch($chain);
+        $this->priceAt($prod, $branch, 1000.0);
+
+        $generate = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id), [
+            'supermarket_branch_id' => $branch->id,
+        ]);
+        $listId = $generate->json('data.shopping_list.id');
+
+        $items = $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/shopping-lists/{$listId}/items")
+            ->assertStatus(200);
+
+        $item = $items->json('data.0');
+        $this->assertEquals('branch', $item['price_source']);
+        $this->assertEquals($branch->id, $item['supermarket_branch_id']);
+        $this->assertEquals('recipe_generation', $item['source_type']);
+        $this->assertNotNull($item['price_updated_at']);
+        $this->assertNotNull($item['estimated_subtotal']);
+    }
+
+    public function test_precio_cambia_despues_y_lista_conserva_estimacion_original()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+
+        $chain  = $this->chain();
+        $branch = $this->branch($chain);
+        $this->priceAt($prod, $branch, 1000.0);
+
+        $generate = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id), [
+            'supermarket_branch_id' => $branch->id,
+        ]);
+        $listId = $generate->json('data.shopping_list.id');
+
+        // El precio de mercado sube despues de generar la lista.
+        $this->priceAt($prod, $branch, 5000.0);
+
+        $items = $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/shopping-lists/{$listId}/items")
+            ->assertStatus(200);
+
+        $this->assertEquals(1000.0, (float) $items->json('data.0.estimated_price'));
+    }
+
+    public function test_sin_precio_disponible_persiste_null_no_cero()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $this->product($ing, $grams); // producto sin ningun precio cargado
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+
+        $response = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id), []);
+        $response->assertStatus(201);
+        $itemId = $response->json('data.priced_items.0.shopping_list_item_id');
+
+        $this->assertDatabaseHas('shopping_list_items', [
+            'id' => $itemId,
+            'estimated_price' => null,
+            'price_source' => null,
+        ]);
     }
 }

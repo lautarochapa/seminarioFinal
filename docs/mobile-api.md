@@ -131,6 +131,39 @@ POST /api/v1/auth/logout
 
 ---
 
+### Recuperación de contraseña (implementado)
+
+```
+POST /api/v1/auth/forgot-password
+```
+
+**Body:** `{ "email": string }`
+
+**Rate limit:** `throttle:5,1` (5 req/min por IP).
+
+**Respuesta 200 (siempre igual, exista o no el email — sin enumeración):**
+```json
+{ "data": { "message": "Si el email está registrado, recibirás un enlace de recuperación." }, "trace_id": "uuid" }
+```
+
+**Errores:** `422` solo por formato de email inválido, `429` por rate limit.
+
+```
+POST /api/v1/auth/reset-password
+```
+
+**Body:** `{ "token": string, "email": string, "password": string, "password_confirmation": string }`
+
+**Rate limit:** `throttle:60,1`.
+
+**Respuesta 200:** `{ "data": { "message": "Contraseña restablecida correctamente." }, "trace_id": "uuid" }`
+
+**Errores:** `422` con `error.code = "AUTH_RESET_TOKEN_INVALID"` (token inválido o vencido — expira a los 60 minutos, `config('auth.passwords.users.expire')`), `422` `VALIDATION_ERROR` por campos faltantes/contraseña débil/confirmación distinta.
+
+**Deep link:** el email de reset apunta a `cccontrol://reset-password?token={token}&email={email}` (configurado vía `ResetPassword::createUrlUsing` en `AppServiceProvider`, no a la vista web legacy de Laravel UI). La pantalla `mobile/app/(auth)/reset-password.tsx` lee `token`/`email` con `useLocalSearchParams`. Si faltan, muestra un mensaje de enlace inválido con botón para solicitar uno nuevo — nunca expone el token en logs ni en la UI.
+
+---
+
 ## Perfil de usuario
 
 ```
@@ -345,17 +378,21 @@ En desarrollo, el cliente mobile puede mostrar el `trace_id` al usuario para fac
 
 ```
 POST /api/v1/family-groups/{groupId}/shopping-sessions/{sessionId}/finish
+Body: { "stock_location_id"?: number | null }
 ```
 
 **Requiere Authorization Bearer.**
 
 Comportamiento verificado en backend:
-- crea una `Purchase` confirmada;
-- crea `PurchaseItem` para scans matcheados;
-- crea stock y movimientos de stock;
-- marca la sesión como `finished`;
-- marca la lista como `completed`;
-- una segunda finalización devuelve `409 SHOPPING_SESSION_ALREADY_FINISHED`.
+- crea una `Purchase` confirmada (`status: "confirmed"`, `purchase_date: hoy`);
+- para cada scan matcheado con producto y cantidad > 0: crea o incrementa un `StockItem` (match por `product_id`+`unit_id`+`stock_location_id`+`status=active`+`expiration_date IS NULL`), crea `StockMovement` y `PurchaseItem`;
+- scans sin producto o con cantidad 0 se omiten (`stock_skipped_count`, `stock_warnings`) sin afectar stock;
+- `stock_location_id`: si no se envía, usa la única ubicación activa del grupo (si hay más de una, exige que se envíe explícitamente); una ubicación inexistente/inactiva para el grupo devuelve `422 STOCK_LOCATION_NOT_FOUND`;
+- calcula `estimated_total`/`actual_total` de la `Purchase` a partir de los items comprados;
+- marca la sesión como `finished` y la lista como `completed`;
+- una segunda finalización devuelve `409 SHOPPING_SESSION_ALREADY_FINISHED` (no crea una segunda `Purchase`).
+
+**Impacto en presupuesto:** no hay un paso adicional que "aplicar" — `GET .../budgets/{id}/summary` y `.../projection` calculan `spent_amount` dinámicamente (`SUM(purchases.actual_total)` del grupo/período con `status != cancelled` y no eliminadas), así que la compra recién finalizada queda reflejada apenas se consulta el presupuesto de nuevo. Mobile debe volver a pedir `budgetsApi.current(groupId)` después de finalizar (no calcular el gasto localmente).
 
 **Respuesta 200:**
 ```json
@@ -371,11 +408,18 @@ Comportamiento verificado en backend:
     "finished_at": "2026-07-01T19:30:00+00:00",
     "status": "finished"
   },
+  "summary": {
+    "purchase_id": 123,
+    "stock_created_count": 2,
+    "stock_updated_count": 1,
+    "stock_skipped_count": 0,
+    "stock_warnings": []
+  },
   "trace_id": "uuid"
 }
 ```
 
-> Mobile debe navegar a `/(app)/purchases/{purchase_id}` cuando `purchase_id` esté presente. No debe crear una Purchase duplicada.
+> Mobile debe navegar a `/(app)/purchases/{purchase_id}` cuando `purchase_id` esté presente. No debe crear una Purchase duplicada. El resumen final debe mostrar `summary` (stock creado/actualizado/omitido) y, si existe presupuesto para el período, el `spent_amount`/`available_amount` actualizados desde `budgetsApi.current()`.
 
 ---
 
@@ -550,15 +594,21 @@ Mobile muestra el motivo solo si la API lo entrega.
 
 ```http
 POST /api/v1/family-groups/{groupId}/recipes/{recipeId}/shopping-list
-Body: { "servings"?: number, "shopping_list_id"?: number }
+Body: { "servings"?: number, "shopping_list_id"?: number, "supermarket_branch_id"?: number, "supermarket_chain_id"?: number }
 ```
 
 - Si no se envía `shopping_list_id`, crea una lista nueva (`source_type: "recipe"`) y responde `201`.
 - Si se envía `shopping_list_id`, reutiliza esa lista (debe pertenecer al grupo y no estar `completed`; si está cerrada devuelve `409 SHOPPING_LIST_CLOSED`) y responde `200`.
-- Calcula faltantes contra stock del grupo, convierte unidades cuando hay `UnitConversion` disponible, evita duplicados (`items_skipped_duplicate`), e informa ingredientes sin unidad/ingrediente resolubles en `unmapped_ingredients`.
-- Respuesta: `{ shopping_list, items_added, items_skipped_duplicate, unmapped_ingredients, warnings }`.
+- Calcula faltantes contra stock del grupo, convierte unidades cuando hay `UnitConversion` disponible (incluye conversiones dependientes del ingrediente, ej. g↔kg), evita duplicados (`items_skipped_duplicate`), e informa ingredientes sin unidad/ingrediente resolubles en `unmapped_ingredients`.
+- Resolución de producto por ingrediente, en orden: (1) `specific_product_id` de la receta si existe, (2) producto vinculado directo (`Product.ingredient_id`), (3) el primer sustituto activo en `ingredient_equivalences` que tenga un producto propio. Cuando se usa (3), el ingrediente sustituto se reporta en `substitutions` y como advertencia en `warnings` — nunca se reemplaza en silencio.
+- Precio estimado por producto resuelto, con prioridad: sucursal seleccionada (`supermarket_branch_id`) → mejor precio de la cadena seleccionada (`supermarket_chain_id`) → último precio pagado por el grupo → mejor precio disponible globalmente → `null` (nunca `0`) si no hay ninguno.
+- Paquetes necesarios: `ceil(faltante_convertido_a_unidad_de_paquete / net_quantity_del_producto)`; si el producto no tiene `net_quantity`/`package_unit_id` cargados o la unidad no es convertible, no se estima precio (se informa en `warnings`).
+- **La metadata de precio queda persistida** en cada `shopping_list_item` (`price_source`, `price_updated_at`, `supermarket_chain_id`, `supermarket_branch_id`, `source_type: "recipe_generation"`, `source_id: <recipe_id>`) — al reabrir la lista más tarde, el precio mostrado es el que se usó al generar, aunque el precio de mercado haya cambiado. Editar manualmente `product_id`/`unit_id` de un item invalida esa estimación (`price_source` pasa a `"manual"`, `estimated_price` vuelve a `null` salvo que se envíe uno explícito en el mismo `PATCH`); editar solo `quantity` no la invalida (`estimated_subtotal` no se persiste, se deriva de `estimated_price * quantity`).
+- Respuesta: `{ shopping_list, items_added, items_skipped_duplicate, unmapped_ingredients, priced_items, estimated_total, items_without_price, warnings, substitutions }`.
 
-Consumido por `recipeShoppingListApi.generate()` desde el botón "Generar lista de compras" en `RecipeDetailScreen`, que navega a la lista resultante y muestra un resumen (`GenerationSummary`).
+Consumido por `recipeShoppingListApi.generate()` desde el botón "Generar lista de compras" en `RecipeDetailScreen`, que navega a la lista resultante y muestra un resumen (`ShoppingGenerationSummary`, `EstimatedPriceRow`, `PriceSourceBadge`). `ShoppingListDetailScreen` muestra la misma metadata persistida al reabrir la lista.
+
+**Requerimiento de base de datos ya resuelto:** la persistencia de precio requirió la migración `2026_07_08_000039_add_price_metadata_to_shopping_list_items` (columnas nullable en `shopping_list_items`, sin romper datos existentes).
 
 La generación desde meal plan sigue disponible por separado:
 

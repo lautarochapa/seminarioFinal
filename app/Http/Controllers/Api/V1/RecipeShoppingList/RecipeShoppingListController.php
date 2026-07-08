@@ -40,6 +40,7 @@ class RecipeShoppingListController extends Controller
                 'estimated_total'         => $result['estimated_total'],
                 'items_without_price'     => $result['items_without_price'],
                 'warnings'                => $result['warnings'],
+                'substitutions'           => $result['substitutions'],
             ],
             'trace_id' => $traceId,
         ], $result['created'] ? 201 : 200)->header('X-Trace-Id', $traceId);

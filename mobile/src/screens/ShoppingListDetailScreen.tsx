@@ -21,6 +21,7 @@ import { FormError } from '@/components/FormError';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { PriceSourceBadge } from '@/components/PriceSourceBadge';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useShoppingListDetail } from '@/hooks/useShoppingListDetail';
 import { useProducts } from '@/hooks/useProducts';
@@ -255,9 +256,11 @@ export function ShoppingListDetailScreen({ listId }: Props) {
                   {item.product?.name ?? item.ingredient?.name ?? 'Item'}
                 </Text>
                 <Text style={styles.itemMeta}>
-                  {item.quantity} {item.unit?.symbol ?? ''}{item.estimated_price != null ? ` · ` : ''}
-                  {item.estimated_price != null && <MoneyText amount={item.estimated_price} />}
+                  {item.quantity} {item.unit?.symbol ?? ''}
+                  {item.estimated_subtotal != null ? ' · ' : ''}
+                  {item.estimated_subtotal != null && <MoneyText amount={item.estimated_subtotal} />}
                 </Text>
+                <PriceSourceBadge source={item.price_source} />
               </View>
               {canEdit && (
                 deletingItemId === item.id ? (

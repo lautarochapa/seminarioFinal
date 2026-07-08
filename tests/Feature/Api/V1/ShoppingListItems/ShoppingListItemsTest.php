@@ -4,12 +4,15 @@ namespace Tests\Feature\Api\V1\ShoppingListItems;
 
 use App\AuditLog;
 use App\Brand;
+use App\City;
 use App\FamilyGroup;
 use App\FamilyGroupMember;
 use App\Ingredient;
 use App\Product;
 use App\ShoppingList;
 use App\ShoppingListItem;
+use App\SupermarketBranch;
+use App\SupermarketChain;
 use App\UnitMeasure;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -81,6 +84,20 @@ class ShoppingListItemsTest extends TestCase
             'ingredient_id' => $ingredient->id,
             'default_unit_id' => $unit->id,
             'is_active' => true,
+            'status' => 'active',
+        ]);
+    }
+
+    private function branch()
+    {
+        $chain = SupermarketChain::create(['name' => 'Chain '.uniqid(), 'code' => 'ch_'.uniqid(), 'status' => 'active']);
+        $city = City::create(['name' => 'City '.uniqid(), 'province' => 'Prov', 'country' => 'Argentina', 'status' => 'active']);
+
+        return SupermarketBranch::create([
+            'supermarket_chain_id' => $chain->id,
+            'city_id' => $city->id,
+            'name' => 'Sucursal '.uniqid(),
+            'address' => 'Calle 1',
             'status' => 'active',
         ]);
     }
@@ -198,6 +215,109 @@ class ShoppingListItemsTest extends TestCase
             ])->assertStatus(200)
             ->assertJsonPath('data.quantity', '4.0000')
             ->assertJsonPath('data.estimated_price', '120.50');
+    }
+
+    public function test_update_quantity_only_keeps_existing_price_and_source()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $list = $this->list($group, $user);
+        $item = $this->item($list, $ingredient, $unit, [
+            'product_id' => $product->id,
+            'estimated_price' => 100,
+            'price_source' => 'branch',
+            'price_updated_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->patchJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items/'.$item->id, [
+                'quantity' => 5,
+            ])->assertStatus(200)
+            ->assertJsonPath('data.price_source', 'branch')
+            ->assertJsonPath('data.estimated_price', '100.00')
+            ->assertJsonPath('data.estimated_subtotal', 500);
+    }
+
+    public function test_update_product_invalidates_generated_price_estimation()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $otherProduct = $this->product($ingredient, $unit);
+        $branch = $this->branch();
+        $list = $this->list($group, $user);
+        $item = $this->item($list, $ingredient, $unit, [
+            'product_id' => $product->id,
+            'estimated_price' => 100,
+            'price_source' => 'branch',
+            'price_updated_at' => now(),
+            'supermarket_branch_id' => $branch->id,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->patchJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items/'.$item->id, [
+                'product_id' => $otherProduct->id,
+            ])->assertStatus(200);
+
+        $response->assertJsonPath('data.price_source', 'manual');
+        $this->assertNull($response->json('data.estimated_price'));
+        $this->assertDatabaseHas('shopping_list_items', [
+            'id' => $item->id,
+            'product_id' => $otherProduct->id,
+            'price_source' => 'manual',
+            'estimated_price' => null,
+            'supermarket_branch_id' => null,
+        ]);
+    }
+
+    public function test_update_unit_invalidates_generated_price_estimation()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $otherUnit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $list = $this->list($group, $user);
+        $item = $this->item($list, $ingredient, $unit, [
+            'product_id' => $product->id,
+            'estimated_price' => 100,
+            'price_source' => 'branch',
+            'price_updated_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->patchJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items/'.$item->id, [
+                'unit_id' => $otherUnit->id,
+            ])->assertStatus(200)
+            ->assertJsonPath('data.price_source', 'manual');
+
+        $this->assertNull(ShoppingListItem::find($item->id)->estimated_price);
+    }
+
+    public function test_update_product_with_explicit_price_keeps_that_price_but_marks_manual()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $otherProduct = $this->product($ingredient, $unit);
+        $list = $this->list($group, $user);
+        $item = $this->item($list, $ingredient, $unit, [
+            'product_id' => $product->id,
+            'estimated_price' => 100,
+            'price_source' => 'branch',
+        ]);
+
+        $this->actingAs($user)
+            ->patchJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items/'.$item->id, [
+                'product_id' => $otherProduct->id,
+                'estimated_price' => 250,
+            ])->assertStatus(200)
+            ->assertJsonPath('data.price_source', 'manual')
+            ->assertJsonPath('data.estimated_price', '250.00');
     }
 
     public function test_status_change_and_delete()

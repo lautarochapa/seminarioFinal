@@ -41,9 +41,16 @@ const ITEM: ShoppingListItem = {
   quantity: 2,
   unit: { id: 1, code: 'un', symbol: 'un' },
   estimated_price: 500,
+  estimated_subtotal: 1000,
   actual_price: null,
   status: 'purchased',
   notes: null,
+  price_source: 'best_available',
+  price_updated_at: null,
+  supermarket_chain_id: null,
+  supermarket_branch_id: null,
+  source_type: null,
+  source_id: null,
   created_at: '',
   updated_at: '',
 };
@@ -71,14 +78,17 @@ jest.mock('../src/hooks/useShoppingSession', () => ({
   }),
 }));
 
+const mockBudgetCurrent = jest.fn();
 jest.mock('../src/api/endpoints', () => ({
   shoppingListItemsApi: { update: jest.fn() },
+  budgetsApi: { current: (...args: unknown[]) => mockBudgetCurrent(...args) },
 }));
 
 beforeEach(() => {
   jest.clearAllMocks();
   mockFinishSummary = null;
   mockSessionError = null;
+  mockBudgetCurrent.mockResolvedValue({ data: null, trace_id: 't1' });
 });
 
 function pressFinishAndConfirm() {
@@ -103,6 +113,47 @@ describe('ShoppingSessionScreen — finish()', () => {
     const resultAlertCall = alertSpy.mock.calls.find((c) => c[0] === 'Compra finalizada');
     expect(resultAlertCall).toBeTruthy();
     expect(String(resultAlertCall?.[1])).toContain('2 producto(s) agregados al stock');
+  });
+
+  it('shows the updated budget spent/available amounts when a budget exists for the period', async () => {
+    mockFinishSummary = { purchase_id: 42, stock_created_count: 1, stock_updated_count: 0, stock_skipped_count: 0, stock_warnings: [] };
+    mockFinishSession.mockResolvedValue({ id: 9, status: 'completed' });
+    mockBudgetCurrent.mockResolvedValue({
+      data: { id: 1, family_group_id: 7, year: 2026, month: 7, total_amount: 10000, currency: 'ARS', status: 'active', used_amount: 3000, available_amount: 7000, consumed_percent: 30 },
+      trace_id: 't1',
+    });
+
+    const alertSpy = pressFinishAndConfirm();
+    const { getByRole } = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);
+    await fireEvent.press(getByRole('button', { name: /Finalizar compra/ }));
+
+    await waitFor(() => expect(mockBudgetCurrent).toHaveBeenCalledWith(7));
+
+    await waitFor(() => {
+      const resultAlertCall = alertSpy.mock.calls.find((c) => c[0] === 'Compra finalizada');
+      expect(resultAlertCall).toBeTruthy();
+      expect(String(resultAlertCall?.[1])).toContain('Presupuesto actualizado');
+      expect(String(resultAlertCall?.[1])).toMatch(/Gastado este mes.*3.000|Gastado este mes.*3,000/);
+      expect(String(resultAlertCall?.[1])).toMatch(/Disponible.*7.000|Disponible.*7,000/);
+    });
+  });
+
+  it('does not show a budget line when there is no budget for the period', async () => {
+    mockFinishSummary = { purchase_id: 42, stock_created_count: 1, stock_updated_count: 0, stock_skipped_count: 0, stock_warnings: [] };
+    mockFinishSession.mockResolvedValue({ id: 9, status: 'completed' });
+    mockBudgetCurrent.mockResolvedValue({ data: null, trace_id: 't1' });
+
+    const alertSpy = pressFinishAndConfirm();
+    const { getByRole } = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);
+    await fireEvent.press(getByRole('button', { name: /Finalizar compra/ }));
+
+    await waitFor(() => expect(mockBudgetCurrent).toHaveBeenCalled());
+
+    await waitFor(() => {
+      const resultAlertCall = alertSpy.mock.calls.find((c) => c[0] === 'Compra finalizada');
+      expect(resultAlertCall).toBeTruthy();
+      expect(String(resultAlertCall?.[1])).not.toContain('Presupuesto actualizado');
+    });
   });
 
   it('reports updated stock counts in the summary', async () => {

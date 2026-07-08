@@ -1,5 +1,15 @@
 import { apiClient } from './client';
-import type { LoginRequest, LoginResponse, MeResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
+import type {
+  LoginRequest,
+  LoginResponse,
+  MeResponse,
+  RegisterRequest,
+  RegisterResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+} from '@/types/auth';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
 import type { Profile } from '@/types/profile';
 import type {
@@ -86,6 +96,12 @@ export const authApi = {
   },
   logout(): Promise<void> {
     return apiClient.post<void>('/api/v1/auth/logout');
+  },
+  forgotPassword(payload: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+    return apiClient.post<ForgotPasswordResponse>('/api/v1/auth/forgot-password', payload, { skipAuth: true });
+  },
+  resetPassword(payload: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    return apiClient.post<ResetPasswordResponse>('/api/v1/auth/reset-password', payload, { skipAuth: true });
   },
 };
 

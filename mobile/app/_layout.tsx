@@ -18,11 +18,14 @@ function NavigationGuard() {
     if (state === 'initializing') return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    // El deep link de reset puede abrirse con una sesión ya iniciada en el dispositivo;
+    // no debe expulsar al usuario antes de que pueda cambiar la contraseña.
+    const isResetPasswordScreen = segments[0] === '(auth)' && segments[1] === 'reset-password';
 
     if (state === 'unauthenticated' && !inAuthGroup) {
       clearGroup();
       router.replace('/(auth)/login' as never);
-    } else if (state === 'authenticated' && inAuthGroup) {
+    } else if (state === 'authenticated' && inAuthGroup && !isResetPasswordScreen) {
       router.replace('/(app)' as never);
     }
   }, [state, segments, router, clearGroup]);

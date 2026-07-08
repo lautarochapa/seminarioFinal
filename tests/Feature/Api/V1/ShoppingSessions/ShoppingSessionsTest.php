@@ -346,6 +346,60 @@ class ShoppingSessionsTest extends TestCase
         ]);
     }
 
+    public function test_finish_impacts_budget_summary_of_the_purchase_period()
+    {
+        \Carbon\Carbon::setTestNow('2026-06-15');
+        [$user, $group, $list, $item, $product] = $this->context();
+        $budget = \App\Budget::create([
+            'family_group_id' => $group->id, 'year' => 2026, 'month' => 6,
+            'total_amount' => 10000, 'currency' => 'ARS', 'status' => 'active',
+        ]);
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        $summary = $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/budgets/{$budget->id}/summary")
+            ->assertStatus(200);
+
+        $this->assertEquals(200.0, $summary->json('data.spent_amount'));
+        $this->assertEquals(1, $summary->json('data.purchase_count'));
+        \Carbon\Carbon::setTestNow();
+    }
+
+    public function test_double_finish_does_not_duplicate_budget_spend()
+    {
+        \Carbon\Carbon::setTestNow('2026-06-15');
+        [$user, $group, $list, $item, $product] = $this->context();
+        $budget = \App\Budget::create([
+            'family_group_id' => $group->id, 'year' => 2026, 'month' => 6,
+            'total_amount' => 10000, 'currency' => 'ARS', 'status' => 'active',
+        ]);
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+        ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200);
+
+        // Second finish on the same (now finished) session must be rejected, not double-counted.
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(409);
+
+        $this->assertEquals(1, Purchase::where('family_group_id', $group->id)->count());
+
+        $summary = $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/budgets/{$budget->id}/summary")
+            ->assertStatus(200);
+
+        $this->assertEquals(200.0, $summary->json('data.spent_amount'));
+        \Carbon\Carbon::setTestNow();
+    }
+
     public function test_writes_are_audited()
     {
         [$user, $group, $list] = $this->context();

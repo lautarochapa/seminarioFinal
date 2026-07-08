@@ -19,9 +19,16 @@ export interface ShoppingListItem {
   quantity: number;
   unit: { id: number; code: string; symbol: string } | null;
   estimated_price: number | null;
+  estimated_subtotal: number | null;
   actual_price: number | null;
   status: 'pending' | 'purchased' | 'skipped' | 'cancelled';
   notes: string | null;
+  price_source: 'branch' | 'chain' | 'group_history' | 'best_available' | 'manual' | null;
+  price_updated_at: string | null;
+  supermarket_chain_id: number | null;
+  supermarket_branch_id: number | null;
+  source_type: string | null;
+  source_id: number | null;
   created_at: string;
   updated_at: string;
 }

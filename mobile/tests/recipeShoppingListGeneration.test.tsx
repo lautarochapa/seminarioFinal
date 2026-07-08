@@ -66,7 +66,7 @@ function resultWith(overrides: Partial<RecipeShoppingListResult>): { data: Recip
         estimated_total: null,
         optimization_mode: null,
         items: [
-          { id: 100, ingredient: null, product: { id: 1, name: 'Harina' }, quantity: 2, unit: { id: 1, code: 'un', symbol: 'un' }, estimated_price: 500, actual_price: null, status: 'pending', notes: null, created_at: '', updated_at: '' },
+          { id: 100, ingredient: null, product: { id: 1, name: 'Harina' }, quantity: 2, unit: { id: 1, code: 'un', symbol: 'un' }, estimated_price: 500, estimated_subtotal: 1000, actual_price: null, status: 'pending', notes: null, price_source: 'best_available', price_updated_at: null, supermarket_chain_id: null, supermarket_branch_id: null, source_type: 'recipe_generation', source_id: 3, created_at: '', updated_at: '' },
         ],
         created_at: '',
         updated_at: '',
@@ -93,6 +93,7 @@ function resultWith(overrides: Partial<RecipeShoppingListResult>): { data: Recip
       estimated_total: 1000,
       items_without_price: 0,
       warnings: [],
+      substitutions: [],
       ...overrides,
     },
   };
@@ -152,6 +153,23 @@ describe('RecipeDetailScreen — generar lista desde receta', () => {
     await fireEvent.press(getByRole('button', { name: 'Generar lista de compras' }));
 
     expect(await findByText(/Sal no se pudo mapear/)).toBeTruthy();
+  });
+
+  it('shows a substitution warning when a substitute ingredient was used', async () => {
+    mockGenerate.mockResolvedValue(resultWith({
+      substitutions: [{
+        original_ingredient_id: 5,
+        resolved_ingredient_id: 6,
+        resolved_ingredient_name: 'Harina integral',
+        substitution_used: true,
+        reason: 'Sustituto habitual',
+      }],
+    }));
+    const { getByRole, findByText } = await render(<RecipeDetailScreen recipeId={3} />);
+
+    await fireEvent.press(getByRole('button', { name: 'Generar lista de compras' }));
+
+    expect(await findByText(/Se usará Harina integral como reemplazo/)).toBeTruthy();
   });
 
   it('sends the selected chain and branch when generating', async () => {

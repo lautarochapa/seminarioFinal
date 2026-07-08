@@ -126,6 +126,15 @@ export function LoginScreen() {
           editable={!isLoading}
         />
 
+        <Pressable
+          style={styles.forgotLink}
+          onPress={() => router.push('/(auth)/forgot-password' as never)}
+          accessibilityRole="button"
+          accessibilityLabel="¿Olvidaste tu contraseña?"
+        >
+          <Text style={styles.forgotLinkText}>¿Olvidaste tu contraseña?</Text>
+        </Pressable>
+
         <AppButton
           title={retryAfter ? `Esperá ${retryAfter}s` : 'Iniciar sesión'}
           onPress={handleSubmit}
@@ -202,6 +211,15 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: SPACING.sm,
+  },
+  forgotLink: {
+    alignSelf: 'flex-end',
+    paddingVertical: SPACING.xs,
+  },
+  forgotLinkText: {
+    fontSize: FONT.captionSize,
+    color: COLORS.primary,
+    fontWeight: '600',
   },
   demo: {
     marginHorizontal: SPACING.lg,
