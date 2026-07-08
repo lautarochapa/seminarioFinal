@@ -62,3 +62,7 @@ export function useFamilyGroupContext(): FamilyGroupContextValue {
   if (!ctx) throw new Error('useFamilyGroupContext must be used inside FamilyGroupProvider');
   return ctx;
 }
+
+export function useOptionalFamilyGroupContext(): FamilyGroupContextValue | null {
+  return useContext(FamilyGroupContext);
+}

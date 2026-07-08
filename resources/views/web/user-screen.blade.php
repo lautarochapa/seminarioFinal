@@ -25,7 +25,7 @@
     </section>
 
     @if($screenKey === 'stock')
-        <section data-user-stock-locations>
+        <section data-user-stock-locations data-can-manage-catalog="{{ auth()->user() && auth()->user()->hasPermission('catalog.manage') ? '1' : '0' }}">
             <div class="alert" data-stock-locations-message style="display:none"></div>
             <div class="family-layout">
                 <div class="family-stack">
@@ -278,27 +278,49 @@
 
                 <aside class="aside-panel">
                     <h2 data-stock-item-form-title>Cargar stock</h2>
-                    <form class="family-form" data-stock-item-form>
+                    <div class="alert alert-warning" data-stock-group-required style="display:none;margin-bottom:12px">
+                        Para cargar stock primero necesitas crear o seleccionar un grupo familiar.
+                        <a href="{{ url('/web/family-group') }}">Ir a grupos familiares</a>
+                    </div>
+                    <form class="family-form" data-stock-item-form novalidate>
                         <input type="hidden" name="id">
-                        <label>Producto</label>
-                        <input class="form-control" data-stock-product-search type="search" placeholder="Buscar producto">
-                        <select class="form-control" name="product_id" required data-stock-product-select>
-                            <option value="">Cargando productos...</option>
-                        </select>
+                        <input type="hidden" name="product_id" data-stock-product-id>
+                        <label>Producto *</label>
+                        <input class="form-control" data-stock-product-search type="search" placeholder="Buscar producto..." autocomplete="off">
+                        <div class="muted" data-stock-product-help style="font-size:12px;margin-top:4px">Escribi al menos 2 caracteres. Si no existe, podes cargarlo manualmente y usarlo ahora.</div>
+                        <div data-stock-product-results style="display:none;margin-top:8px"></div>
+                        <div data-stock-product-selected style="display:none;margin-top:8px"></div>
+                        <span class="invalid-feedback" data-stock-field-error="product_id" role="alert"></span>
+                        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #dde6df">
+                            <label>Buscar por codigo de barras</label>
+                            <div style="display:flex;gap:8px;align-items:flex-start">
+                                <input class="form-control" data-stock-barcode-input type="text" inputmode="numeric" placeholder="Ingresar codigo de barras" autocomplete="off">
+                                <button type="button" class="btn-secondary-web" data-stock-barcode-search>Buscar</button>
+                            </div>
+                            <span class="invalid-feedback" data-stock-field-error="barcode" role="alert"></span>
+                            <div data-stock-barcode-request-action style="display:none;margin-top:8px">
+                                <button type="button" class="btn-secondary-web btn-sm" data-product-request-open="barcode">Cargar manualmente con este codigo</button>
+                            </div>
+                        </div>
                         <label>Ubicacion</label>
                         <select class="form-control" name="stock_location_id" data-stock-item-location>
                             <option value="">Sin ubicacion</option>
                         </select>
+                        <span class="invalid-feedback" data-stock-field-error="stock_location_id" role="alert"></span>
                         <label>Cantidad</label>
                         <input class="form-control" name="quantity" type="number" step="0.01" min="0" required>
+                        <span class="invalid-feedback" data-stock-field-error="quantity" role="alert"></span>
                         <label>Unidad</label>
                         <select class="form-control" name="unit_id" required data-stock-unit-select>
                             <option value="">Cargando unidades...</option>
                         </select>
+                        <span class="invalid-feedback" data-stock-field-error="unit_id" role="alert"></span>
                         <label>Vencimiento</label>
                         <input class="form-control" name="expiration_date" type="date">
+                        <span class="invalid-feedback" data-stock-field-error="expiration_date" role="alert"></span>
                         <label>Precio de compra</label>
                         <input class="form-control" name="purchase_price" type="number" step="0.01" min="0">
+                        <span class="invalid-feedback" data-stock-field-error="purchase_price" role="alert"></span>
                         <label>Estado</label>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
@@ -309,6 +331,51 @@
                             <button type="button" class="btn-secondary-web" data-stock-item-cancel style="display:none">Cancelar</button>
                         </div>
                     </form>
+
+                    <div data-product-request-modal style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.46);z-index:1050;padding:16px;overflow:auto">
+                        <div class="panel" style="max-width:520px;margin:7vh auto;min-height:0">
+                            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+                                <h2 style="margin:0">Cargar producto manualmente</h2>
+                                <button type="button" class="btn-secondary-web btn-sm" data-product-request-close>Cerrar</button>
+                            </div>
+                            <form class="family-form" data-product-request-form novalidate>
+                                <input type="hidden" name="source" value="stock">
+                                <p class="muted" style="margin:0 0 8px">Se va a crear un producto pendiente de revision, pero vas a poder cargarlo a tu stock ahora.</p>
+                                <label>Nombre *</label>
+                                <input class="form-control" name="name" type="text" maxlength="200" required>
+                                <span class="invalid-feedback" data-product-request-field-error="name" role="alert"></span>
+                                <span class="invalid-feedback" data-product-request-field-error="product.name" role="alert"></span>
+                                <label>Marca</label>
+                                <input class="form-control" name="brand" type="text" maxlength="150">
+                                <label>Presentacion</label>
+                                <input class="form-control" name="presentation" type="text" maxlength="150" placeholder="Ej: 1 litro, pack x 6">
+                                <label>Codigo de barras</label>
+                                <input class="form-control" name="barcode" type="text" inputmode="numeric" maxlength="80">
+                                <span class="invalid-feedback" data-product-request-field-error="barcode" role="alert"></span>
+                                <span class="invalid-feedback" data-product-request-field-error="product.barcode" role="alert"></span>
+                                <label>Unidad base *</label>
+                                <select class="form-control" name="unit_id" data-product-request-unit-select>
+                                    <option value="">Selecciona unidad</option>
+                                </select>
+                                <span class="invalid-feedback" data-product-request-field-error="product.unit_id" role="alert"></span>
+                                <label>Cantidad en stock *</label>
+                                <input class="form-control" name="quantity" type="number" step="0.01" min="0.0001" required value="1">
+                                <span class="invalid-feedback" data-product-request-field-error="stock.quantity" role="alert"></span>
+                                <label>Ubicacion</label>
+                                <select class="form-control" name="stock_location_id" data-product-request-location-select>
+                                    <option value="">Sin ubicacion</option>
+                                </select>
+                                <label>Vencimiento</label>
+                                <input class="form-control" name="expiration_date" type="date">
+                                <label>Precio de compra</label>
+                                <input class="form-control" name="purchase_price" type="number" step="0.01" min="0">
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                                    <button type="submit" class="btn-main" data-product-request-submit>Cargar producto y stock</button>
+                                    <button type="button" class="btn-secondary-web" data-product-request-close>Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                     <hr>
 

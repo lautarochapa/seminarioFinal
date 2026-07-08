@@ -45,6 +45,7 @@
                 ['Tags alimentarios', '/admin-web/food-tags', 'catalog.manage'],
                 ['Categorias productos', '/admin-web/product-categories', 'catalog.manage'],
                 ['Productos', '/admin-web/products', 'web.admin.products'],
+                ['Solicitudes productos', '/admin-web/product-requests', 'web.admin.product-requests'],
                 ['Codigos de barra', '/admin-web/barcodes', 'web.admin.barcodes'],
                 ['Marcas', '/admin-web/brands', 'web.admin.brands'],
                 ['Reportes de productos', '/admin-web/product-reports', 'web.admin.product-reports'],

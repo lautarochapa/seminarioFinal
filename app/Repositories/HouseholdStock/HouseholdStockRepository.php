@@ -81,12 +81,22 @@ class HouseholdStockRepository
         return StockItem::withTrashed()->with(['product', 'location', 'unit'])->find($item->id);
     }
 
-    public function activeProductExists(int $productId): bool
+    public function activeProductExists(int $productId, ?int $groupId = null): bool
     {
         return Product::where('id', $productId)
-            ->where('status', 'active')
             ->where('is_active', true)
             ->whereNull('deleted_at')
+            ->where(function ($query) use ($groupId) {
+                $query->where('status', 'active');
+
+                if ($groupId) {
+                    $query->orWhere(function ($pending) use ($groupId) {
+                        $pending->where('status', 'pending_review')
+                            ->where('origin', 'user_created')
+                            ->where('family_group_id', $groupId);
+                    });
+                }
+            })
             ->exists();
     }
 

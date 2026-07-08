@@ -1,6 +1,6 @@
 # Auditoría de cierre del alcance inicial (MVP)
 
-Última actualización: 2026-07-08.
+Última actualización: 2026-07-08 (estabilización técnica previa a QA física / build APK).
 
 Metodología: para cada módulo se verificó (a) existencia de rutas/controladores/servicios backend, (b) cobertura de tests automatizados backend (`tests/Feature/Api/V1/...`), (c) existencia de pantalla mobile y su wiring a la API real (sin `fetch` directo ni datos hardcodeados), (d) tests mobile relacionados. **Ningún módulo fue probado manualmente en dispositivo físico o emulador durante esta auditoría** (bloqueado por falta de aceleración de hardware en el entorno de desarrollo — ver `docs/mobile-release-checklist.md`). Por lo tanto, todo módulo marcado `COMPLETO` se refiere a completitud de implementación y cobertura automatizada, no a validación manual end-to-end; `Pendiente manual` es `Sí` en todos los casos salvo que se indique lo contrario.
 
@@ -17,7 +17,7 @@ Estados usados: `COMPLETO`, `COMPLETO CON LIMITACIÓN`, `PENDIENTE`, `FUERA DEL 
 | Logout | COMPLETO | COMPLETO | COMPLETO | cubierto en `AuthContext` | — | Sí |
 | Perfil | COMPLETO | COMPLETO | COMPLETO (`ProfileScreen`) | — | — | Sí |
 | **Recuperación de contraseña** | COMPLETO | N/A | COMPLETO | 14 tests backend (`PasswordResetTest`), 9 tests mobile (`passwordReset.test.tsx`) | El email de reset usa el deep link `cccontrol://reset-password` (via `ResetPassword::createUrlUsing`), no una vista web legacy. Requiere que el dispositivo tenga la app instalada con el scheme registrado para que el link abra la pantalla in-app. | Sí — probar en dispositivo real que el link de email abre la app. |
-| Google Login | COMPLETO (backend) | — | **PENDIENTE** | — | Endpoint `POST /api/v1/auth/google` existe y funciona (`GoogleAuthController`), pero no hay botón ni flujo en el mobile. Explícitamente fuera de esta tanda por pedido del usuario. | — |
+| Google Login | COMPLETO (backend) | — | **FUERA DEL MVP** | — | Endpoint `POST /api/v1/auth/google` existe y funciona (`GoogleAuthController`), pero no hay botón ni flujo en el mobile. Explícitamente fuera del MVP mobile por pedido del usuario — ver `Mejoras post-MVP`. | — |
 | RBAC web | COMPLETO | COMPLETO | N/A | — | — | Sí |
 
 ## Grupos y preferencias
@@ -37,6 +37,7 @@ Estados usados: `COMPLETO`, `COMPLETO CON LIMITACIÓN`, `PENDIENTE`, `FUERA DEL 
 | Equivalencias de ingredientes | COMPLETO | COMPLETO (ABM) | COMPLETO CON LIMITACIÓN | tests `IngredientEquivalences`, `RecipeSubstitutions`; nuevos tests de sustitución en generación de lista (`RecipeShoppingListTest`) | Hasta esta tanda, la generación de lista de compras ignoraba `ingredient_equivalences`; ahora se usa como fallback ordenado (producto directo → sustituto configurado) y se reporta en `data.substitutions`. La pantalla de "ver equivalencias" (`GET /recipes/{id}/substitutions`) no tiene UI mobile dedicada aún — solo se muestra el aviso de sustitución dentro del resumen de generación. | Sí |
 | Stock / ubicaciones | COMPLETO | COMPLETO | COMPLETO | tests `HouseholdStock`, `StockLocations`, `StockMovements`, `StockAlerts` | — | Sí |
 | Código de barras | COMPLETO | COMPLETO (admin) | COMPLETO (`BarcodeScannerScreen`, cámara + manual) | tests `Barcodes`, mobile `barcodeScanner.test.tsx` (6 tests) | Requiere Chromium 83+/`expo-camera` soportado; fallback manual siempre disponible | Sí |
+| Productos manuales pendientes | COMPLETO | COMPLETO (`/web/stock` + `/admin-web/product-requests`) | COMPLETO CON LIMITACIÓN (carga rápida desde stock/barcode, sin admin mobile) | tests `ManualProductStock`, `ProductRequests` | Si el producto no existe, el usuario lo carga en stock en una sola operación: se crea `Product.status=pending_review`, `ProductRequest.status=pending`, stock item y movimiento. El producto queda visible solo para su grupo hasta aprobación admin. El scraping sigue separado y no implica alta automática. | Sí |
 
 ## Recetas
 
@@ -105,5 +106,6 @@ No implementadas en esta tanda, no bloquean el cierre funcional automatizado:
 - Edición/anulación de compras con reversión de stock (hoy `cancel()` solo cambia `status`+soft-delete; no revierte los `StockItem`/`StockMovement` generados).
 - Reconciliar `budget_movements` (ledger de ajustes manuales) con el cálculo dinámico de `spent_amount`, o documentar definitivamente que son mecanismos independientes.
 - Sincronización offline completa (cola de escrituras pendientes).
+- Fusionar productos `pending_review` con productos activos existentes desde `/admin-web/product-requests`, actualizando referencias en stock/listas/compras y marcando el pendiente como `merged`.
 - Build iOS y publicación en Play Store.
 - Toggle mobile para aceptar/excluir una sustitución de ingrediente antes de generar la lista (hoy es automática y solo informativa).

@@ -38,6 +38,9 @@ export interface ProductSummary {
   barcode: string | null;
   description: string | null;
   status: string;
+  origin?: string | null;
+  review_status?: string | null;
+  family_group_id?: number | null;
   brand: ProductBrand | null;
   category: ProductCategory | null;
   ingredient: ProductIngredient | null;
@@ -54,8 +57,41 @@ export type BarcodeLookupResult = ProductDetail;
 
 export interface ProductFilters {
   search?: string;
+  family_group_id?: number;
   page?: number;
   per_page?: number;
   sort?: string;
   order?: 'asc' | 'desc';
+}
+
+export interface ProductRequestCreate {
+  name: string;
+  brand?: string;
+  presentation?: string;
+  barcode?: string;
+  unit_id?: number;
+  family_group_id?: number;
+  comment?: string;
+  source?: 'user_request' | 'barcode' | 'stock' | 'shopping_list';
+}
+
+export interface ManualProductStockCreate {
+  product: {
+    name: string;
+    brand?: string;
+    presentation?: string;
+    barcode?: string;
+    unit_id: number;
+    net_quantity?: number;
+    package_unit_id?: number;
+    ingredient_id?: number;
+    category_id?: number;
+  };
+  stock: {
+    quantity: number;
+    unit_id?: number;
+    stock_location_id?: number | null;
+    expiration_date?: string | null;
+    purchase_price?: number | null;
+  };
 }

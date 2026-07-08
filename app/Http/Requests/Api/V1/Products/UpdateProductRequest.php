@@ -22,6 +22,7 @@ class UpdateProductRequest extends FormRequest
             'description' => 'sometimes|nullable|string',
             'net_quantity' => 'sometimes|nullable|numeric|min:0',
             'default_unit_id' => 'sometimes|nullable|integer|min:1',
+            'package_unit_id' => 'sometimes|nullable|integer|min:1',
             'status' => 'sometimes|string|in:active,inactive',
         ];
     }
@@ -29,7 +30,7 @@ class UpdateProductRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $allowed = ['name', 'brand_id', 'category_id', 'ingredient_id', 'barcode', 'description', 'net_quantity', 'default_unit_id', 'status'];
+            $allowed = ['name', 'brand_id', 'category_id', 'ingredient_id', 'barcode', 'description', 'net_quantity', 'default_unit_id', 'package_unit_id', 'status'];
             foreach (array_keys($this->all()) as $key) {
                 if (! in_array($key, $allowed, true)) {
                     $validator->errors()->add($key, 'El campo '.$key.' no esta permitido.');

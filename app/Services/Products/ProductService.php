@@ -8,6 +8,7 @@ use App\Exceptions\Ingredients\IngredientException;
 use App\Ingredient;
 use App\Product;
 use App\ProductCategory;
+use App\FamilyGroupMember;
 use App\Repositories\Products\ProductRepository;
 use App\UnitMeasure;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +27,10 @@ class ProductService
         return $this->products->paginate($filters);
     }
 
-    public function publicList(array $filters)
+    public function publicList(array $filters, $actor = null)
     {
+        $filters = $this->scopeFamilyGroupFilter($filters, $actor);
+
         return $this->products->paginate($filters, true);
     }
 
@@ -36,9 +39,13 @@ class ProductService
         return $this->products->findOrFail($id);
     }
 
-    public function publicShow($id)
+    public function publicShow($id, ?int $familyGroupId = null, $actor = null)
     {
-        return $this->products->findPublicOrFail($id);
+        if (! $this->canUseFamilyGroupScope($familyGroupId, $actor)) {
+            $familyGroupId = null;
+        }
+
+        return $this->products->findPublicOrFail($id, $familyGroupId);
     }
 
     public function create($actorId, array $data, $ip, $userAgent)
@@ -163,9 +170,13 @@ class ProductService
         return $this->products->prices($product->id);
     }
 
-    public function findByBarcode(string $barcode)
+    public function findByBarcode(string $barcode, ?int $familyGroupId = null, $actor = null)
     {
-        return $this->products->findPublicByBarcodeOrFail($barcode);
+        if (! $this->canUseFamilyGroupScope($familyGroupId, $actor)) {
+            $familyGroupId = null;
+        }
+
+        return $this->products->findPublicByBarcodeOrFail($barcode, $familyGroupId);
     }
 
     public function alternatives($id)
@@ -192,6 +203,33 @@ class ProductService
         if (! empty($data['default_unit_id']) && ! UnitMeasure::where('id', $data['default_unit_id'])->where('status', 'active')->exists()) {
             throw new IngredientException('PRODUCT_UNIT_INVALID', 'La unidad indicada no existe o no esta activa.', 422);
         }
+
+        if (! empty($data['package_unit_id']) && ! UnitMeasure::where('id', $data['package_unit_id'])->where('status', 'active')->exists()) {
+            throw new IngredientException('PRODUCT_UNIT_INVALID', 'La unidad indicada no existe o no esta activa.', 422);
+        }
+    }
+
+    private function scopeFamilyGroupFilter(array $filters, $actor): array
+    {
+        $familyGroupId = ! empty($filters['family_group_id']) ? (int) $filters['family_group_id'] : null;
+
+        if (! $this->canUseFamilyGroupScope($familyGroupId, $actor)) {
+            unset($filters['family_group_id']);
+        }
+
+        return $filters;
+    }
+
+    private function canUseFamilyGroupScope(?int $familyGroupId, $actor): bool
+    {
+        if (! $familyGroupId || ! $actor) {
+            return false;
+        }
+
+        return FamilyGroupMember::where('family_group_id', $familyGroupId)
+            ->where('user_id', $actor->id)
+            ->where('status', 'active')
+            ->exists();
     }
 
     private function prepare(array $data, $creating, Product $product = null)
@@ -235,6 +273,7 @@ class ProductService
             'ingredient_id',
             'default_unit_id',
             'net_quantity',
+            'package_unit_id',
             'description',
             'status',
             'is_active',
@@ -264,6 +303,7 @@ class ProductService
             'ingredient_id' => $product->ingredient_id,
             'default_unit_id' => $product->default_unit_id,
             'net_quantity' => $product->net_quantity,
+            'package_unit_id' => $product->package_unit_id,
             'barcode' => optional($product->barcodes->first())->barcode,
             'description' => $product->description,
             'status' => $product->status,

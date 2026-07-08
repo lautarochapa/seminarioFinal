@@ -15,6 +15,7 @@ Route::get('family-groups/{id}/reports/waste',    [\App\Http\Controllers\Api\V1\
 Route::get('family-groups/{id}/stock/expiring',   [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'expiring']);
 Route::get('family-groups/{id}/stock/low-stock',  [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'lowStock']);
 Route::post('family-groups/{id}/stock/scan',      [\App\Http\Controllers\Api\V1\StockScan\StockScanController::class, 'store']);
+Route::post('family-groups/{id}/stock/manual-product', [\App\Http\Controllers\Api\V1\HouseholdStock\ManualProductStockController::class, 'store']);
 
 // Stock alerts and minimum rules
 Route::get('family-groups/{id}/stock-alerts',                             [\App\Http\Controllers\Api\V1\StockAlerts\StockAlertController::class, 'index']);

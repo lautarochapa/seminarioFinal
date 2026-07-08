@@ -19,9 +19,13 @@ class ProductResource extends JsonResource
             'ingredient_id' => $this->ingredient_id,
             'default_unit_id' => $this->default_unit_id,
             'net_quantity' => $this->net_quantity,
+            'package_unit_id' => $this->package_unit_id,
             'barcode' => $barcode,
             'description' => $this->description,
             'status' => $this->status,
+            'origin' => $this->origin,
+            'review_status' => $this->status === 'pending_review' ? 'pending_review' : null,
+            'family_group_id' => $this->family_group_id,
             'brand' => $this->whenLoaded('brand', function () {
                 return $this->brand ? ['id' => $this->brand->id, 'name' => $this->brand->name] : null;
             }),
@@ -37,6 +41,14 @@ class ProductResource extends JsonResource
                     'code' => $this->defaultUnit->code,
                     'name' => $this->defaultUnit->name,
                     'symbol' => $this->defaultUnit->symbol,
+                ] : null;
+            }),
+            'package_unit' => $this->whenLoaded('packageUnit', function () {
+                return $this->packageUnit ? [
+                    'id' => $this->packageUnit->id,
+                    'code' => $this->packageUnit->code,
+                    'name' => $this->packageUnit->name,
+                    'symbol' => $this->packageUnit->symbol,
                 ] : null;
             }),
             'images' => $this->whenLoaded('images', function () {

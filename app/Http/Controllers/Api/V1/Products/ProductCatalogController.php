@@ -23,20 +23,24 @@ class ProductCatalogController extends Controller
         $traceId = $request->attributes->get('trace_id');
         $barcode = trim((string) $barcode);
 
-        return response()->json(['data' => new ProductResource($this->service->findByBarcode($barcode)), 'trace_id' => $traceId])
+        $familyGroupId = $request->query('family_group_id') ? (int) $request->query('family_group_id') : null;
+
+        return response()->json(['data' => new ProductResource($this->service->findByBarcode($barcode, $familyGroupId, $request->user())), 'trace_id' => $traceId])
             ->header('X-Trace-Id', $traceId);
     }
 
     public function index(Request $request)
     {
-        return $this->paginated($request, $this->service->publicList($request->query()));
+        return $this->paginated($request, $this->service->publicList($request->query(), $request->user()));
     }
 
     public function show(Request $request, $id)
     {
         $traceId = $request->attributes->get('trace_id');
 
-        return response()->json(['data' => new ProductResource($this->service->publicShow((int) $id)), 'trace_id' => $traceId])
+        $familyGroupId = $request->query('family_group_id') ? (int) $request->query('family_group_id') : null;
+
+        return response()->json(['data' => new ProductResource($this->service->publicShow((int) $id, $familyGroupId, $request->user())), 'trace_id' => $traceId])
             ->header('X-Trace-Id', $traceId);
     }
 

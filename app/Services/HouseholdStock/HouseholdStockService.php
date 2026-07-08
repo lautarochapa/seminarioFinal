@@ -160,7 +160,7 @@ class HouseholdStockService
 
     private function validateRelations(int $groupId, array $data): void
     {
-        if (isset($data['product_id']) && ! $this->stock->activeProductExists((int) $data['product_id'])) {
+        if (isset($data['product_id']) && ! $this->stock->activeProductExists((int) $data['product_id'], $groupId)) {
             throw new FamilyGroupException('STOCK_PRODUCT_INVALID', 'El producto indicado no existe o no esta activo.', 422);
         }
 

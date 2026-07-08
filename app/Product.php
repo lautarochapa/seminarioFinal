@@ -22,6 +22,9 @@ class Product extends Model
         'is_verified',
         'is_active',
         'status',
+        'origin',
+        'created_by_user_id',
+        'family_group_id',
         'nombre',
         'codigo',
         'img',
@@ -64,6 +67,16 @@ class Product extends Model
     public function packageUnit()
     {
         return $this->belongsTo(UnitMeasure::class, 'package_unit_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    public function familyGroup()
+    {
+        return $this->belongsTo(FamilyGroup::class);
     }
 
     public function supply()

@@ -10,10 +10,11 @@ interface Props {
   product: ProductDetail | null;
   notFound: boolean;
   onUseProduct?: () => void;
+  onRequestProduct?: () => void;
   onScanAgain: () => void;
 }
 
-export function BarcodeResult({ barcode, product, notFound, onUseProduct, onScanAgain }: Props) {
+export function BarcodeResult({ barcode, product, notFound, onUseProduct, onRequestProduct, onScanAgain }: Props) {
   if (product) {
     return (
       <View style={styles.card}>
@@ -25,6 +26,7 @@ export function BarcodeResult({ barcode, product, notFound, onUseProduct, onScan
         <Text style={styles.code}>Código: {barcode}</Text>
         <View style={styles.actions}>
           {onUseProduct ? <AppButton title="Usar este producto" onPress={onUseProduct} fullWidth /> : null}
+          {onRequestProduct ? <AppButton title="Cargar manualmente" onPress={onRequestProduct} fullWidth /> : null}
           <AppButton title="Escanear nuevamente" variant="outline" onPress={onScanAgain} fullWidth />
         </View>
       </View>
@@ -39,8 +41,9 @@ export function BarcodeResult({ barcode, product, notFound, onUseProduct, onScan
           <Text style={styles.title}>No encontramos un producto con este código.</Text>
         </View>
         <Text style={styles.code}>Código: {barcode}</Text>
-        <Text style={styles.meta}>Podés buscarlo manualmente o volver a escanear.</Text>
+        <Text style={styles.meta}>Podés cargarlo ahora y quedará pendiente de revisión.</Text>
         <View style={styles.actions}>
+          {onRequestProduct ? <AppButton title="Cargar manualmente" onPress={onRequestProduct} fullWidth /> : null}
           <AppButton title="Escanear nuevamente" variant="outline" onPress={onScanAgain} fullWidth />
         </View>
       </View>

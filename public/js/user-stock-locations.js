@@ -25,8 +25,13 @@
         wasteLastPage: 1,
         wasteTotals: {},
         products: [],
+        stockProductResults: [],
+        selectedStockProduct: null,
+        lastProductSearch: '',
+        lastBarcodeSearch: '',
         units: [],
         productSearchTimer: null,
+        barcodeSearchLoading: false,
         wasteSearchTimer: null,
         loading: false,
     };
@@ -98,6 +103,32 @@
         showMessage(root, 'danger', apiErrorMessage(error));
     }
 
+    function fieldError(root, field, message) {
+        var target = qs('[data-stock-field-error="' + field + '"]', root);
+        if (target) {
+            target.textContent = message || '';
+            target.style.display = message ? 'block' : 'none';
+        }
+    }
+
+    function clearFieldErrors(root) {
+        qsa('[data-stock-field-error]', root).forEach(function (target) {
+            target.textContent = '';
+            target.style.display = 'none';
+        });
+    }
+
+    function applyApiFieldErrors(root, error) {
+        var payload = error.payload || {};
+        var apiError = payload.error || {};
+        var fieldErrors = apiError.field_errors || {};
+        Object.keys(fieldErrors).forEach(function (field) {
+            if (fieldErrors[field] && fieldErrors[field].length) {
+                fieldError(root, field, fieldErrors[field][0]);
+            }
+        });
+    }
+
     function endpoint(groupId, path) {
         return API_BASE + '/family-groups/' + encodeURIComponent(groupId) + path;
     }
@@ -111,7 +142,20 @@
         if (!product) {
             return '-';
         }
-        return product.name || ('Producto #' + product.id);
+        var label = product.name || ('Producto #' + product.id);
+        if (product.brand && product.brand.name) {
+            label += ' - ' + product.brand.name;
+        }
+        if (product.net_quantity) {
+            label += ' ' + product.net_quantity;
+        }
+        return label;
+    }
+
+    function productReviewBadge(product) {
+        return product && product.review_status === 'pending_review'
+            ? ' <span class="chip" style="margin-left:6px">Pendiente de revision</span>'
+            : '';
     }
 
     function unitLabel(unit) {
@@ -162,6 +206,7 @@
 
         if (!state.groups.length) {
             select.innerHTML = '<option value="">Sin grupo familiar activo</option>';
+            updateStockFormAvailability(root);
             return;
         }
 
@@ -170,6 +215,7 @@
                 escapeHtml(group.name) +
                 '</option>';
         }).join('');
+        updateStockFormAvailability(root);
     }
 
     function renderLocationOptions(root) {
@@ -177,7 +223,7 @@
             return '<option value="' + location.id + '">' + escapeHtml(locationLabel(location)) + '</option>';
         }).join('');
 
-        qsa('[data-stock-filter-location], [data-stock-item-location]', root).forEach(function (select) {
+        qsa('[data-stock-filter-location], [data-stock-item-location], [data-product-request-location-select]', root).forEach(function (select) {
             var current = select.value;
             var first = select.hasAttribute('data-stock-filter-location') ? '<option value="">Todas las ubicaciones</option>' : '<option value="">Sin ubicacion</option>';
             select.innerHTML = first + optionHtml;
@@ -192,7 +238,7 @@
     }
 
     function renderProducts(root) {
-        ['[data-stock-product-select]', '[data-stock-rule-product-select]'].forEach(function (selector) {
+        ['[data-stock-rule-product-select]'].forEach(function (selector) {
             var select = qs(selector, root);
             if (!select) {
                 return;
@@ -213,8 +259,107 @@
         }
     }
 
+    function renderStockProductResults(root) {
+        var target = qs('[data-stock-product-results]', root);
+        if (!target) {
+            return;
+        }
+        if (!state.stockProductResults.length) {
+            target.style.display = 'block';
+            var createNow = root.getAttribute('data-can-manage-catalog') === '1'
+                ? ' <a class="btn-secondary-web btn-sm" href="/admin-web/products">Crear producto ahora</a>'
+                : '';
+            target.innerHTML =
+                '<div class="muted" style="font-size:13px;padding:8px;border:1px solid #dde6df;border-radius:6px">' +
+                    'No encontramos productos con ese nombre. Podes cargarlo ahora y quedara pendiente de revision.' +
+                    '<div style="margin-top:8px"><button type="button" class="btn-secondary-web btn-sm" data-product-request-open="name">Cargar producto manualmente</button> ' +
+                    createNow + '</div>' +
+                '</div>';
+            return;
+        }
+
+        target.style.display = 'grid';
+        target.style.gap = '6px';
+        target.innerHTML = state.stockProductResults.map(function (product) {
+            return '<button type="button" class="btn-secondary-web" style="justify-content:flex-start;text-align:left;width:100%;white-space:normal" data-stock-product-pick="' + product.id + '">' +
+                escapeHtml(productLabel(product)) + productReviewBadge(product) +
+                '</button>';
+        }).join('');
+    }
+
+    function renderSelectedStockProduct(root) {
+        var target = qs('[data-stock-product-selected]', root);
+        var input = qs('[data-stock-product-id]', root);
+        if (input) {
+            input.value = state.selectedStockProduct ? state.selectedStockProduct.id : '';
+        }
+        if (!target) {
+            return;
+        }
+        if (!state.selectedStockProduct) {
+            target.style.display = 'none';
+            target.innerHTML = '';
+            return;
+        }
+        target.style.display = 'block';
+        target.innerHTML = '<div class="chip" style="display:flex;align-items:center;justify-content:space-between;gap:8px;white-space:normal">' +
+            '<span>Seleccionado: <strong>' + escapeHtml(productLabel(state.selectedStockProduct)) + '</strong>' + productReviewBadge(state.selectedStockProduct) + '</span>' +
+            '<button type="button" class="btn-secondary-web btn-sm" data-stock-product-clear>Cambiar</button>' +
+        '</div>';
+    }
+
+    function updateStockFormAvailability(root) {
+        var notice = qs('[data-stock-group-required]', root);
+        var form = qs('[data-stock-item-form]', root);
+        var disabled = !state.currentGroupId;
+        if (notice) {
+            notice.style.display = disabled ? 'block' : 'none';
+        }
+        if (!form) {
+            return;
+        }
+        qsa('input, select, button', form).forEach(function (control) {
+            control.disabled = disabled;
+        });
+    }
+
+    function selectStockProduct(root, product) {
+        if (!product) {
+            return;
+        }
+        state.selectedStockProduct = product;
+        state.stockProductResults = [];
+        var search = qs('[data-stock-product-search]', root);
+        var results = qs('[data-stock-product-results]', root);
+        if (search) {
+            search.value = productLabel(product);
+        }
+        if (results) {
+            results.style.display = 'none';
+            results.innerHTML = '';
+        }
+        fieldError(root, 'product_id', '');
+        renderSelectedStockProduct(root);
+    }
+
+    function clearSelectedStockProduct(root) {
+        state.selectedStockProduct = null;
+        var search = qs('[data-stock-product-search]', root);
+        if (search) {
+            search.value = '';
+            search.focus();
+        }
+        renderSelectedStockProduct(root);
+    }
+
+    function productFromKnownLists(id) {
+        return state.stockProductResults.concat(state.products).filter(function (product) {
+            return String(product.id) === String(id);
+        })[0] || null;
+    }
+
     function renderUnits(root) {
-        ['[data-stock-unit-select]', '[data-stock-rule-unit-select]'].forEach(function (selector) {
+        ['[data-stock-unit-select]', '[data-stock-rule-unit-select]', '[data-product-request-unit-select]'].forEach(function (selector) {
             var select = qs(selector, root);
             if (!select) {
                 return;
@@ -592,8 +737,18 @@
         if (form) {
             form.reset();
             form.elements.id.value = '';
+            form.elements.product_id.value = '';
             form.elements.status.value = 'active';
         }
+        state.selectedStockProduct = null;
+        state.stockProductResults = [];
+        clearFieldErrors(root);
+        renderStockProductResults(root);
+        var results = qs('[data-stock-product-results]', root);
+        if (results) {
+            results.style.display = 'none';
+        }
+        renderSelectedStockProduct(root);
         if (title) {
             title.textContent = 'Cargar stock';
         }
@@ -671,8 +826,12 @@
             state.products.push(item.product);
             renderProducts(root);
         }
+        if (item.product) {
+            selectStockProduct(root, item.product);
+        } else {
+            form.elements.product_id.value = item.product_id || '';
+        }
         form.elements.id.value = item.id;
-        form.elements.product_id.value = item.product_id || '';
         form.elements.stock_location_id.value = item.stock_location_id || '';
         form.elements.quantity.value = item.quantity || 0;
         form.elements.unit_id.value = item.unit_id || '';
@@ -731,7 +890,7 @@
                     renderStock(root);
                     renderSummary(root, {});
                     renderValue(root, {});
-                    showMessage(root, 'warning', 'Necesitas un grupo familiar para administrar stock.');
+                    showMessage(root, 'warning', 'Para cargar stock primero necesitas crear o seleccionar un grupo familiar.');
                     return null;
                 }
                 return reloadGroupData(root);
@@ -781,6 +940,9 @@
         }
         var params = new URLSearchParams();
         params.set('per_page', 100);
+        if (state.currentGroupId) {
+            params.set('family_group_id', state.currentGroupId);
+        }
         params.set('status', 'active');
         return window.CCApi.request(endpoint(state.currentGroupId, '/stock-locations') + '?' + params.toString())
             .then(function (response) {
@@ -1028,6 +1190,19 @@
         ]);
     }
 
+    function refreshStockScreen(root) {
+        return reloadGroupData(root).then(function () {
+            return loadProducts(root);
+        });
+    }
+
+    function handleRefreshFailure(root, error) {
+        if (window.console && window.console.error) {
+            window.console.error('[stock] refresh failed', error);
+        }
+        showMessage(root, 'warning', 'Producto cargado, pero no pudimos actualizar el stock. Intenta nuevamente.');
+    }
+
     function loadProducts(root, search) {
         var params = new URLSearchParams();
         params.set('per_page', 100);
@@ -1044,6 +1219,239 @@
                 renderProducts(root);
                 handleError(root, error);
             });
+    }
+
+    function searchStockProducts(root, search) {
+        var trimmed = (search || '').trim();
+        state.lastProductSearch = trimmed;
+        state.selectedStockProduct = null;
+        renderSelectedStockProduct(root);
+        if (trimmed.length < 2) {
+            state.stockProductResults = [];
+            var target = qs('[data-stock-product-results]', root);
+            if (target) {
+                target.style.display = 'none';
+                target.innerHTML = '';
+            }
+            return Promise.resolve();
+        }
+
+        var params = new URLSearchParams();
+        params.set('per_page', 20);
+        params.set('search', trimmed);
+        if (state.currentGroupId) {
+            params.set('family_group_id', state.currentGroupId);
+        }
+        fieldError(root, 'product_id', '');
+        return window.CCApi.request(API_BASE + '/products?' + params.toString())
+            .then(function (response) {
+                state.stockProductResults = response.data || [];
+                renderStockProductResults(root);
+            })
+            .catch(function (error) {
+                state.stockProductResults = [];
+                renderStockProductResults(root);
+                handleError(root, error);
+            });
+    }
+
+    function searchStockBarcode(root) {
+        var input = qs('[data-stock-barcode-input]', root);
+        var button = qs('[data-stock-barcode-search]', root);
+        var barcode = input ? input.value.trim() : '';
+        if (!barcode) {
+            fieldError(root, 'barcode', 'Ingresa un codigo de barras.');
+            return Promise.resolve();
+        }
+        fieldError(root, 'barcode', '');
+        var barcodeRequestAction = qs('[data-stock-barcode-request-action]', root);
+        if (barcodeRequestAction) {
+            barcodeRequestAction.style.display = 'none';
+        }
+        state.barcodeSearchLoading = true;
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Buscando...';
+        }
+        var params = new URLSearchParams();
+        if (state.currentGroupId) {
+            params.set('family_group_id', state.currentGroupId);
+        }
+        var url = API_BASE + '/products/barcode/' + encodeURIComponent(barcode) + (params.toString() ? '?' + params.toString() : '');
+        return window.CCApi.request(url)
+            .then(function (response) {
+                selectStockProduct(root, response.data);
+                if (input) {
+                    input.value = '';
+                }
+                showMessage(root, 'success', 'Producto seleccionado por codigo de barras.');
+            })
+            .catch(function (error) {
+                if (error.status === 404) {
+                    state.lastBarcodeSearch = barcode;
+                    fieldError(root, 'barcode', 'No encontramos un producto con ese codigo de barras.');
+                    if (barcodeRequestAction) {
+                        barcodeRequestAction.style.display = 'block';
+                    }
+                    showMessage(root, 'warning', 'No encontramos un producto con este codigo.');
+                    return;
+                }
+                handleError(root, error);
+            })
+            .then(function () {
+                state.barcodeSearchLoading = false;
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = 'Buscar';
+                }
+            });
+    }
+
+    function productRequestFieldError(root, field, message) {
+        var target = qs('[data-product-request-field-error="' + field + '"]', root);
+        if (target) {
+            target.textContent = message || '';
+            target.style.display = message ? 'block' : 'none';
+        }
+    }
+
+    function clearProductRequestFieldErrors(root) {
+        qsa('[data-product-request-field-error]', root).forEach(function (target) {
+            target.textContent = '';
+            target.style.display = 'none';
+        });
+    }
+
+    function openProductRequestModal(root, mode) {
+        var modal = qs('[data-product-request-modal]', root);
+        var form = qs('[data-product-request-form]', root);
+        if (!modal || !form) {
+            return;
+        }
+        form.reset();
+        clearProductRequestFieldErrors(root);
+        form.elements.source.value = mode === 'barcode' ? 'barcode' : 'stock';
+        if (mode === 'barcode') {
+            form.elements.barcode.value = state.lastBarcodeSearch || '';
+            form.elements.name.value = state.lastProductSearch || '';
+        } else {
+            form.elements.name.value = state.lastProductSearch || '';
+        }
+        var stockForm = qs('[data-stock-item-form]', root);
+        if (stockForm) {
+            if (stockForm.elements.unit_id && stockForm.elements.unit_id.value) {
+                form.elements.unit_id.value = stockForm.elements.unit_id.value;
+            }
+            if (stockForm.elements.quantity && stockForm.elements.quantity.value) {
+                form.elements.quantity.value = stockForm.elements.quantity.value;
+            }
+            if (stockForm.elements.stock_location_id && stockForm.elements.stock_location_id.value) {
+                form.elements.stock_location_id.value = stockForm.elements.stock_location_id.value;
+            }
+            if (stockForm.elements.expiration_date && stockForm.elements.expiration_date.value) {
+                form.elements.expiration_date.value = stockForm.elements.expiration_date.value;
+            }
+            if (stockForm.elements.purchase_price && stockForm.elements.purchase_price.value) {
+                form.elements.purchase_price.value = stockForm.elements.purchase_price.value;
+            }
+        }
+        modal.style.display = 'block';
+        form.elements.name.focus();
+    }
+
+    function closeProductRequestModal(root) {
+        var modal = qs('[data-product-request-modal]', root);
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    function saveProductRequest(root, event) {
+        event.preventDefault();
+        var form = event.currentTarget;
+        var submit = qs('[data-product-request-submit]', form);
+        var name = form.elements.name.value.trim();
+        var barcode = form.elements.barcode.value.trim();
+        var unitId = form.elements.unit_id.value;
+        var quantity = form.elements.quantity.value;
+        clearProductRequestFieldErrors(root);
+        if (!state.currentGroupId) {
+            showMessage(root, 'warning', 'Selecciona un grupo familiar para cargar stock.');
+            return Promise.resolve();
+        }
+        if (!name) {
+            productRequestFieldError(root, 'name', 'Ingresa el nombre del producto.');
+            return Promise.resolve();
+        }
+        if (!unitId) {
+            productRequestFieldError(root, 'product.unit_id', 'Selecciona una unidad base.');
+            return Promise.resolve();
+        }
+        if (!quantity || Number(quantity) <= 0) {
+            productRequestFieldError(root, 'stock.quantity', 'Ingresa una cantidad mayor a cero.');
+            return Promise.resolve();
+        }
+        if (barcode && !/^[A-Za-z0-9-]+$/.test(barcode)) {
+            productRequestFieldError(root, 'barcode', 'El codigo solo puede contener letras, numeros o guiones.');
+            return Promise.resolve();
+        }
+
+        var body = {
+            product: {
+                name: name,
+                unit_id: Number(unitId),
+            },
+            stock: {
+                quantity: Number(quantity),
+                unit_id: Number(unitId),
+            },
+        };
+        ['brand', 'presentation', 'barcode'].forEach(function (field) {
+            var value = form.elements[field].value.trim();
+            if (value) {
+                body.product[field] = value;
+            }
+        });
+        if (form.elements.stock_location_id.value) {
+            body.stock.stock_location_id = Number(form.elements.stock_location_id.value);
+        }
+        if (form.elements.expiration_date.value) {
+            body.stock.expiration_date = form.elements.expiration_date.value;
+        }
+        if (form.elements.purchase_price.value) {
+            body.stock.purchase_price = Number(form.elements.purchase_price.value);
+        }
+
+        if (submit) {
+            submit.disabled = true;
+            submit.textContent = 'Cargando...';
+        }
+        return window.CCApi.request(endpoint(state.currentGroupId, '/stock/manual-product'), {
+            method: 'POST',
+            body: body,
+        }).then(function (response) {
+            closeProductRequestModal(root);
+            resetStockForm(root);
+            showMessage(root, 'success', response.message || 'Producto cargado en tu stock. Quedo pendiente de revision del catalogo.');
+            return refreshStockScreen(root).catch(function (refreshError) {
+                handleRefreshFailure(root, refreshError);
+            });
+        }).catch(function (error) {
+            var payload = error.payload || {};
+            var apiError = payload.error || {};
+            var fieldErrors = apiError.field_errors || {};
+            Object.keys(fieldErrors).forEach(function (field) {
+                productRequestFieldError(root, field, fieldErrors[field][0]);
+            });
+            if (!Object.keys(fieldErrors).length) {
+                handleError(root, error);
+            }
+        }).then(function () {
+            if (submit) {
+                submit.disabled = false;
+                submit.textContent = 'Cargar producto y stock';
+            }
+        });
     }
 
     function loadUnits(root) {
@@ -1095,24 +1503,62 @@
 
     function saveStock(root, event) {
         event.preventDefault();
+        clearFieldErrors(root);
         if (!state.currentGroupId) {
-            showMessage(root, 'warning', 'Selecciona un grupo familiar.');
+            showMessage(root, 'warning', 'Para cargar stock primero necesitas crear o seleccionar un grupo familiar.');
             return;
         }
         var form = event.currentTarget;
         var submit = qs('[data-stock-item-submit]', root);
         var id = form.elements.id.value;
+        var productId = Number(form.elements.product_id.value);
+        var quantity = Number(form.elements.quantity.value);
+        var unitId = Number(form.elements.unit_id.value);
+        var locationId = form.elements.stock_location_id.value ? Number(form.elements.stock_location_id.value) : null;
+        var price = form.elements.purchase_price.value === '' ? null : Number(form.elements.purchase_price.value);
+        var hasErrors = false;
+
+        if (!productId) {
+            fieldError(root, 'product_id', 'Selecciona un producto de la lista. Escribir el nombre no lo selecciona automaticamente.');
+            hasErrors = true;
+        }
+        if (!form.elements.quantity.value || !isFinite(quantity) || quantity <= 0) {
+            fieldError(root, 'quantity', 'La cantidad debe ser mayor que cero.');
+            hasErrors = true;
+        }
+        if (!unitId) {
+            fieldError(root, 'unit_id', 'Selecciona una unidad.');
+            hasErrors = true;
+        }
+        if (locationId && !state.locationOptions.filter(function (location) { return String(location.id) === String(locationId); }).length) {
+            fieldError(root, 'stock_location_id', 'Selecciona una ubicacion valida o deja Sin ubicacion.');
+            hasErrors = true;
+        }
+        if (form.elements.expiration_date.value && !/^\d{4}-\d{2}-\d{2}$/.test(form.elements.expiration_date.value)) {
+            fieldError(root, 'expiration_date', 'Ingresa una fecha valida.');
+            hasErrors = true;
+        }
+        if (price !== null && (!isFinite(price) || price < 0)) {
+            fieldError(root, 'purchase_price', 'El precio debe ser mayor o igual a cero.');
+            hasErrors = true;
+        }
+        if (hasErrors) {
+            showMessage(root, 'danger', 'Revisa los campos marcados antes de guardar.');
+            return;
+        }
+
         var body = {
-            product_id: Number(form.elements.product_id.value),
-            stock_location_id: form.elements.stock_location_id.value ? Number(form.elements.stock_location_id.value) : null,
-            quantity: Number(form.elements.quantity.value),
-            unit_id: Number(form.elements.unit_id.value),
+            product_id: productId,
+            stock_location_id: locationId,
+            quantity: quantity,
+            unit_id: unitId,
             expiration_date: form.elements.expiration_date.value || null,
-            purchase_price: form.elements.purchase_price.value === '' ? null : Number(form.elements.purchase_price.value),
+            purchase_price: price,
             status: form.elements.status.value,
         };
         if (submit) {
             submit.disabled = true;
+            submit.textContent = id ? 'Guardando...' : 'Cargando...';
         }
         clearMessage(root);
         return window.CCApi.request(endpoint(state.currentGroupId, '/stock' + (id ? '/' + encodeURIComponent(id) : '')), {
@@ -1123,10 +1569,16 @@
             showMessage(root, 'success', id ? 'Stock actualizado.' : 'Stock cargado.');
             return Promise.all([loadStock(root), loadSummary(root), loadValue(root)]);
         }).catch(function (error) {
+            applyApiFieldErrors(root, error);
+            if (error.status === 403) {
+                showMessage(root, 'danger', 'No tenes permiso para cargar stock en este grupo.');
+                return;
+            }
             handleError(root, error);
         }).then(function () {
             if (submit) {
                 submit.disabled = false;
+                submit.textContent = 'Guardar stock';
             }
         });
     }
@@ -1300,6 +1752,9 @@
         var stockLocationFilter = qs('[data-stock-filter-location]', root);
         var stockExpiryFilter = qs('[data-stock-filter-expiry]', root);
         var productSearch = qs('[data-stock-product-search]', root);
+        var barcodeInput = qs('[data-stock-barcode-input]', root);
+        var barcodeSearch = qs('[data-stock-barcode-search]', root);
+        var productRequestForm = qs('[data-product-request-form]', root);
         var movementForm = qs('[data-stock-movement-form]', root);
         var movementCancel = qs('[data-stock-movement-cancel]', root);
         var movementOperation = qs('[data-stock-movement-operation]', root);
@@ -1337,6 +1792,7 @@
                 resetStockForm(root);
                 resetMovementForm(root);
                 resetRuleForm(root);
+                updateStockFormAvailability(root);
                 reloadGroupData(root);
             });
         }
@@ -1428,8 +1884,26 @@
             productSearch.addEventListener('input', function () {
                 window.clearTimeout(state.productSearchTimer);
                 state.productSearchTimer = window.setTimeout(function () {
-                    loadProducts(root, productSearch.value.trim());
+                    searchStockProducts(root, productSearch.value.trim());
                 }, 250);
+            });
+        }
+        if (barcodeSearch) {
+            barcodeSearch.addEventListener('click', function () {
+                searchStockBarcode(root);
+            });
+        }
+        if (barcodeInput) {
+            barcodeInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchStockBarcode(root);
+                }
+            });
+        }
+        if (productRequestForm) {
+            productRequestForm.addEventListener('submit', function (event) {
+                saveProductRequest(root, event);
             });
         }
         if (movementForm) {
@@ -1569,6 +2043,23 @@
             var alertRead = event.target.closest('[data-stock-alert-read]');
             var ruleEdit = event.target.closest('[data-stock-rule-edit]');
             var ruleDelete = event.target.closest('[data-stock-rule-delete]');
+            var productPick = event.target.closest('[data-stock-product-pick]');
+            var productClear = event.target.closest('[data-stock-product-clear]');
+            var productRequestOpen = event.target.closest('[data-product-request-open]');
+            var productRequestClose = event.target.closest('[data-product-request-close]');
+
+            if (productPick) {
+                selectStockProduct(root, productFromKnownLists(productPick.getAttribute('data-stock-product-pick')));
+            }
+            if (productClear) {
+                clearSelectedStockProduct(root);
+            }
+            if (productRequestOpen) {
+                openProductRequestModal(root, productRequestOpen.getAttribute('data-product-request-open'));
+            }
+            if (productRequestClose) {
+                closeProductRequestModal(root);
+            }
 
             if (locationEdit) {
                 fillLocationForm(root, getLocation(locationEdit.getAttribute('data-stock-location-edit')));
@@ -1613,6 +2104,7 @@
         }
         bind(root);
         updateMovementModeVisibility(root);
+        updateStockFormAvailability(root);
         loadProducts(root, '');
         loadUnits(root);
         loadGroups(root);

@@ -471,6 +471,8 @@ Endpoints consumidos:
 - `GET /api/v1/products/{productId}/supermarket-prices`
 - `GET /api/v1/products/{productId}/best-price`
 - `GET /api/v1/products/{productId}/price-history?chain_id=&branch_id=&date_from=&date_to=&per_page=`
+- `POST /api/v1/family-groups/{groupId}/stock/manual-product`
+- `POST /api/v1/product-requests`
 - `GET /api/v1/promotions?chain_id=&branch_id=&product_id=&payment_method_id=&day=&active=&per_page=`
 - `GET /api/v1/payment-methods`
 - `GET /api/v1/notifications`
@@ -492,6 +494,8 @@ Campos reales usados:
 - Productos por sucursal: `product`, `branch`, `current_price`, `source_name`, `last_scraped_at`, `status`.
 - Precios: `price`, `currency`, `scraped_at/captured_at`, `valid_from`, `valid_to`, `source`, `status`.
 - Promociones: `name`, `description`, `discount_type`, `discount_value`, `valid_from`, `valid_to`, `day_of_week`, `requires_payment_method`, `status`.
+- Productos manuales: mobile debe usar `POST /api/v1/family-groups/{groupId}/stock/manual-product` cuando una búsqueda o barcode no encuentra resultados. El endpoint crea en una transacción un producto `pending_review`, stock item, movimiento y `ProductRequest` vinculada. El usuario puede usarlo inmediatamente en su grupo; el catálogo global queda curado hasta aprobación admin.
+- Solicitudes de producto: `POST /api/v1/product-requests` sigue disponible como cola explícita, pero el flujo principal de stock/barcode no debe bloquear al usuario esperando aprobación.
 
 Ubicacion y mapa:
 

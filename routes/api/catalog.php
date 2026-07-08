@@ -81,6 +81,16 @@ Route::patch('admin/products/{id}', [\App\Http\Controllers\Api\V1\Products\Admin
 Route::delete('admin/products/{id}', [\App\Http\Controllers\Api\V1\Products\AdminProductController::class, 'destroy'])
     ->middleware('permission:catalog.manage');
 
+// Product requests — user and catalog admin review
+Route::get('product-requests', [\App\Http\Controllers\Api\V1\ProductRequests\ProductRequestController::class, 'index']);
+Route::post('product-requests', [\App\Http\Controllers\Api\V1\ProductRequests\ProductRequestController::class, 'store'])
+    ->middleware('throttle:20,1');
+Route::get('product-requests/{id}', [\App\Http\Controllers\Api\V1\ProductRequests\ProductRequestController::class, 'show']);
+Route::post('product-requests/{id}/approve', [\App\Http\Controllers\Api\V1\ProductRequests\ProductRequestController::class, 'approve'])
+    ->middleware('permission:catalog.manage');
+Route::post('product-requests/{id}/reject', [\App\Http\Controllers\Api\V1\ProductRequests\ProductRequestController::class, 'reject'])
+    ->middleware('permission:catalog.manage');
+
 // Products — catalog (specific routes before wildcard {id})
 Route::get('products/barcode/{barcode}', [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'findByBarcode']);
 Route::get('products/{id}/nutrition',    [\App\Http\Controllers\Api\V1\Products\ProductCatalogController::class, 'nutrition']);

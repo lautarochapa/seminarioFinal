@@ -22,6 +22,9 @@ class StockItemResource extends JsonResource
                 return $this->product ? [
                     'id' => $this->product->id,
                     'name' => $this->product->name,
+                    'status' => $this->product->status,
+                    'origin' => $this->product->origin,
+                    'review_status' => $this->product->status === 'pending_review' ? 'pending_review' : null,
                 ] : null;
             }),
             'location' => $this->whenLoaded('location', function () {

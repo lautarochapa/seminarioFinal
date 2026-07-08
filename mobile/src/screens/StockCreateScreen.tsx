@@ -22,7 +22,7 @@ import { FamilyGroupSelector } from '@/components/FamilyGroupSelector';
 import { EmptyState } from '@/components/EmptyState';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useStockLocations } from '@/hooks/useStockLocations';
-import { stockApi, productsApi } from '@/api/endpoints';
+import { stockApi, productsApi, unitsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { useProducts } from '@/hooks/useProducts';
@@ -30,6 +30,7 @@ import { consumePendingScanResult } from '@/utils/barcodeScanResult';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { ProductSummary } from '@/types/product';
 import type { StockLocation } from '@/types/stock';
+import type { Unit } from '@/types/unit';
 
 const DEBOUNCE_MS = 400;
 
@@ -55,6 +56,13 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [manualSubmitting, setManualSubmitting] = useState(false);
+  const [manualMessage, setManualMessage] = useState<string | null>(null);
+  const [manualVisible, setManualVisible] = useState(false);
+  const [manualName, setManualName] = useState('');
+  const [manualUnitId, setManualUnitId] = useState<number | null>(null);
+  const [manualQuantity, setManualQuantity] = useState('1');
+  const [units, setUnits] = useState<Unit[]>([]);
 
   // Product search modal
   const [productModalVisible, setProductModalVisible] = useState(false);
@@ -66,9 +74,19 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
     setProductSearch(text);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setProductFilters({ search: text || undefined });
+      setProductFilters({ search: text || undefined, family_group_id: groupId || undefined });
     }, DEBOUNCE_MS);
-  }, [setProductFilters]);
+  }, [groupId, setProductFilters]);
+
+  useEffect(() => {
+    unitsApi.list()
+      .then((res) => {
+        const loaded = res.data || [];
+        setUnits(loaded);
+        if (!manualUnitId && loaded[0]) setManualUnitId(loaded[0].id);
+      })
+      .catch(() => setUnits([]));
+  }, [manualUnitId]);
 
   useEffect(() => {
     return () => {
@@ -86,6 +104,47 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
     setProductModalVisible(false);
     setFieldErrors((e) => ({ ...e, product_id: '', unit_id: '' }));
   }, []);
+
+  function openManualProduct() {
+    const name = productSearch.trim();
+    if (!name) return;
+    setManualName(name);
+    setManualQuantity(quantity || '1');
+    setManualVisible(true);
+    setManualMessage(null);
+  }
+
+  async function handleManualProductSubmit() {
+    const name = manualName.trim();
+    if (!groupId || !name || !manualUnitId || !manualQuantity || Number(manualQuantity) <= 0) return;
+    setManualSubmitting(true);
+    setManualMessage(null);
+    try {
+      await stockApi.createManualProduct(groupId, {
+        product: {
+          name,
+          unit_id: manualUnitId,
+        },
+        stock: {
+          quantity: Number(manualQuantity),
+          unit_id: manualUnitId,
+          stock_location_id: locationId,
+          expiration_date: expirationDate || null,
+          purchase_price: purchasePrice ? Number(purchasePrice) : null,
+        },
+      });
+      setManualVisible(false);
+      router.replace('/(app)/stock' as never);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setManualMessage(err.normalized.message);
+      } else {
+        setManualMessage('No se pudo cargar el producto.');
+      }
+    } finally {
+      setManualSubmitting(false);
+    }
+  }
 
   // Picks up the product resolved by the barcode scanner screen (if any) without
   // losing the fields the user already filled in on this screen.
@@ -196,7 +255,9 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               accessibilityLabel="Seleccionar producto"
             >
               {productName ? (
-                <Text style={styles.selectorValue} numberOfLines={1}>{productName}</Text>
+            <View style={styles.selectedProductText}>
+              <Text style={styles.selectorValue} numberOfLines={1}>{productName}</Text>
+            </View>
               ) : (
                 <Text style={styles.selectorPlaceholder}>Buscar producto...</Text>
               )}
@@ -331,6 +392,9 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               autoCorrect={false}
             />
           </View>
+          {manualMessage ? (
+            <Text style={styles.requestMessage}>{manualMessage}</Text>
+          ) : null}
           {loadingProducts ? (
             <ActivityIndicator style={styles.modalLoading} color={COLORS.primary} />
           ) : (
@@ -346,6 +410,9 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
                 >
                   <View style={styles.modalItemBody}>
                     <Text style={styles.modalItemName} numberOfLines={1}>{item.name}</Text>
+                    {item.review_status === 'pending_review' ? (
+                      <Text style={styles.pendingBadge}>Pendiente de revisión</Text>
+                    ) : null}
                     {item.brand?.name ? (
                       <Text style={styles.modalItemMeta} numberOfLines={1}>{item.brand.name}</Text>
                     ) : null}
@@ -354,11 +421,66 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
                 </Pressable>
               )}
               ListEmptyComponent={
-                <Text style={styles.modalEmpty}>Sin resultados.</Text>
+                <View style={styles.modalEmptyBox}>
+                  <Text style={styles.modalEmpty}>Sin resultados.</Text>
+                  {productSearch.trim().length > 1 ? (
+                    <AppButton
+                      title="Cargar producto manualmente"
+                      variant="outline"
+                      onPress={openManualProduct}
+                      fullWidth
+                    />
+                  ) : null}
+                </View>
               }
               keyboardShouldPersistTaps="handled"
             />
           )}
+        </View>
+      </Modal>
+
+      <Modal
+        visible={manualVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setManualVisible(false)}
+      >
+        <View style={styles.modal}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Crear producto rápido</Text>
+            <Pressable onPress={() => setManualVisible(false)} style={styles.modalClose} accessibilityLabel="Cerrar" accessibilityRole="button">
+              <MaterialCommunityIcons name="close" size={24} color={COLORS.textPrimary} />
+            </Pressable>
+          </View>
+          <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+            <Text style={styles.hintText}>Se carga ahora en tu stock y queda pendiente de revisión del catálogo.</Text>
+            <AppInput label="Nombre *" value={manualName} onChangeText={setManualName} placeholder="Producto" />
+            <AppInput label="Cantidad en stock *" value={manualQuantity} onChangeText={setManualQuantity} keyboardType="decimal-pad" placeholder="1" />
+            <Text style={styles.label}>Unidad *</Text>
+            <View style={styles.chipRow}>
+              {units.map((unit) => (
+                <Pressable
+                  key={unit.id}
+                  style={[styles.locationChip, manualUnitId === unit.id && styles.locationChipSelected]}
+                  onPress={() => setManualUnitId(unit.id)}
+                  accessibilityRole="button"
+                  accessibilityLabel={unit.name}
+                >
+                  <Text style={[styles.chipText, manualUnitId === unit.id && styles.chipTextSelected]} numberOfLines={1}>
+                    {unit.symbol || unit.code || unit.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {manualMessage ? <Text style={styles.fieldError}>{manualMessage}</Text> : null}
+            <AppButton
+              title="Cargar producto y stock"
+              onPress={handleManualProductSubmit}
+              loading={manualSubmitting}
+              disabled={!manualName.trim() || !manualUnitId || !manualQuantity || Number(manualQuantity) <= 0}
+              fullWidth
+            />
+          </ScrollView>
         </View>
       </Modal>
     </View>
@@ -396,6 +518,7 @@ const styles = StyleSheet.create({
     fontSize: FONT.bodySize,
     color: COLORS.textPrimary,
   },
+  selectedProductText: { flex: 1 },
   selectorPlaceholder: {
     flex: 1,
     fontSize: FONT.bodySize,
@@ -517,10 +640,17 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xs,
     color: COLORS.textSecondary,
   },
+  pendingBadge: {
+    alignSelf: 'flex-start',
+    color: COLORS.warning,
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '700',
+  },
   modalEmpty: {
     textAlign: 'center',
-    padding: SPACING.xxl,
     color: COLORS.textHint,
     fontSize: FONT.bodySize,
   },
+  modalEmptyBox: { padding: SPACING.xxl, gap: SPACING.md },
+  requestMessage: { color: COLORS.textSecondary, fontSize: FONT_SIZE.sm, paddingHorizontal: SPACING.md, paddingTop: SPACING.sm },
 });

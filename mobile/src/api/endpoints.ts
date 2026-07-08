@@ -19,7 +19,7 @@ import type {
   CreateFamilyGroupRequest,
   InviteMemberRequest,
 } from '@/types/familyGroup';
-import type { ProductSummary, ProductDetail, ProductFilters } from '@/types/product';
+import type { ProductSummary, ProductDetail, ProductFilters, ProductRequestCreate, ManualProductStockCreate } from '@/types/product';
 import type {
   StockItem,
   StockLocation,
@@ -147,8 +147,15 @@ export const productsApi = {
   get(id: number): Promise<ApiResponse<ProductDetail>> {
     return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/${id}`);
   },
-  findByBarcode(barcode: string): Promise<ApiResponse<ProductDetail>> {
-    return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/barcode/${encodeURIComponent(barcode)}`);
+  findByBarcode(barcode: string, familyGroupId?: number | null): Promise<ApiResponse<ProductDetail>> {
+    const qs = toQueryString({ family_group_id: familyGroupId || undefined });
+    return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/barcode/${encodeURIComponent(barcode)}${qs}`);
+  },
+};
+
+export const productRequestsApi = {
+  create(payload: ProductRequestCreate): Promise<ApiResponse<unknown>> {
+    return apiClient.post<ApiResponse<unknown>>('/api/v1/product-requests', payload);
   },
 };
 
@@ -159,6 +166,9 @@ export const stockApi = {
   },
   create(groupId: number, payload: StockCreateRequest): Promise<ApiResponse<StockItem>> {
     return apiClient.post<ApiResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock`, payload);
+  },
+  createManualProduct(groupId: number, payload: ManualProductStockCreate): Promise<ApiResponse<unknown>> {
+    return apiClient.post<ApiResponse<unknown>>(`/api/v1/family-groups/${groupId}/stock/manual-product`, payload);
   },
   update(groupId: number, stockItemId: number, payload: StockUpdateRequest): Promise<ApiResponse<StockItem>> {
     return apiClient.patch<ApiResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock/${stockItemId}`, payload);

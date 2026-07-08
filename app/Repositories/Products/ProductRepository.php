@@ -12,10 +12,24 @@ class ProductRepository
 {
     public function paginate(array $filters, $publicOnly = false)
     {
-        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images']);
+        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images']);
 
         if ($publicOnly) {
-            $query->where('status', 'active')->where('is_active', true);
+            $familyGroupId = ! empty($filters['family_group_id']) ? (int) $filters['family_group_id'] : null;
+            $query->where(function ($scope) use ($familyGroupId) {
+                $scope->where(function ($active) {
+                    $active->where('status', 'active')->where('is_active', true);
+                });
+
+                if ($familyGroupId) {
+                    $scope->orWhere(function ($pending) use ($familyGroupId) {
+                        $pending->where('status', 'pending_review')
+                            ->where('origin', 'user_created')
+                            ->where('family_group_id', $familyGroupId)
+                            ->where('is_active', true);
+                    });
+                }
+            });
         } elseif (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
@@ -72,7 +86,7 @@ class ProductRepository
 
     public function findOrFail($id)
     {
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])->find($id);
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])->find($id);
 
         if (! $product) {
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
@@ -81,12 +95,24 @@ class ProductRepository
         return $product;
     }
 
-    public function findPublicOrFail($id)
+    public function findPublicOrFail($id, ?int $familyGroupId = null)
     {
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])
             ->where('id', $id)
-            ->where('status', 'active')
-            ->where('is_active', true)
+            ->where(function ($scope) use ($familyGroupId) {
+                $scope->where(function ($active) {
+                    $active->where('status', 'active')->where('is_active', true);
+                });
+
+                if ($familyGroupId) {
+                    $scope->orWhere(function ($pending) use ($familyGroupId) {
+                        $pending->where('status', 'pending_review')
+                            ->where('origin', 'user_created')
+                            ->where('family_group_id', $familyGroupId)
+                            ->where('is_active', true);
+                    });
+                }
+            })
             ->first();
 
         if (! $product) {
@@ -98,7 +124,7 @@ class ProductRepository
 
     public function findWithTrashedOrFail($id)
     {
-        $product = Product::withTrashed()->with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])->find($id);
+        $product = Product::withTrashed()->with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])->find($id);
 
         if (! $product) {
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
@@ -131,7 +157,7 @@ class ProductRepository
 
     public function create(array $data)
     {
-        return Product::create($data)->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images']);
+        return Product::create($data)->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images']);
     }
 
     public function update(Product $product, array $data)
@@ -139,7 +165,7 @@ class ProductRepository
         $product->fill($data);
         $product->save();
 
-        return $product->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images']);
+        return $product->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images']);
     }
 
     public function syncBarcode(Product $product, $barcode)
@@ -186,7 +212,7 @@ class ProductRepository
             ->get();
     }
 
-    public function findPublicByBarcodeOrFail(string $barcode)
+    public function findPublicByBarcodeOrFail(string $barcode, ?int $familyGroupId = null)
     {
         $barcodeRecord = ProductBarcode::where('barcode', $barcode)
             ->where('status', 'active')
@@ -196,10 +222,22 @@ class ProductRepository
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
         }
 
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])
+        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])
             ->where('id', $barcodeRecord->product_id)
-            ->where('status', 'active')
-            ->where('is_active', true)
+            ->where(function ($scope) use ($familyGroupId) {
+                $scope->where(function ($active) {
+                    $active->where('status', 'active')->where('is_active', true);
+                });
+
+                if ($familyGroupId) {
+                    $scope->orWhere(function ($pending) use ($familyGroupId) {
+                        $pending->where('status', 'pending_review')
+                            ->where('origin', 'user_created')
+                            ->where('family_group_id', $familyGroupId)
+                            ->where('is_active', true);
+                    });
+                }
+            })
             ->first();
 
         if (! $product) {
@@ -285,7 +323,7 @@ class ProductRepository
 
     public function alternatives(Product $product)
     {
-        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'barcodes', 'images'])
+        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])
             ->where('id', '<>', $product->id)
             ->where('status', 'active')
             ->where('is_active', true);

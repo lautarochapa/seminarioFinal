@@ -17,6 +17,7 @@ use App\PriceRefreshRequest;
 use App\Product;
 use App\ProductBarcode;
 use App\ProductCategory;
+use App\ProductRequest;
 use App\Promotion;
 use App\Recipe;
 use App\RecipeTag;
@@ -79,6 +80,7 @@ class AdminWebScreenController extends Controller
             'units' => UnitMeasure::count(),
             'conversions' => UnitConversion::count(),
             'products' => Product::count(),
+            'product_requests' => ProductRequest::count(),
             'product_categories' => ProductCategory::count(),
             'brands' => Brand::count(),
             'barcodes' => ProductBarcode::count(),
@@ -121,6 +123,7 @@ class AdminWebScreenController extends Controller
             'food-tags' => ['title' => 'Tags alimentarios', 'module' => 'Catalogo', 'description' => 'Etiquetas de salud y dieta.', 'primary' => 'Nuevo tag', 'secondary' => 'Ver catalogo', 'metrics' => ['food_tags'], 'panels' => ['Tags', 'Tipos', 'Catalogo', 'Estado'], 'permission' => 'catalog.manage'],
             'product-categories' => ['title' => 'Categorias productos', 'module' => 'Productos', 'description' => 'Categorias comerciales jerarquicas.', 'primary' => 'Nueva categoria', 'secondary' => 'Ver arbol', 'metrics' => ['product_categories', 'products'], 'panels' => ['Categorias', 'Jerarquia', 'Catalogo', 'Estado'], 'permission' => 'catalog.manage'],
             'products' => ['title' => 'Productos', 'module' => 'Productos', 'description' => 'ABM productos.', 'primary' => 'Nuevo producto', 'secondary' => 'Importar', 'metrics' => ['products', 'brands'], 'panels' => ['Listado', 'Marca', 'Categoria', 'Nutricion']],
+            'product-requests' => ['title' => 'Solicitudes de productos', 'module' => 'Productos', 'description' => 'Revision de productos solicitados por usuarios para el catalogo interno.', 'primary' => 'Ver pendientes', 'secondary' => 'Ver rechazadas', 'metrics' => ['product_requests', 'products'], 'panels' => ['Pendientes', 'Aprobadas', 'Rechazadas', 'Creacion'], 'permission' => 'web.admin.product-requests'],
             'brands' => ['title' => 'Marcas', 'module' => 'Productos', 'description' => 'ABM marcas.', 'primary' => 'Nueva marca', 'secondary' => 'Normalizar', 'metrics' => ['brands'], 'panels' => ['Listado', 'Normalizados', 'Productos', 'Estado']],
             'barcodes' => ['title' => 'Codigos de barra', 'module' => 'Productos', 'description' => 'Gestion barcodes.', 'primary' => 'Nuevo codigo', 'secondary' => 'Buscar duplicados', 'metrics' => ['barcodes', 'products'], 'panels' => ['Codigos', 'Productos', 'Duplicados', 'Estado']],
             'supermarkets' => ['title' => 'Supermercados', 'module' => 'Supermercados', 'description' => 'ABM cadenas.', 'primary' => 'Nueva cadena', 'secondary' => 'Editar', 'metrics' => ['supermarkets'], 'panels' => ['Cadenas', 'Sitios', 'Estado', 'Scraping']],

@@ -924,6 +924,9 @@
                         <select class="form-control" name="default_unit_id" data-product-unit-select>
                             <option value="">Unidad</option>
                         </select>
+                        <select class="form-control" name="package_unit_id" data-product-package-unit-select>
+                            <option value="">Unidad de paquete</option>
+                        </select>
                         <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
@@ -979,6 +982,83 @@
                     <div data-product-images class="muted" style="margin-top:10px">Selecciona un producto.</div>
                 </article>
             </section>
+        </section>
+    @elseif($screenKey === 'product-requests')
+        <section data-admin-product-requests>
+            <div class="alert" data-product-requests-message style="display:none"></div>
+            <div class="rbac-layout">
+                <article class="panel">
+                    <div class="admin-tools">
+                        <input class="form-control" type="search" data-product-requests-search placeholder="Buscar nombre, marca o barcode">
+                        <select class="form-control" data-product-requests-status>
+                            <option value="pending">Pendientes</option>
+                            <option value="approved">Aprobadas</option>
+                            <option value="rejected">Rechazadas</option>
+                            <option value="">Todas</option>
+                        </select>
+                        <button type="button" class="btn-ghost" data-product-requests-refresh>Actualizar</button>
+                        <span class="chip" data-product-requests-count>0 solicitudes</span>
+                    </div>
+                    <div style="overflow:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Solicitud</th>
+                                    <th>Solicitante</th>
+                                    <th>Barcode</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody data-product-requests-body>
+                                <tr><td colspan="6" class="muted">Cargando solicitudes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="audit-pagination">
+                        <button type="button" class="btn-ghost btn-sm" data-product-requests-prev>Anterior</button>
+                        <span class="muted" data-product-requests-page>Pagina 1</span>
+                        <button type="button" class="btn-ghost btn-sm" data-product-requests-next>Siguiente</button>
+                    </div>
+                </article>
+
+                <aside class="panel">
+                    <h2 data-product-request-form-title>Selecciona una solicitud</h2>
+                    <div data-product-request-detail class="muted" style="margin-bottom:12px">Usa Aprobar para completar los datos del producto interno.</div>
+                    <form class="rbac-form" data-product-request-approve-form>
+                        <input type="hidden" name="id">
+                        <input class="form-control" name="name" type="text" placeholder="Nombre del producto">
+                        <select class="form-control" name="brand_id" data-product-request-brand>
+                            <option value="">Marca</option>
+                        </select>
+                        <select class="form-control" name="category_id" data-product-request-category>
+                            <option value="">Categoria</option>
+                        </select>
+                        <select class="form-control" name="ingredient_id" data-product-request-ingredient>
+                            <option value="">Ingrediente principal</option>
+                        </select>
+                        <input class="form-control" name="barcode" type="text" placeholder="Codigo de barras">
+                        <input class="form-control" name="net_quantity" type="number" min="0" step="0.0001" placeholder="Cantidad neta">
+                        <select class="form-control" name="default_unit_id" data-product-request-unit required>
+                            <option value="">Unidad base *</option>
+                        </select>
+                        <select class="form-control" name="package_unit_id" data-product-request-package-unit>
+                            <option value="">Unidad de paquete</option>
+                        </select>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="review_notes" rows="2" placeholder="Notas de revision"></textarea>
+                        <select class="form-control" name="status">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main">Aprobar y crear producto</button>
+                            <button type="button" class="btn-ghost" data-product-request-reject>Rechazar</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
         </section>
     @elseif($screenKey === 'barcodes')
         <section data-admin-barcodes>

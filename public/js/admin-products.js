@@ -104,7 +104,7 @@
         renderSelects(root, ['[data-products-brand]', '[data-product-brand-select]'], state.brands, ['Marca', 'Marca']);
         renderSelects(root, ['[data-products-category]', '[data-product-category-select]'], state.categories, ['Categoria', 'Categoria']);
         renderSelects(root, ['[data-products-ingredient]', '[data-product-ingredient-select]'], state.ingredients, ['Ingrediente', 'Ingrediente principal']);
-        renderSelects(root, ['[data-product-unit-select]'], state.units, ['Unidad'], unitLabel);
+        renderSelects(root, ['[data-product-unit-select]', '[data-product-package-unit-select]'], state.units, ['Unidad', 'Unidad de paquete'], unitLabel);
     }
 
     function renderSelects(root, selectors, items, labels, labeler) {
@@ -198,7 +198,7 @@
     }
 
     function payload(form) {
-        var numeric = ['brand_id', 'category_id', 'ingredient_id', 'default_unit_id'];
+        var numeric = ['brand_id', 'category_id', 'ingredient_id', 'default_unit_id', 'package_unit_id'];
         var decimal = ['net_quantity'];
         var data = {};
         Array.from(new FormData(form).entries()).forEach(function (entry) {
@@ -236,6 +236,7 @@
         form.elements.barcode.value = product.barcode || '';
         form.elements.net_quantity.value = product.net_quantity || '';
         form.elements.default_unit_id.value = product.default_unit_id || '';
+        form.elements.package_unit_id.value = product.package_unit_id || '';
         form.elements.description.value = product.description || '';
         form.elements.status.value = product.status || 'active';
         qs('[data-product-form-title]', root).textContent = 'Editar producto #' + product.id;
