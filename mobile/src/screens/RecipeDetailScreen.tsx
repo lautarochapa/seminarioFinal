@@ -28,7 +28,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   const router = useRouter();
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
-  const { data, loading, error, refresh } = useRecipeDetail(recipeId);
+  const { data, nutrition, cost, loading, error, refresh } = useRecipeDetail(recipeId);
   const favorites = useRecipeFavorites();
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<RecipeShoppingListResult | null>(null);
@@ -83,6 +83,14 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
 
   const minutes = (data.prep_time_minutes ?? 0) + (data.cook_time_minutes ?? 0);
   const listItems = result?.shopping_list.items ?? [];
+  const nutritionRows = [
+    ['Calorías', nutrition?.calories_per_serving ?? nutrition?.calories_total, 'kcal'],
+    ['Proteínas', nutrition?.protein_per_serving ?? nutrition?.protein_total, 'g'],
+    ['Carbohidratos', nutrition?.carbohydrates_per_serving ?? nutrition?.carbohydrates_total, 'g'],
+    ['Grasas', nutrition?.fat_per_serving ?? nutrition?.fat_total, 'g'],
+    ['Sodio', nutrition?.sodium_per_serving ?? nutrition?.sodium_total, 'mg'],
+  ].filter((row) => row[1] !== null && row[1] !== undefined && row[1] !== '');
+  const costValue = cost?.cost_per_serving ?? cost?.total_cost;
 
   return (
     <View style={styles.fill}>
@@ -112,6 +120,20 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pasos</Text>
           {data.steps && data.steps.length > 0 ? data.steps.map((step) => <RecipeStep key={step.step_number} step={step} />) : <Text style={styles.emptyText}>Sin pasos cargados.</Text>}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Nutrición y costo</Text>
+          {nutritionRows.length > 0 ? nutritionRows.map(([label, value, unit]) => (
+            <View key={String(label)} style={styles.infoRow}>
+              <Text style={styles.infoLabel}>{label}</Text>
+              <Text style={styles.infoValue}>{formatValue(value)} {unit}</Text>
+            </View>
+          )) : <Text style={styles.emptyText}>Sin información nutricional disponible.</Text>}
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Costo estimado</Text>
+            <Text style={styles.infoValue}>{costValue === null || costValue === undefined ? 'Sin información' : `${formatMoneyValue(costValue)}${cost?.currency ? ` ${cost.currency}` : ''}`}</Text>
+          </View>
         </View>
 
         {groupId ? (
@@ -204,4 +226,19 @@ const styles = StyleSheet.create({
   blocked: { fontSize: FONT.captionSize, color: COLORS.textSecondary, textAlign: 'center' },
   noGroup: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, gap: SPACING.sm, alignItems: 'center', ...SHADOW.sm },
   generateBtn: { marginTop: SPACING.xs },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', gap: SPACING.sm },
+  infoLabel: { color: COLORS.textSecondary, fontSize: FONT.captionSize },
+  infoValue: { color: COLORS.textPrimary, fontSize: FONT.captionSize, fontWeight: '700' },
 });
+
+function formatValue(value: unknown): string {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return String(value ?? '-');
+  return n.toLocaleString('es-AR', { maximumFractionDigits: 2 });
+}
+
+function formatMoneyValue(value: unknown): string {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return String(value ?? '-');
+  return n.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+}

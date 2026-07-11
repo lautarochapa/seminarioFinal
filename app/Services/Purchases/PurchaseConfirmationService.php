@@ -3,9 +3,11 @@
 namespace App\Services\Purchases;
 
 use App\AuditLog;
+use App\Budget;
 use App\Exceptions\Purchases\PurchaseException;
 use App\Purchase;
 use App\PurchaseItem;
+use App\Repositories\Budgets\BudgetAlertRepository;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\HouseholdStock\HouseholdStockRepository;
 use App\Repositories\Purchases\PurchaseRepository;
@@ -23,17 +25,20 @@ class PurchaseConfirmationService
     private $groupRepo;
     private $stockRepo;
     private $movementRepo;
+    private $budgetAlerts;
 
     public function __construct(
         PurchaseRepository $purchaseRepo,
         FamilyGroupRepository $groupRepo,
         HouseholdStockRepository $stockRepo,
-        StockMovementRepository $movementRepo
+        StockMovementRepository $movementRepo,
+        BudgetAlertRepository $budgetAlerts
     ) {
         $this->purchaseRepo = $purchaseRepo;
         $this->groupRepo    = $groupRepo;
         $this->stockRepo    = $stockRepo;
         $this->movementRepo = $movementRepo;
+        $this->budgetAlerts = $budgetAlerts;
     }
 
     public function confirm(int $groupId, int $purchaseId, int $userId, string $ip, string $ua): Purchase
@@ -60,6 +65,7 @@ class PurchaseConfirmationService
 
             $this->purchaseRepo->update($purchase, ['actual_total' => $actual]);
             $purchase->refresh();
+            $this->createBudgetAlertIfNeeded($purchase);
 
             AuditLog::create([
                 'user_id'     => $userId,
@@ -176,6 +182,56 @@ class PurchaseConfirmationService
             'purchase_date'            => $purchase->purchase_date,
             'estimated_purchase_price' => $item->unit_price !== null ? (float) $item->unit_price : null,
             'status'                   => 'active',
+        ]);
+    }
+
+    private function createBudgetAlertIfNeeded(Purchase $purchase): void
+    {
+        if ($purchase->actual_total === null || ! $purchase->purchase_date) {
+            return;
+        }
+
+        $budget = Budget::where('family_group_id', $purchase->family_group_id)
+            ->where('year', (int) date('Y', strtotime($purchase->purchase_date)))
+            ->where('month', (int) date('n', strtotime($purchase->purchase_date)))
+            ->where('status', 'active')
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (! $budget || (float) $budget->total_amount <= 0) {
+            return;
+        }
+
+        $spent = round((float) Purchase::where('family_group_id', $purchase->family_group_id)
+            ->whereYear('purchase_date', $budget->year)
+            ->whereMonth('purchase_date', $budget->month)
+            ->whereIn('status', [self::STATUS_CONFIRMED, self::STATUS_STOCK_ADDED])
+            ->whereNull('deleted_at')
+            ->sum('actual_total'), 2);
+
+        $percent = round(($spent / (float) $budget->total_amount) * 100, 2);
+        $type = null;
+        $severity = null;
+
+        if ($spent >= (float) $budget->total_amount) {
+            $type = 'limit_exceeded';
+            $severity = 'critical';
+        } elseif ($percent >= 80) {
+            $type = 'near_limit';
+            $severity = 'warning';
+        }
+
+        if (! $type || $this->budgetAlerts->existsUnreadForType($budget->id, $type)) {
+            return;
+        }
+
+        $this->budgetAlerts->create([
+            'budget_id' => $budget->id,
+            'alert_type' => $type,
+            'message' => 'El presupuesto alcanzo el '.$percent.'% de consumo.',
+            'severity' => $severity,
+            'status' => 'unread',
+            'created_at' => now(),
         ]);
     }
 }

@@ -50,7 +50,7 @@ class DemoScenariosTest extends TestCase
 
     public function test_admin_can_create_scenario_and_it_is_audited()
     {
-        $admin = $this->userWithPermission('catalog.manage');
+        $admin = $this->userWithPermission('demo_scenarios.manage');
 
         $response = $this->actingAs($admin)
             ->postJson('/api/v1/admin/demo-scenarios', [
@@ -73,7 +73,7 @@ class DemoScenariosTest extends TestCase
 
     public function test_duplicate_name_is_rejected()
     {
-        $admin = $this->userWithPermission('catalog.manage');
+        $admin = $this->userWithPermission('demo_scenarios.manage');
         $this->scenario(['name' => 'Escenario unico']);
 
         $this->actingAs($admin)
@@ -83,7 +83,7 @@ class DemoScenariosTest extends TestCase
 
     public function test_admin_can_update_scenario_partially()
     {
-        $admin    = $this->userWithPermission('catalog.manage');
+        $admin    = $this->userWithPermission('demo_scenarios.manage');
         $scenario = $this->scenario(['name' => 'Original', 'status' => 'active']);
 
         $response = $this->actingAs($admin)
@@ -96,7 +96,7 @@ class DemoScenariosTest extends TestCase
 
     public function test_admin_can_soft_delete_scenario()
     {
-        $admin    = $this->userWithPermission('catalog.manage');
+        $admin    = $this->userWithPermission('demo_scenarios.manage');
         $scenario = $this->scenario();
 
         $this->actingAs($admin)
@@ -145,7 +145,7 @@ class DemoScenariosTest extends TestCase
 
     public function test_admin_list_includes_inactive_scenarios()
     {
-        $admin = $this->userWithPermission('catalog.manage');
+        $admin = $this->userWithPermission('demo_scenarios.manage');
         $this->scenario(['status' => 'active']);
         $this->scenario(['status' => 'inactive']);
 
@@ -154,5 +154,14 @@ class DemoScenariosTest extends TestCase
             ->assertStatus(200);
 
         $this->assertEquals(2, $response->json('meta.total'));
+    }
+
+    public function test_catalog_manage_does_not_grant_admin_access()
+    {
+        $user = $this->userWithPermission('catalog.manage');
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/admin/demo-scenarios')
+            ->assertStatus(403);
     }
 }

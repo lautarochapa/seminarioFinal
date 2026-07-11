@@ -20,8 +20,8 @@ class AdminThesisDocumentsTest extends TestCase
     {
         $user = factory(User::class)->create();
         $perm = Permission::firstOrCreate(
-            ['code' => 'catalog.manage'],
-            ['module' => 'catalog', 'action' => 'manage', 'status' => 'active']
+            ['code' => 'thesis_documents.manage'],
+            ['module' => 'thesis_documents', 'action' => 'manage', 'status' => 'active']
         );
         $role = Role::create(['code' => 'admin_' . uniqid(), 'name' => 'Admin', 'status' => 'active']);
         DB::table('role_permissions')->insert(['role_id' => $role->id, 'permission_id' => $perm->id]);
@@ -49,6 +49,22 @@ class AdminThesisDocumentsTest extends TestCase
         $user = factory(User::class)->create();
         $this->actingAs($user)->getJson('/api/v1/admin/thesis-documents')->assertStatus(403);
         $this->actingAs($user)->postJson('/api/v1/admin/thesis-documents', ['title' => 'X'])->assertStatus(403);
+    }
+
+    public function test_catalog_manage_does_not_grant_admin_access()
+    {
+        $user = factory(User::class)->create();
+        $perm = Permission::firstOrCreate(
+            ['code' => 'catalog.manage'],
+            ['module' => 'catalog', 'action' => 'manage', 'status' => 'active']
+        );
+        $role = Role::create(['code' => 'catalog_' . uniqid(), 'name' => 'Catalog', 'status' => 'active']);
+        DB::table('role_permissions')->insert(['role_id' => $role->id, 'permission_id' => $perm->id]);
+        DB::table('user_roles')->insert(['user_id' => $user->id, 'role_id' => $role->id, 'created_at' => now()]);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/admin/thesis-documents')
+            ->assertStatus(403);
     }
 
     public function test_admin_can_list_all_documents_including_drafts()

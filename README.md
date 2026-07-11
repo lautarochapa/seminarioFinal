@@ -85,6 +85,52 @@ Ese script llama a `scripts/bootstrap-local.ps1` y ahora tambien ejecuta una pas
 
 Si una PC nueva devuelve `403` en pantallas web o APIs protegidas, normalmente significa que no se aplicaron migrations de permisos/roles. En ese caso, volver a correr el script anterior deberia corregirlo.
 
+## Validacion de cierre
+
+Backend:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File .\scripts\run-test-suite.ps1
+```
+
+Mobile:
+
+```powershell
+cd mobile
+npm.cmd test -- --runInBand
+npm.cmd run typecheck
+```
+
+## Stock vencido
+
+El procesamiento automatico de vencimientos se ejecuta con:
+
+```powershell
+C:\xampp\php74\php.exe artisan stock:process-expired
+```
+
+El comando es idempotente: usa `stock_waste_logs.stock_item_id` para no procesar dos veces el mismo item, crea un movimiento `expiration`, deja el stock en cantidad cero y registra alerta, notificacion y auditoria. Esta programado diariamente en `app/Console/Kernel.php`.
+
+## Mobile en dispositivo fisico
+
+La app mobile toma la URL del backend desde `EXPO_PUBLIC_API_URL`. No dejar IPs LAN hardcodeadas en el codigo fuente.
+
+Para probar en un celular fisico dentro de la misma red:
+
+```powershell
+C:\xampp\php74\php.exe artisan serve --host=0.0.0.0 --port=8000
+cd mobile
+$env:EXPO_PUBLIC_API_URL="http://<IP-LAN-DE-LA-PC>:8000"
+$env:EXPO_PUBLIC_ALLOW_INSECURE_API="true"
+npx eas-cli@latest build --platform android --profile preview
+```
+
+Para produccion, usar una URL HTTPS real y no activar `EXPO_PUBLIC_ALLOW_INSECURE_API`.
+
+## Presupuesto
+
+El presupuesto no almacena un gasto acumulado duplicado. El total gastado se calcula dinamicamente a partir de las compras confirmadas o con stock cargado (`confirmed`, `stock_added`) y excluye compras canceladas, eliminadas o no confirmadas.
+
 ## Taxonomias de ingredientes
 
 Las categorias y taxonomias de soporte de ingredientes quedan versionadas en:

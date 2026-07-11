@@ -130,6 +130,37 @@ class BudgetSummaryTest extends TestCase
         $this->assertEquals(1,      $response->json('data.purchase_count'));
     }
 
+    public function test_summary_excludes_unconfirmed_and_deleted_purchases()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $budget = $this->budget($group, ['total_amount' => 10000]);
+        $this->confirmedPurchase($group, $user, '2026-06-10', 2500, 'confirmed');
+        $this->confirmedPurchase($group, $user, '2026-06-11', 1500, 'draft');
+        $deleted = $this->confirmedPurchase($group, $user, '2026-06-12', 2000, 'confirmed');
+        $deleted->delete();
+
+        $response = $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/budgets/{$budget->id}/summary")
+            ->assertStatus(200);
+
+        $this->assertEquals(2500.0, $response->json('data.spent_amount'));
+        $this->assertEquals(1,      $response->json('data.purchase_count'));
+    }
+
+    public function test_summary_counts_stock_added_purchase_once()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $budget = $this->budget($group, ['total_amount' => 10000]);
+        $this->confirmedPurchase($group, $user, '2026-06-10', 2500, 'stock_added');
+
+        $response = $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/budgets/{$budget->id}/summary")
+            ->assertStatus(200);
+
+        $this->assertEquals(2500.0, $response->json('data.spent_amount'));
+        $this->assertEquals(1,      $response->json('data.purchase_count'));
+    }
+
     public function test_projection_includes_pending_shopping_lists_as_planned()
     {
         Carbon::setTestNow('2026-06-15');

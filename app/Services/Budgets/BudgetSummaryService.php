@@ -28,7 +28,7 @@ class BudgetSummaryService
         $row = Purchase::where('family_group_id', $groupId)
             ->whereYear('purchase_date', $budget->year)
             ->whereMonth('purchase_date', $budget->month)
-            ->whereNotIn('status', ['cancelled'])
+            ->whereIn('status', ['confirmed', 'stock_added'])
             ->whereNull('deleted_at')
             ->selectRaw('COALESCE(SUM(actual_total), 0) as spent, COUNT(*) as count')
             ->first();
@@ -59,7 +59,7 @@ class BudgetSummaryService
         $spent = round((float) Purchase::where('family_group_id', $groupId)
             ->whereYear('purchase_date', $budget->year)
             ->whereMonth('purchase_date', $budget->month)
-            ->whereNotIn('status', ['cancelled'])
+            ->whereIn('status', ['confirmed', 'stock_added'])
             ->whereNull('deleted_at')
             ->sum('actual_total'), 2);
 
@@ -90,7 +90,7 @@ class BudgetSummaryService
         $periodEnd   = date('Y-m-t', strtotime($periodStart));
 
         $purchasedListIds = Purchase::where('family_group_id', $groupId)
-            ->whereNotIn('status', ['cancelled'])
+            ->whereIn('status', ['confirmed', 'stock_added'])
             ->whereNull('deleted_at')
             ->whereNotNull('shopping_list_id')
             ->pluck('shopping_list_id')

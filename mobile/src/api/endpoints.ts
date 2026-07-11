@@ -11,7 +11,7 @@ import type {
   ResetPasswordResponse,
 } from '@/types/auth';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
-import type { Profile } from '@/types/profile';
+import type { Profile, ProfileUpdateRequest } from '@/types/profile';
 import type {
   FamilyGroup,
   FamilyGroupMember,
@@ -22,10 +22,14 @@ import type {
 import type { ProductSummary, ProductDetail, ProductFilters, ProductRequestCreate, ManualProductStockCreate } from '@/types/product';
 import type {
   StockItem,
+  StockAdjustRequest,
   StockLocation,
   StockCreateRequest,
   StockUpdateRequest,
   StockFilters,
+  StockMovement,
+  StockMovementRequest,
+  StockScanRequest,
 } from '@/types/stock';
 import type {
   ShoppingList,
@@ -55,9 +59,11 @@ import type {
 import type { Unit } from '@/types/unit';
 import type {
   RecipeCategory,
+  RecipeCost,
   RecipeDetail,
   RecipeFavorite,
   RecipeFilters,
+  RecipeNutrition,
   RecipeSummary,
   RecipeSuggestion,
   GenerateShoppingListResult,
@@ -108,6 +114,9 @@ export const authApi = {
 export const profileApi = {
   get(): Promise<ApiResponse<Profile>> {
     return apiClient.get<ApiResponse<Profile>>('/api/v1/users/me/profile');
+  },
+  update(payload: ProfileUpdateRequest): Promise<ApiResponse<Profile>> {
+    return apiClient.patch<ApiResponse<Profile>>('/api/v1/users/me/profile', payload);
   },
 };
 
@@ -175,6 +184,31 @@ export const stockApi = {
   },
   delete(groupId: number, stockItemId: number): Promise<void> {
     return apiClient.delete<void>(`/api/v1/family-groups/${groupId}/stock/${stockItemId}`);
+  },
+  expiring(groupId: number): Promise<PaginatedResponse<StockItem>> {
+    return apiClient.get<PaginatedResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock/expiring`);
+  },
+  lowStock(groupId: number): Promise<PaginatedResponse<StockItem>> {
+    return apiClient.get<PaginatedResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock/low-stock`);
+  },
+  scan(groupId: number, payload: StockScanRequest): Promise<ApiResponse<unknown>> {
+    return apiClient.post<ApiResponse<unknown>>(`/api/v1/family-groups/${groupId}/stock/scan`, payload);
+  },
+};
+
+export const stockMovementsApi = {
+  list(groupId: number, filters?: { page?: number; per_page?: number; product_id?: number; type?: string }): Promise<PaginatedResponse<StockMovement>> {
+    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<StockMovement>>(`/api/v1/family-groups/${groupId}/stock-movements${qs}`);
+  },
+  adjust(groupId: number, stockItemId: number, payload: StockAdjustRequest): Promise<ApiResponse<StockItem>> {
+    return apiClient.post<ApiResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock/${stockItemId}/adjust`, payload);
+  },
+  consume(groupId: number, stockItemId: number, payload: StockMovementRequest): Promise<ApiResponse<StockItem>> {
+    return apiClient.post<ApiResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock/${stockItemId}/consume`, payload);
+  },
+  discard(groupId: number, stockItemId: number, payload: StockMovementRequest): Promise<ApiResponse<StockItem>> {
+    return apiClient.post<ApiResponse<StockItem>>(`/api/v1/family-groups/${groupId}/stock/${stockItemId}/discard`, payload);
   },
 };
 
@@ -306,6 +340,13 @@ export const recipesApi = {
   },
   get(id: number): Promise<ApiResponse<RecipeDetail>> {
     return apiClient.get<ApiResponse<RecipeDetail>>(`/api/v1/recipes/${id}`);
+  },
+  nutrition(id: number): Promise<ApiResponse<RecipeNutrition>> {
+    return apiClient.get<ApiResponse<RecipeNutrition>>(`/api/v1/recipes/${id}/nutrition`);
+  },
+  cost(id: number, groupId?: number | null): Promise<ApiResponse<RecipeCost>> {
+    const qs = toQueryString({ family_group_id: groupId || undefined });
+    return apiClient.get<ApiResponse<RecipeCost>>(`/api/v1/recipes/${id}/cost${qs}`);
   },
   categories(): Promise<PaginatedResponse<RecipeCategory>> {
     return apiClient.get<PaginatedResponse<RecipeCategory>>('/api/v1/recipe-categories?per_page=100');
@@ -484,6 +525,17 @@ export const reportsApi = {
   },
   budgetVsActual(groupId: number): Promise<ApiResponse<Record<string, unknown>>> {
     return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/budget-vs-actual`);
+  },
+  expiringProducts(groupId: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/expiring-products`);
+  },
+  recipesCooked(groupId: number, period?: ReportPeriod): Promise<ApiResponse<Record<string, unknown>>> {
+    const qs = toQueryString(periodToDates(period));
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/recipes-cooked${qs}`);
+  },
+  nutritionEstimate(groupId: number, period?: ReportPeriod): Promise<ApiResponse<Record<string, unknown>>> {
+    const qs = toQueryString(periodToDates(period));
+    return apiClient.get<ApiResponse<Record<string, unknown>>>(`/api/v1/family-groups/${groupId}/reports/nutrition-estimate${qs}`);
   },
 };
 

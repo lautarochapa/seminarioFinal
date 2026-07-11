@@ -59,6 +59,27 @@ export interface RecipeDetail extends RecipeSummary {
   steps?: RecipeStep[];
 }
 
+export interface RecipeNutrition {
+  calories_total?: number | string | null;
+  calories_per_serving?: number | string | null;
+  protein_total?: number | string | null;
+  protein_per_serving?: number | string | null;
+  carbohydrates_total?: number | string | null;
+  carbohydrates_per_serving?: number | string | null;
+  fat_total?: number | string | null;
+  fat_per_serving?: number | string | null;
+  sodium_total?: number | string | null;
+  sodium_per_serving?: number | string | null;
+  calculation_status?: string | null;
+}
+
+export interface RecipeCost {
+  total_cost?: number | string | null;
+  cost_per_serving?: number | string | null;
+  currency?: string | null;
+  calculation_status?: string | null;
+}
+
 export interface RecipeFilters {
   page?: number;
   per_page?: number;

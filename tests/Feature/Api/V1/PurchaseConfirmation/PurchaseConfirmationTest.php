@@ -3,6 +3,8 @@
 namespace Tests\Feature\Api\V1\PurchaseConfirmation;
 
 use App\AuditLog;
+use App\Budget;
+use App\BudgetAlert;
 use App\FamilyGroup;
 use App\FamilyGroupMember;
 use App\Product;
@@ -78,6 +80,18 @@ class PurchaseConfirmationTest extends TestCase
         return [$purchase, $product, $unit];
     }
 
+    private function budget(FamilyGroup $group, array $overrides = [])
+    {
+        return Budget::create(array_merge([
+            'family_group_id' => $group->id,
+            'year' => 2026,
+            'month' => 6,
+            'total_amount' => 500,
+            'currency' => 'ARS',
+            'status' => 'active',
+        ], $overrides));
+    }
+
     public function test_unauthenticated_confirm_is_rejected()
     {
         $this->postJson('/api/v1/family-groups/1/purchases/1/confirm')->assertStatus(401);
@@ -117,6 +131,46 @@ class PurchaseConfirmationTest extends TestCase
 
         $this->assertEquals(300.0, $response->json('data.actual_total'));
         $this->assertArrayHasKey('trace_id', $response->json());
+    }
+
+    public function test_confirm_generates_budget_alert_without_storing_duplicate_spent_amount()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $budget = $this->budget($group, ['total_amount' => 300]);
+        [$purchase] = $this->purchaseWithItem($group, $user);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/purchases/{$purchase->id}/confirm")
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('budget_alerts', [
+            'budget_id' => $budget->id,
+            'alert_type' => 'limit_exceeded',
+            'severity' => 'critical',
+            'status' => 'unread',
+        ]);
+        $this->assertFalse(array_key_exists('spent_amount', $budget->fresh()->getAttributes()));
+    }
+
+    public function test_confirm_does_not_duplicate_unread_budget_alerts()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $budget = $this->budget($group, ['total_amount' => 300]);
+        BudgetAlert::create([
+            'budget_id' => $budget->id,
+            'alert_type' => 'limit_exceeded',
+            'message' => 'Existente',
+            'severity' => 'critical',
+            'status' => 'unread',
+            'created_at' => now(),
+        ]);
+        [$purchase] = $this->purchaseWithItem($group, $user);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/purchases/{$purchase->id}/confirm")
+            ->assertStatus(200);
+
+        $this->assertSame(1, BudgetAlert::where('budget_id', $budget->id)->where('alert_type', 'limit_exceeded')->count());
     }
 
     public function test_double_confirm_after_stock_added_is_rejected()

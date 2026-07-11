@@ -27,3 +27,11 @@ export interface Profile {
   objectives: ProfileObjective[];
   preferences: ProfilePreferences;
 }
+
+export interface ProfileUpdateRequest {
+  name?: string;
+  lastname?: string;
+  phone?: string | null;
+  notes?: string | null;
+  preferences?: Partial<ProfilePreferences>;
+}

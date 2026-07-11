@@ -125,6 +125,7 @@ $domains = [ordered]@{
     'Feature/StockMovements'  = (Join-Path $featureBase 'StockMovements')
     'Feature/StockAlerts'     = (Join-Path $featureBase 'StockAlerts')
     'Feature/StockScan'       = (Join-Path $featureBase 'StockScan')
+    'Feature/StockExpiration' = (Join-Path $featureBase 'StockExpiration')
     'Feature/WasteReport'     = (Join-Path $featureBase 'WasteReport')
 
     # Meal plans

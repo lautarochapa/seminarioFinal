@@ -16,7 +16,6 @@
         { key: 'scraping-errors',          label: 'Errores scraping',        icon: '⚠' },
         { key: 'price-variations',         label: 'Variación de precios',    icon: '📈' },
         { key: 'most-used-recipes',        label: 'Recetas más usadas',      icon: '🏆' },
-        { key: 'most-searched-products',   label: 'Productos más buscados',  icon: '🔍' },
         { key: 'supermarket-price-status', label: 'Estado precios supermercado', icon: '🏪' },
     ];
 
@@ -70,14 +69,6 @@
             { key: 'times_cooked', label: 'Veces cocinada', fmt: 'int' },
             { key: 'unique_users', label: 'Usuarios únicos', fmt: 'int' },
             { key: 'avg_rating',   label: 'Rating prom.',   fmt: 'num' },
-        ],
-        'most-searched-products': [
-            { key: 'rank',          label: '#',              fmt: 'int' },
-            { key: 'product_name',  label: 'Producto' },
-            { key: 'category',      label: 'Categoría' },
-            { key: 'search_count',  label: 'Búsquedas',      fmt: 'int' },
-            { key: 'unique_users',  label: 'Usuarios únicos', fmt: 'int' },
-            { key: 'found_rate_pct',label: '% encontrado',    fmt: 'pct' },
         ],
         'supermarket-price-status': [
             { key: 'supermarket',     label: 'Supermercado' },

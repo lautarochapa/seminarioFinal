@@ -177,6 +177,52 @@ class ManualProductStockTest extends TestCase
         $this->assertSame(2, StockMovement::count());
     }
 
+    public function test_barcode_pending_in_another_group_returns_409()
+    {
+        [$user, $group] = $this->groupWithMember();
+        [$otherUser, $otherGroup] = $this->groupWithMember();
+        $unit = $this->unit();
+
+        // El otro grupo ya tiene un producto pendiente con este barcode.
+        $this->actingAs($otherUser)->postJson('/api/v1/family-groups/'.$otherGroup->id.'/stock/manual-product', [
+            'product' => ['name' => 'Producto de otro grupo', 'barcode' => '7790000000099', 'unit_id' => $unit->id],
+            'stock' => ['quantity' => 1, 'unit_id' => $unit->id],
+        ])->assertStatus(201);
+
+        $response = $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/stock/manual-product', [
+            'product' => ['name' => 'Mismo barcode', 'barcode' => '7790000000099', 'unit_id' => $unit->id],
+            'stock' => ['quantity' => 1, 'unit_id' => $unit->id],
+        ]);
+
+        $response->assertStatus(409)
+            ->assertJsonPath('error.code', 'PRODUCT_BARCODE_ALREADY_EXISTS');
+    }
+
+    public function test_validation_error_returns_422()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/stock/manual-product', [
+            'product' => ['barcode' => '7790000000055', 'unit_id' => $unit->id], // falta 'name'
+            'stock' => ['quantity' => 1, 'unit_id' => $unit->id],
+        ])->assertStatus(422)
+            ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_client_supplied_family_group_id_is_rejected()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/stock/manual-product', [
+            'product' => ['name' => 'Producto', 'unit_id' => $unit->id],
+            'stock' => ['quantity' => 1, 'unit_id' => $unit->id],
+            'family_group_id' => 999999,
+        ])->assertStatus(422)
+            ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
     public function test_invalid_location_returns_404()
     {
         [$user, $group] = $this->groupWithMember();
