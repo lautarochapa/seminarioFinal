@@ -121,6 +121,17 @@ export interface RecipeShoppingListRequest {
   supermarket_chain_id?: number;
 }
 
+export interface CookRecipeRequest {
+  servings: number;
+  family_group_id?: number;
+  deduct_stock?: boolean;
+  idempotency_key?: string;
+}
+
+export interface CookRecipeResult {
+  cook_log_id: number;
+}
+
 export interface RecipeShoppingListUnmappedIngredient {
   ingredient_id: number | null;
   ingredient_name: string | null;

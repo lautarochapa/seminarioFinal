@@ -6,6 +6,7 @@ use App\AuditLog;
 use App\Exceptions\RecipeFavoritesCooked\RecipeFavoritesCookedException;
 use App\Repositories\RecipeFavoritesCooked\RecipeFavoritesCookedRepository;
 use App\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class RecipeFavoritesCookedService
@@ -79,6 +80,8 @@ class RecipeFavoritesCookedService
         $servings      = (int) $input['servings'];
         $familyGroupId = isset($input['family_group_id']) ? (int) $input['family_group_id'] : null;
         $deductStock   = !empty($input['deduct_stock']);
+        $idempotencyKey = ! empty($input['idempotency_key']) ? trim((string) $input['idempotency_key']) : null;
+        $cacheKey = null;
 
         if ($familyGroupId !== null) {
             $group = $this->repo->findFamilyGroup($familyGroupId);
@@ -90,7 +93,19 @@ class RecipeFavoritesCookedService
             }
         }
 
-        $logId = DB::transaction(function () use ($user, $recipe, $recipeId, $servings, $familyGroupId, $deductStock, $ip, $userAgent) {
+        if ($idempotencyKey) {
+            $cacheKey = 'recipe_cook:' . $user->id . ':' . $recipeId . ':' . sha1($idempotencyKey);
+            $cached = Cache::get($cacheKey);
+            if (is_array($cached) && isset($cached['cook_log_id'])) {
+                return $cached;
+            }
+            if (! Cache::add($cacheKey, ['processing' => true], now()->addMinutes(10))) {
+                throw RecipeFavoritesCookedException::cookInProgress();
+            }
+        }
+
+        try {
+            $logId = DB::transaction(function () use ($user, $recipe, $recipeId, $servings, $familyGroupId, $deductStock, $ip, $userAgent) {
             $log = $this->repo->createCookLog([
                 'user_id'          => $user->id,
                 'family_group_id'  => $familyGroupId,
@@ -122,9 +137,20 @@ class RecipeFavoritesCookedService
             ]);
 
             return $log->id;
-        });
+            });
+        } catch (\Throwable $e) {
+            if ($cacheKey) {
+                Cache::forget($cacheKey);
+            }
+            throw $e;
+        }
 
-        return ['cook_log_id' => $logId];
+        $result = ['cook_log_id' => $logId];
+        if ($cacheKey) {
+            Cache::put($cacheKey, $result, now()->addMinutes(10));
+        }
+
+        return $result;
     }
 
     public function listCooked(User $user, int $page, int $perPage): array
@@ -151,6 +177,15 @@ class RecipeFavoritesCookedService
             $totalRequired = ((float) $ri->quantity / $baseServings) * $servings;
 
             $stockItems    = $this->repo->stockItemsForIngredient($familyGroupId, $ingredientId);
+            if (empty($stockItems)) {
+                $name = $ri->ingredient ? $ri->ingredient->name : null;
+                throw RecipeFavoritesCookedException::ingredientMissing([
+                    'ingredient_id' => $ingredientId,
+                    'ingredient_name' => $name,
+                    'required_quantity' => $totalRequired,
+                    'unit_id' => $recipeUnitId,
+                ]);
+            }
             $remaining     = $totalRequired;
             $plan          = [];
 
@@ -183,7 +218,9 @@ class RecipeFavoritesCookedService
         }
 
         foreach ($deductions as $d) {
-            $this->repo->deductStockItem($d['item_id'], $d['deduct']);
+            if (! $this->repo->deductStockItem($d['item_id'], $d['deduct'])) {
+                throw RecipeFavoritesCookedException::insufficientStock();
+            }
             $this->repo->createStockMovement([
                 'family_group_id'    => $familyGroupId,
                 'stock_item_id'      => $d['item_id'],

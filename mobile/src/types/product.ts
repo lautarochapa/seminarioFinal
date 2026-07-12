@@ -26,6 +26,19 @@ export interface ProductImage {
   is_primary: boolean;
 }
 
+export interface ProductStockItem {
+  id: number;
+  family_group_id: number;
+  product_id: number;
+  stock_location_id: number | null;
+  quantity: number;
+  unit_id: number;
+  expiration_date: string | null;
+  status: string;
+  location: { id: number; name: string; type: string | null } | null;
+  unit: ProductUnit | null;
+}
+
 export interface ProductSummary {
   id: number;
   name: string;
@@ -46,6 +59,11 @@ export interface ProductSummary {
   ingredient: ProductIngredient | null;
   unit: ProductUnit | null;
   images?: ProductImage[];
+  stock_items?: ProductStockItem[];
+  stock_summary?: {
+    in_stock: boolean;
+    items_count: number;
+  };
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

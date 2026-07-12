@@ -63,6 +63,8 @@ import type {
   RecipeDetail,
   RecipeFavorite,
   RecipeFilters,
+  CookRecipeRequest,
+  CookRecipeResult,
   RecipeNutrition,
   RecipeSummary,
   RecipeSuggestion,
@@ -117,6 +119,25 @@ export const profileApi = {
   },
   update(payload: ProfileUpdateRequest): Promise<ApiResponse<Profile>> {
     return apiClient.patch<ApiResponse<Profile>>('/api/v1/users/me/profile', payload);
+  },
+};
+
+export const homeApi = {
+  summary(familyGroupId?: number | null): Promise<ApiResponse<{
+    family_group_id: number | null;
+    stock: { products: number; low_stock: number; expiring: number; expired: number };
+    recipes: { available: number };
+    shopping: { active_lists: number; pending_items: number };
+    actions: { type: string; message: string }[];
+  }>> {
+    const qs = toQueryString({ family_group_id: familyGroupId || undefined });
+    return apiClient.get<ApiResponse<{
+      family_group_id: number | null;
+      stock: { products: number; low_stock: number; expiring: number; expired: number };
+      recipes: { available: number };
+      shopping: { active_lists: number; pending_items: number };
+      actions: { type: string; message: string }[];
+    }>>(`/api/v1/users/me/home-summary${qs}`);
   },
 };
 
@@ -347,6 +368,9 @@ export const recipesApi = {
   cost(id: number, groupId?: number | null): Promise<ApiResponse<RecipeCost>> {
     const qs = toQueryString({ family_group_id: groupId || undefined });
     return apiClient.get<ApiResponse<RecipeCost>>(`/api/v1/recipes/${id}/cost${qs}`);
+  },
+  cook(id: number, payload: CookRecipeRequest): Promise<ApiResponse<CookRecipeResult>> {
+    return apiClient.post<ApiResponse<CookRecipeResult>>(`/api/v1/recipes/${id}/cook`, payload);
   },
   categories(): Promise<PaginatedResponse<RecipeCategory>> {
     return apiClient.get<PaginatedResponse<RecipeCategory>>('/api/v1/recipe-categories?per_page=100');

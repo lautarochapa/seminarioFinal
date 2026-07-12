@@ -49,7 +49,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   const { data: units } = useUnits();
 
   const [addModalVisible, setAddModalVisible] = useState(false);
-  const [productSearch, setProductSearch] = useState('');
+  const [freeTextName, setFreeTextName] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(null);
   const [itemQty, setItemQty] = useState('1');
   const [itemUnitId, setItemUnitId] = useState<number | null>(null);
@@ -60,7 +60,6 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   const { data: products, loading: loadingProducts, setFilters: setProductFilters } = useProducts();
 
   const handleProductSearch = useCallback((text: string) => {
-    setProductSearch(text);
     if (debounceTimer) clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
       setProductFilters({ search: text || undefined });
@@ -74,23 +73,26 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   }, []);
 
   async function handleAddItem() {
-    if (!groupId || !selectedProduct) { setAddError('Seleccioná un producto.'); return; }
-    if (!itemUnitId) { setAddError('El producto no tiene unidad.'); return; }
+    const name = freeTextName.trim();
+    if (!groupId) return;
+    if (!selectedProduct && !name) { setAddError('Escribí qué necesitás comprar o seleccioná un producto.'); return; }
+    if (selectedProduct && !itemUnitId) { setAddError('El producto no tiene unidad.'); return; }
     const qty = Number(itemQty);
-    if (!itemQty || isNaN(qty) || qty <= 0) { setAddError('Ingresá una cantidad válida.'); return; }
+    if (itemQty && (isNaN(qty) || qty <= 0)) { setAddError('Ingresá una cantidad válida.'); return; }
 
     setAddingItem(true);
     setAddError(null);
     try {
       await shoppingListItemsApi.create(groupId, listId, {
-        product_id: selectedProduct.id,
-        quantity: qty,
+        product_id: selectedProduct ? selectedProduct.id : undefined,
+        free_text_name: selectedProduct ? undefined : name,
+        quantity: itemQty ? qty : undefined,
         unit_id: itemUnitId,
       });
       setAddModalVisible(false);
       setSelectedProduct(null);
+      setFreeTextName('');
       setItemQty('1');
-      setProductSearch('');
       refresh();
     } catch (err) {
       if (err instanceof ApiError) {
@@ -105,7 +107,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
 
   async function handleDeleteItem(item: ShoppingListItem) {
     if (!groupId) return;
-    Alert.alert('Eliminar item', `¿Eliminar "${item.product?.name ?? item.ingredient?.name ?? 'item'}"?`, [
+    Alert.alert('Eliminar item', `¿Eliminar "${item.display_name ?? item.product?.name ?? item.ingredient?.name ?? item.free_text_name ?? 'item'}"?`, [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Eliminar',
@@ -253,10 +255,10 @@ export function ShoppingListDetailScreen({ listId }: Props) {
               </Pressable>
               <View style={styles.itemBody}>
                 <Text style={[styles.itemName, item.status === 'purchased' && styles.strikethrough]} numberOfLines={2}>
-                  {item.product?.name ?? item.ingredient?.name ?? 'Item'}
+                  {item.display_name ?? item.product?.name ?? item.ingredient?.name ?? item.free_text_name ?? 'Item'}
                 </Text>
                 <Text style={styles.itemMeta}>
-                  {item.quantity} {item.unit?.symbol ?? ''}
+                  {item.quantity ?? ''} {item.unit?.symbol ?? ''}
                   {item.estimated_subtotal != null ? ' · ' : ''}
                   {item.estimated_subtotal != null && <MoneyText amount={item.estimated_subtotal} />}
                 </Text>
@@ -296,7 +298,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
       <Modal visible={addModalVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setAddModalVisible(false)}>
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Agregar producto</Text>
+            <Text style={styles.modalTitle}>Agregar artículo</Text>
             <Pressable onPress={() => setAddModalVisible(false)} accessibilityLabel="Cerrar" style={styles.modalClose}>
               <MaterialCommunityIcons name="close" size={24} color={COLORS.textPrimary} />
             </Pressable>
@@ -310,15 +312,19 @@ export function ShoppingListDetailScreen({ listId }: Props) {
                 <MaterialCommunityIcons name="magnify" size={18} color={COLORS.textHint} />
                 <TextInput
                   style={styles.modalSearchInput}
-                  placeholder="Buscar producto..."
+                  placeholder="¿Qué necesitás comprar?"
                   placeholderTextColor={COLORS.textHint}
-                  value={productSearch}
-                  onChangeText={handleProductSearch}
+                  value={freeTextName}
+                  onChangeText={(text) => { setFreeTextName(text); handleProductSearch(text); }}
                   autoFocus
-                  autoCapitalize="none"
-                  autoCorrect={false}
                 />
               </View>
+              {freeTextName.trim() ? (
+                <Pressable style={styles.freeTextAdd} onPress={handleAddItem} disabled={addingItem}>
+                  <MaterialCommunityIcons name="plus" size={18} color={COLORS.primary} />
+                  <Text style={styles.freeTextAddText}>Agregar {freeTextName.trim()} como artículo libre</Text>
+                </Pressable>
+              ) : null}
               {loadingProducts ? (
                 <ActivityIndicator style={{ margin: SPACING.xl }} color={COLORS.primary} />
               ) : (
@@ -450,6 +456,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
   },
   modalSearchInput: { flex: 1, fontSize: FONT.bodySize, color: COLORS.textPrimary, minHeight: 36 },
+  freeTextAdd: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.borderLight,
+    backgroundColor: COLORS.primarySurface,
+  },
+  freeTextAddText: { flex: 1, color: COLORS.primary, fontWeight: '700', fontSize: FONT_SIZE.sm },
   modalItem: {
     padding: SPACING.md,
     borderBottomWidth: 1,

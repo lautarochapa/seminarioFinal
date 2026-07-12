@@ -171,6 +171,55 @@ class ShoppingListItemsTest extends TestCase
             ->assertJsonPath('data.quantity', '3.0000');
     }
 
+    public function test_create_free_text_item_without_catalog_reference()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $this->unit();
+        $list = $this->list($group, $user);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items', [
+                'free_text_name' => 'detergente',
+                'notes' => 'cualquier marca',
+            ])->assertStatus(201)
+            ->assertJsonPath('data.free_text_name', 'detergente')
+            ->assertJsonPath('data.display_name', 'detergente');
+
+        $this->assertDatabaseHas('shopping_list_items', [
+            'shopping_list_id' => $list->id,
+            'free_text_name' => 'detergente',
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_free_text_item_can_be_updated_purchased_and_deleted()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $list = $this->list($group, $user);
+        $item = ShoppingListItem::create([
+            'shopping_list_id' => $list->id,
+            'free_text_name' => 'servilletas',
+            'quantity' => 1,
+            'unit_id' => $unit->id,
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($user)
+            ->patchJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items/'.$item->id, [
+                'free_text_name' => 'servilletas grandes',
+                'status' => 'purchased',
+            ])->assertStatus(200)
+            ->assertJsonPath('data.display_name', 'servilletas grandes')
+            ->assertJsonPath('data.status', 'purchased');
+
+        $this->actingAs($user)
+            ->deleteJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items/'.$item->id)
+            ->assertStatus(204);
+
+        $this->assertDatabaseMissing('shopping_list_items', ['id' => $item->id]);
+    }
+
     public function test_validations()
     {
         [$user, $group] = $this->groupWithMember();
@@ -178,7 +227,7 @@ class ShoppingListItemsTest extends TestCase
 
         $this->actingAs($user)
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items', [
-                'quantity' => 0,
+            'quantity' => 0,
             ])->assertStatus(422)
             ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     }

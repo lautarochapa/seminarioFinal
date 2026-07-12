@@ -8,11 +8,13 @@ function fromExtra(key: string): string | undefined {
 
 const apiUrl =
   fromExtra('EXPO_PUBLIC_API_URL') ??
+  fromExtra('apiUrl') ??
   process.env.EXPO_PUBLIC_API_URL ??
   'http://localhost:8000';
 
 const allowInsecureApi =
   (fromExtra('EXPO_PUBLIC_ALLOW_INSECURE_API') ??
+    fromExtra('allowInsecureApi') ??
     process.env.EXPO_PUBLIC_ALLOW_INSECURE_API ??
     'false') === 'true';
 

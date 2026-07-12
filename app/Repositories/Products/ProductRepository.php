@@ -222,7 +222,20 @@ class ProductRepository
             throw new IngredientException('PRODUCT_NOT_FOUND', 'El producto solicitado no existe.', 404);
         }
 
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])
+        $relations = ['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'];
+        if ($familyGroupId) {
+            $relations['stockItems'] = function ($stock) use ($familyGroupId) {
+                $stock->with(['location', 'unit'])
+                    ->where('family_group_id', $familyGroupId)
+                    ->where('status', 'active')
+                    ->whereNull('deleted_at')
+                    ->orderByRaw('expiration_date is null')
+                    ->orderBy('expiration_date')
+                    ->orderBy('id');
+            };
+        }
+
+        $product = Product::with($relations)
             ->where('id', $barcodeRecord->product_id)
             ->where(function ($scope) use ($familyGroupId) {
                 $scope->where(function ($active) {

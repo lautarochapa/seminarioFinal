@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class ShoppingListItem extends Model
 {
     protected $fillable = [
-        'shopping_list_id', 'ingredient_id', 'product_id', 'selected_supermarket_product_id',
-        'quantity', 'unit_id', 'estimated_price', 'actual_price', 'status', 'notes',
+        'shopping_list_id', 'ingredient_id', 'product_id', 'free_text_name', 'selected_supermarket_product_id',
+        'quantity', 'unit_id', 'estimated_price', 'actual_price', 'status', 'sort_order', 'notes',
         'price_source', 'price_updated_at', 'supermarket_chain_id', 'supermarket_branch_id',
         'source_type', 'source_id',
     ];

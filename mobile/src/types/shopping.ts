@@ -16,7 +16,9 @@ export interface ShoppingListItem {
   id: number;
   ingredient: { id: number; name: string } | null;
   product: { id: number; name: string } | null;
-  quantity: number;
+  free_text_name?: string | null;
+  display_name?: string | null;
+  quantity: number | null;
   unit: { id: number; code: string; symbol: string } | null;
   estimated_price: number | null;
   estimated_subtotal: number | null;
@@ -42,8 +44,9 @@ export interface ShoppingListCreateRequest {
 export interface ShoppingListItemCreateRequest {
   ingredient_id?: number | null;
   product_id?: number | null;
-  quantity: number;
-  unit_id: number;
+  free_text_name?: string | null;
+  quantity?: number | null;
+  unit_id?: number | null;
   estimated_price?: number | null;
   status?: 'pending' | 'purchased' | 'skipped' | 'cancelled';
   notes?: string | null;
@@ -52,6 +55,7 @@ export interface ShoppingListItemCreateRequest {
 export interface ShoppingListItemUpdateRequest {
   quantity?: number;
   unit_id?: number;
+  free_text_name?: string | null;
   estimated_price?: number | null;
   actual_price?: number | null;
   status?: 'pending' | 'purchased' | 'skipped' | 'cancelled';

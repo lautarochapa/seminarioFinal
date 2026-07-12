@@ -117,7 +117,7 @@
         if (item.ingredient) {
             return item.ingredient.name || ('Ingrediente #' + item.ingredient.id);
         }
-        return 'Item #' + item.id;
+        return item.display_name || item.free_text_name || ('Articulo #' + item.id);
     }
 
     function catalogName(item) {
@@ -298,7 +298,7 @@
         form.elements.id.value = '';
         form.elements.status.value = 'pending';
         if (title) {
-            title.textContent = 'Agregar item';
+            title.textContent = 'Agregar articulo';
         }
     }
 
@@ -309,6 +309,7 @@
             return;
         }
         form.elements.id.value = item.id;
+        form.elements.free_text_name.value = item.free_text_name || '';
         form.elements.ingredient_id.value = item.ingredient ? item.ingredient.id : '';
         form.elements.product_id.value = item.product ? item.product.id : '';
         form.elements.quantity.value = item.quantity || '';
@@ -318,7 +319,7 @@
         form.elements.status.value = item.status || 'pending';
         form.elements.notes.value = item.notes || '';
         if (title) {
-            title.textContent = 'Editar item #' + item.id;
+            title.textContent = 'Editar articulo';
         }
     }
 
@@ -343,6 +344,9 @@
         }
         if (form.elements.product_id.value) {
             data.product_id = Number(form.elements.product_id.value);
+        }
+        if (form.elements.free_text_name.value.trim()) {
+            data.free_text_name = form.elements.free_text_name.value.trim();
         }
         if (form.elements.quantity.value) {
             data.quantity = Number(form.elements.quantity.value);

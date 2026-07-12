@@ -101,6 +101,7 @@
         el.innerHTML =
             imgHtml +
             '<div class="table-line"><span class="muted">Producto</span><strong>' + escapeHtml(product.name) + '</strong></div>' +
+            '<div class="table-line"><span class="muted">Stock</span><strong>' + escapeHtml(stockStatus(product)) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Marca</span><strong>' + escapeHtml(product.brand && product.brand.name) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Categoria</span><strong>' + escapeHtml(product.category && product.category.name) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Ingrediente</span><strong>' + escapeHtml(product.ingredient && product.ingredient.name) + '</strong></div>' +
@@ -108,6 +109,14 @@
             '<div class="table-line"><span class="muted">Cantidad neta</span><strong>' +
                 escapeHtml(product.net_quantity) + ' ' + escapeHtml(product.unit && product.unit.symbol) +
             '</strong></div>';
+    }
+
+    function stockStatus(product) {
+        var summary = product.stock_summary || null;
+        if (!summary || !summary.in_stock) {
+            return 'No esta en tu stock';
+        }
+        return summary.items_count === 1 ? 'Ya esta en tu stock (1 item)' : 'Ya esta en tu stock (' + summary.items_count + ' items)';
     }
 
     function renderStockResult(root, item) {
@@ -223,7 +232,12 @@
             submitBtn.disabled = true;
         }
 
-        window.CCApi.request(endpoint('/products/barcode/' + encodeURIComponent(code)))
+        var lookupUrl = endpoint('/products/barcode/' + encodeURIComponent(code));
+        if (state.currentGroupId) {
+            lookupUrl += '?family_group_id=' + encodeURIComponent(state.currentGroupId);
+        }
+
+        window.CCApi.request(lookupUrl)
             .then(function (response) {
                 state.lastProduct = response.data || null;
                 renderResult(root, state.lastProduct);

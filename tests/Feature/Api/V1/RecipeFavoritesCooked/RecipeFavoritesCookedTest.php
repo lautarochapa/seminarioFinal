@@ -8,7 +8,9 @@ use App\Product;
 use App\Recipe;
 use App\RecipeIngredient;
 use App\StockItem;
+use App\StockMovement;
 use App\UnitMeasure;
+use App\UnitConversion;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -90,16 +92,16 @@ class RecipeFavoritesCookedTest extends TestCase
         ]);
     }
 
-    private function stockItem(FamilyGroup $group, Product $prod, UnitMeasure $unit, float $qty): StockItem
+    private function stockItem(FamilyGroup $group, Product $prod, UnitMeasure $unit, float $qty, array $overrides = []): StockItem
     {
-        return StockItem::create([
+        return StockItem::create(array_merge([
             'family_group_id' => $group->id,
             'product_id'      => $prod->id,
             'unit_id'         => $unit->id,
             'quantity'        => $qty,
             'is_open'         => false,
             'status'          => 'active',
-        ]);
+        ], $overrides));
     }
 
     private function familyGroup(User $user): FamilyGroup
@@ -261,6 +263,130 @@ class RecipeFavoritesCookedTest extends TestCase
             'family_group_id' => $group->id,
             'deduct_stock'    => true,
         ])->assertStatus(422)->assertJsonPath('error.code', 'INSUFFICIENT_STOCK');
+    }
+
+    public function test_descuento_convierte_unidades()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $kg     = $this->unit('kg');
+        UnitConversion::create(['from_unit_id' => $kg->id, 'to_unit_id' => $grams->id, 'factor' => 1000, 'status' => 'active']);
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $kg);
+        $this->addIngredient($recipe, $ing, $grams, 500.0);
+        $stock  = $this->stockItem($group, $prod, $kg, 1.0);
+
+        $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', [
+            'servings'        => 1,
+            'family_group_id' => $group->id,
+            'deduct_stock'    => true,
+        ])->assertStatus(201);
+
+        $stock->refresh();
+        $this->assertEquals(0.5, (float) $stock->quantity);
+    }
+
+    public function test_ingrediente_faltante_hace_rollback_completo()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ingOk  = $this->ingredient($grams);
+        $ingMissing = $this->ingredient($grams);
+        $prod   = $this->product($ingOk, $grams);
+        $this->addIngredient($recipe, $ingOk, $grams, 100.0);
+        $this->addIngredient($recipe, $ingMissing, $grams, 50.0);
+        $stock  = $this->stockItem($group, $prod, $grams, 200.0);
+
+        $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', [
+            'servings'        => 1,
+            'family_group_id' => $group->id,
+            'deduct_stock'    => true,
+        ])->assertStatus(422)->assertJsonPath('error.code', 'RECIPE_INGREDIENT_MISSING_STOCK');
+
+        $stock->refresh();
+        $this->assertEquals(200.0, (float) $stock->quantity);
+        $this->assertSame(0, StockMovement::where('related_recipe_id', $recipe->id)->count());
+        $this->assertDatabaseMissing('recipe_cook_logs', ['recipe_id' => $recipe->id]);
+    }
+
+    public function test_multiples_stock_items_y_prioridad_por_vencimiento()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 250.0);
+        $later = $this->stockItem($group, $prod, $grams, 200.0, ['expiration_date' => '2026-12-31']);
+        $first = $this->stockItem($group, $prod, $grams, 100.0, ['expiration_date' => '2026-08-01']);
+
+        $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', [
+            'servings'        => 1,
+            'family_group_id' => $group->id,
+            'deduct_stock'    => true,
+        ])->assertStatus(201);
+
+        $first->refresh();
+        $later->refresh();
+        $this->assertEquals(0.0, (float) $first->quantity);
+        $this->assertEquals(50.0, (float) $later->quantity);
+    }
+
+    public function test_doble_ejecucion_con_idempotency_key_no_duplica_consumo()
+    {
+        $user   = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+        $stock  = $this->stockItem($group, $prod, $grams, 300.0);
+        $payload = [
+            'servings'        => 1,
+            'family_group_id' => $group->id,
+            'deduct_stock'    => true,
+            'idempotency_key' => 'cook-panqueques-demo',
+        ];
+
+        $first = $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', $payload)->assertStatus(201);
+        $second = $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', $payload)->assertStatus(201);
+
+        $this->assertSame($first->json('data.cook_log_id'), $second->json('data.cook_log_id'));
+        $stock->refresh();
+        $this->assertEquals(200.0, (float) $stock->quantity);
+        $this->assertSame(1, StockMovement::where('related_recipe_id', $recipe->id)->count());
+    }
+
+    public function test_descuento_aislado_por_grupo()
+    {
+        $user   = factory(User::class)->create();
+        $other  = factory(User::class)->create();
+        $group  = $this->familyGroup($user);
+        $otherGroup = $this->familyGroup($other);
+        $grams  = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ing    = $this->ingredient($grams);
+        $prod   = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100.0);
+        $stock  = $this->stockItem($group, $prod, $grams, 200.0);
+        $otherStock = $this->stockItem($otherGroup, $prod, $grams, 200.0);
+
+        $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', [
+            'servings'        => 1,
+            'family_group_id' => $group->id,
+            'deduct_stock'    => true,
+        ])->assertStatus(201);
+
+        $stock->refresh();
+        $otherStock->refresh();
+        $this->assertEquals(100.0, (float) $stock->quantity);
+        $this->assertEquals(200.0, (float) $otherStock->quantity);
     }
 
     public function test_historial_coccion_del_usuario()

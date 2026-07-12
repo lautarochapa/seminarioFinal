@@ -9,12 +9,14 @@ interface Props {
   barcode: string;
   product: ProductDetail | null;
   notFound: boolean;
+  stockStatus?: string | null;
   onUseProduct?: () => void;
+  onAddToStock?: () => void;
   onRequestProduct?: () => void;
   onScanAgain: () => void;
 }
 
-export function BarcodeResult({ barcode, product, notFound, onUseProduct, onRequestProduct, onScanAgain }: Props) {
+export function BarcodeResult({ barcode, product, notFound, stockStatus, onUseProduct, onAddToStock, onRequestProduct, onScanAgain }: Props) {
   if (product) {
     return (
       <View style={styles.card}>
@@ -24,7 +26,9 @@ export function BarcodeResult({ barcode, product, notFound, onUseProduct, onRequ
         </View>
         {product.brand?.name ? <Text style={styles.meta}>{product.brand.name}</Text> : null}
         <Text style={styles.code}>Código: {barcode}</Text>
+        {stockStatus ? <Text style={styles.meta}>{stockStatus}</Text> : null}
         <View style={styles.actions}>
+          {onAddToStock ? <AppButton title="Agregar al stock" onPress={onAddToStock} fullWidth /> : null}
           {onUseProduct ? <AppButton title="Usar este producto" onPress={onUseProduct} fullWidth /> : null}
           {onRequestProduct ? <AppButton title="Cargar manualmente" onPress={onRequestProduct} fullWidth /> : null}
           <AppButton title="Escanear nuevamente" variant="outline" onPress={onScanAgain} fullWidth />

@@ -9,6 +9,7 @@ use App\Repositories\ShoppingListItems\ShoppingListItemRepository;
 use App\Repositories\ShoppingLists\ShoppingListRepository;
 use App\ShoppingList;
 use App\ShoppingListItem;
+use App\UnitMeasure;
 use App\User;
 use Illuminate\Support\Collection;
 
@@ -39,11 +40,12 @@ class ShoppingListItemService
         $list = $this->findList($groupId, $listId);
 
         $payload = $this->payloadFromInput($data);
+        $payload = $this->applyFreeTextDefaults($payload);
         $payload['shopping_list_id'] = $list->id;
         $payload['status'] = $payload['status'] ?? 'pending';
 
         $this->validateReferences($payload);
-        $this->assertNoDuplicate($list->id, $payload['ingredient_id'] ?? null, $payload['product_id'] ?? null, (int) $payload['unit_id']);
+        $this->assertNoDuplicate($list->id, $payload['ingredient_id'] ?? null, $payload['product_id'] ?? null, $payload['unit_id'] ?? null, $payload['free_text_name'] ?? null);
 
         $item = $this->items->create($payload);
         $this->audit($user->id, 'shopping_list_item.created', $item->id, null, $this->payload($item), $ip, $ua);
@@ -62,7 +64,7 @@ class ShoppingListItemService
         $merged = array_merge($old, $fields);
 
         $this->validateReferences($merged);
-        $this->assertNoDuplicate($list->id, $merged['ingredient_id'] ?? null, $merged['product_id'] ?? null, (int) $merged['unit_id'], $item->id);
+        $this->assertNoDuplicate($list->id, $merged['ingredient_id'] ?? null, $merged['product_id'] ?? null, $merged['unit_id'] ?? null, $merged['free_text_name'] ?? null, $item->id);
 
         $fields = $this->applyManualPriceInvalidation($item, $fields);
 
@@ -143,18 +145,26 @@ class ShoppingListItemService
 
     private function payloadFromInput(array $data): array
     {
-        $allowed = ['ingredient_id', 'product_id', 'quantity', 'unit_id', 'estimated_price', 'actual_price', 'status', 'notes'];
+        $allowed = ['ingredient_id', 'product_id', 'free_text_name', 'quantity', 'unit_id', 'estimated_price', 'actual_price', 'status', 'sort_order', 'notes'];
 
-        return array_intersect_key($data, array_flip($allowed));
+        $payload = array_intersect_key($data, array_flip($allowed));
+        if (array_key_exists('free_text_name', $payload)) {
+            $payload['free_text_name'] = trim((string) $payload['free_text_name']);
+            if ($payload['free_text_name'] === '') {
+                $payload['free_text_name'] = null;
+            }
+        }
+
+        return $payload;
     }
 
     private function validateReferences(array $data): void
     {
-        if (empty($data['ingredient_id']) && empty($data['product_id'])) {
-            throw new FamilyGroupException('SHOPPING_LIST_ITEM_TARGET_REQUIRED', 'El item debe tener ingrediente o producto.', 422);
+        if (empty($data['ingredient_id']) && empty($data['product_id']) && empty($data['free_text_name'])) {
+            throw new FamilyGroupException('SHOPPING_LIST_ITEM_TARGET_REQUIRED', 'Escribi que necesitas comprar o selecciona un producto o ingrediente.', 422);
         }
 
-        if (empty($data['unit_id']) || !$this->items->activeUnitExists((int) $data['unit_id'])) {
+        if (!empty($data['unit_id']) && !$this->items->activeUnitExists((int) $data['unit_id'])) {
             throw new FamilyGroupException('UNIT_NOT_FOUND', 'La unidad no existe o no esta activa.', 422);
         }
 
@@ -167,9 +177,26 @@ class ShoppingListItemService
         }
     }
 
-    private function assertNoDuplicate(int $listId, ?int $ingredientId, ?int $productId, int $unitId, ?int $exceptId = null): void
+    private function applyFreeTextDefaults(array $payload): array
     {
-        if ($this->items->duplicateExists($listId, $ingredientId, $productId, $unitId, $exceptId)) {
+        if (!empty($payload['free_text_name']) && empty($payload['ingredient_id']) && empty($payload['product_id'])) {
+            if (!array_key_exists('quantity', $payload) || $payload['quantity'] === null || $payload['quantity'] === '') {
+                $payload['quantity'] = 1;
+            }
+            if (empty($payload['unit_id'])) {
+                $unitId = UnitMeasure::where('status', 'active')->orderBy('id')->value('id');
+                if ($unitId) {
+                    $payload['unit_id'] = (int) $unitId;
+                }
+            }
+        }
+
+        return $payload;
+    }
+
+    private function assertNoDuplicate(int $listId, ?int $ingredientId, ?int $productId, $unitId, ?string $freeTextName = null, ?int $exceptId = null): void
+    {
+        if ($this->items->duplicateExists($listId, $ingredientId, $productId, $unitId !== null ? (int) $unitId : null, $freeTextName, $exceptId)) {
             throw new FamilyGroupException('SHOPPING_LIST_ITEM_DUPLICATE', 'El item ya existe en la lista.', 409);
         }
     }
@@ -180,11 +207,13 @@ class ShoppingListItemService
             'shopping_list_id' => $item->shopping_list_id,
             'ingredient_id' => $item->ingredient_id,
             'product_id' => $item->product_id,
+            'free_text_name' => $item->free_text_name,
             'quantity' => $item->quantity,
             'unit_id' => $item->unit_id,
             'estimated_price' => $item->estimated_price,
             'actual_price' => $item->actual_price,
             'status' => $item->status,
+            'sort_order' => $item->sort_order,
             'notes' => $item->notes,
             'price_source' => $item->price_source,
             'supermarket_chain_id' => $item->supermarket_chain_id,

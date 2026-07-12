@@ -17,7 +17,7 @@ import { BranchSelector } from '@/components/BranchSelector';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useRecipeDetail } from '@/hooks/useRecipeDetail';
 import { useRecipeFavorites } from '@/hooks/useRecipeFavorites';
-import { recipeShoppingListApi } from '@/api/endpoints';
+import { recipeShoppingListApi, recipesApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
@@ -32,6 +32,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   const favorites = useRecipeFavorites();
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<RecipeShoppingListResult | null>(null);
+  const [cooking, setCooking] = useState(false);
   const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
   const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
 
@@ -61,6 +62,41 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   function handleOpenList() {
     if (!result) return;
     router.push({ pathname: '/(app)/shopping-lists/[id]' as never, params: { id: String(result.shopping_list.id) } });
+  }
+
+  function handleCookRecipe() {
+    if (!groupId || !data) return;
+    const servings = data.servings || 1;
+    Alert.alert(
+      'Cocinar receta',
+      'Se descontaran los ingredientes requeridos del stock del grupo seleccionado.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          style: 'default',
+          onPress: () => {
+            const key = `${recipeId}-${groupId}-${Date.now()}`;
+            setCooking(true);
+            recipesApi.cook(recipeId, {
+              servings,
+              family_group_id: groupId,
+              deduct_stock: true,
+              idempotency_key: key,
+            })
+              .then(() => {
+                Alert.alert('Receta cocinada', 'El stock fue actualizado.');
+                refresh();
+              })
+              .catch((err) => {
+                const msg = err instanceof ApiError ? err.normalized.message : 'No se pudo cocinar la receta.';
+                Alert.alert('No se pudo cocinar', msg);
+              })
+              .finally(() => setCooking(false));
+          },
+        },
+      ],
+    );
   }
 
   if (loading) return <LoadingScreen message="Cargando receta..." />;
@@ -138,6 +174,17 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
 
         {groupId ? (
           <>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Cocinar</Text>
+              <Text style={styles.hint}>Desconta los ingredientes del stock del grupo seleccionado.</Text>
+              <AppButton
+                title={cooking ? 'Cocinando...' : 'Marcar como cocinada'}
+                onPress={handleCookRecipe}
+                loading={cooking}
+                fullWidth
+              />
+            </View>
+
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Generar lista de compras</Text>
               <Text style={styles.hint}>Elegí un supermercado (opcional) para estimar precios más precisos.</Text>

@@ -88,6 +88,15 @@
         ],
     ];
     $currentUser = Auth::user();
+    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/family-group', '/web/profile-objectives', '/web/barcode-scanner'];
+    $userMainLabels = [
+        '/web' => 'Inicio',
+        '/web/stock' => 'Mi cocina',
+        '/web/planning' => 'Plan',
+        '/web/shopping-list' => 'Compras',
+        '/web/profile-objectives' => 'Mi perfil',
+        '/web/barcode-scanner' => 'Escaner',
+    ];
 @endphp
 
 @auth
@@ -96,6 +105,11 @@
             $visibleItems = array_values(array_filter($menu['items'], function ($item) use ($currentUser) {
                 return $currentUser && $currentUser->hasPermission($item[2]);
             }));
+            if ($label === 'Usuario') {
+                $visibleItems = array_values(array_filter($visibleItems, function ($item) use ($userMainRoutes) {
+                    return in_array($item[1], $userMainRoutes, true);
+                }));
+            }
         @endphp
         @if(count($visibleItems) > 0)
             <li class="dropdown" data-permission="{{ $menu['permission'] }}">
@@ -104,7 +118,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="portalDropdown{{ $label }}">
                     @foreach($visibleItems as $item)
-                        <a class="dropdown-item {{ request()->is(ltrim($item[1], '/')) ? 'active' : '' }}" data-permission="{{ $item[2] }}" href="{{ url($item[1]) }}">{{ $item[0] }}</a>
+                        <a class="dropdown-item {{ request()->is(ltrim($item[1], '/')) ? 'active' : '' }}" data-permission="{{ $item[2] }}" href="{{ url($item[1]) }}">{{ $label === 'Usuario' ? ($userMainLabels[$item[1]] ?? $item[0]) : $item[0] }}</a>
                     @endforeach
                 </div>
             </li>

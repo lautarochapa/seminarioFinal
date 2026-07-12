@@ -28,6 +28,8 @@ class ShoppingListResource extends JsonResource
                             'id' => $item->product->id,
                             'name' => $item->product->name,
                         ] : null,
+                        'free_text_name' => $item->free_text_name,
+                        'display_name' => $item->product ? $item->product->name : ($item->ingredient ? $item->ingredient->name : $item->free_text_name),
                         'quantity' => $item->quantity,
                         'unit' => $item->unit ? [
                             'id' => $item->unit->id,
@@ -35,6 +37,7 @@ class ShoppingListResource extends JsonResource
                             'symbol' => $item->unit->symbol,
                         ] : null,
                         'status' => $item->status,
+                        'sort_order' => $item->sort_order,
                         'notes' => $item->notes,
                     ];
                 })->values();

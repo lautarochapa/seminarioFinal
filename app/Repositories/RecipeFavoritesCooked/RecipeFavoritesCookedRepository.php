@@ -98,9 +98,11 @@ class RecipeFavoritesCookedRepository
             ->where('si.status', 'active')
             ->whereNull('si.deleted_at')
             ->where('si.quantity', '>', 0)
+            ->orderByRaw('si.expiration_date is null')
             ->orderBy('si.expiration_date')
             ->orderBy('si.id')
             ->select('si.id', 'si.quantity', 'si.unit_id', 'si.product_id', 'p.ingredient_id')
+            ->lockForUpdate()
             ->get()
             ->toArray();
     }
@@ -124,12 +126,35 @@ class RecipeFavoritesCookedRepository
             ->orderByRaw('CASE WHEN ingredient_id IS NOT NULL THEN 0 ELSE 1 END')
             ->first();
 
-        return $conv ? (float) $conv->factor : null;
+        if ($conv) {
+            return (float) $conv->factor;
+        }
+
+        $inverse = UnitConversion::where('from_unit_id', $toUnitId)
+            ->where('to_unit_id', $fromUnitId)
+            ->where(function ($q) use ($ingredientId) {
+                if ($ingredientId) {
+                    $q->where('ingredient_id', $ingredientId)->orWhereNull('ingredient_id');
+                } else {
+                    $q->whereNull('ingredient_id');
+                }
+            })
+            ->where('status', 'active')
+            ->orderByRaw('CASE WHEN ingredient_id IS NOT NULL THEN 0 ELSE 1 END')
+            ->first();
+
+        if ($inverse && (float) $inverse->factor > 0) {
+            return 1 / (float) $inverse->factor;
+        }
+
+        return null;
     }
 
-    public function deductStockItem(int $stockItemId, float $deductQty): void
+    public function deductStockItem(int $stockItemId, float $deductQty): bool
     {
-        StockItem::where('id', $stockItemId)->decrement('quantity', $deductQty);
+        return StockItem::where('id', $stockItemId)
+            ->where('quantity', '>=', $deductQty)
+            ->decrement('quantity', $deductQty) > 0;
     }
 
     public function createStockMovement(array $data): StockMovement

@@ -15,6 +15,7 @@
         </div>
     </section>
 
+    @if($screenKey !== 'dashboard')
     <section class="metric-row">
         @foreach($screen['metrics'] as $metric)
             <article class="metric">
@@ -23,8 +24,35 @@
             </article>
         @endforeach
     </section>
+    @endif
 
-    @if($screenKey === 'stock')
+    @if($screenKey === 'dashboard')
+        <section data-user-home>
+            <div class="alert" data-user-home-message style="display:none"></div>
+            <div class="metric-row">
+                <article class="metric"><strong data-home-products>0</strong><span>productos en tu cocina</span></article>
+                <article class="metric"><strong data-home-expiring>0</strong><span>por vencer</span></article>
+                <article class="metric"><strong data-home-low-stock>0</strong><span>con poco stock</span></article>
+                <article class="metric"><strong data-home-recipes>0</strong><span>recetas posibles</span></article>
+            </div>
+            <div class="workspace">
+                <article class="panel">
+                    <h2>Que queres hacer ahora?</h2>
+                    <div class="web-tools">
+                        <a class="btn-main" href="{{ url('/web/stock') }}">Agregar producto</a>
+                        <a class="btn-secondary-web" href="{{ url('/web/barcode-scanner') }}">Escanear codigo</a>
+                        <a class="btn-secondary-web" href="{{ url('/web/recipes') }}">Buscar que cocinar</a>
+                        <a class="btn-secondary-web" href="{{ url('/web/shopping-list') }}">Crear lista de compras</a>
+                    </div>
+                    <p class="muted" data-home-empty>Agrega lo que tenes en tu cocina para que podamos recomendarte recetas y armar compras.</p>
+                </article>
+                <aside class="aside-panel">
+                    <h2>Para resolver</h2>
+                    <div data-home-actions class="muted">Cargando pendientes...</div>
+                </aside>
+            </div>
+        </section>
+    @elseif($screenKey === 'stock')
         <section data-user-stock-locations data-can-manage-catalog="{{ auth()->user() && auth()->user()->hasPermission('catalog.manage') ? '1' : '0' }}">
             <div class="alert" data-stock-locations-message style="display:none"></div>
             <div class="family-layout">
@@ -2149,17 +2177,19 @@
 
                     <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
 
-                    <h2 data-shopping-list-item-form-title>Agregar item</h2>
+                    <h2 data-shopping-list-item-form-title>Agregar articulo</h2>
                     <form class="family-form" data-shopping-list-item-form>
                         <input type="hidden" name="id">
+                        <label>Que necesitas comprar?</label>
+                        <input class="form-control" name="free_text_name" type="text" maxlength="180" placeholder="Ej: detergente, carne, shampoo">
                         <select class="form-control" name="ingredient_id" data-shopping-list-item-ingredient>
                             <option value="">Ingrediente opcional</option>
                         </select>
                         <select class="form-control" name="product_id" data-shopping-list-item-product>
                             <option value="">Producto opcional</option>
                         </select>
-                        <input class="form-control" name="quantity" type="number" min="0.0001" step="0.0001" placeholder="Cantidad" required>
-                        <select class="form-control" name="unit_id" data-shopping-list-item-unit required>
+                        <input class="form-control" name="quantity" type="number" min="0.0001" step="0.0001" placeholder="Cantidad opcional">
+                        <select class="form-control" name="unit_id" data-shopping-list-item-unit>
                             <option value="">Unidad</option>
                         </select>
                         <input class="form-control" name="estimated_price" type="number" min="0" step="0.01" placeholder="Precio estimado">

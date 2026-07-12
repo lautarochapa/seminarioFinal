@@ -24,6 +24,7 @@ Route::prefix('v1')->middleware(['web'])->group(base_path('routes/api_contract.p
 $v1 = ['web', 'trace_id', 'api_token', 'auth'];
 
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/notifications.php'));
+Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/home.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/catalog.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/ingredients.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/recipes.php'));

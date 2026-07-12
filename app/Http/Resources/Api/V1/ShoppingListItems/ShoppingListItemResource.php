@@ -18,6 +18,8 @@ class ShoppingListItemResource extends JsonResource
                 'id' => $this->product->id,
                 'name' => $this->product->name,
             ] : null,
+            'free_text_name' => $this->free_text_name,
+            'display_name' => $this->product ? $this->product->name : ($this->ingredient ? $this->ingredient->name : $this->free_text_name),
             'quantity' => $this->quantity,
             'unit' => $this->unit ? [
                 'id' => $this->unit->id,
@@ -28,6 +30,7 @@ class ShoppingListItemResource extends JsonResource
             'estimated_subtotal' => $this->estimated_price !== null ? round((float) $this->estimated_price * (float) $this->quantity, 2) : null,
             'actual_price' => $this->actual_price,
             'status' => $this->status,
+            'sort_order' => $this->sort_order,
             'notes' => $this->notes,
             'price_source' => $this->price_source,
             'price_updated_at' => optional($this->price_updated_at)->toIso8601String(),

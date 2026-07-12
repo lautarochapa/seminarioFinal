@@ -56,4 +56,14 @@ class RecipeFavoritesCookedException extends RuntimeException
     {
         return new self('INSUFFICIENT_STOCK', 'No hay stock suficiente para descontar todos los ingredientes.', 422);
     }
+
+    public static function ingredientMissing(array $details = []): self
+    {
+        return new self('RECIPE_INGREDIENT_MISSING_STOCK', 'Faltan ingredientes requeridos en el stock.', 422, $details);
+    }
+
+    public static function cookInProgress(): self
+    {
+        return new self('RECIPE_COOK_IN_PROGRESS', 'La receta ya se esta procesando para esta solicitud.', 409);
+    }
 }

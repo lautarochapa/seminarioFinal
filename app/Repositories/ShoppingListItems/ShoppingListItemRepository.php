@@ -14,6 +14,7 @@ class ShoppingListItemRepository
     {
         return ShoppingListItem::with(['ingredient', 'product', 'unit'])
             ->where('shopping_list_id', $shoppingListId)
+            ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
     }
@@ -44,15 +45,20 @@ class ShoppingListItemRepository
         $item->delete();
     }
 
-    public function duplicateExists(int $shoppingListId, ?int $ingredientId, ?int $productId, int $unitId, ?int $exceptId = null): bool
+    public function duplicateExists(int $shoppingListId, ?int $ingredientId, ?int $productId, ?int $unitId, ?string $freeTextName = null, ?int $exceptId = null): bool
     {
-        $query = ShoppingListItem::where('shopping_list_id', $shoppingListId)
-            ->where('unit_id', $unitId);
+        $query = ShoppingListItem::where('shopping_list_id', $shoppingListId);
 
         if ($productId !== null) {
-            $query->where('product_id', $productId);
+            $query->where('product_id', $productId)->where('unit_id', $unitId);
+        } elseif ($ingredientId !== null) {
+            $query->whereNull('product_id')->where('ingredient_id', $ingredientId)->where('unit_id', $unitId);
+        } elseif ($freeTextName !== null && trim($freeTextName) !== '') {
+            $query->whereNull('product_id')
+                ->whereNull('ingredient_id')
+                ->whereRaw('LOWER(free_text_name) = ?', [strtolower(trim($freeTextName))]);
         } else {
-            $query->whereNull('product_id')->where('ingredient_id', $ingredientId);
+            return false;
         }
 
         if ($exceptId !== null) {

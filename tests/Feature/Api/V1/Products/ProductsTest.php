@@ -4,6 +4,8 @@ namespace Tests\Feature\Api\V1\Products;
 
 use App\AuditLog;
 use App\Brand;
+use App\FamilyGroup;
+use App\FamilyGroupMember;
 use App\Ingredient;
 use App\Nutrient;
 use App\Product;
@@ -12,6 +14,7 @@ use App\ProductCategory;
 use App\ProductImage;
 use App\ProductNutrient;
 use App\Role;
+use App\StockItem;
 use App\SupermarketProduct;
 use App\SupermarketProductPrice;
 use App\UnitMeasure;
@@ -121,6 +124,19 @@ class ProductsTest extends TestCase
         ], Arr::except($data, ['brand', 'category', 'ingredient', 'unit', 'barcode'])));
     }
 
+    private function groupFor(User $user): FamilyGroup
+    {
+        $group = factory(FamilyGroup::class)->create(['owner_user_id' => $user->id, 'status' => 'active']);
+        factory(FamilyGroupMember::class)->create([
+            'family_group_id' => $group->id,
+            'user_id' => $user->id,
+            'role_in_group' => 'owner',
+            'status' => 'active',
+        ]);
+
+        return $group;
+    }
+
     public function test_admin_autenticacion_y_permiso()
     {
         $this->getJson('/api/v1/admin/products')->assertStatus(401);
@@ -221,6 +237,52 @@ class ProductsTest extends TestCase
             ->getJson('/api/v1/products/'.$active->id)
             ->assertStatus(200)
             ->assertJsonPath('data.id', $active->id);
+    }
+
+    public function test_barcode_conocido_con_stock_del_grupo_incluye_stock()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->groupFor($user);
+        $unit = $this->unit(['code' => 'scan_u_'.uniqid(), 'symbol' => 'u']);
+        $product = $this->product(['unit' => $unit, 'barcode' => '7791234500001']);
+        ProductBarcode::create(['product_id' => $product->id, 'barcode' => '7791234500001', 'type' => 'ean13', 'status' => 'active']);
+        StockItem::create([
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'quantity' => 2,
+            'unit_id' => $unit->id,
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/products/barcode/7791234500001?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.id', $product->id)
+            ->assertJsonPath('data.stock_summary.in_stock', true)
+            ->assertJsonPath('data.stock_items.0.quantity', '2.0000');
+    }
+
+    public function test_barcode_conocido_sin_stock_del_grupo_sigue_devolviendo_producto()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->groupFor($user);
+        $product = $this->product(['barcode' => '7791234500002']);
+        ProductBarcode::create(['product_id' => $product->id, 'barcode' => '7791234500002', 'type' => 'ean13', 'status' => 'active']);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/products/barcode/7791234500002?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.id', $product->id)
+            ->assertJsonPath('data.stock_summary.in_stock', false)
+            ->assertJsonPath('data.stock_items', []);
+    }
+
+    public function test_barcode_desconocido_retorna_404_para_flujo_manual()
+    {
+        $this->actingAs(factory(User::class)->create())
+            ->getJson('/api/v1/products/barcode/7791234599999')
+            ->assertStatus(404)
+            ->assertJsonPath('error.code', 'PRODUCT_NOT_FOUND');
     }
 
     public function test_nutricion()

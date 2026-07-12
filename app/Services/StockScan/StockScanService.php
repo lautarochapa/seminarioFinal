@@ -38,7 +38,7 @@ class StockScanService
             throw new FamilyGroupException('STOCK_LOCATION_NOT_FOUND', 'Ubicacion de stock no encontrada.', 404);
         }
 
-        $unitId = $this->resolveUnitId($product);
+        $unitId = ! empty($data['unit_id']) ? (int) $data['unit_id'] : $this->resolveUnitId($product);
         if (! $unitId || ! $this->stock->activeUnitExists($unitId)) {
             throw new FamilyGroupException('STOCK_UNIT_INVALID', 'La unidad indicada no existe o no esta activa.', 422);
         }

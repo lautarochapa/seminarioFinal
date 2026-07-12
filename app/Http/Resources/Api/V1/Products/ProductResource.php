@@ -54,6 +54,37 @@ class ProductResource extends JsonResource
             'images' => $this->whenLoaded('images', function () {
                 return ProductImageResource::collection($this->images);
             }),
+            'stock_items' => $this->whenLoaded('stockItems', function () {
+                return $this->stockItems->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'family_group_id' => $item->family_group_id,
+                        'product_id' => $item->product_id,
+                        'stock_location_id' => $item->stock_location_id,
+                        'quantity' => $item->quantity,
+                        'unit_id' => $item->unit_id,
+                        'expiration_date' => $item->expiration_date ? $item->expiration_date->toDateString() : null,
+                        'status' => $item->status,
+                        'location' => $item->relationLoaded('location') && $item->location ? [
+                            'id' => $item->location->id,
+                            'name' => $item->location->name,
+                            'type' => $item->location->type,
+                        ] : null,
+                        'unit' => $item->relationLoaded('unit') && $item->unit ? [
+                            'id' => $item->unit->id,
+                            'code' => $item->unit->code,
+                            'name' => $item->unit->name,
+                            'symbol' => $item->unit->symbol,
+                        ] : null,
+                    ];
+                })->values();
+            }),
+            'stock_summary' => $this->whenLoaded('stockItems', function () {
+                return [
+                    'in_stock' => $this->stockItems->count() > 0,
+                    'items_count' => $this->stockItems->count(),
+                ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

@@ -58,13 +58,20 @@
           "microphonePermission": false,
           "recordAudioAndroid": false
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "apiUrl": {},
       "router": {},
       "eas": {
         "projectId": "b8defe12-ded6-4f3b-9055-2e1f5129f45d"

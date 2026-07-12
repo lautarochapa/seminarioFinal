@@ -5,13 +5,14 @@ import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import { BarcodeResult } from '@/components/BarcodeResult';
-import { productsApi, stockApi, unitsApi } from '@/api/endpoints';
+import { productsApi, stockApi, stockLocationsApi, unitsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { useOptionalFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { setPendingScanResult } from '@/utils/barcodeScanResult';
 import { goBackOrHome } from '@/utils/navigation';
 import { COLORS, FONT, RADIUS, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { ProductDetail } from '@/types/product';
+import type { StockLocation } from '@/types/stock';
 import type { Unit } from '@/types/unit';
 
 export function BarcodeScannerScreen() {
@@ -28,6 +29,12 @@ export function BarcodeScannerScreen() {
   const [manualName, setManualName] = useState('');
   const [manualQuantity, setManualQuantity] = useState('1');
   const [manualUnitId, setManualUnitId] = useState<number | null>(null);
+  const [knownStockVisible, setKnownStockVisible] = useState(false);
+  const [knownQuantity, setKnownQuantity] = useState('1');
+  const [knownUnitId, setKnownUnitId] = useState<number | null>(null);
+  const [knownLocationId, setKnownLocationId] = useState<number | null>(null);
+  const [locations, setLocations] = useState<StockLocation[]>([]);
+  const [addingKnownStock, setAddingKnownStock] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
   const [requestingProduct, setRequestingProduct] = useState(false);
 
@@ -45,6 +52,20 @@ export function BarcodeScannerScreen() {
       .catch(() => setUnits([]));
   }, [manualUnitId]);
 
+  useEffect(() => {
+    if (!groupId) {
+      return;
+    }
+
+    stockLocationsApi.list(groupId)
+      .then((res) => {
+        const loaded = res.data || [];
+        setLocations(loaded);
+        setKnownLocationId(loaded[0]?.id ?? null);
+      })
+      .catch(() => setLocations([]));
+  }, [groupId]);
+
   async function lookup(code: string) {
     setLoading(true);
     setProduct(null);
@@ -55,6 +76,7 @@ export function BarcodeScannerScreen() {
         ? await productsApi.findByBarcode(code, groupId)
         : await productsApi.findByBarcode(code);
       setProduct(res.data);
+      if (res.data.unit?.id) setKnownUnitId(res.data.unit.id);
     } catch (err) {
       if (err instanceof ApiError && err.normalized.status === 404) {
         setNotFound(true);
@@ -83,6 +105,41 @@ export function BarcodeScannerScreen() {
     setManualName(`Producto ${lastCode}`);
     setManualQuantity('1');
     setManualProductVisible(true);
+  }
+
+  function openKnownStock() {
+    if (!product) return;
+    if (!groupId) {
+      Alert.alert('Selecciona un grupo', 'Necesitas un grupo familiar activo para cargar stock.');
+      return;
+    }
+    setKnownQuantity('1');
+    setKnownUnitId(product.unit?.id ?? manualUnitId ?? units[0]?.id ?? null);
+    setKnownLocationId(knownLocationId ?? locations[0]?.id ?? null);
+    setKnownStockVisible(true);
+  }
+
+  async function handleKnownStockSubmit() {
+    if (!lastCode || !groupId || addingKnownStock) return;
+    if (!knownLocationId || !knownUnitId || !knownQuantity || Number(knownQuantity) <= 0) return;
+
+    setAddingKnownStock(true);
+    try {
+      await stockApi.scan(groupId, {
+        barcode: lastCode,
+        stock_location_id: knownLocationId,
+        quantity: Number(knownQuantity),
+        unit_id: knownUnitId,
+      });
+      setKnownStockVisible(false);
+      Alert.alert('Stock actualizado', 'El producto quedo cargado en tu stock.');
+      router.replace('/(app)/stock' as never);
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.normalized.message : 'No se pudo agregar al stock.';
+      Alert.alert('No se pudo cargar', msg);
+    } finally {
+      setAddingKnownStock(false);
+    }
   }
 
   async function handleManualProductSubmit() {
@@ -135,6 +192,8 @@ export function BarcodeScannerScreen() {
             barcode={lastCode ?? ''}
             product={product}
             notFound={notFound}
+            stockStatus={product ? stockStatus(product) : null}
+            onAddToStock={product ? openKnownStock : undefined}
             onUseProduct={product ? handleUseProduct : undefined}
             onRequestProduct={notFound && !requestingProduct ? openManualProduct : undefined}
             onScanAgain={handleScanAgain}
@@ -235,8 +294,77 @@ export function BarcodeScannerScreen() {
           </View>
         </View>
       </Modal>
+
+      <Modal visible={knownStockVisible} transparent animationType="fade" onRequestClose={() => setKnownStockVisible(false)}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Agregar al stock</Text>
+            <Text style={styles.modalHint}>{product?.name}</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={knownQuantity}
+              onChangeText={setKnownQuantity}
+              placeholder="Cantidad"
+              placeholderTextColor={COLORS.textHint}
+              keyboardType="decimal-pad"
+              accessibilityLabel="Cantidad"
+            />
+            <View style={styles.unitWrap}>
+              {locations.map((location) => (
+                <Pressable
+                  key={location.id}
+                  onPress={() => setKnownLocationId(location.id)}
+                  accessibilityRole="button"
+                  style={[styles.unitChip, knownLocationId === location.id && styles.unitChipSelected]}
+                >
+                  <Text style={[styles.unitChipText, knownLocationId === location.id && styles.unitChipTextSelected]}>
+                    {location.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.unitWrap}>
+              {units.map((unit) => (
+                <Pressable
+                  key={unit.id}
+                  onPress={() => setKnownUnitId(unit.id)}
+                  accessibilityRole="button"
+                  style={[styles.unitChip, knownUnitId === unit.id && styles.unitChipSelected]}
+                >
+                  <Text style={[styles.unitChipText, knownUnitId === unit.id && styles.unitChipTextSelected]}>
+                    {unit.symbol || unit.code || unit.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.modalActions}>
+              <Pressable
+                onPress={() => setKnownStockVisible(false)}
+                accessibilityRole="button"
+                style={styles.modalCancelBtn}
+              >
+                <Text style={styles.modalCancelText}>Cancelar</Text>
+              </Pressable>
+              <AppButton
+                title="Agregar"
+                onPress={handleKnownStockSubmit}
+                loading={addingKnownStock}
+                disabled={!knownLocationId || !knownUnitId || !knownQuantity || Number(knownQuantity) <= 0}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
+}
+
+function stockStatus(product: ProductDetail): string {
+  const summary = product.stock_summary;
+  if (!summary || !summary.in_stock) {
+    return 'No esta en tu stock.';
+  }
+  return summary.items_count === 1 ? 'Ya tenes 1 item en stock.' : `Ya tenes ${summary.items_count} items en stock.`;
 }
 
 const styles = StyleSheet.create({
