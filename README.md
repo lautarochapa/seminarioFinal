@@ -54,6 +54,58 @@ Luego abrir:
 http://127.0.0.1:8000
 ```
 
+## Deploy en Render
+
+El repo ya queda preparado para desplegar en Render usando Docker:
+
+- `Dockerfile`
+- `.dockerignore`
+- `render.yaml`
+- health check web en `/healthz`
+
+### Opcion recomendada
+
+En Render, crear un **Web Service** con:
+
+- `Runtime`: `Docker`
+- `Docker Build Context Directory`: `.`
+- `Dockerfile Path`: `./Dockerfile`
+- `Health Check Path`: `/healthz`
+- `Pre-Deploy Command`: `php artisan migrate --force`
+
+### Variables obligatorias
+
+Configurar manualmente en Render:
+
+```text
+APP_KEY=base64:...
+APP_URL=https://<tu-servicio>.onrender.com
+ASSET_URL=https://<tu-servicio>.onrender.com
+DB_HOST=<host de postgres>
+DB_DATABASE=<db>
+DB_USERNAME=<user>
+DB_PASSWORD=<password>
+```
+
+Y dejar:
+
+```text
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=pgsql
+DB_PORT=5432
+DB_SSLMODE=require
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+```
+
+### Importante
+
+- No usar `.env.qa` como archivo secreto tal cual está hoy si contiene credenciales reales.
+- Conviene rotar la password de la base si alguna vez quedó commiteada o compartida.
+- Si Render no completa el primer deploy por una migration, volver a correr el deploy luego de revisar logs suele alcanzar.
+
 ## Ambientes
 
 - `.env` queda apuntando a PostgreSQL local.

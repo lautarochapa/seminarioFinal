@@ -17,6 +17,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/healthz', function () {
+    return response()->json([
+        'status' => 'ok',
+        'app' => config('app.name'),
+        'time' => now()->toIso8601String(),
+    ]);
+});
+
 
 Route::get('/map2','AddressController@index');
 Route::get('/map', function() { return view('map'); });
