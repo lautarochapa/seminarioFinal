@@ -14,11 +14,11 @@ RUN apt-get update && apt-get install -y \
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
+    --no-autoloader \
     --no-scripts \
     --prefer-dist \
     --no-interaction \
     --no-progress \
-    --optimize-autoloader \
     --ignore-platform-req=ext-gd
 
 COPY . .
