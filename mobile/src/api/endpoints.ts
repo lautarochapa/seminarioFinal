@@ -67,6 +67,7 @@ import type {
   RecipeFilters,
   CookRecipeRequest,
   CookRecipeResult,
+  RecipeAvailability,
   RecipeNutrition,
   RecipeSummary,
   RecipeSuggestion,
@@ -295,6 +296,9 @@ export const shoppingListsApi = {
   complete(groupId: number, listId: number, payload: CompleteShoppingListRequest): Promise<ApiResponse<CompleteShoppingListResult>> {
     return apiClient.post<ApiResponse<CompleteShoppingListResult>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/complete`, payload);
   },
+  processPendingStock(groupId: number, listId: number, payload: CompleteShoppingListRequest): Promise<ApiResponse<CompleteShoppingListResult>> {
+    return apiClient.post<ApiResponse<CompleteShoppingListResult>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/process-pending-stock`, payload);
+  },
   start(groupId: number, listId: number): Promise<ApiResponse<ShoppingList>> {
     return apiClient.post<ApiResponse<ShoppingList>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/start`);
   },
@@ -402,6 +406,10 @@ export const recipesApi = {
     const qs = toQueryString({ family_group_id: groupId || undefined });
     return apiClient.get<ApiResponse<RecipeCost>>(`/api/v1/recipes/${id}/cost${qs}`);
   },
+  availability(id: number, groupId: number, servings: number): Promise<ApiResponse<RecipeAvailability>> {
+    const qs = toQueryString({ family_group_id: groupId, servings });
+    return apiClient.get<ApiResponse<RecipeAvailability>>(`/api/v1/recipes/${id}/availability${qs}`);
+  },
   cook(id: number, payload: CookRecipeRequest): Promise<ApiResponse<CookRecipeResult>> {
     return apiClient.post<ApiResponse<CookRecipeResult>>(`/api/v1/recipes/${id}/cook`, payload);
   },
@@ -435,6 +443,10 @@ export const recipeSuggestionsApi = {
   },
   available(groupId: number): Promise<PaginatedResponse<RecipeSuggestion>> {
     return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/available?per_page=20`)
+      .then((payload) => normalizeRecipeSuggestions(payload).response);
+  },
+  almostAvailable(groupId: number): Promise<PaginatedResponse<RecipeSuggestion>> {
+    return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/almost-available?per_page=20`)
       .then((payload) => normalizeRecipeSuggestions(payload).response);
   },
 };

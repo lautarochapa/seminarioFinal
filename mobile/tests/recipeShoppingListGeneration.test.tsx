@@ -14,6 +14,7 @@ jest.mock('react-native-safe-area-context', () => ({
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
+  useFocusEffect: jest.fn(),
 }));
 
 jest.mock('../src/auth/FamilyGroupContext', () => ({
@@ -186,6 +187,7 @@ describe('RecipeDetailScreen — generar lista desde receta', () => {
 
     await waitFor(() => {
       expect(mockGenerate).toHaveBeenCalledWith(7, 3, {
+        servings: 4,
         supermarket_chain_id: 1,
         supermarket_branch_id: 10,
       });

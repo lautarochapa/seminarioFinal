@@ -19,12 +19,14 @@ class RecipeAvailabilityController extends Controller
     {
         $this->validate($request, [
             'family_group_id' => 'required|integer|min:1',
+            'servings' => 'sometimes|integer|min:1|max:100',
         ]);
 
         $traceId       = $request->attributes->get('trace_id');
         $familyGroupId = (int) $request->query('family_group_id');
 
-        $result = $this->service->availability($request->user(), $recipeId, $familyGroupId);
+        $servings = $request->query('servings') !== null ? (int) $request->query('servings') : null;
+        $result = $this->service->availability($request->user(), $recipeId, $familyGroupId, $servings);
 
         return response()->json(['data' => $result, 'trace_id' => $traceId])
             ->header('X-Trace-Id', $traceId);

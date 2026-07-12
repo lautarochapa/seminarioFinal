@@ -5,6 +5,7 @@ namespace App\Services\RecipeSuggestions;
 use App\Exceptions\RecipeAvailability\RecipeAvailabilityException;
 use App\Repositories\RecipeSuggestions\RecipeSuggestionsRepository;
 use App\User;
+use App\Services\RecipeAvailability\RecipeAvailabilityService;
 use Illuminate\Support\Collection;
 
 class RecipeSuggestionsService
@@ -14,17 +15,20 @@ class RecipeSuggestionsService
     const STATUS_NOT_POSSIBLE    = 'not_possible';
 
     private RecipeSuggestionsRepository $repo;
+    private RecipeAvailabilityService $availabilityService;
 
-    public function __construct(RecipeSuggestionsRepository $repo)
+    public function __construct(RecipeSuggestionsRepository $repo, RecipeAvailabilityService $availabilityService)
     {
         $this->repo = $repo;
+        $this->availabilityService = $availabilityService;
     }
 
     public function available(User $user, int $groupId, int $page, int $perPage): array
     {
         $this->assertMember($user, $groupId);
         $result = $this->computeAll($user, $groupId);
-        $filtered = $result->filter(fn ($r) => $r['availability'] === self::STATUS_POSSIBLE)->values();
+        $filtered = $result->filter(fn ($r) => $r['availability'] === self::STATUS_POSSIBLE)
+            ->sortBy(function ($r) { return sprintf('%05d-%06.2f-%06d-%s', 99999 - $r['expiring_ingredients_count'], 100 - $r['coverage_percentage'], $r['total_time'], $r['name']); })->values();
         return $this->paginate($filtered, $page, $perPage);
     }
 
@@ -32,7 +36,7 @@ class RecipeSuggestionsService
     {
         $this->assertMember($user, $groupId);
         $result = $this->computeAll($user, $groupId);
-        $filtered = $result->filter(fn ($r) => $r['availability'] === self::STATUS_ALMOST_POSSIBLE)->values();
+        $filtered = $result->filter(fn ($r) => $r['availability'] === self::STATUS_ALMOST_POSSIBLE && $r['missing_ingredients_count'] <= 2)->values();
         return $this->paginate($filtered, $page, $perPage);
     }
 
@@ -196,15 +200,16 @@ class RecipeSuggestionsService
     {
         $canManage = $user->hasPermission('recipes.manage');
         $recipes   = $this->repo->candidateRecipes($user->id, $canManage);
-        $stockMap  = $this->repo->stockSummary($groupId);
-        $convs     = $this->repo->allConversions();
+        $expiringIds = $this->repo->expiringIngredientIds($groupId);
 
-        return $recipes->map(function ($recipe) use ($stockMap, $convs) {
-            $avail = $this->recipeAvailability($recipe, $stockMap, $convs);
+        return $recipes->map(function ($recipe) use ($user, $groupId, $expiringIds) {
+            $avail = $this->availabilityService->availability($user, $recipe->id, $groupId, $recipe->servings ?: 1);
+            $expiring = $recipe->ingredients->filter(fn ($item) => in_array((int) $item->ingredient_id, $expiringIds, true))->count();
             return array_merge($this->recipeData($recipe), [
-                'availability'          => $avail['status'],
-                'max_possible_servings' => $avail['max_servings'],
-                'coverage_percentage'   => $avail['coverage_pct'],
+                'availability'          => $avail['status'], 'availability_status' => $avail['status'], 'can_cook' => $avail['can_cook'],
+                'max_possible_servings' => $avail['max_possible_servings'], 'coverage_percentage' => $avail['coverage_percentage'],
+                'required_ingredients_count' => $avail['required_ingredients_count'], 'available_ingredients_count' => $avail['available_ingredients_count'],
+                'missing_ingredients_count' => $avail['missing_ingredients_count'], 'expiring_ingredients_count' => $expiring,
             ]);
         });
     }
@@ -279,6 +284,7 @@ class RecipeSuggestionsService
             'prep_time_minutes' => $recipe->prep_time_minutes,
             'cook_time_minutes' => $recipe->cook_time_minutes,
             'servings'          => $recipe->servings,
+            'total_time'        => (int) ($recipe->prep_time_minutes ?? 0) + (int) ($recipe->cook_time_minutes ?? 0),
             'is_official'       => $recipe->is_official,
             'source_type'       => $recipe->source_type,
         ];

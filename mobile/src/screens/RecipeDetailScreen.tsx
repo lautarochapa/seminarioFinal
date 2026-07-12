@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { EmptyState } from '@/components/EmptyState';
@@ -22,7 +22,7 @@ import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '@/utils/theme';
-import type { RecipeShoppingListResult } from '@/types/recipe';
+import type { RecipeAvailability, RecipeShoppingListResult } from '@/types/recipe';
 
 export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   const router = useRouter();
@@ -35,6 +35,22 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   const [cooking, setCooking] = useState(false);
   const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
   const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
+  const [servings, setServings] = useState(1);
+  const [availability, setAvailability] = useState<RecipeAvailability | null>(null);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+
+  useEffect(() => { const timer = setTimeout(() => { if (data?.servings) setServings(data.servings); }, 0); return () => clearTimeout(timer); }, [data?.servings]);
+
+  const refreshAvailability = useCallback(async () => {
+    if (!groupId || !recipeId || servings < 1) { setAvailability(null); return; }
+    setAvailabilityLoading(true); setAvailabilityError(null);
+    try { setAvailability((await recipesApi.availability(recipeId, groupId, servings)).data); }
+    catch (err) { setAvailabilityError(err instanceof ApiError ? err.normalized.message : 'No pudimos verificar el stock.'); }
+    finally { setAvailabilityLoading(false); }
+  }, [groupId, recipeId, servings]);
+
+  useFocusEffect(useCallback(() => { void refreshAvailability(); }, [refreshAvailability]));
 
   function handleSelectChain(chainId: number | null) {
     setSelectedChainId(chainId);
@@ -47,6 +63,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
     setResult(null);
     try {
       const res = await recipeShoppingListApi.generate(groupId, recipeId, {
+        servings,
         supermarket_chain_id: selectedChainId ?? undefined,
         supermarket_branch_id: selectedBranchId ?? undefined,
       });
@@ -66,7 +83,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
 
   function handleCookRecipe() {
     if (!groupId || !data) return;
-    const servings = data.servings || 1;
+    if (!availability?.can_cook) return;
     Alert.alert(
       'Cocinar receta',
       'Se descontaran los ingredientes requeridos del stock del grupo seleccionado.',
@@ -87,6 +104,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
               .then(() => {
                 Alert.alert('Receta cocinada', 'El stock fue actualizado.');
                 refresh();
+                void refreshAvailability();
               })
               .catch((err) => {
                 const msg = err instanceof ApiError ? err.normalized.message : 'No se pudo cocinar la receta.';
@@ -175,12 +193,19 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
         {groupId ? (
           <>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Cocinar</Text>
-              <Text style={styles.hint}>Desconta los ingredientes del stock del grupo seleccionado.</Text>
+              <Text style={styles.sectionTitle}>Disponibilidad con Mi cocina</Text>
+              <View style={styles.servingsRow}><Text style={styles.hint}>Porciones</Text><AppButton title="−" variant="outline" disabled={servings <= 1 || availabilityLoading} onPress={() => setServings((value) => Math.max(1, value - 1))} /><Text style={styles.servingsValue}>{servings}</Text><AppButton title="+" variant="outline" disabled={availabilityLoading} onPress={() => setServings((value) => Math.min(100, value + 1))} /></View>
+              {availabilityLoading ? <Text style={styles.hint}>Verificando disponibilidad...</Text> : null}
+              {availabilityError ? <><Text style={styles.availabilityError}>{availabilityError}</Text><AppButton title="Reintentar" variant="outline" onPress={() => void refreshAvailability()} /></> : null}
+              {availability ? <AvailabilityPanel availability={availability} /> : null}
+              {availability?.warnings.map((warning) => <Text key={warning} style={styles.warning}>{warning}</Text>)}
+              {availability && !availability.can_cook ? <AppButton title="Agregar faltantes a compras" variant="outline" onPress={handleGenerateList} loading={generating} fullWidth /> : null}
+              {availability?.status === 'not_possible' ? <AppButton title="Ver Mi cocina" variant="ghost" onPress={() => router.push('/(app)/stock' as never)} fullWidth /> : null}
               <AppButton
                 title={cooking ? 'Cocinando...' : 'Marcar como cocinada'}
                 onPress={handleCookRecipe}
                 loading={cooking}
+                disabled={!availability?.can_cook || availabilityLoading}
                 fullWidth
               />
             </View>
@@ -276,7 +301,17 @@ const styles = StyleSheet.create({
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', gap: SPACING.sm },
   infoLabel: { color: COLORS.textSecondary, fontSize: FONT.captionSize },
   infoValue: { color: COLORS.textPrimary, fontSize: FONT.captionSize, fontWeight: '700' },
+  servingsRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm }, servingsValue: { minWidth: 28, textAlign: 'center', color: COLORS.textPrimary, fontWeight: '800' },
+  availabilityError: { color: COLORS.error, fontWeight: '700' }, warning: { color: COLORS.warning, fontSize: FONT.captionSize },
+  availabilityOk: { color: COLORS.success, fontWeight: '800' }, availabilityBad: { color: COLORS.error, fontWeight: '800' },
+  ingredientAvailability: { borderTopWidth: 1, borderTopColor: COLORS.border, paddingTop: SPACING.sm }, ingredientName: { color: COLORS.textPrimary, fontWeight: '700' }, ingredientQty: { color: COLORS.textSecondary, fontSize: FONT.captionSize },
 });
+
+export function AvailabilityPanel({ availability }: { availability: RecipeAvailability }) {
+  const missing = availability.ingredients.filter((item) => !item.is_available);
+  const headline = availability.can_cook ? 'Tenés todos los ingredientes.' : availability.status === 'not_possible' ? 'No podés cocinar esta receta todavía.' : `Te faltan ${availability.missing_ingredients_count} ingredientes.`;
+  return <View><Text style={availability.can_cook ? styles.availabilityOk : styles.availabilityBad}>{headline}</Text><Text style={styles.hint}>{availability.available_ingredients_count} de {availability.required_ingredients_count} ingredientes disponibles</Text>{missing.map((item) => <View key={item.ingredient_id} style={styles.ingredientAvailability}><Text style={styles.ingredientName}>{item.ingredient_name ?? 'Ingrediente'}</Text><Text style={styles.ingredientQty}>Necesitás {formatValue(item.required_quantity)} {item.unit_symbol ?? item.unit_name ?? ''} · Tenés {formatValue(item.available_quantity)} · Faltan {formatValue(item.missing_quantity)}</Text>{!item.unit_compatible ? <Text style={styles.warning}>La unidad del stock no es compatible.</Text> : null}</View>)}</View>;
+}
 
 function formatValue(value: unknown): string {
   const n = Number(value);

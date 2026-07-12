@@ -218,7 +218,7 @@ class ShoppingListCompletionTest extends TestCase
         $this->assertDatabaseMissing('stock_items', ['family_group_id' => $group->id]);
     }
 
-    public function test_ingredient_only_item_from_recipe_requires_explicit_product_association()
+    public function test_ingredient_only_item_reuses_unique_compatible_product()
     {
         [$user, $group] = $this->groupWithMember();
         $unit = $this->unit();
@@ -227,15 +227,74 @@ class ShoppingListCompletionTest extends TestCase
         $list = $this->list($group, $user);
         $item = $this->item($list, $unit, ['ingredient_id' => $ingredient->id, 'quantity' => 1]);
 
-        // Without an explicit product association the backend must not guess.
-        $noAssoc = $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/complete', [
                 'items' => [
                     ['shopping_list_item_id' => $item->id, 'add_to_stock' => true],
                 ],
             ])->assertStatus(200);
-        $noAssoc->assertJsonPath('data.items_omitted_count', 1);
-        $this->assertEquals('INGREDIENT_WITHOUT_PRODUCT_ASSOCIATION', $noAssoc->json('data.warnings.0.reason'));
+        $response->assertJsonPath('data.items_added_to_stock_count', 1);
+        $this->assertDatabaseHas('stock_items', ['family_group_id' => $group->id, 'product_id' => $product->id]);
+    }
+
+    public function test_ingredient_without_product_creates_pending_product_request_stock_movement_and_purchase_item()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $list = $this->list($group, $user);
+        $item = $this->item($list, $unit, ['ingredient_id' => $ingredient->id, 'quantity' => 3]);
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/complete', [
+            'items' => [['shopping_list_item_id' => $item->id, 'add_to_stock' => true]],
+        ])->assertStatus(200)->assertJsonPath('data.items_added_to_stock_count', 1);
+
+        $product = Product::where('ingredient_id', $ingredient->id)->where('family_group_id', $group->id)->first();
+        $this->assertNotNull($product);
+        $this->assertEquals('pending_review', $product->status);
+        $this->assertDatabaseHas('product_requests', ['product_id' => $product->id, 'family_group_id' => $group->id, 'status' => 'pending']);
+        $this->assertDatabaseHas('stock_items', ['product_id' => $product->id, 'quantity' => 3]);
+        $this->assertDatabaseHas('stock_movements', ['product_id' => $product->id, 'movement_type' => 'entry', 'reason' => 'shopping_list_completion']);
+        $this->assertDatabaseHas('purchase_items', ['product_id' => $product->id, 'quantity' => 3]);
+        $this->assertNotNull(ShoppingListItem::find($item->id)->purchase_item_id);
+    }
+
+    public function test_multiple_compatible_products_returns_ambiguous_conflict_and_rolls_back()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $this->product($ingredient, $unit);
+        $this->product($ingredient, $unit);
+        $list = $this->list($group, $user);
+        $item = $this->item($list, $unit, ['ingredient_id' => $ingredient->id]);
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/complete', [
+            'items' => [['shopping_list_item_id' => $item->id, 'add_to_stock' => true]],
+        ])->assertStatus(409)->assertJsonPath('error.code', 'SHOPPING_ITEM_PRODUCT_AMBIGUOUS');
+
+        $this->assertDatabaseMissing('purchases', ['shopping_list_id' => $list->id]);
+        $this->assertDatabaseMissing('stock_items', ['family_group_id' => $group->id]);
+    }
+
+    public function test_reuses_group_pending_product_without_duplicate_product_or_request()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+
+        foreach ([2, 3] as $quantity) {
+            $list = $this->list($group, $user);
+            $item = $this->item($list, $unit, ['ingredient_id' => $ingredient->id, 'quantity' => $quantity]);
+            $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/complete', [
+                'items' => [['shopping_list_item_id' => $item->id, 'add_to_stock' => true]],
+            ])->assertStatus(200);
+        }
+
+        $this->assertEquals(1, Product::where('ingredient_id', $ingredient->id)->where('family_group_id', $group->id)->count());
+        $product = Product::where('ingredient_id', $ingredient->id)->where('family_group_id', $group->id)->first();
+        $this->assertEquals(1, \App\ProductRequest::where('product_id', $product->id)->where('status', 'pending')->count());
+        $this->assertDatabaseHas('stock_items', ['family_group_id' => $group->id, 'product_id' => $product->id, 'quantity' => 5]);
     }
 
     public function test_ingredient_item_associated_to_existing_product_is_added_to_stock()
@@ -425,5 +484,27 @@ class ShoppingListCompletionTest extends TestCase
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/complete', [])
             ->assertStatus(409)
             ->assertJsonPath('error.code', 'SHOPPING_LIST_ALREADY_COMPLETED');
+    }
+
+    public function test_repairs_selected_legacy_omission_on_completed_list_idempotently()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $list = $this->list($group, $user, ['status' => 'completed']);
+        $item = $this->item($list, $unit, ['ingredient_id' => $ingredient->id, 'quantity' => 32, 'stock_processed_at' => now()]);
+        $purchase = \App\Purchase::create(['family_group_id' => $group->id, 'shopping_list_id' => $list->id, 'user_id' => $user->id, 'purchase_date' => now()->toDateString(), 'estimated_total' => 0, 'actual_total' => 0, 'status' => 'confirmed']);
+        $body = ['items' => [['shopping_list_item_id' => $item->id, 'add_to_stock' => true]]];
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/process-pending-stock', $body)
+            ->assertStatus(200)->assertJsonPath('data.items_added_to_stock_count', 1)->assertJsonPath('data.purchase.id', $purchase->id);
+        $product = Product::where('ingredient_id', $ingredient->id)->where('family_group_id', $group->id)->first();
+        $this->assertDatabaseHas('stock_items', ['product_id' => $product->id, 'quantity' => 32]);
+        $this->assertDatabaseHas('stock_movements', ['product_id' => $product->id, 'related_purchase_id' => $purchase->id]);
+        $this->assertDatabaseHas('purchase_items', ['purchase_id' => $purchase->id, 'product_id' => $product->id]);
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/process-pending-stock', $body)
+            ->assertStatus(200)->assertJsonPath('data.items_added_to_stock_count', 0);
+        $this->assertEquals(1, StockMovement::where('product_id', $product->id)->count());
     }
 }

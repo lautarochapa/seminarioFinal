@@ -48,6 +48,7 @@ class RecipeAvailabilityRepository
             ->where('si.family_group_id', $familyGroupId)
             ->where('si.status', 'active')
             ->whereNull('si.deleted_at')
+            ->where(function ($q) { $q->whereNull('si.expiration_date')->orWhereDate('si.expiration_date', '>=', now()->toDateString()); })
             ->whereNotNull('p.ingredient_id')
             ->select('p.ingredient_id', 'si.unit_id', DB::raw('SUM(si.quantity) as total_qty'))
             ->groupBy('p.ingredient_id', 'si.unit_id')
@@ -77,6 +78,7 @@ class RecipeAvailabilityRepository
             ->where('si.product_id', $productId)
             ->where('si.status', 'active')
             ->whereNull('si.deleted_at')
+            ->where(function ($q) { $q->whereNull('si.expiration_date')->orWhereDate('si.expiration_date', '>=', now()->toDateString()); })
             ->select('p.ingredient_id', 'si.unit_id', DB::raw('SUM(si.quantity) as total_qty'))
             ->groupBy('p.ingredient_id', 'si.unit_id')
             ->get();
@@ -109,6 +111,17 @@ class RecipeAvailabilityRepository
             ->orderByRaw('CASE WHEN ingredient_id IS NOT NULL THEN 0 ELSE 1 END')
             ->first();
 
-        return $conv ? (float) $conv->factor : null;
+        if ($conv) {
+            return (float) $conv->factor;
+        }
+
+        $inverse = UnitConversion::where('from_unit_id', $toUnitId)
+            ->where('to_unit_id', $fromUnitId)
+            ->where(function ($q) use ($ingredientId) {
+                if ($ingredientId) { $q->where('ingredient_id', $ingredientId)->orWhereNull('ingredient_id'); }
+                else { $q->whereNull('ingredient_id'); }
+            })->where('status', 'active')->orderByRaw('CASE WHEN ingredient_id IS NOT NULL THEN 0 ELSE 1 END')->first();
+
+        return $inverse && (float) $inverse->factor > 0 ? 1 / (float) $inverse->factor : null;
     }
 }

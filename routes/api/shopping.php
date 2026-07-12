@@ -12,6 +12,7 @@ Route::post('family-groups/{id}/recipes/{recipeId}/shopping-list',              
 // Shopping list {listId} sub-resources — specific before wildcard
 Route::post('family-groups/{id}/shopping-lists/{listId}/start-session',                [\App\Http\Controllers\Api\V1\ShoppingSessions\ShoppingSessionController::class, 'start']);
 Route::post('family-groups/{id}/shopping-lists/{listId}/complete',                     [\App\Http\Controllers\Api\V1\ShoppingListCompletion\ShoppingListCompletionController::class, 'complete']);
+Route::post('family-groups/{id}/shopping-lists/{listId}/process-pending-stock',        [\App\Http\Controllers\Api\V1\ShoppingListCompletion\ShoppingListCompletionController::class, 'processPendingStock']);
 Route::post('family-groups/{id}/shopping-lists/{listId}/start',                        [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'start']);
 Route::post('family-groups/{id}/shopping-lists/{listId}/cancel',                       [\App\Http\Controllers\Api\V1\ShoppingLists\ShoppingListController::class, 'cancel']);
 Route::get('family-groups/{id}/shopping-lists/{listId}/compare-supermarkets',          [\App\Http\Controllers\Api\V1\SupermarketComparison\SupermarketComparisonController::class, 'compare']);

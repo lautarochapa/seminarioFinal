@@ -11,6 +11,11 @@
     function endpoint(path) { return '/api/v1' + path; }
 
     function extractMsg(err) {
+        var fields = err && err.payload && err.payload.error && err.payload.error.field_errors;
+        if (fields) {
+            var first = Object.keys(fields)[0];
+            if (first && fields[first] && fields[first][0]) { return fields[first][0]; }
+        }
         return (err && err.payload && err.payload.error && err.payload.error.message) || 'Error inesperado.';
     }
 
@@ -27,7 +32,7 @@
         if (s.cookOpen) {
             var groupOptions = '<option value="">Sin grupo familiar</option>';
             s.groups.forEach(function (g) {
-                groupOptions += '<option value="' + g.id + '">' + escapeHtml(g.name) + '</option>';
+                groupOptions += '<option value="' + g.id + '"' + (String(g.id) === String(s.selectedGroupId) ? ' selected' : '') + '>' + escapeHtml(g.name) + '</option>';
             });
             cookForm =
                 '<div style="margin-top:10px;padding:12px;background:#f9fbfb;border-radius:6px;border:1px solid #dde3e8">' +
@@ -37,12 +42,12 @@
                 '<input type="number" min="1" max="999" class="form-control" data-cook-servings value="' + escapeHtml(s.servings) + '" style="max-width:100px">' +
                 '</div>' +
                 '<div style="margin-bottom:8px">' +
-                '<label style="font-size:12px;color:#697681;display:block;margin-bottom:3px">Grupo familiar (opcional)</label>' +
+                '<label style="font-size:12px;color:#697681;display:block;margin-bottom:3px">Grupo familiar</label>' +
                 '<select class="form-control" data-cook-group>' + groupOptions + '</select>' +
                 '</div>' +
-                '<div data-cook-deduct-row style="margin-bottom:10px;display:none">' +
+                '<div data-cook-deduct-row style="margin-bottom:10px;display:' + (s.selectedGroupId ? 'block' : 'none') + '">' +
                 '<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">' +
-                '<input type="checkbox" data-cook-deduct> Descontar del stock' +
+                '<input type="checkbox" data-cook-deduct> Descontar ingredientes de Mi cocina' +
                 '</label>' +
                 '</div>' +
                 '<div style="display:flex;gap:8px">' +
@@ -138,6 +143,7 @@
 
         if (cookGroup && deductRow) {
             cookGroup.addEventListener('change', function () {
+                s.selectedGroupId = cookGroup.value ? parseInt(cookGroup.value, 10) : null;
                 deductRow.style.display = cookGroup.value ? '' : 'none';
             });
         }
@@ -173,7 +179,7 @@
 
                 window.CCApi.request(endpoint('/recipes/' + s.recipeId + '/cook'), {
                     method: 'POST',
-                    body:   JSON.stringify(body),
+                    body:   body,
                 })
                     .then(function () {
                         s.cookLoading = false;
@@ -204,6 +210,7 @@
             .then(function (res) {
                 s.groups        = res.data || [];
                 s.groupsLoaded  = true;
+                if (!s.selectedGroupId && s.groups.length) { s.selectedGroupId = s.groups[0].id; }
                 if (s.cookOpen) { render(s); }
             })
             .catch(function () {
@@ -226,6 +233,7 @@
                 cookLoading:  false,
                 groups:       [],
                 groupsLoaded: false,
+                selectedGroupId: null,
             };
             render(s);
         },

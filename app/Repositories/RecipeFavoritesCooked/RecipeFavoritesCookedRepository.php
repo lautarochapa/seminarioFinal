@@ -98,6 +98,7 @@ class RecipeFavoritesCookedRepository
             ->where('si.status', 'active')
             ->whereNull('si.deleted_at')
             ->where('si.quantity', '>', 0)
+            ->where(function ($q) { $q->whereNull('si.expiration_date')->orWhereDate('si.expiration_date', '>=', now()->toDateString()); })
             ->orderByRaw('si.expiration_date is null')
             ->orderBy('si.expiration_date')
             ->orderBy('si.id')

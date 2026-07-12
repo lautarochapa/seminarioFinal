@@ -34,4 +34,11 @@ class ShoppingListCompletionController extends Controller
             'trace_id' => $traceId,
         ], 200)->header('X-Trace-Id', $traceId);
     }
+
+    public function processPendingStock(CompleteShoppingListRequest $request, $id, $listId)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $result = $this->service->repairPendingStock($request->user(), (int) $id, (int) $listId, $request->validated(), $request->ip(), $request->userAgent());
+        return response()->json(['data' => new ShoppingListCompletionResource($result), 'message' => 'Procesamos '.$result['summary']['items_added_to_stock_count'].' artículos pendientes.', 'trace_id' => $traceId], 200)->header('X-Trace-Id', $traceId);
+    }
 }
