@@ -5,6 +5,7 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
+    --no-scripts \
     --prefer-dist \
     --no-interaction \
     --no-progress \
@@ -12,7 +13,8 @@ RUN composer install \
     --ignore-platform-req=ext-gd
 
 COPY . .
-RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
+    && php artisan package:discover --ansi
 
 FROM php:8.2-apache
 
