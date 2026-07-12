@@ -36,10 +36,13 @@ class ShoppingListGenerationRepository
 
     public function existingHistoryList(int $groupId): ?ShoppingList
     {
+        // Only reuse a list that hasn't been started/finished/cancelled yet — see the equivalent
+        // comment in ShoppingListPreviewRepository::existingList().
         return ShoppingList::with(['items.ingredient', 'items.unit'])
             ->where('family_group_id', $groupId)
             ->where('source_type', 'history')
             ->whereNull('meal_plan_id')
+            ->whereIn('status', [ShoppingList::STATUS_DRAFT, ShoppingList::STATUS_ACTIVE])
             ->whereNull('deleted_at')
             ->first();
     }
@@ -51,7 +54,7 @@ class ShoppingListGenerationRepository
             'meal_plan_id' => null,
             'created_by' => $userId,
             'source_type' => 'history',
-            'status' => 'draft',
+            'status' => ShoppingList::STATUS_ACTIVE,
         ]);
     }
 

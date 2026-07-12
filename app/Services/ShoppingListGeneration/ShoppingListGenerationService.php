@@ -47,6 +47,9 @@ class ShoppingListGenerationService
             if (!$list) {
                 $list = $this->historyRepo->createHistoryList($groupId, $user->id);
                 $created = true;
+            } elseif ($list->status !== \App\ShoppingList::STATUS_ACTIVE && $list->canTransitionTo(\App\ShoppingList::STATUS_ACTIVE)) {
+                $list->status = \App\ShoppingList::STATUS_ACTIVE;
+                $list->save();
             }
 
             $this->historyRepo->replaceItems($list, $items);

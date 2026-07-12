@@ -216,7 +216,36 @@ class ShoppingListGenerationTest extends TestCase
                 'meal_plan_id' => $plan->id,
             ])->assertStatus(201)
             ->assertJsonPath('data.source_type', 'meal_plan')
-            ->assertJsonPath('data.items.0.ingredient.id', $ingredient->id);
+            ->assertJsonPath('data.status', 'active')
+            ->assertJsonPath('data.items.0.ingredient.id', $ingredient->id)
+            ->assertJsonPath('data.items.0.status', 'pending');
+    }
+
+    public function test_regenerating_over_a_completed_list_creates_a_new_one_instead_of_reopening_it()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit('g');
+        $ingredient = $this->ingredient($unit);
+        $plan = $this->planWithRecipe($group, $user, $this->recipe($ingredient, $unit, 5));
+
+        $first = $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/generate-from-meal-plan', [
+                'meal_plan_id' => $plan->id,
+            ])->assertStatus(201);
+        $firstListId = $first->json('data.id');
+
+        // Simulate that the previously generated list was fully purchased and closed.
+        ShoppingList::find($firstListId)->update(['status' => 'completed']);
+
+        $second = $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/generate-from-meal-plan', [
+                'meal_plan_id' => $plan->id,
+            ])->assertStatus(201);
+
+        $this->assertNotEquals($firstListId, $second->json('data.id'));
+        $second->assertJsonPath('data.status', 'active');
+        $this->assertDatabaseHas('shopping_lists', ['id' => $firstListId, 'status' => 'completed']);
+        $this->assertEquals(2, ShoppingList::where('meal_plan_id', $plan->id)->count());
     }
 
     public function test_generate_from_meal_plan_subtracts_available_stock()
@@ -278,6 +307,7 @@ class ShoppingListGenerationTest extends TestCase
             ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/generate-from-history')
             ->assertStatus(201)
             ->assertJsonPath('data.source_type', 'history')
+            ->assertJsonPath('data.status', 'active')
             ->assertJsonPath('data.items.0.ingredient.id', $ingredient->id);
     }
 

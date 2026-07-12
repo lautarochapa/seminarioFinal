@@ -171,6 +171,58 @@ class ShoppingListItemsTest extends TestCase
             ->assertJsonPath('data.quantity', '3.0000');
     }
 
+    public function test_create_item_with_product_id()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $list = $this->list($group, $user);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items', [
+                'product_id' => $product->id,
+                'quantity' => 2,
+                'unit_id' => $unit->id,
+            ])->assertStatus(201)
+            ->assertJsonPath('data.product.id', $product->id);
+
+        $this->assertDatabaseHas('shopping_list_items', [
+            'shopping_list_id' => $list->id,
+            'product_id' => $product->id,
+        ]);
+    }
+
+    public function test_create_item_without_product_ingredient_or_free_text_is_rejected()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items', [
+                'notes' => 'sin nada que comprar',
+            ])->assertStatus(422)
+            ->assertJsonPath('error.field_errors.free_text_name.0', 'Escribi que necesitas comprar o selecciona un producto o ingrediente.');
+    }
+
+    public function test_free_text_duplicate_is_case_insensitive()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user);
+        ShoppingListItem::create([
+            'shopping_list_id' => $list->id,
+            'free_text_name' => 'Detergente',
+            'quantity' => 1,
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/items', [
+                'free_text_name' => 'detergente',
+            ])->assertStatus(409)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_ITEM_DUPLICATE');
+    }
+
     public function test_create_free_text_item_without_catalog_reference()
     {
         [$user, $group] = $this->groupWithMember();

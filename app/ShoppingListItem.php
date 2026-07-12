@@ -10,12 +10,12 @@ class ShoppingListItem extends Model
         'shopping_list_id', 'ingredient_id', 'product_id', 'free_text_name', 'selected_supermarket_product_id',
         'quantity', 'unit_id', 'estimated_price', 'actual_price', 'status', 'sort_order', 'notes',
         'price_source', 'price_updated_at', 'supermarket_chain_id', 'supermarket_branch_id',
-        'source_type', 'source_id',
+        'source_type', 'source_id', 'stock_processed_at', 'purchase_item_id',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:4', 'estimated_price' => 'decimal:2', 'actual_price' => 'decimal:2',
-        'price_updated_at' => 'datetime',
+        'price_updated_at' => 'datetime', 'stock_processed_at' => 'datetime',
     ];
 
     public function shoppingList() { return $this->belongsTo(ShoppingList::class); }
@@ -27,4 +27,5 @@ class ShoppingListItem extends Model
     public function scans() { return $this->hasMany(ShoppingSessionScan::class); }
     public function supermarketChain() { return $this->belongsTo(SupermarketChain::class, 'supermarket_chain_id'); }
     public function supermarketBranch() { return $this->belongsTo(SupermarketBranch::class, 'supermarket_branch_id'); }
+    public function purchaseItem() { return $this->belongsTo(PurchaseItem::class); }
 }

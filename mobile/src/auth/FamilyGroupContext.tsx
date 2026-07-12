@@ -15,9 +15,14 @@ export function FamilyGroupProvider({ children }: { children: React.ReactNode })
   const [selectedGroup, setSelectedGroup] = useState<FamilyGroup | null>(null);
 
   const selectGroup = useCallback((group: FamilyGroup) => {
+    if (selectedGroup?.id !== group.id) {
+      // Group-scoped responses must never survive a context switch.
+      // Fire-and-forget keeps selection responsive; cache is best-effort.
+      import('@/storage/offlineCache').then(({ offlineCache }) => offlineCache.clearAll()).catch(() => undefined);
+    }
     setSelectedGroup(group);
     secureStorage.setSelectedGroupId(group.id).catch(() => { /* best-effort */ });
-  }, []);
+  }, [selectedGroup?.id]);
 
   const clearGroup = useCallback(() => {
     setSelectedGroup(null);

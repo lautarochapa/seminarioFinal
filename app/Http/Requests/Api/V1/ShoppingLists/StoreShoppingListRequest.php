@@ -14,7 +14,7 @@ class StoreShoppingListRequest extends FormRequest
         return [
             'source_type' => 'sometimes|string|in:manual,meal_plan,history',
             'meal_plan_id' => 'sometimes|nullable|integer|min:1',
-            'status' => 'sometimes|string|in:draft,active,completed,cancelled',
+            'status' => 'sometimes|string|in:draft,active,in_progress,completed,cancelled',
             'optimization_mode' => 'sometimes|nullable|string|max:60',
         ];
     }

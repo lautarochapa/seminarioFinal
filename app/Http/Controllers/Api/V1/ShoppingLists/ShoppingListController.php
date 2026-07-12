@@ -72,4 +72,24 @@ class ShoppingListController extends Controller
             'trace_id' => $request->attributes->get('trace_id'),
         ]);
     }
+
+    public function start(Request $request, int $id, int $listId): JsonResponse
+    {
+        $list = $this->service->start($request->user(), $id, $listId, $request->ip(), $request->userAgent() ?? '');
+
+        return response()->json([
+            'data' => new ShoppingListResource($list),
+            'trace_id' => $request->attributes->get('trace_id'),
+        ]);
+    }
+
+    public function cancel(Request $request, int $id, int $listId): JsonResponse
+    {
+        $list = $this->service->cancel($request->user(), $id, $listId, $request->ip(), $request->userAgent() ?? '');
+
+        return response()->json([
+            'data' => new ShoppingListResource($list),
+            'trace_id' => $request->attributes->get('trace_id'),
+        ]);
+    }
 }

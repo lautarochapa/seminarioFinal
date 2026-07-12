@@ -243,7 +243,7 @@ class RecipeShoppingListService
                 throw new FamilyGroupException('SHOPPING_LIST_NOT_FOUND', 'La lista de compras no existe.', 404);
             }
 
-            if ($list->status === 'completed') {
+            if (! in_array($list->status, [ShoppingList::STATUS_DRAFT, ShoppingList::STATUS_ACTIVE], true)) {
                 throw new FamilyGroupException('SHOPPING_LIST_CLOSED', 'La lista de compras esta cerrada.', 409);
             }
 
@@ -255,7 +255,7 @@ class RecipeShoppingListService
             'meal_plan_id'    => null,
             'created_by'      => $user->id,
             'source_type'     => 'recipe',
-            'status'          => 'draft',
+            'status'          => ShoppingList::STATUS_ACTIVE,
         ]);
     }
 

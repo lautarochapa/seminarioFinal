@@ -31,7 +31,7 @@ import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING, TOUCH_TARGET } from '@/utils/theme';
-import type { ShoppingListItem } from '@/types/shopping';
+import type { CompleteShoppingListItemRequest, ShoppingListItem } from '@/types/shopping';
 import type { ProductSummary } from '@/types/product';
 
 interface Props {
@@ -57,7 +57,14 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   const [addingItem, setAddingItem] = useState(false);
   const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
   const [startingSession, setStartingSession] = useState(false);
+  const [startingPurchase, setStartingPurchase] = useState(false);
+  const [confirmingList, setConfirmingList] = useState(false);
   const { data: products, loading: loadingProducts, setFilters: setProductFilters } = useProducts();
+
+  const [completeModalVisible, setCompleteModalVisible] = useState(false);
+  const [completingPurchase, setCompletingPurchase] = useState(false);
+  const [completeError, setCompleteError] = useState<string | null>(null);
+  const [stockSelections, setStockSelections] = useState<Record<number, boolean>>({});
 
   const handleProductSearch = useCallback((text: string) => {
     if (debounceTimer) clearTimeout(debounceTimer);
@@ -133,15 +140,56 @@ export function ShoppingListDetailScreen({ listId }: Props) {
     try {
       await shoppingListItemsApi.update(groupId, listId, item.id, { status: newStatus });
       refresh();
-    } catch {
-      Alert.alert('Error', 'No se pudo actualizar el item.');
+    } catch (err) {
+      // Show the real reason (e.g. transition rejected) instead of a generic message.
+      if (err instanceof ApiError) {
+        Alert.alert('No se pudo actualizar', err.normalized.message);
+      } else {
+        Alert.alert('Error', 'No se pudo actualizar el item.');
+      }
+    }
+  }
+
+  async function handleConfirmList() {
+    if (!groupId) return;
+    setConfirmingList(true);
+    try {
+      await shoppingListsApi.update(groupId, listId, { status: 'active' });
+      refresh();
+    } catch (err) {
+      Alert.alert('Error', err instanceof ApiError ? err.normalized.message : 'No se pudo confirmar la lista.');
+    } finally {
+      setConfirmingList(false);
+    }
+  }
+
+  async function handleStartPurchase() {
+    if (!groupId) return;
+    setStartingPurchase(true);
+    try {
+      await shoppingListsApi.start(groupId, listId);
+      refresh();
+    } catch (err) {
+      Alert.alert('No se pudo comenzar la compra', err instanceof ApiError ? err.normalized.message : 'Intenta nuevamente.');
+    } finally {
+      setStartingPurchase(false);
+    }
+  }
+
+  async function handlePausePurchase() {
+    if (!groupId) return;
+    try {
+      await shoppingListsApi.update(groupId, listId, { status: 'active' });
+      refresh();
+    } catch (err) {
+      Alert.alert('Error', err instanceof ApiError ? err.normalized.message : 'No se pudo pausar la compra.');
     }
   }
 
   async function handleStartSession() {
     if (!groupId || !list) return;
-    if (list.status === 'completed' || list.status === 'cancelled') {
-      Alert.alert('Lista finalizada', 'Esta lista ya no puede iniciarse.');
+    if (list.status !== 'active' && list.status !== 'in_progress') {
+      Alert.alert('No disponible', 'La lista debe estar "Lista para comprar" o "En compra" para usar el escaner.');
       return;
     }
     setStartingSession(true);
@@ -156,6 +204,71 @@ export function ShoppingListDetailScreen({ listId }: Props) {
       }
     } finally {
       setStartingSession(false);
+    }
+  }
+
+  const purchasedItems = items.filter((i) => i.status === 'purchased');
+
+  function canAutoAssociate(item: ShoppingListItem): boolean {
+    return !!item.product?.id;
+  }
+
+  function handleOpenComplete() {
+    const initial: Record<number, boolean> = {};
+    purchasedItems.forEach((item) => {
+      // Only pre-check items whose product is already known; free-text/ingredient-only items
+      // require an explicit user decision (create pending product) — never guessed automatically.
+      initial[item.id] = canAutoAssociate(item);
+    });
+    setStockSelections(initial);
+    setCompleteError(null);
+    setCompleteModalVisible(true);
+  }
+
+  async function handleConfirmComplete() {
+    if (!groupId) return;
+    const requestItems: CompleteShoppingListItemRequest[] = purchasedItems
+      .filter((item) => stockSelections[item.id])
+      .map((item) => {
+        if (canAutoAssociate(item)) {
+          return { shopping_list_item_id: item.id, add_to_stock: true };
+        }
+        return {
+          shopping_list_item_id: item.id,
+          add_to_stock: true,
+          create_pending_product: true,
+          name: item.free_text_name ?? item.display_name ?? 'Articulo',
+        };
+      });
+
+    setCompletingPurchase(true);
+    setCompleteError(null);
+    try {
+      const res = await shoppingListsApi.complete(groupId, listId, { items: requestItems });
+      setCompleteModalVisible(false);
+      refresh();
+      Alert.alert(
+        'Compra finalizada',
+        `Agregamos ${res.data.items_added_to_stock_count} producto(s) a Mi cocina.`,
+        [
+          { text: 'Ver Mi cocina', onPress: () => router.push('/(app)/stock' as never) },
+          { text: 'Ver compra', onPress: () => router.push({ pathname: '/(app)/purchases/[id]' as never, params: { id: String(res.data.purchase.id) } }) },
+          { text: 'Volver a Compras', onPress: () => router.push('/(app)/purchases' as never) },
+        ]
+      );
+    } catch (err) {
+      if (err instanceof ApiError && err.normalized.status === 409) {
+        // Already completed by a previous attempt (e.g. retry after timeout): not an error, just refresh.
+        setCompleteModalVisible(false);
+        refresh();
+        Alert.alert('Compra ya finalizada', 'Esta lista ya habia sido finalizada.');
+      } else if (err instanceof ApiError) {
+        setCompleteError(err.normalized.message);
+      } else {
+        setCompleteError('No pudimos finalizar la compra. Intenta nuevamente.');
+      }
+    } finally {
+      setCompletingPurchase(false);
     }
   }
 
@@ -181,7 +294,12 @@ export function ShoppingListDetailScreen({ listId }: Props) {
 
   if (!list) return null;
 
-  const canEdit = list.status !== 'completed' && list.status !== 'cancelled';
+  const isDraft = list.status === 'draft';
+  const isActive = list.status === 'active';
+  const isInProgress = list.status === 'in_progress';
+  const isClosed = list.status === 'completed' || list.status === 'cancelled';
+  const canEditItems = isDraft || isActive; // add/remove articles before the purchase starts
+  const canMarkPurchased = isInProgress; // checking items off only makes sense once the purchase is under way
   const purchased = items.filter((i) => i.status === 'purchased').length;
   const total = items.length;
 
@@ -193,7 +311,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
         showBack
         onBack={goBackOrHome}
         rightAction={
-          canEdit ? (
+          canEditItems ? (
             <Pressable
               onPress={() => setAddModalVisible(true)}
               accessibilityLabel="Agregar item"
@@ -202,7 +320,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
             >
               <MaterialCommunityIcons name="plus" size={26} color={COLORS.textInverse} />
             </Pressable>
-          ) : (
+          ) : !isClosed ? (
             <Pressable
               onPress={() => router.push({ pathname: '/(app)/shopping-lists/[id]/edit' as never, params: { id: String(listId) } })}
               accessibilityLabel="Editar lista"
@@ -211,7 +329,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
             >
               <MaterialCommunityIcons name="pencil-outline" size={22} color={COLORS.textInverse} />
             </Pressable>
-          )
+          ) : undefined
         }
       />
       <ScrollView
@@ -227,12 +345,18 @@ export function ShoppingListDetailScreen({ listId }: Props) {
               <MoneyText amount={list.estimated_total} style={styles.total} />
             )}
           </View>
-          <Text style={styles.progress}>{purchased}/{total} items comprados</Text>
-          {total > 0 && (
-            <View style={styles.barBg}>
-              <View style={[styles.barFill, { width: `${Math.round((purchased / total) * 100)}%` as `${number}%` }]} />
-            </View>
+          {isInProgress && (
+            <>
+              <Text style={styles.progress}>{purchased} de {total} articulos comprados</Text>
+              {total > 0 && (
+                <View style={styles.barBg}>
+                  <View style={[styles.barFill, { width: `${Math.round((purchased / total) * 100)}%` as `${number}%` }]} />
+                </View>
+              )}
+            </>
           )}
+          {isDraft && <Text style={styles.itemMeta}>Todavia en edicion. Confirmala cuando este lista para comprar.</Text>}
+          {isActive && <Text style={styles.itemMeta}>Lista confirmada. Toca &quot;Comenzar compra&quot; cuando salgas a comprar.</Text>}
         </View>
 
         {/* Items */}
@@ -243,14 +367,16 @@ export function ShoppingListDetailScreen({ listId }: Props) {
             <View key={item.id} style={styles.itemCard}>
               <Pressable
                 style={styles.itemCheck}
-                onPress={() => handleTogglePurchased(item)}
+                onPress={() => canMarkPurchased && handleTogglePurchased(item)}
+                disabled={!canMarkPurchased}
                 accessibilityRole="checkbox"
+                accessibilityState={{ disabled: !canMarkPurchased, checked: item.status === 'purchased' }}
                 accessibilityLabel={item.status === 'purchased' ? 'Desmarcar' : 'Marcar como comprado'}
               >
                 <MaterialCommunityIcons
                   name={item.status === 'purchased' ? 'check-circle' : 'circle-outline'}
                   size={24}
-                  color={item.status === 'purchased' ? COLORS.success : COLORS.textHint}
+                  color={item.status === 'purchased' ? COLORS.success : (canMarkPurchased ? COLORS.textHint : COLORS.border)}
                 />
               </Pressable>
               <View style={styles.itemBody}>
@@ -264,7 +390,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
                 </Text>
                 <PriceSourceBadge source={item.price_source} />
               </View>
-              {canEdit && (
+              {canEditItems && (
                 deletingItemId === item.id ? (
                   <ActivityIndicator size="small" color={COLORS.error} />
                 ) : (
@@ -282,15 +408,61 @@ export function ShoppingListDetailScreen({ listId }: Props) {
           ))
         )}
 
-        {/* Actions */}
-        {canEdit && (
+        {/* Actions — depend strictly on the list's current lifecycle status */}
+        {isDraft && (
           <AppButton
-            title={startingSession ? 'Iniciando...' : 'Iniciar compra'}
-            onPress={handleStartSession}
-            loading={startingSession}
+            title={confirmingList ? 'Confirmando...' : 'Confirmar lista'}
+            onPress={handleConfirmList}
+            loading={confirmingList}
             fullWidth
             style={styles.actionBtn}
+            accessibilityLabel="Confirmar lista para poder comenzar la compra"
           />
+        )}
+        {isActive && (
+          <>
+            <AppButton
+              title={startingPurchase ? 'Comenzando...' : 'Comenzar compra'}
+              onPress={handleStartPurchase}
+              loading={startingPurchase}
+              fullWidth
+              style={styles.actionBtn}
+              accessibilityLabel="Comenzar compra"
+            />
+            <AppButton
+              title={startingSession ? 'Iniciando...' : 'Comenzar compra con escaner'}
+              onPress={handleStartSession}
+              loading={startingSession}
+              fullWidth
+              variant="secondary"
+              style={styles.actionBtn}
+            />
+          </>
+        )}
+        {isInProgress && (
+          <>
+            {purchased < total && (
+              <Text style={[styles.itemMeta, { textAlign: 'center' }]}>
+                Todavia quedan {total - purchased} articulo(s) sin comprar.
+              </Text>
+            )}
+            {purchasedItems.length > 0 && (
+              <AppButton
+                title="Finalizar compra"
+                onPress={handleOpenComplete}
+                fullWidth
+                style={styles.actionBtn}
+                accessibilityLabel="Finalizar compra"
+              />
+            )}
+            <AppButton
+              title="Pausar compra"
+              onPress={handlePausePurchase}
+              fullWidth
+              variant="secondary"
+              style={styles.actionBtn}
+            />
+          </>
         )}
       </ScrollView>
 
@@ -393,6 +565,67 @@ export function ShoppingListDetailScreen({ listId }: Props) {
               <AppButton title="Agregar" onPress={handleAddItem} loading={addingItem} fullWidth />
             </ScrollView>
           )}
+        </View>
+      </Modal>
+
+      {/* Complete purchase / add-to-stock review modal */}
+      <Modal visible={completeModalVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setCompleteModalVisible(false)}>
+        <View style={styles.modal}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Finalizar compra</Text>
+            <Pressable onPress={() => setCompleteModalVisible(false)} accessibilityLabel="Cerrar" style={styles.modalClose}>
+              <MaterialCommunityIcons name="close" size={24} color={COLORS.textPrimary} />
+            </Pressable>
+          </View>
+
+          <FormError message={completeError} />
+
+          <ScrollView contentContainerStyle={{ padding: SPACING.md, gap: SPACING.sm }}>
+            <Text style={styles.itemMeta}>
+              Compraste {purchasedItems.length} articulo(s). Elegi cuales agregar a Mi cocina.
+            </Text>
+            {purchasedItems.map((item) => {
+              const label = item.display_name ?? item.product?.name ?? item.ingredient?.name ?? item.free_text_name ?? 'Item';
+              const autoAssociable = canAutoAssociate(item);
+              const disabled = !!item.ingredient && !item.product; // recipe ingredient without a linked product: needs manual association elsewhere
+              return (
+                <Pressable
+                  key={item.id}
+                  style={[styles.itemCard, disabled && { opacity: 0.5 }]}
+                  disabled={disabled}
+                  onPress={() => setStockSelections((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}
+                  accessibilityRole="checkbox"
+                >
+                  <MaterialCommunityIcons
+                    name={stockSelections[item.id] ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                    size={22}
+                    color={disabled ? COLORS.textHint : COLORS.primary}
+                  />
+                  <View style={styles.itemBody}>
+                    <Text style={styles.itemName}>{label}</Text>
+                    <Text style={styles.itemMeta}>{item.quantity ?? ''} {item.unit?.symbol ?? ''}</Text>
+                    {disabled && (
+                      <Text style={[styles.itemMeta, { color: COLORS.error }]}>
+                        Asocia un producto desde Mi cocina para poder sumarlo al stock.
+                      </Text>
+                    )}
+                    {!disabled && !autoAssociable && (
+                      <Text style={styles.itemMeta}>Se creara como producto pendiente de revision.</Text>
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          <View style={{ padding: SPACING.md }}>
+            <AppButton
+              title="Finalizar y actualizar Mi cocina"
+              onPress={handleConfirmComplete}
+              loading={completingPurchase}
+              fullWidth
+            />
+          </View>
         </View>
       </Modal>
     </View>

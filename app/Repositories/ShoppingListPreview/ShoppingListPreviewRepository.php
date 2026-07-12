@@ -67,9 +67,13 @@ class ShoppingListPreviewRepository
 
     public function existingList(int $groupId, int $planId): ?ShoppingList
     {
+        // Only reuse a list that hasn't been started/finished/cancelled yet. Regenerating on top of
+        // an already-completed or cancelled list would silently resurrect it with fresh pending items
+        // while leaving its status untouched — exactly the "Completada" list with pending items bug.
         return ShoppingList::with(['items.ingredient', 'items.unit'])
             ->where('family_group_id', $groupId)
             ->where('meal_plan_id', $planId)
+            ->whereIn('status', [ShoppingList::STATUS_DRAFT, ShoppingList::STATUS_ACTIVE])
             ->whereNull('deleted_at')
             ->first();
     }

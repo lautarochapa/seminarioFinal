@@ -41,6 +41,18 @@ class ShoppingSessionService
             throw new FamilyGroupException('SHOPPING_SESSION_ALREADY_ACTIVE', 'Ya existe una sesion activa para esta lista.', 409);
         }
 
+        if ($list->status !== ShoppingList::STATUS_IN_PROGRESS) {
+            if (!$list->canTransitionTo(ShoppingList::STATUS_IN_PROGRESS)) {
+                throw new FamilyGroupException(
+                    'SHOPPING_LIST_INVALID_STATUS_TRANSITION',
+                    'La lista debe estar "Lista para comprar" para comenzar la compra.',
+                    409
+                );
+            }
+            $list->status = ShoppingList::STATUS_IN_PROGRESS;
+            $list->save();
+        }
+
         $session = $this->sessions->create([
             'shopping_list_id' => $list->id,
             'family_group_id' => $groupId,
@@ -252,8 +264,10 @@ class ShoppingSessionService
             $session->save();
 
             $list = $session->shoppingList;
-            $list->status = 'completed';
-            $list->save();
+            if ($list->canTransitionTo(ShoppingList::STATUS_COMPLETED)) {
+                $list->status = ShoppingList::STATUS_COMPLETED;
+                $list->save();
+            }
 
             $session = $session->fresh(['shoppingList', 'branch']);
             $this->audit($user->id, 'shopping_session.finished', $session->id, $old, $this->payload($session), $ip, $ua);

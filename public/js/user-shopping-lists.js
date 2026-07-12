@@ -94,7 +94,7 @@
     }
 
     function statusLabel(value) {
-        var labels = { draft: 'Borrador', active: 'Activa', completed: 'Completada', cancelled: 'Cancelada' };
+        var labels = { draft: 'Borrador', active: 'Lista para comprar', in_progress: 'En compra', completed: 'Completada', cancelled: 'Cancelada' };
         return labels[value] || value;
     }
 
@@ -239,14 +239,19 @@
                 '<button type="button" class="btn-secondary-web btn-sm" data-shopping-list-item-delete="' + escapeHtml(item.id) + '">Eliminar</button></td>' +
                 '</tr>';
         }).join('') : '<tr><td colspan="7" class="muted">La lista no tiene items cargados.</td></tr>';
+        var purchased = items.filter(function (item) { return item.status === 'purchased'; });
+        var canComplete = (list.status === 'active' || list.status === 'in_progress') && purchased.length > 0;
         target.className = '';
         target.innerHTML = '<div class="table-line"><span>Lista</span><strong>#' + escapeHtml(list.id) + '</strong></div>' +
             '<div class="table-line"><span>Origen</span><strong>' + escapeHtml(sourceLabel(list.source_type)) + '</strong></div>' +
             '<div class="table-line"><span>Estado</span><strong>' + escapeHtml(statusLabel(list.status)) + '</strong></div>' +
             '<div class="table-line"><span>Total estimado</span><strong>' + escapeHtml(list.estimated_total) + '</strong></div>' +
+            renderLifecycleActions(list) +
+            (list.status === 'in_progress' ? '<p class="muted">' + purchased.length + ' de ' + items.length + ' articulos comprados.</p>' : '') +
             '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Item</th><th>Cantidad</th><th>Estimado</th><th>Real</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
             '<div data-alt-panel></div>' +
-            '<div data-compare-panel></div>';
+            '<div data-compare-panel></div>' +
+            (canComplete ? renderCompletePanel(purchased) : '');
         if (window.ShoppingAlternatives && state.currentGroupId) {
             var altPanel = qs('[data-alt-panel]', target);
             if (altPanel) { window.ShoppingAlternatives.mount(altPanel, state.currentGroupId, list.id); }
@@ -255,6 +260,103 @@
             var comparePanel = qs('[data-compare-panel]', target);
             if (comparePanel) { window.ShoppingCompare.mount(comparePanel, state.currentGroupId, list.id); }
         }
+    }
+
+    function itemCanAutoAssociate(item) {
+        return !!item.product;
+    }
+
+    function renderLifecycleActions(list) {
+        if (list.status === 'draft') {
+            return '<div class="table-line"><button type="button" class="btn-main btn-sm" data-shopping-list-confirm>Confirmar lista</button></div>';
+        }
+        if (list.status === 'active') {
+            return '<div class="table-line"><button type="button" class="btn-main btn-sm" data-shopping-list-start>Comenzar compra</button></div>';
+        }
+        if (list.status === 'in_progress') {
+            return '<div class="table-line"><button type="button" class="btn-secondary-web btn-sm" data-shopping-list-pause>Pausar compra</button></div>';
+        }
+        return '';
+    }
+
+    function transitionList(root, action, nextBody) {
+        if (!state.currentGroupId || !state.selectedList) {
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + action), {
+            method: nextBody === undefined ? 'POST' : 'PATCH',
+            body: nextBody,
+        }).then(function () {
+            return loadList(root, state.selectedList.id).then(function () {
+                return loadLists(root);
+            });
+        }).catch(function (error) {
+            handleError(root, error);
+        });
+    }
+
+    function renderCompletePanel(purchasedItems) {
+        var rows = purchasedItems.map(function (item) {
+            var autoAssociable = itemCanAutoAssociate(item);
+            var disabled = !!item.ingredient && !item.product;
+            var note = disabled
+                ? '<span class="muted"> - asocia un producto desde Mi cocina para poder sumarlo al stock</span>'
+                : (!autoAssociable ? '<span class="muted"> - se creara como producto pendiente de revision</span>' : '');
+            return '<label class="table-line" style="align-items:center">' +
+                '<input type="checkbox" data-complete-item-checkbox value="' + escapeHtml(item.id) + '"' +
+                (autoAssociable ? ' checked' : '') + (disabled ? ' disabled' : '') + ' /> ' +
+                '<span>' + escapeHtml(itemName(item)) + ' (' + escapeHtml(item.quantity) + ' ' + escapeHtml(unitLabel(item.unit)) + ')' + note + '</span>' +
+                '</label>';
+        }).join('');
+        return '<div class="card" style="margin-top:16px" data-complete-panel>' +
+            '<h3>Finalizar compra</h3>' +
+            '<p class="muted">Compraste ' + purchasedItems.length + ' articulo(s). Elegi cuales agregar a Mi cocina.</p>' +
+            rows +
+            '<button type="button" class="btn-main" data-shopping-list-complete style="margin-top:12px">Finalizar y actualizar Mi cocina</button>' +
+            '</div>';
+    }
+
+    function completePurchase(root) {
+        if (!state.currentGroupId || !state.selectedList) {
+            return Promise.resolve();
+        }
+        var panel = qs('[data-complete-panel]', root);
+        var checked = panel ? Array.prototype.slice.call(panel.querySelectorAll('[data-complete-item-checkbox]:checked')) : [];
+        var itemsById = {};
+        (state.selectedList.items || []).forEach(function (item) { itemsById[item.id] = item; });
+
+        var payloadItems = checked.map(function (checkbox) {
+            var id = Number(checkbox.value);
+            var item = itemsById[id];
+            if (item && itemCanAutoAssociate(item)) {
+                return { shopping_list_item_id: id, add_to_stock: true };
+            }
+            return {
+                shopping_list_item_id: id,
+                add_to_stock: true,
+                create_pending_product: true,
+                name: (item && (item.free_text_name || item.display_name)) || 'Articulo',
+            };
+        });
+
+        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/complete'), {
+            method: 'POST',
+            body: { items: payloadItems },
+        }).then(function (response) {
+            var summary = response.data || {};
+            showMessage(root, 'success', 'Compra finalizada. Agregamos ' + (summary.items_added_to_stock_count || 0) + ' producto(s) a Mi cocina.');
+            return loadList(root, state.selectedList.id).then(function () {
+                return loadLists(root);
+            });
+        }).catch(function (error) {
+            if (error.status === 409) {
+                showMessage(root, 'warning', 'Esta lista ya habia sido finalizada.');
+                return loadList(root, state.selectedList.id).then(function () {
+                    return loadLists(root);
+                });
+            }
+            handleError(root, error);
+        });
     }
 
     function resetForm(root) {
@@ -713,6 +815,10 @@
         qs('[data-shopping-list-detail]', root).addEventListener('click', function (event) {
             var edit = event.target.closest('[data-shopping-list-item-edit]');
             var remove = event.target.closest('[data-shopping-list-item-delete]');
+            var complete = event.target.closest('[data-shopping-list-complete]');
+            var confirmBtn = event.target.closest('[data-shopping-list-confirm]');
+            var startBtn = event.target.closest('[data-shopping-list-start]');
+            var pauseBtn = event.target.closest('[data-shopping-list-pause]');
             if (edit && state.selectedList) {
                 var editId = edit.getAttribute('data-shopping-list-item-edit');
                 var item = (state.selectedList.items || []).find(function (candidate) {
@@ -722,6 +828,30 @@
             }
             if (remove) {
                 deleteItem(root, remove.getAttribute('data-shopping-list-item-delete'));
+            }
+            if (complete) {
+                complete.disabled = true;
+                completePurchase(root).then(function () {
+                    complete.disabled = false;
+                });
+            }
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                transitionList(root, '', { status: 'active' }).then(function () {
+                    showMessage(root, 'success', 'Lista confirmada. Ya podes comenzar la compra.');
+                });
+            }
+            if (startBtn) {
+                startBtn.disabled = true;
+                transitionList(root, '/start').then(function () {
+                    showMessage(root, 'success', 'Compra iniciada.');
+                });
+            }
+            if (pauseBtn) {
+                pauseBtn.disabled = true;
+                transitionList(root, '', { status: 'active' }).then(function () {
+                    showMessage(root, 'success', 'Compra pausada.');
+                });
             }
         });
     }

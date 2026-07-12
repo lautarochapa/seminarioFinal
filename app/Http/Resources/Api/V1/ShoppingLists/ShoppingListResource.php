@@ -14,6 +14,7 @@ class ShoppingListResource extends JsonResource
             'meal_plan_id' => $this->meal_plan_id,
             'source_type' => $this->source_type,
             'status' => $this->status,
+            'status_label' => $this->statusLabel(),
             'estimated_total' => $this->estimated_total,
             'optimization_mode' => $this->optimization_mode,
             'items' => $this->whenLoaded('items', function () {

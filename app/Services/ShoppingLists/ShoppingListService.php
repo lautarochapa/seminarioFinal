@@ -49,7 +49,7 @@ class ShoppingListService
             'meal_plan_id' => $mealPlanId,
             'created_by' => $user->id,
             'source_type' => $sourceType,
-            'status' => $data['status'] ?? 'draft',
+            'status' => $data['status'] ?? ShoppingList::STATUS_DRAFT,
             'optimization_mode' => $data['optimization_mode'] ?? null,
         ]);
 
@@ -67,6 +67,14 @@ class ShoppingListService
             throw new FamilyGroupException('SHOPPING_LIST_MEAL_PLAN_NOT_FOUND', 'El plan de comidas no existe para este grupo.', 422);
         }
 
+        if (isset($data['status']) && $data['status'] !== $list->status && !$list->canTransitionTo($data['status'])) {
+            throw new FamilyGroupException(
+                'SHOPPING_LIST_INVALID_STATUS_TRANSITION',
+                'No se puede pasar la lista de "'.$list->statusLabel().'" a ese estado.',
+                409
+            );
+        }
+
         $allowed = ['meal_plan_id', 'source_type', 'status', 'optimization_mode'];
         $fields = array_intersect_key($data, array_flip($allowed));
         $old = $this->payload($list);
@@ -75,6 +83,63 @@ class ShoppingListService
         $this->audit($user->id, 'shopping_list.updated', $updated->id, $old, $this->payload($updated), $ip, $ua);
 
         return $updated;
+    }
+
+    public function start(User $user, int $groupId, int $listId, string $ip, string $ua): ShoppingList
+    {
+        $this->assertMember($user, $groupId);
+        $list = $this->findList($groupId, $listId);
+
+        if ($list->status === ShoppingList::STATUS_IN_PROGRESS) {
+            // Idempotent: starting an already-started list is a no-op, not an error.
+            return $list;
+        }
+
+        if (!$list->canTransitionTo(ShoppingList::STATUS_IN_PROGRESS)) {
+            throw new FamilyGroupException(
+                'SHOPPING_LIST_INVALID_STATUS_TRANSITION',
+                'La lista debe estar "Lista para comprar" para comenzar la compra.',
+                409
+            );
+        }
+
+        if ($list->items()->count() === 0) {
+            throw new FamilyGroupException('SHOPPING_LIST_EMPTY', 'La lista no tiene articulos para comprar.', 422);
+        }
+
+        $old = $this->payload($list);
+        $list->status = ShoppingList::STATUS_IN_PROGRESS;
+        $list->save();
+
+        $this->audit($user->id, 'shopping_list.started', $list->id, $old, $this->payload($list), $ip, $ua);
+
+        return $list->fresh(['items.ingredient', 'items.product', 'items.unit']);
+    }
+
+    public function cancel(User $user, int $groupId, int $listId, string $ip, string $ua): ShoppingList
+    {
+        $this->assertMember($user, $groupId);
+        $list = $this->findList($groupId, $listId);
+
+        if ($list->status === ShoppingList::STATUS_CANCELLED) {
+            return $list;
+        }
+
+        if (!$list->canTransitionTo(ShoppingList::STATUS_CANCELLED)) {
+            throw new FamilyGroupException(
+                'SHOPPING_LIST_INVALID_STATUS_TRANSITION',
+                'No se puede cancelar la lista desde "'.$list->statusLabel().'".',
+                409
+            );
+        }
+
+        $old = $this->payload($list);
+        $list->status = ShoppingList::STATUS_CANCELLED;
+        $list->save();
+
+        $this->audit($user->id, 'shopping_list.cancelled', $list->id, $old, $this->payload($list), $ip, $ua);
+
+        return $list->fresh(['items.ingredient', 'items.product', 'items.unit']);
     }
 
     public function delete(User $user, int $groupId, int $listId, string $ip, string $ua): ShoppingList

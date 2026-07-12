@@ -29,6 +29,9 @@ export default function AppLayout() {
 
       <Tabs.Screen name="catalog" options={{ ...hidden, title: 'Catalogo' }} />
       <Tabs.Screen name="profile" options={{ ...hidden, title: 'Perfil' }} />
+      <Tabs.Screen name="goals" options={{ ...hidden, title: 'Mis objetivos' }} />
+      <Tabs.Screen name="dietary-preferences" options={{ ...hidden, title: 'Preferencias alimentarias' }} />
+      <Tabs.Screen name="restrictions" options={{ ...hidden, title: 'Restricciones y alergias' }} />
       <Tabs.Screen name="groups/index" options={{ ...hidden, title: 'Grupos familiares' }} />
       <Tabs.Screen name="groups/[id]" options={{ ...hidden, title: 'Detalle del grupo' }} />
       <Tabs.Screen name="products/[id]" options={{ ...hidden, title: 'Producto' }} />

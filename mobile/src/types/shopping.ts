@@ -1,9 +1,20 @@
+export type ShoppingListStatus = 'draft' | 'active' | 'in_progress' | 'completed' | 'cancelled';
+
+export const SHOPPING_LIST_STATUS_LABELS: Record<ShoppingListStatus, string> = {
+  draft: 'Borrador',
+  active: 'Lista para comprar',
+  in_progress: 'En compra',
+  completed: 'Completada',
+  cancelled: 'Cancelada',
+};
+
 export interface ShoppingList {
   id: number;
   family_group_id: number;
   meal_plan_id: number | null;
   source_type: 'manual' | 'meal_plan' | 'history' | 'recipe';
-  status: 'draft' | 'active' | 'completed' | 'cancelled';
+  status: ShoppingListStatus;
+  status_label?: string;
   estimated_total: number | null;
   optimization_mode: string | null;
   items?: ShoppingListItem[];
@@ -112,4 +123,41 @@ export interface ShoppingListFilters {
   page?: number;
   per_page?: number;
   status?: string;
+}
+
+export interface CompleteShoppingListItemRequest {
+  shopping_list_item_id: number;
+  add_to_stock: boolean;
+  product_id?: number | null;
+  create_pending_product?: boolean;
+  name?: string;
+  brand?: string;
+  presentation?: string;
+  quantity?: number;
+  unit_id?: number;
+  stock_location_id?: number | null;
+  expiration_date?: string | null;
+  actual_price?: number | null;
+}
+
+export interface CompleteShoppingListRequest {
+  stock_location_id?: number | null;
+  items: CompleteShoppingListItemRequest[];
+}
+
+export interface CompleteShoppingListWarning {
+  shopping_list_item_id: number;
+  reason: string;
+}
+
+export interface CompleteShoppingListResult {
+  purchase: { id: number; estimated_total: number | null; actual_total: number | null; status: string };
+  shopping_list: ShoppingList;
+  items_purchased_count: number;
+  items_added_to_stock_count: number;
+  items_omitted_count: number;
+  stock_items_created: number;
+  stock_items_updated: number;
+  stock_movements_created: number;
+  warnings: CompleteShoppingListWarning[];
 }

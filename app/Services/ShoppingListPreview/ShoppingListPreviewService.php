@@ -45,13 +45,17 @@ class ShoppingListPreviewService
 
             if ($existing) {
                 $list = $existing;
+                if ($list->status !== ShoppingList::STATUS_ACTIVE && $list->canTransitionTo(ShoppingList::STATUS_ACTIVE)) {
+                    $list->status = ShoppingList::STATUS_ACTIVE;
+                    $list->save();
+                }
             } else {
                 $list = $this->repo->createList([
                     'family_group_id' => $groupId,
                     'meal_plan_id' => $planId,
                     'created_by' => $user->id,
                     'source_type' => 'meal_plan',
-                    'status' => 'draft',
+                    'status' => ShoppingList::STATUS_ACTIVE,
                 ]);
                 $created = true;
             }

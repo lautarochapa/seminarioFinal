@@ -11,7 +11,7 @@ import type {
   ResetPasswordResponse,
 } from '@/types/auth';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
-import type { Profile, ProfileUpdateRequest } from '@/types/profile';
+import type { Profile, ProfileUpdateRequest, HealthPreferenceCatalogItem, HealthPreferenceType, UserHealthPreference } from '@/types/profile';
 import type {
   FamilyGroup,
   FamilyGroupMember,
@@ -42,6 +42,8 @@ import type {
   ShoppingListFilters,
   ShoppingSessionFinishRequest,
   ShoppingSessionFinishResult,
+  CompleteShoppingListRequest,
+  CompleteShoppingListResult,
 } from '@/types/shopping';
 import type {
   Purchase,
@@ -119,6 +121,28 @@ export const profileApi = {
   },
   update(payload: ProfileUpdateRequest): Promise<ApiResponse<Profile>> {
     return apiClient.patch<ApiResponse<Profile>>('/api/v1/users/me/profile', payload);
+  },
+};
+
+export const healthPreferencesApi = {
+  catalog(type: HealthPreferenceType): Promise<ApiResponse<HealthPreferenceCatalogItem[]>> {
+    return apiClient.get<ApiResponse<HealthPreferenceCatalogItem[]>>(`/api/v1/catalog/${type}`);
+  },
+  list(type: HealthPreferenceType): Promise<ApiResponse<UserHealthPreference[]>> {
+    return apiClient.get<ApiResponse<UserHealthPreference[]>>(`/api/v1/users/me/${type}`);
+  },
+  add(type: HealthPreferenceType, itemId: number, severity?: string, notes?: string): Promise<ApiResponse<UserHealthPreference>> {
+    const key = type === 'allergies' ? 'allergy_id' : type === 'health-conditions' ? 'health_condition_id' : 'dietary_restriction_id';
+    return apiClient.post<ApiResponse<UserHealthPreference>>(`/api/v1/users/me/${type}`, { [key]: itemId, severity, notes });
+  },
+  remove(type: HealthPreferenceType, relationId: number): Promise<void> {
+    return apiClient.delete<void>(`/api/v1/users/me/${type}/${relationId}`);
+  },
+};
+
+export const objectivesApi = {
+  catalog(): Promise<ApiResponse<{ id: number; code: string; name: string; description?: string | null }[]>> {
+    return apiClient.get<ApiResponse<{ id: number; code: string; name: string; description?: string | null }[]>>('/api/v1/catalog/objectives');
   },
 };
 
@@ -267,6 +291,15 @@ export const shoppingListsApi = {
   },
   startSession(groupId: number, listId: number): Promise<ApiResponse<ShoppingSession>> {
     return apiClient.post<ApiResponse<ShoppingSession>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/start-session`);
+  },
+  complete(groupId: number, listId: number, payload: CompleteShoppingListRequest): Promise<ApiResponse<CompleteShoppingListResult>> {
+    return apiClient.post<ApiResponse<CompleteShoppingListResult>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/complete`, payload);
+  },
+  start(groupId: number, listId: number): Promise<ApiResponse<ShoppingList>> {
+    return apiClient.post<ApiResponse<ShoppingList>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/start`);
+  },
+  cancel(groupId: number, listId: number): Promise<ApiResponse<ShoppingList>> {
+    return apiClient.post<ApiResponse<ShoppingList>>(`/api/v1/family-groups/${groupId}/shopping-lists/${listId}/cancel`);
   },
 };
 

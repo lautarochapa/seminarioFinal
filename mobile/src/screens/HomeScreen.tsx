@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@/auth/AuthContext';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { AppLogo } from '@/components/AppLogo';
+import { UserAccountMenu } from '@/components/UserAccountMenu';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { homeApi } from '@/api/endpoints';
@@ -15,7 +16,7 @@ import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme'
 type HomeSummary = Awaited<ReturnType<typeof homeApi.summary>>['data'];
 
 export function HomeScreen() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { selectedGroup } = useFamilyGroupContext();
   const selectedGroupId = selectedGroup?.id ?? null;
   const router = useRouter();
@@ -23,6 +24,7 @@ export function HomeScreen() {
   const [summary, setSummary] = useState<HomeSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -47,12 +49,21 @@ export function HomeScreen() {
   const stock = summary?.stock ?? { products: 0, low_stock: 0, expiring: 0, expired: 0 };
   const recipes = summary?.recipes ?? { available: 0 };
 
+  function confirmLogout() {
+    Alert.alert('Cerrar sesión', '¿Querés cerrar sesión?', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Cerrar sesión', style: 'destructive', onPress: () => { void logout(); } },
+    ]);
+  }
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={[styles.header, { paddingTop: insets.top + SPACING.sm }]}>
         <View style={styles.headerTop}>
           <AppLogo variant="small" inverted />
-          <View style={styles.avatar}><Text style={styles.avatarText}>{initials}</Text></View>
+          <Pressable style={({ pressed }) => [styles.avatar, pressed && styles.avatarPressed]} onPress={() => setAccountMenuOpen(true)} accessibilityRole="button" accessibilityLabel="Abrir menú de usuario" accessibilityHint="Muestra perfil, grupo, planes, listas y configuración">
+            <Text style={styles.avatarText}>{initials}</Text>
+          </Pressable>
         </View>
         <Text style={styles.greeting}>Hola, <Text style={styles.greetingName}>{displayName}</Text></Text>
         {selectedGroup ? <Text style={styles.groupName}>{selectedGroup.name}</Text> : null}
@@ -76,10 +87,10 @@ export function HomeScreen() {
 
         {!loading && !error ? (
           <View style={styles.summaryGrid}>
-            <SummaryCard value={stock.products} label="productos en tu cocina" />
-            <SummaryCard value={stock.expiring} label="por vencer" />
-            <SummaryCard value={stock.low_stock} label="con poco stock" />
-            <SummaryCard value={recipes.available} label="recetas posibles" />
+            <SummaryCard value={stock.products} label="productos en tu cocina" onPress={() => router.push('/(app)/stock' as never)} />
+            <SummaryCard value={stock.expiring} label="por vencer" onPress={() => router.push({ pathname: '/(app)/stock' as never, params: { filter: 'expiring' } })} />
+            <SummaryCard value={stock.low_stock} label="con poco stock" onPress={() => router.push({ pathname: '/(app)/stock' as never, params: { filter: 'low_stock' } })} />
+            <SummaryCard value={recipes.available} label="recetas posibles" onPress={() => router.push({ pathname: '/(app)/recipes' as never, params: { available: '1' } })} />
           </View>
         ) : null}
 
@@ -90,6 +101,7 @@ export function HomeScreen() {
           </View>
         ) : null}
       </View>
+      <UserAccountMenu visible={accountMenuOpen} user={user} group={selectedGroup} onClose={() => setAccountMenuOpen(false)} onNavigate={(route) => router.push(route as never)} onLogout={confirmLogout} />
     </ScrollView>
   );
 }
@@ -103,12 +115,12 @@ function QuickAction({ icon, label, onPress }: { icon: React.ComponentProps<type
   );
 }
 
-function SummaryCard({ value, label }: { value: number; label: string }) {
+function SummaryCard({ value, label, onPress }: { value: number; label: string; onPress: () => void }) {
   return (
-    <View style={styles.summaryCard}>
+    <Pressable style={({ pressed }) => [styles.summaryCard, pressed && styles.cardPressed]} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${value} ${label}`}>
       <Text style={styles.summaryValue}>{value}</Text>
       <Text style={styles.summaryLabel}>{label}</Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -118,6 +130,7 @@ const styles = StyleSheet.create({
   header: { backgroundColor: COLORS.dark, paddingBottom: SPACING.md, paddingHorizontal: SPACING.lg, borderBottomLeftRadius: RADIUS.xl, borderBottomRightRadius: RADIUS.xl, gap: SPACING.sm, marginBottom: SPACING.md },
   headerTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.sm },
   avatar: { width: 40, height: 40, borderRadius: RADIUS.full, backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center' },
+  avatarPressed: { opacity: 0.7, transform: [{ scale: 0.96 }] },
   avatarText: { fontSize: FONT.labelSize, fontWeight: '700', color: '#fff' },
   greeting: { fontSize: FONT.titleSize, fontWeight: '400', color: 'rgba(255,255,255,0.8)' },
   greetingName: { fontWeight: FONT.titleWeight, color: '#fff' },
@@ -130,6 +143,7 @@ const styles = StyleSheet.create({
   loader: { marginVertical: SPACING.lg },
   summaryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm },
   summaryCard: { width: '48%', backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, ...SHADOW.sm },
+  cardPressed: { opacity: 0.72 },
   summaryValue: { fontSize: 26, fontWeight: '800', color: COLORS.textPrimary },
   summaryLabel: { fontSize: FONT_SIZE.xs, color: COLORS.textSecondary },
   panel: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, gap: SPACING.xs, ...SHADOW.sm },

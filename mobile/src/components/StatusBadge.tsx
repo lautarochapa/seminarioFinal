@@ -4,8 +4,8 @@ import { COLORS, FONT, RADIUS, SPACING } from '@/utils/theme';
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
   draft:       { label: 'Borrador',    bg: COLORS.skeleton,    color: COLORS.textSecondary },
-  active:      { label: 'Activa',      bg: COLORS.infoLight,   color: COLORS.info },
-  in_progress: { label: 'En curso',    bg: COLORS.warningLight, color: COLORS.warning },
+  active:      { label: 'Lista para comprar', bg: COLORS.infoLight, color: COLORS.info },
+  in_progress: { label: 'En compra',   bg: COLORS.warningLight, color: COLORS.warning },
   completed:   { label: 'Completada',  bg: COLORS.successLight, color: COLORS.success },
   cancelled:   { label: 'Cancelada',   bg: COLORS.errorLight,   color: COLORS.error },
   pending:     { label: 'Pendiente',   bg: COLORS.warningLight, color: COLORS.warning },

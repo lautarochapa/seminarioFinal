@@ -186,4 +186,122 @@ class ShoppingListsTest extends TestCase
 
         $this->assertTrue(AuditLog::where('entity_name', 'shopping_lists')->where('action', 'shopping_list.created')->exists());
     }
+
+    public function test_manual_list_defaults_to_draft()
+    {
+        [$user, $group] = $this->groupWithMember();
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists', [
+                'source_type' => 'manual',
+            ])->assertStatus(201)
+            ->assertJsonPath('data.status', 'draft')
+            ->assertJsonPath('data.status_label', 'Borrador');
+    }
+
+    public function test_status_label_reflects_status()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'active']);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.status_label', 'Lista para comprar');
+    }
+
+    public function test_cannot_jump_from_draft_to_completed()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'draft']);
+
+        $this->actingAs($user)
+            ->patchJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id, [
+                'status' => 'completed',
+            ])->assertStatus(409)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_INVALID_STATUS_TRANSITION');
+    }
+
+    public function test_start_transitions_active_to_in_progress()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'active']);
+        $unit = UnitMeasure::create(['code' => 'sl_'.uniqid(), 'name' => 'Unidad', 'type' => 'unit', 'symbol' => 'u', 'status' => 'active']);
+        ShoppingListItem::create(['shopping_list_id' => $list->id, 'quantity' => 1, 'unit_id' => $unit->id, 'status' => 'pending']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start')
+            ->assertStatus(200)
+            ->assertJsonPath('data.status', 'in_progress')
+            ->assertJsonPath('data.status_label', 'En compra');
+    }
+
+    public function test_starting_twice_is_idempotent()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'active']);
+        $unit = UnitMeasure::create(['code' => 'sl_'.uniqid(), 'name' => 'Unidad', 'type' => 'unit', 'symbol' => 'u', 'status' => 'active']);
+        ShoppingListItem::create(['shopping_list_id' => $list->id, 'quantity' => 1, 'unit_id' => $unit->id, 'status' => 'pending']);
+
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start')->assertStatus(200);
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start')
+            ->assertStatus(200)
+            ->assertJsonPath('data.status', 'in_progress');
+    }
+
+    public function test_cannot_start_a_draft_list()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'draft']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start')
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_INVALID_STATUS_TRANSITION');
+    }
+
+    public function test_cannot_start_an_already_completed_list()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'completed']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start')
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_INVALID_STATUS_TRANSITION');
+    }
+
+    public function test_cannot_start_a_list_of_another_group()
+    {
+        [$user, $group] = $this->groupWithMember();
+        [$other, $otherGroup] = $this->groupWithMember();
+        $list = $this->list($otherGroup, $other, ['status' => 'active']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start')
+            ->assertStatus(404)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_NOT_FOUND');
+    }
+
+    public function test_cancel_marks_list_cancelled()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'active']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/cancel')
+            ->assertStatus(200)
+            ->assertJsonPath('data.status', 'cancelled');
+    }
+
+    public function test_cannot_cancel_a_completed_list()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $list = $this->list($group, $user, ['status' => 'completed']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/cancel')
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_INVALID_STATUS_TRANSITION');
+    }
 }
