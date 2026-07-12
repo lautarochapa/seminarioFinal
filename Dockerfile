@@ -1,6 +1,15 @@
-FROM composer:2 AS vendor
+FROM php:7.4-cli AS vendor
 
 WORKDIR /app
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    && docker-php-ext-install zip \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY composer.json composer.lock ./
 RUN composer install \
@@ -16,7 +25,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
     && php artisan package:discover --ansi
 
-FROM php:8.2-apache
+FROM php:7.4-apache
 
 ARG APP_DIR=/var/www/html
 
