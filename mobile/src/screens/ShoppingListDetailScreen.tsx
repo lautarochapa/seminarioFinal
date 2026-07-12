@@ -41,6 +41,10 @@ interface Props {
 const DEBOUNCE_MS = 400;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
+export function shoppingItemCanAutoAssociate(item: ShoppingListItem): boolean {
+  return !!item.product?.id || !!item.ingredient?.id;
+}
+
 export function ShoppingListDetailScreen({ listId }: Props) {
   const router = useRouter();
   const { selectedGroup } = useFamilyGroupContext();
@@ -208,9 +212,10 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   }
 
   const purchasedItems = items.filter((i) => i.status === 'purchased');
+  const repairableItems = purchasedItems.filter((item) => !item.purchase_item_id && (!!item.ingredient || !item.stock_processed_at));
 
   function canAutoAssociate(item: ShoppingListItem): boolean {
-    return !!item.product?.id;
+    return shoppingItemCanAutoAssociate(item);
   }
 
   function handleOpenComplete() {
@@ -230,7 +235,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
     const requestItems: CompleteShoppingListItemRequest[] = purchasedItems
       .filter((item) => stockSelections[item.id])
       .map((item) => {
-        if (canAutoAssociate(item)) {
+        if (item.product?.id || item.ingredient?.id) {
           return { shopping_list_item_id: item.id, add_to_stock: true };
         }
         return {
@@ -270,6 +275,17 @@ export function ShoppingListDetailScreen({ listId }: Props) {
     } finally {
       setCompletingPurchase(false);
     }
+  }
+
+  async function handleRepairPending() {
+    if (!groupId) return;
+    setCompletingPurchase(true); setCompleteError(null);
+    try {
+      const res = await shoppingListsApi.processPendingStock(groupId, listId, { items: repairableItems.map((item) => ({ shopping_list_item_id: item.id, add_to_stock: true })) });
+      Alert.alert('Mi cocina actualizada', `Agregamos ${res.data.items_added_to_stock_count} artículo(s) pendientes.`);
+      refresh();
+    } catch (err) { setCompleteError(err instanceof ApiError ? err.normalized.message : 'No pudimos procesar los artículos pendientes.'); }
+    finally { setCompletingPurchase(false); }
   }
 
   if (!selectedGroup) {
@@ -337,6 +353,13 @@ export function ShoppingListDetailScreen({ listId }: Props) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {list.status === 'completed' && repairableItems.length > 0 ? (
+          <View style={styles.summaryCard}>
+            <Text style={styles.itemMeta}>Hay {repairableItems.length} artículos comprados que todavía no se agregaron a Mi cocina.</Text>
+            <FormError message={completeError} />
+            <AppButton title="Agregar pendientes a Mi cocina" onPress={handleRepairPending} loading={completingPurchase} fullWidth />
+          </View>
+        ) : null}
         {/* Summary */}
         <View style={styles.summaryCard}>
           <View style={styles.row}>
@@ -587,7 +610,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
             {purchasedItems.map((item) => {
               const label = item.display_name ?? item.product?.name ?? item.ingredient?.name ?? item.free_text_name ?? 'Item';
               const autoAssociable = canAutoAssociate(item);
-              const disabled = !!item.ingredient && !item.product; // recipe ingredient without a linked product: needs manual association elsewhere
+              const disabled = false;
               return (
                 <Pressable
                   key={item.id}
@@ -604,12 +627,12 @@ export function ShoppingListDetailScreen({ listId }: Props) {
                   <View style={styles.itemBody}>
                     <Text style={styles.itemName}>{label}</Text>
                     <Text style={styles.itemMeta}>{item.quantity ?? ''} {item.unit?.symbol ?? ''}</Text>
-                    {disabled && (
-                      <Text style={[styles.itemMeta, { color: COLORS.error }]}>
-                        Asocia un producto desde Mi cocina para poder sumarlo al stock.
+                    {item.ingredient && !item.product && (
+                      <Text style={styles.itemMeta}>
+                        Se resolverá automáticamente o se creará como producto pendiente asociado a {item.ingredient.name}.
                       </Text>
                     )}
-                    {!disabled && !autoAssociable && (
+                    {!item.ingredient && !disabled && !autoAssociable && (
                       <Text style={styles.itemMeta}>Se creara como producto pendiente de revision.</Text>
                     )}
                   </View>

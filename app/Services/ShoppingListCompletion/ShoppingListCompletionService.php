@@ -102,7 +102,7 @@ class ShoppingListCompletionService
                     continue;
                 }
 
-                $resolution = $this->resolveProduct($groupId, $user, $item, $request, $ip, $ua);
+                $resolution = $this->resolveProduct($groupId, $user, $item, $request, $purchase->id, $ip, $ua);
 
                 if ($resolution === null) {
                     $itemsOmitted++;
@@ -147,6 +147,7 @@ class ShoppingListCompletionService
                     // (pending-product path, delegated to ManualProductStockService).
                     $stockItem = $reusedStockItem;
                     $reusedMovement ? $stockUpdated++ : $stockCreated++;
+                    $movementsCreated++;
                 } else {
                     $existing = $this->repo->findCompatibleStock($groupId, $product->id, $unitId, $locationId, $expirationDate);
 
@@ -244,13 +245,64 @@ class ShoppingListCompletionService
         });
     }
 
+    public function repairPendingStock(User $user, int $groupId, int $listId, array $data, string $ip, string $ua): array
+    {
+        $this->groups->findOrFailForUser($groupId, $user->id);
+        $list = $this->findList($groupId, $listId);
+        if ($list->status !== ShoppingList::STATUS_COMPLETED) {
+            throw new PurchaseException('SHOPPING_LIST_NOT_COMPLETED', 'La reparación solo aplica a listas finalizadas.', 409);
+        }
+        $requested = $this->indexByShoppingListItemId($data['items'] ?? []);
+
+        return DB::transaction(function () use ($user, $groupId, $list, $requested, $ip, $ua) {
+            ShoppingList::where('id', $list->id)->lockForUpdate()->first();
+            $purchase = Purchase::where('shopping_list_id', $list->id)->lockForUpdate()->first();
+            if (!$purchase) {
+                $purchase = Purchase::create(['family_group_id' => $groupId, 'shopping_list_id' => $list->id, 'user_id' => $user->id, 'purchase_date' => now()->toDateString(), 'estimated_total' => 0, 'actual_total' => 0, 'status' => 'confirmed']);
+            }
+            $query = $list->items()->where('status', 'purchased')->whereNull('purchase_item_id');
+            if (!empty($requested)) {
+                $query->whereIn('id', array_keys($requested));
+            } else {
+                $query->whereNull('stock_processed_at');
+            }
+            $items = $query->lockForUpdate()->get();
+            $processed = 0; $omitted = 0; $created = 0; $updated = 0; $movements = 0;
+            foreach ($items as $item) {
+                $request = $requested[$item->id] ?? ['shopping_list_item_id' => $item->id, 'add_to_stock' => true];
+                if (empty($request['add_to_stock'])) {
+                    $item->stock_processed_at = now(); $item->save(); $omitted++; continue;
+                }
+                $resolution = $this->resolveProduct($groupId, $user, $item, $request, $purchase->id, $ip, $ua);
+                if (!$resolution) { continue; }
+                [$product, $stockItem, $serviceUpdated] = $resolution;
+                $quantity = (float) ($request['quantity'] ?? $item->quantity);
+                $unitId = (int) ($request['unit_id'] ?? $item->unit_id);
+                $price = $request['actual_price'] ?? $item->actual_price;
+                if (!$stockItem) {
+                    $existing = $this->repo->findCompatibleStock($groupId, $product->id, $unitId, null, null);
+                    if ($existing) {
+                        $stockItem = $this->repo->updateStockItem($existing, ['quantity' => (float) $existing->quantity + $quantity]); $updated++;
+                    } else {
+                        $stockItem = $this->repo->createStockItem(['family_group_id' => $groupId, 'product_id' => $product->id, 'quantity' => $quantity, 'unit_id' => $unitId, 'purchase_date' => now()->toDateString(), 'status' => 'active']); $created++;
+                    }
+                    $this->repo->createMovement(['family_group_id' => $groupId, 'stock_item_id' => $stockItem->id, 'product_id' => $product->id, 'movement_type' => 'entry', 'quantity' => $quantity, 'unit_id' => $unitId, 'reason' => 'shopping_list_completion', 'related_purchase_id' => $purchase->id, 'created_by' => $user->id]);
+                } else { $serviceUpdated ? $updated++ : $created++; }
+                $movements++;
+                $purchaseItem = PurchaseItem::create(['purchase_id' => $purchase->id, 'product_id' => $product->id, 'quantity' => $quantity, 'unit_id' => $unitId, 'unit_price' => $price, 'total_price' => $price !== null ? (float) $price * $quantity : null, 'created_stock_item_id' => $stockItem->id]);
+                $item->product_id = $product->id; $item->purchase_item_id = $purchaseItem->id; $item->stock_processed_at = now(); $item->save(); $processed++;
+            }
+            return ['purchase' => $purchase->fresh(['items.product', 'items.unit']), 'list' => $list->fresh(['items.ingredient', 'items.product', 'items.unit']), 'summary' => ['items_purchased_count' => $items->count(), 'items_added_to_stock_count' => $processed, 'items_omitted_count' => $omitted, 'stock_items_created' => $created, 'stock_items_updated' => $updated, 'stock_movements_created' => $movements, 'warnings' => []]];
+        });
+    }
+
     /**
      * Resolves the product to stock for one shopping list item. Returns null when the item
      * cannot be safely resolved (no auto-guessing of product/ingredient associations — the
      * caller must have confirmed one explicitly). When the pending-product path is used, the
      * stock item/movement it created is returned so the caller doesn't duplicate that work.
      */
-    private function resolveProduct(int $groupId, User $user, ShoppingListItem $item, array $request, string $ip, string $ua): ?array
+    private function resolveProduct(int $groupId, User $user, ShoppingListItem $item, array $request, int $purchaseId, string $ip, string $ua): ?array
     {
         if (!empty($item->product_id)) {
             $product = $this->repo->usableProduct($groupId, (int) $item->product_id);
@@ -264,8 +316,26 @@ class ShoppingListCompletionService
             return $product ? [$product, null, null] : null;
         }
 
-        if (!empty($request['create_pending_product'])) {
-            $name = $request['name'] ?? $item->free_text_name;
+        $createPending = !empty($request['create_pending_product']);
+        if (!empty($item->ingredient_id) && !$createPending) {
+            $unitId = (int) ($request['unit_id'] ?? $item->unit_id);
+            $candidates = $this->repo->compatibleProductsForIngredient($groupId, (int) $item->ingredient_id, $unitId);
+            if ($candidates->count() === 1) {
+                return [$candidates->first(), null, null];
+            }
+            if ($candidates->count() > 1) {
+                throw new PurchaseException(
+                    'SHOPPING_ITEM_PRODUCT_AMBIGUOUS',
+                    'Hay varios productos compatibles. Elegí cuál compraste o creá un producto genérico.',
+                    409,
+                    ['shopping_list_item_id' => $item->id, 'product_ids' => $candidates->pluck('id')->all()]
+                );
+            }
+            $createPending = true;
+        }
+
+        if ($createPending) {
+            $name = $request['name'] ?? ($item->ingredient ? $item->ingredient->name : $item->free_text_name);
             if (!$name) {
                 return null;
             }
@@ -289,6 +359,11 @@ class ShoppingListCompletionService
                 ], function ($v) {
                     return $v !== null;
                 }),
+                'movement' => [
+                    'movement_type' => 'entry',
+                    'reason' => 'shopping_list_completion',
+                    'related_purchase_id' => $purchaseId,
+                ],
             ], $ip, $ua);
 
             return [$result['product'], $result['stock_item'], $result['status'] === 200];

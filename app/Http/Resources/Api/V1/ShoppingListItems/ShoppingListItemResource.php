@@ -38,6 +38,9 @@ class ShoppingListItemResource extends JsonResource
             'supermarket_branch_id' => $this->supermarket_branch_id,
             'source_type' => $this->source_type,
             'source_id' => $this->source_id,
+            'stock_processed_at' => optional($this->stock_processed_at)->toIso8601String(),
+            'purchase_item_id' => $this->purchase_item_id,
+            'stock_processing_state' => $this->purchase_item_id ? 'processed' : ($this->stock_processed_at ? 'omitted' : 'pending'),
             'created_at' => optional($this->created_at)->toIso8601String(),
             'updated_at' => optional($this->updated_at)->toIso8601String(),
         ];

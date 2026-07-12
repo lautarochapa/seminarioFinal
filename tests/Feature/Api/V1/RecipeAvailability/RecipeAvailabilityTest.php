@@ -298,4 +298,26 @@ class RecipeAvailabilityTest extends TestCase
             ->assertJsonPath('data.status', 'almost_possible')
             ->assertJsonPath('data.suggested_servings', 1);
     }
+
+    public function test_porciones_solicitadas_escalan_requerimientos_y_contadores()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $grams = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 2]);
+        $ing = $this->ingredient($grams);
+        $prod = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 200.0);
+        $this->stockItem($group, $prod, $grams, 300.0);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/recipes/'.$recipe->id.'/availability?family_group_id='.$group->id.'&servings=4')
+            ->assertStatus(200)
+            ->assertJsonPath('data.required_servings', 4)
+            ->assertJsonPath('data.ingredients.0.required_quantity', 400)
+            ->assertJsonPath('data.ingredients.0.missing_quantity', 100)
+            ->assertJsonPath('data.available_ingredients_count', 0)
+            ->assertJsonPath('data.missing_ingredients_count', 1)
+            ->assertJsonPath('data.can_cook', false);
+    }
 }

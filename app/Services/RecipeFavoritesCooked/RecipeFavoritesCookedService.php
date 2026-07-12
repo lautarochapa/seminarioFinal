@@ -5,6 +5,7 @@ namespace App\Services\RecipeFavoritesCooked;
 use App\AuditLog;
 use App\Exceptions\RecipeFavoritesCooked\RecipeFavoritesCookedException;
 use App\Repositories\RecipeFavoritesCooked\RecipeFavoritesCookedRepository;
+use App\Services\RecipeAvailability\RecipeAvailabilityService;
 use App\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\DB;
 class RecipeFavoritesCookedService
 {
     private RecipeFavoritesCookedRepository $repo;
+    private RecipeAvailabilityService $availability;
 
-    public function __construct(RecipeFavoritesCookedRepository $repo)
+    public function __construct(RecipeFavoritesCookedRepository $repo, RecipeAvailabilityService $availability)
     {
         $this->repo = $repo;
+        $this->availability = $availability;
     }
 
     public function addFavorite(User $user, int $recipeId, string $ip, string $userAgent): void
@@ -93,6 +96,21 @@ class RecipeFavoritesCookedService
             }
         }
 
+        if ($deductStock) {
+            if ($familyGroupId === null) {
+                throw new RecipeFavoritesCookedException('FAMILY_GROUP_REQUIRED', 'Seleccioná el grupo familiar del que querés descontar los ingredientes.', 422);
+            }
+            $availability = $this->availability->availability($user, $recipeId, $familyGroupId, $servings);
+            if (empty($availability['can_cook'])) {
+                foreach ($availability['ingredients'] as $ingredient) {
+                    if ($ingredient['status'] === 'missing') {
+                        throw RecipeFavoritesCookedException::ingredientMissing($ingredient);
+                    }
+                }
+                throw RecipeFavoritesCookedException::insufficientStock();
+            }
+        }
+
         if ($idempotencyKey) {
             $cacheKey = 'recipe_cook:' . $user->id . ':' . $recipeId . ':' . sha1($idempotencyKey);
             $cached = Cache::get($cacheKey);
@@ -105,7 +123,7 @@ class RecipeFavoritesCookedService
         }
 
         try {
-            $logId = DB::transaction(function () use ($user, $recipe, $recipeId, $servings, $familyGroupId, $deductStock, $ip, $userAgent) {
+            $transactionResult = DB::transaction(function () use ($user, $recipe, $recipeId, $servings, $familyGroupId, $deductStock, $ip, $userAgent) {
             $log = $this->repo->createCookLog([
                 'user_id'          => $user->id,
                 'family_group_id'  => $familyGroupId,
@@ -116,8 +134,9 @@ class RecipeFavoritesCookedService
                 'notes'            => null,
             ]);
 
+            $movementsCreated = 0;
             if ($deductStock && $familyGroupId !== null) {
-                $this->deductStock($log->id, $recipe, $servings, $familyGroupId, $user->id, $recipeId);
+                $movementsCreated = $this->deductStock($log->id, $recipe, $servings, $familyGroupId, $user->id, $recipeId);
             }
 
             AuditLog::create([
@@ -136,7 +155,7 @@ class RecipeFavoritesCookedService
                 'user_agent' => $userAgent,
             ]);
 
-            return $log->id;
+            return ['cook_log_id' => $log->id, 'stock_movements_created' => $movementsCreated];
             });
         } catch (\Throwable $e) {
             if ($cacheKey) {
@@ -145,7 +164,7 @@ class RecipeFavoritesCookedService
             throw $e;
         }
 
-        $result = ['cook_log_id' => $logId];
+        $result = array_merge($transactionResult, ['recipe_id' => $recipeId, 'servings' => $servings, 'family_group_id' => $familyGroupId, 'stock_discounted' => $deductStock && $familyGroupId !== null]);
         if ($cacheKey) {
             Cache::put($cacheKey, $result, now()->addMinutes(10));
         }
@@ -158,7 +177,7 @@ class RecipeFavoritesCookedService
         return ['paginator' => $this->repo->paginateCookLogs($user->id, $page, $perPage)];
     }
 
-    private function deductStock(int $logId, $recipe, int $servings, int $familyGroupId, int $userId, int $recipeId): void
+    private function deductStock(int $logId, $recipe, int $servings, int $familyGroupId, int $userId, int $recipeId): int
     {
         $recipeWithIng = $this->repo->loadRecipeWithIngredients($recipe->id);
         $baseServings  = ($recipeWithIng->servings !== null && $recipeWithIng->servings > 0)
@@ -235,5 +254,6 @@ class RecipeFavoritesCookedService
         }
 
         $this->repo->markCookLogDiscounted($logId);
+        return count($deductions);
     }
 }

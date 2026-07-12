@@ -80,6 +80,15 @@ export interface RecipeCost {
   calculation_status?: string | null;
 }
 
+export interface RecipeAvailabilityIngredient {
+  ingredient_id: number; ingredient_name: string | null; required_quantity: number; available_quantity: number; missing_quantity: number;
+  unit_id: number; unit_name: string | null; unit_symbol: string | null; unit_compatible: boolean; status: 'available' | 'insufficient' | 'missing'; is_available: boolean;
+}
+export interface RecipeAvailability {
+  recipe_id: number; status: 'possible' | 'almost_possible' | 'not_possible'; required_servings: number; base_servings: number; max_possible_servings: number;
+  coverage_percentage: number; ingredients: RecipeAvailabilityIngredient[]; required_ingredients_count: number; available_ingredients_count: number; missing_ingredients_count: number; can_cook: boolean; warnings: string[];
+}
+
 export interface RecipeFilters {
   page?: number;
   per_page?: number;

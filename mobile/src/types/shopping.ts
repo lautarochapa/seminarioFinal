@@ -42,6 +42,9 @@ export interface ShoppingListItem {
   supermarket_branch_id: number | null;
   source_type: string | null;
   source_id: number | null;
+  stock_processed_at?: string | null;
+  purchase_item_id?: number | null;
+  stock_processing_state?: 'pending' | 'processed' | 'omitted';
   created_at: string;
   updated_at: string;
 }

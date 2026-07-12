@@ -240,6 +240,7 @@
                 '</tr>';
         }).join('') : '<tr><td colspan="7" class="muted">La lista no tiene items cargados.</td></tr>';
         var purchased = items.filter(function (item) { return item.status === 'purchased'; });
+        var repairable = purchased.filter(function (item) { return !item.purchase_item_id && (!!item.ingredient || !item.stock_processed_at); });
         var canComplete = (list.status === 'active' || list.status === 'in_progress') && purchased.length > 0;
         target.className = '';
         target.innerHTML = '<div class="table-line"><span>Lista</span><strong>#' + escapeHtml(list.id) + '</strong></div>' +
@@ -247,6 +248,7 @@
             '<div class="table-line"><span>Estado</span><strong>' + escapeHtml(statusLabel(list.status)) + '</strong></div>' +
             '<div class="table-line"><span>Total estimado</span><strong>' + escapeHtml(list.estimated_total) + '</strong></div>' +
             renderLifecycleActions(list) +
+            (list.status === 'completed' && repairable.length ? '<div class="alert warning">Hay ' + repairable.length + ' artículos comprados que todavía no se agregaron a Mi cocina. <button type="button" class="btn-main btn-sm" data-process-pending-stock>Agregar pendientes a Mi cocina</button></div>' : '') +
             (list.status === 'in_progress' ? '<p class="muted">' + purchased.length + ' de ' + items.length + ' articulos comprados.</p>' : '') +
             '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Item</th><th>Cantidad</th><th>Estimado</th><th>Real</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
             '<div data-alt-panel></div>' +
@@ -263,7 +265,7 @@
     }
 
     function itemCanAutoAssociate(item) {
-        return !!item.product;
+        return !!item.product || !!item.ingredient;
     }
 
     function renderLifecycleActions(list) {
@@ -298,10 +300,10 @@
     function renderCompletePanel(purchasedItems) {
         var rows = purchasedItems.map(function (item) {
             var autoAssociable = itemCanAutoAssociate(item);
-            var disabled = !!item.ingredient && !item.product;
-            var note = disabled
-                ? '<span class="muted"> - asocia un producto desde Mi cocina para poder sumarlo al stock</span>'
-                : (!autoAssociable ? '<span class="muted"> - se creara como producto pendiente de revision</span>' : '');
+            var disabled = false;
+            var note = item.ingredient && !item.product
+                ? '<span class="muted"> - se resolverá automáticamente o se creará como pendiente asociado al ingrediente</span>'
+                : (!autoAssociable ? '<span class="muted"> - se creará como producto pendiente de revisión</span>' : '');
             return '<label class="table-line" style="align-items:center">' +
                 '<input type="checkbox" data-complete-item-checkbox value="' + escapeHtml(item.id) + '"' +
                 (autoAssociable ? ' checked' : '') + (disabled ? ' disabled' : '') + ' /> ' +
@@ -357,6 +359,16 @@
             }
             handleError(root, error);
         });
+    }
+
+    function processPendingStock(root) {
+        var items = (state.selectedList.items || []).filter(function (item) { return item.status === 'purchased' && !item.purchase_item_id && (!!item.ingredient || !item.stock_processed_at); });
+        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/process-pending-stock'), {
+            method: 'POST', body: { items: items.map(function (item) { return { shopping_list_item_id: item.id, add_to_stock: true }; }) }
+        }).then(function (response) {
+            showMessage(root, 'success', 'Agregamos ' + response.data.items_added_to_stock_count + ' artículo(s) pendientes a Mi cocina.');
+            return loadList(root, state.selectedList.id);
+        }).catch(function (error) { handleError(root, error); });
     }
 
     function resetForm(root) {
@@ -819,6 +831,8 @@
             var confirmBtn = event.target.closest('[data-shopping-list-confirm]');
             var startBtn = event.target.closest('[data-shopping-list-start]');
             var pauseBtn = event.target.closest('[data-shopping-list-pause]');
+            var repairBtn = event.target.closest('[data-process-pending-stock]');
+            if (repairBtn) { repairBtn.disabled = true; processPendingStock(root); }
             if (edit && state.selectedList) {
                 var editId = edit.getAttribute('data-shopping-list-item-edit');
                 var item = (state.selectedList.items || []).find(function (candidate) {

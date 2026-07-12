@@ -19,10 +19,10 @@ class RecipeAvailabilityService
         $this->repo = $repo;
     }
 
-    public function availability(User $user, $recipeId, int $familyGroupId): array
+    public function availability(User $user, $recipeId, int $familyGroupId, ?int $servings = null): array
     {
         $recipe = $this->resolveRecipe($user, $recipeId, $familyGroupId);
-        return $this->compute($recipe, $familyGroupId, false);
+        return $this->compute($recipe, $familyGroupId, false, $servings);
     }
 
     public function missingIngredients(User $user, $recipeId, int $familyGroupId): array
@@ -72,10 +72,12 @@ class RecipeAvailabilityService
         return $recipe;
     }
 
-    private function compute($recipe, int $familyGroupId, bool $includeOptional): array
+    private function compute($recipe, int $familyGroupId, bool $includeOptional, ?int $requestedServings = null): array
     {
         $ingredients     = $recipe->ingredients;
-        $requiredServings = ($recipe->servings !== null && $recipe->servings > 0) ? (int) $recipe->servings : 1;
+        $baseServings = ($recipe->servings !== null && $recipe->servings > 0) ? (int) $recipe->servings : 1;
+        $requiredServings = $requestedServings ?: $baseServings;
+        $servingFactor = $requiredServings / $baseServings;
         $stockMap        = $this->repo->stockByIngredient($familyGroupId);
 
         $breakdown   = [];
@@ -89,18 +91,19 @@ class RecipeAvailabilityService
             }
 
             $ingredientId = (int) $ri->ingredient_id;
-            $requiredQty  = (float) $ri->quantity;
+            $requiredQty  = (float) $ri->quantity * $servingFactor;
             $recipeUnitId = (int) $ri->unit_id;
             $ingName      = $ri->ingredient ? $ri->ingredient->name : null;
 
             // Gather stock for this ingredient, converting each unit to the recipe unit
             if ($ri->specific_product_id) {
-                $productStock = $this->repo->stockByProduct($familyGroupId, (int) $ri->specific_product_id);
-                $availableQty = $this->sumConvertedStock($productStock, $recipeUnitId, $ingredientId);
+                $sourceStock = $this->repo->stockByProduct($familyGroupId, (int) $ri->specific_product_id);
+                $availableQty = $this->sumConvertedStock($sourceStock, $recipeUnitId, $ingredientId);
             } else {
-                $ingStock     = $stockMap[$ingredientId] ?? [];
-                $availableQty = $this->sumConvertedStock($ingStock, $recipeUnitId, $ingredientId);
+                $sourceStock  = $stockMap[$ingredientId] ?? [];
+                $availableQty = $this->sumConvertedStock($sourceStock, $recipeUnitId, $ingredientId);
             }
+            $unitCompatible = empty($sourceStock) || $this->hasCompatibleUnit($sourceStock, $recipeUnitId, $ingredientId);
 
             $missingQty  = max(0.0, $requiredQty - $availableQty);
             $covered     = $availableQty >= $requiredQty;
@@ -120,6 +123,10 @@ class RecipeAvailabilityService
                 'available_quantity' => round($availableQty, 4),
                 'missing_quantity'   => round($missingQty, 4),
                 'unit_id'            => $recipeUnitId,
+                'unit_name'          => $ri->unit ? $ri->unit->name : null,
+                'unit_symbol'        => $ri->unit ? $ri->unit->symbol : null,
+                'unit_compatible'    => $unitCompatible,
+                'is_available'       => $covered,
                 'status'             => $itemStatus,
                 'is_optional'        => (bool) $ri->is_optional,
                 'suggested_purchase' => $missingQty > 0 ? round($missingQty, 4) : null,
@@ -142,10 +149,17 @@ class RecipeAvailabilityService
             'recipe_id'              => $recipe->id,
             'status'                 => $overallStatus,
             'required_servings'      => $requiredServings,
+            'base_servings'          => $baseServings,
             'max_possible_servings'  => $maxServings,
             'suggested_servings'     => $suggestedServings,
             'coverage_percentage'    => $coveragePct,
             'ingredients'            => $breakdown,
+            'required_ingredients_count' => count($breakdown),
+            'available_ingredients_count' => count(array_filter($breakdown, function ($item) { return $item['status'] === 'available'; })),
+            'missing_ingredients_count' => count(array_filter($breakdown, function ($item) { return $item['status'] !== 'available'; })),
+            'can_cook' => $overallStatus === self::STATUS_POSSIBLE,
+            'warnings' => count(array_filter($breakdown, function ($item) { return ! $item['unit_compatible']; })) > 0
+                ? ['Hay unidades de stock que no se pueden convertir para esta receta.'] : [],
         ];
     }
 
@@ -159,6 +173,16 @@ class RecipeAvailabilityService
             }
         }
         return $total;
+    }
+
+    private function hasCompatibleUnit(array $unitQtyMap, int $targetUnitId, int $ingredientId): bool
+    {
+        foreach ($unitQtyMap as $unitId => $qty) {
+            if ((float) $qty > 0 && $this->repo->findConversionFactor($unitId, $targetUnitId, $ingredientId) !== null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function overallStatus(int $maxServings, int $requiredServings): string

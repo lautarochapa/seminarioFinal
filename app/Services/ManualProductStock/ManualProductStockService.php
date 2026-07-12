@@ -26,9 +26,10 @@ class ManualProductStockService
         $this->groups->findOrFailForUser($groupId, $actor->id);
         $productInput = $this->prepareProductInput($data['product']);
         $stockInput = $this->prepareStockInput($data['stock'], $productInput);
+        $movementInput = $data['movement'] ?? [];
         $this->validateRelations($groupId, $productInput, $stockInput);
 
-        return DB::transaction(function () use ($groupId, $actor, $productInput, $stockInput, $ip, $userAgent) {
+        return DB::transaction(function () use ($groupId, $actor, $productInput, $stockInput, $movementInput, $ip, $userAgent) {
             $matchedExisting = false;
             $reusedPending = false;
             $createdProduct = false;
@@ -42,14 +43,15 @@ class ManualProductStockService
 
             list($stockItem, $status, $stockAction, $oldStock) = $this->createOrUpdateStock($groupId, $actor->id, $product, $stockInput);
 
-            $this->repo->createMovement([
+            $movement = $this->repo->createMovement([
                 'family_group_id' => $groupId,
                 'stock_item_id' => $stockItem->id,
                 'product_id' => $product->id,
-                'movement_type' => $status === 201 ? 'manual_product_created' : 'manual_product_incremented',
+                'movement_type' => $movementInput['movement_type'] ?? ($status === 201 ? 'manual_product_created' : 'manual_product_incremented'),
                 'quantity' => $stockInput['quantity'],
                 'unit_id' => $stockInput['unit_id'],
-                'reason' => 'Carga manual de producto',
+                'reason' => $movementInput['reason'] ?? 'Carga manual de producto',
+                'related_purchase_id' => $movementInput['related_purchase_id'] ?? null,
                 'created_by' => $actor->id,
                 'created_at' => now(),
             ]);
@@ -67,6 +69,7 @@ class ManualProductStockService
             return [
                 'product' => $product->fresh(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes']),
                 'stock_item' => $stockItem->fresh(['product', 'location', 'unit']),
+                'stock_movement' => $movement,
                 'review_status' => $matchedExisting ? 'approved' : 'pending_review',
                 'matched_existing_product' => $matchedExisting,
                 'reused_pending_product' => $reusedPending,

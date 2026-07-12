@@ -200,6 +200,36 @@ class RecipeFavoritesCookedTest extends TestCase
         ]);
     }
 
+    public function test_validacion_especifica_de_porciones_y_grupo_requerido()
+    {
+        $user = factory(User::class)->create();
+        $recipe = $this->recipe();
+        $this->actingAs($user)->postJson('/api/v1/recipes/'.$recipe->id.'/cook', ['servings' => 0])
+            ->assertStatus(422)->assertJsonPath('error.field_errors.servings.0', 'Indicá una cantidad válida de porciones.');
+        $this->actingAs($user)->postJson('/api/v1/recipes/'.$recipe->id.'/cook', ['servings' => 1, 'deduct_stock' => '1'])
+            ->assertStatus(422)->assertJsonPath('error.field_errors.family_group_id.0', 'Seleccioná el grupo familiar del que querés descontar los ingredientes.');
+    }
+
+    public function test_checkbox_html_on_se_normaliza_y_descuenta_stock()
+    {
+        $user = factory(User::class)->create(); $group = $this->familyGroup($user); $grams = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]); $ing = $this->ingredient($grams); $prod = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 100); $stock = $this->stockItem($group, $prod, $grams, 200);
+        $this->actingAs($user)->postJson('/api/v1/recipes/'.$recipe->id.'/cook', ['servings' => '1', 'family_group_id' => (string) $group->id, 'deduct_stock' => 'on'])->assertStatus(201);
+        $this->assertEquals(100.0, (float) $stock->fresh()->quantity);
+    }
+
+    public function test_disponibilidad_positiva_implica_descuento_exitoso_para_mismas_porciones()
+    {
+        $user = factory(User::class)->create(); $group = $this->familyGroup($user); $grams = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 2]); $ing = $this->ingredient($grams); $prod = $this->product($ing, $grams);
+        $this->addIngredient($recipe, $ing, $grams, 200); $this->stockItem($group, $prod, $grams, 400);
+        $this->actingAs($user)->getJson('/api/v1/recipes/'.$recipe->id.'/availability?family_group_id='.$group->id.'&servings=4')
+            ->assertStatus(200)->assertJsonPath('data.can_cook', true);
+        $this->actingAs($user)->postJson('/api/v1/recipes/'.$recipe->id.'/cook', ['servings' => 4, 'family_group_id' => $group->id, 'deduct_stock' => true])->assertStatus(201);
+        $this->assertDatabaseHas('stock_items', ['family_group_id' => $group->id, 'product_id' => $prod->id, 'quantity' => 0]);
+    }
+
     public function test_registrar_coccion_con_grupo_ajeno_retorna_403()
     {
         $owner  = factory(User::class)->create();
