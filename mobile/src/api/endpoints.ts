@@ -445,6 +445,10 @@ export const recipeSuggestionsApi = {
     return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/available?per_page=20`)
       .then((payload) => normalizeRecipeSuggestions(payload).response);
   },
+  almostAvailable(groupId: number): Promise<PaginatedResponse<RecipeSuggestion>> {
+    return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/almost-available?per_page=20`)
+      .then((payload) => normalizeRecipeSuggestions(payload).response);
+  },
 };
 
 export const mealPlansApi = {

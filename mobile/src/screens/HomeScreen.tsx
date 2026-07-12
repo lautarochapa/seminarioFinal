@@ -74,7 +74,7 @@ export function HomeScreen() {
         <View style={styles.quickGrid}>
           <QuickAction icon="plus-circle-outline" label="Agregar producto" onPress={() => router.push('/(app)/stock/create' as never)} />
           <QuickAction icon="barcode-scan" label="Escanear codigo" onPress={() => router.push('/(app)/barcode-scanner' as never)} />
-          <QuickAction icon="silverware-fork-knife" label="Que cocinar" onPress={() => router.push('/(app)/recipes' as never)} />
+          <QuickAction icon="silverware-fork-knife" label="Qué puedo cocinar hoy" onPress={() => router.push('/(app)/recipe-suggestions' as never)} />
           <QuickAction icon="cart-plus" label="Lista de compras" onPress={() => router.push('/(app)/shopping-lists/create' as never)} />
         </View>
 
@@ -90,7 +90,7 @@ export function HomeScreen() {
             <SummaryCard value={stock.products} label="productos en tu cocina" onPress={() => router.push('/(app)/stock' as never)} />
             <SummaryCard value={stock.expiring} label="por vencer" onPress={() => router.push({ pathname: '/(app)/stock' as never, params: { filter: 'expiring' } })} />
             <SummaryCard value={stock.low_stock} label="con poco stock" onPress={() => router.push({ pathname: '/(app)/stock' as never, params: { filter: 'low_stock' } })} />
-            <SummaryCard value={recipes.available} label="recetas posibles" onPress={() => router.push({ pathname: '/(app)/recipes' as never, params: { available: '1' } })} />
+            <SummaryCard value={recipes.available} label="recetas posibles" onPress={() => router.push('/(app)/recipe-suggestions' as never)} />
           </View>
         ) : null}
 

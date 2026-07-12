@@ -157,6 +157,25 @@
             });
     }
 
+    function loadCookingToday(root) {
+        var mode = qs('[data-recipes-availability-mode]', root); if (mode) { mode.style.display = ''; }
+        var listEl = qs('[data-recipes-list]', root); listEl.innerHTML = '<p class="muted">Revisando tu stock...</p>';
+        return window.CCApi.request(endpoint('/family-groups?per_page=20')).then(function (groups) {
+            var group = (groups.data || [])[0];
+            if (!group) { listEl.innerHTML = '<p class="muted">Seleccioná un grupo familiar para consultar disponibilidad.</p>'; return; }
+            return Promise.all([
+                window.CCApi.request(endpoint('/family-groups/' + group.id + '/recipes/available?per_page=100')),
+                window.CCApi.request(endpoint('/family-groups/' + group.id + '/recipes/almost-available?per_page=100'))
+            ]).then(function (responses) {
+                state.recipes = responses[0].data || []; state.lastPage = 1; renderList(root, responses[0].meta || {});
+                var nowHtml = listEl.innerHTML;
+                var close = responses[1].data || [];
+                var closeHtml = close.length ? close.map(function (r) { return '<button type="button" class="feature-card" data-recipe-card="' + r.id + '"><strong>' + escapeHtml(r.name) + '</strong><span>Te faltan ' + escapeHtml(r.missing_ingredients_count || 1) + ' ingredientes · Ver faltantes</span></button>'; }).join('') : '<p class="muted">No hay recetas con pocos faltantes.</p>';
+                listEl.innerHTML = '<h3>Para cocinar ahora</h3>' + nowHtml + '<h3 style="margin-top:14px">Te falta poco</h3>' + closeHtml;
+            });
+        }).catch(function (err) { handleError(root, err); });
+    }
+
     function renderList(root, meta) {
         var listEl  = qs('[data-recipes-list]', root);
         var countEl = qs('[data-recipes-count]', root);
@@ -526,7 +545,8 @@
 
         loadCategories(root);
         bind(root);
-        loadRecipes(root, 1);
+        if (new URLSearchParams(window.location.search).get('availability') === 'available') { loadCookingToday(root); }
+        else { loadRecipes(root, 1); }
 
         var primaryBtn = document.querySelector('[data-screen-primary-action]');
         if (primaryBtn) {

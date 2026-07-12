@@ -33,7 +33,7 @@
                 <article class="metric"><strong data-home-products>0</strong><span>productos en tu cocina</span></article>
                 <article class="metric"><strong data-home-expiring>0</strong><span>por vencer</span></article>
                 <article class="metric"><strong data-home-low-stock>0</strong><span>con poco stock</span></article>
-                <article class="metric"><strong data-home-recipes>0</strong><span>recetas posibles</span></article>
+                <a class="metric" href="{{ url('/web/recipes?availability=available') }}"><strong data-home-recipes>0</strong><span>recetas posibles</span></a>
             </div>
             <div class="workspace">
                 <article class="panel">
@@ -41,7 +41,7 @@
                     <div class="web-tools">
                         <a class="btn-main" href="{{ url('/web/stock') }}">Agregar producto</a>
                         <a class="btn-secondary-web" href="{{ url('/web/barcode-scanner') }}">Escanear codigo</a>
-                        <a class="btn-secondary-web" href="{{ url('/web/recipes') }}">Buscar que cocinar</a>
+                        <a class="btn-secondary-web" href="{{ url('/web/recipes?availability=available') }}">Qué puedo cocinar hoy</a>
                         <a class="btn-secondary-web" href="{{ url('/web/shopping-list') }}">Crear lista de compras</a>
                     </div>
                     <p class="muted" data-home-empty>Agrega lo que tenes en tu cocina para que podamos recomendarte recetas y armar compras.</p>
@@ -1081,6 +1081,7 @@
                 <article class="panel">
                     <h2>Catalogo disponible</h2>
                     <div class="web-tools">
+                        <span class="chip" data-recipes-availability-mode style="display:none">Para cocinar ahora</span>
                         <select class="form-control" data-user-payment-type>
                             <option value="">Todos los tipos</option>
                             <option value="credit_card">Tarjeta credito</option>
