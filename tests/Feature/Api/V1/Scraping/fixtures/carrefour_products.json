@@ -1,0 +1,48 @@
+[
+  {
+    "productId": "p001",
+    "productName": "Leche Entera La Serenisima 1L",
+    "brand": "La Serenisima",
+    "link": "https://www.carrefour.com.ar/leche-entera-1l",
+    "items": [
+      {
+        "itemId": "sku001",
+        "images": [
+          {
+            "imageUrl": "https://img.carrefour.com.ar/leche.jpg"
+          }
+        ],
+        "sellers": [
+          {
+            "commertialOffer": {
+              "Price": 450.00
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productId": "p002",
+    "productName": "Aceite de Girasol Cocinero 1.5L",
+    "brand": "Cocinero",
+    "link": "https://www.carrefour.com.ar/aceite-girasol-cocinero-1-5l",
+    "items": [
+      {
+        "itemId": "sku002",
+        "images": [
+          {
+            "imageUrl": "https://img.carrefour.com.ar/aceite.jpg"
+          }
+        ],
+        "sellers": [
+          {
+            "commertialOffer": {
+              "Price": 1200.00
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

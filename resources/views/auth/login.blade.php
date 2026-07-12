@@ -2,11 +2,14 @@
 
 @section('content')
 <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<meta name="google-signin-client_id" content="623128501385-5iaciaqn2e29igc5j9vrim31i1mnj3oa.apps.googleusercontent.com">
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="{{ route('login') }}" data-api-endpoint="/api/v1/auth/login" data-api-method="POST" data-auth-session="true" data-redirect="{{ url('/web') }}">
                 @csrf
+                <div class="alert" data-api-message style="display:none"></div>
                 <div cass="row" style="text-align:center;">
                     <h1>Iniciar Sesion</h1>
                     <p>¿Nuevo en ComidaCocinaControl? 
@@ -33,6 +36,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="email" role="alert"></span>
                        
 
                         <div class="login-form form-group row">
@@ -51,6 +55,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <span class="invalid-feedback" data-field-error="password" role="alert"></span>
 
 
 
@@ -84,7 +89,8 @@
 
                     <div class="form-group row" style="margin: 5% auto 5% auto">
                             <div class="col-md-12" style="text-align:center;">
-                              <a href="{{url('/redirect')}}" class="cta">Continuar con Google</a>
+                              <div class="g-signin2" data-onsuccess="onApiGoogleSignIn"></div>
+                              <a href="{{url('/redirect')}}" class="btn btn-link" style="color:rgba(4,172,133, 1); margin-top:12px;">Usar Google legacy</a>
                             </div>
                         </div>
 
@@ -96,6 +102,62 @@
                     </div>
                 </div>
             </form>
+
+            <div class="row" style="margin-top:28px;">
+                <div class="col-md-12">
+                    <div style="background:#fff;border:1px solid #dde6df;border-radius:8px;padding:16px;">
+                        <h2 style="font-size:20px;font-weight:900;margin:0 0 10px;">Usuarios demo</h2>
+                        <p class="text-muted" style="margin-bottom:12px;">Contraseña para todos: <strong>12345678</strong></p>
+                        <div style="overflow:auto;">
+                            <table class="table table-sm" style="margin-bottom:0;">
+                                <thead>
+                                    <tr>
+                                        <th>Rol</th>
+                                        <th>Email</th>
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach([
+                                        ['Usuario comun', 'usuario@cccontrol.test'],
+                                        ['Dietologo / profesional', 'dietologo@cccontrol.test'],
+                                        ['Admin catalogo', 'catalogo@cccontrol.test'],
+                                        ['Admin supermercados', 'supermercados@cccontrol.test'],
+                                        ['Admin recetas / chef', 'recetas@cccontrol.test'],
+                                        ['Docente', 'docente@cccontrol.test'],
+                                        ['Super admin', 'superadmin@cccontrol.test'],
+                                        ['Sistema / Jobs', 'sistema@cccontrol.test'],
+                                    ] as $demo)
+                                        <tr>
+                                            <td>{{ $demo[0] }}</td>
+                                            <td><code>{{ $demo[1] }}</code></td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-link" style="color:rgba(4,172,133, 1);" data-demo-login data-demo-email="{{ $demo[1] }}" data-demo-password="12345678">
+                                                    Usar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-muted" style="margin-top:12px;margin-bottom:6px;">Usuario administrador local — contraseña: <strong>password123</strong></p>
+                        <table class="table table-sm" style="margin-bottom:0;">
+                            <tbody>
+                                <tr>
+                                    <td>Admin local</td>
+                                    <td><code>admin@cccontrol.test</code></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-link" style="color:rgba(4,172,133, 1);" data-demo-login data-demo-email="admin@cccontrol.test" data-demo-password="password123">
+                                            Usar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

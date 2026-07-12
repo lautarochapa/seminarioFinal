@@ -1,0 +1,15 @@
+[
+  {
+    "productId": "p_incomplete",
+    "productName": "Producto Sin Precio",
+    "brand": "MarcaX",
+    "link": "https://www.carrefour.com.ar/producto-sin-precio",
+    "items": [
+      {
+        "itemId": "sku_incomplete",
+        "images": [],
+        "sellers": []
+      }
+    ]
+  }
+]

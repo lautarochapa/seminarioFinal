@@ -604,6 +604,7 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * @throws \LogicException if the in() method has not been called
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         if (0 === \count($this->dirs) && 0 === \count($this->iterators)) {
@@ -673,6 +674,7 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return iterator_count($this->getIterator());

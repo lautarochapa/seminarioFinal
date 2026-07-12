@@ -1,0 +1,66 @@
+services:
+  - type: web
+    name: seminariofinal
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    preDeployCommand: php artisan migrate --force
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_NAME
+        value: CocinaComidaControl
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: ASSET_URL
+        sync: false
+      - key: LOG_CHANNEL
+        value: stack
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+      - key: BROADCAST_DRIVER
+        value: log
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+      - key: SESSION_LIFETIME
+        value: "120"
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_ENCRYPTION
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: CocinaComidaControl

@@ -17,6 +17,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/healthz', function () {
+    return response()->json([
+        'status' => 'ok',
+        'app' => config('app.name'),
+        'time' => now()->toIso8601String(),
+    ]);
+});
+
 
 Route::get('/map2','AddressController@index');
 Route::get('/map', function() { return view('map'); });
@@ -59,6 +67,20 @@ Route::get('/callback', 'SocialAuthGoogleController@callback');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/app', 'AppScreenController@dashboard')->name('app.dashboard');
+Route::get('/app/{screen}', 'AppScreenController@index')->name('app.screen');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/web', 'UserWebScreenController@dashboard')->name('web.dashboard');
+    Route::get('/web/{screen}', 'UserWebScreenController@index')->name('web.screen');
+
+    Route::get('/admin-web', 'AdminWebScreenController@dashboard')->name('admin.web.dashboard');
+    Route::get('/admin-web/{screen}', 'AdminWebScreenController@index')->name('admin.web.screen');
+
+    Route::get('/teacher-web', 'TeacherWebScreenController@home')->name('teacher.web.home');
+    Route::get('/teacher-web/{screen}', 'TeacherWebScreenController@index')->name('teacher.web.screen');
+});
 
 
 

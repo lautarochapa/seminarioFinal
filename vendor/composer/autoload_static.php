@@ -7,58 +7,58 @@ namespace Composer\Autoload;
 class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
 {
     public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
-        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
-        '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
+        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
+        '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
+        'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
+        'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
+        'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
+        '9cdd7b9056abc3081735233ba9dd9c7f' => __DIR__ . '/..' . '/facade/flare-client-php/src/helpers.php',
+        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
+        '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
+        'b6ec61354e97f32c0ae683041c78392a' => __DIR__ . '/..' . '/scrivo/highlight.php/HighlightUtilities/functions.php',
+        '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
+        'ed962a97bd972bc82007176b647d4e36' => __DIR__ . '/..' . '/facade/ignition/src/helpers.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
-        '9cdd7b9056abc3081735233ba9dd9c7f' => __DIR__ . '/..' . '/facade/flare-client-php/src/helpers.php',
-        'b6ec61354e97f32c0ae683041c78392a' => __DIR__ . '/..' . '/scrivo/highlight.php/HighlightUtilities/functions.php',
-        '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
-        'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
-        'ed962a97bd972bc82007176b647d4e36' => __DIR__ . '/..' . '/facade/ignition/src/helpers.php',
-        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
-        'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'v' => 
+        'v' =>
         array (
             'voku\\' => 5,
         ),
-        'p' => 
+        'p' =>
         array (
             'phpDocumentor\\Reflection\\' => 25,
         ),
-        'X' => 
+        'X' =>
         array (
             'XdgBaseDir\\' => 11,
         ),
-        'W' => 
+        'W' =>
         array (
             'Whoops\\' => 7,
             'Webmozart\\Assert\\' => 17,
         ),
-        'T' => 
+        'T' =>
         array (
             'TijsVerkoyen\\CssToInlineStyles\\' => 31,
             'Tests\\' => 6,
         ),
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php73\\' => 23,
@@ -86,12 +86,12 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
         ),
-        'R' => 
+        'R' =>
         array (
             'Ramsey\\Uuid\\' => 12,
             'Ramsey\\Collection\\' => 18,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psy\\' => 4,
             'Psr\\SimpleCache\\' => 16,
@@ -103,19 +103,19 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
             'PhpParser\\' => 10,
             'PhpOption\\' => 10,
         ),
-        'O' => 
+        'O' =>
         array (
             'Opis\\Closure\\' => 13,
         ),
-        'N' => 
+        'N' =>
         array (
             'NunoMaduro\\Collision\\' => 21,
         ),
-        'M' => 
+        'M' =>
         array (
             'Monolog\\' => 8,
         ),
-        'L' => 
+        'L' =>
         array (
             'League\\OAuth1\\' => 14,
             'League\\Flysystem\\' => 17,
@@ -124,18 +124,18 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
             'Laravel\\Tinker\\' => 15,
             'Laravel\\Socialite\\' => 18,
         ),
-        'I' => 
+        'I' =>
         array (
             'Illuminate\\Foundation\\Auth\\' => 27,
             'Illuminate\\' => 11,
         ),
-        'G' => 
+        'G' =>
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'F' => 
+        'F' =>
         array (
             'Fruitcake\\Cors\\' => 15,
             'Fideloper\\Proxy\\' => 16,
@@ -144,11 +144,11 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
             'Facade\\IgnitionContracts\\' => 25,
             'Facade\\FlareClient\\' => 19,
         ),
-        'E' => 
+        'E' =>
         array (
             'Egulias\\EmailValidator\\' => 23,
         ),
-        'D' => 
+        'D' =>
         array (
             'Dotenv\\' => 7,
             'Doctrine\\Instantiator\\' => 22,
@@ -156,16 +156,16 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
             'Doctrine\\Common\\Lexer\\' => 22,
             'DeepCopy\\' => 9,
         ),
-        'C' => 
+        'C' =>
         array (
             'Cron\\' => 5,
             'Carbon\\' => 7,
         ),
-        'B' => 
+        'B' =>
         array (
             'Brick\\Math\\' => 11,
         ),
-        'A' => 
+        'A' =>
         array (
             'Asm89\\Stack\\' => 12,
             'App\\' => 4,
@@ -173,321 +173,321 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
     );
 
     public static $prefixDirsPsr4 = array (
-        'voku\\' => 
+        'voku\\' =>
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
         ),
-        'phpDocumentor\\Reflection\\' => 
+        'phpDocumentor\\Reflection\\' =>
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
-        'XdgBaseDir\\' => 
+        'XdgBaseDir\\' =>
         array (
             0 => __DIR__ . '/..' . '/dnoegel/php-xdg-base-dir/src',
         ),
-        'Whoops\\' => 
+        'Whoops\\' =>
         array (
             0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
         ),
-        'Webmozart\\Assert\\' => 
+        'Webmozart\\Assert\\' =>
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
-        'TijsVerkoyen\\CssToInlineStyles\\' => 
+        'TijsVerkoyen\\CssToInlineStyles\\' =>
         array (
             0 => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src',
         ),
-        'Tests\\' => 
+        'Tests\\' =>
         array (
             0 => __DIR__ . '/../..' . '/tests',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
+        'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Php73\\' => 
+        'Symfony\\Polyfill\\Php73\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
         ),
-        'Symfony\\Polyfill\\Php72\\' => 
+        'Symfony\\Polyfill\\Php72\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'Symfony\\Polyfill\\Mbstring\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
         ),
-        'Symfony\\Polyfill\\Intl\\Idn\\' => 
+        'Symfony\\Polyfill\\Intl\\Idn\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
-        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
+        'Symfony\\Polyfill\\Intl\\Grapheme\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
         ),
-        'Symfony\\Polyfill\\Iconv\\' => 
+        'Symfony\\Polyfill\\Iconv\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
         ),
-        'Symfony\\Polyfill\\Ctype\\' => 
+        'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Contracts\\Translation\\' => 
+        'Symfony\\Contracts\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/translation-contracts',
         ),
-        'Symfony\\Contracts\\Service\\' => 
+        'Symfony\\Contracts\\Service\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
         ),
-        'Symfony\\Contracts\\EventDispatcher\\' => 
+        'Symfony\\Contracts\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
         ),
-        'Symfony\\Component\\VarDumper\\' => 
+        'Symfony\\Component\\VarDumper\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
-        'Symfony\\Component\\Translation\\' => 
+        'Symfony\\Component\\Translation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
         ),
-        'Symfony\\Component\\String\\' => 
+        'Symfony\\Component\\String\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/string',
         ),
-        'Symfony\\Component\\Routing\\' => 
+        'Symfony\\Component\\Routing\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/routing',
         ),
-        'Symfony\\Component\\Process\\' => 
+        'Symfony\\Component\\Process\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/process',
         ),
-        'Symfony\\Component\\Mime\\' => 
+        'Symfony\\Component\\Mime\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/mime',
         ),
-        'Symfony\\Component\\HttpKernel\\' => 
+        'Symfony\\Component\\HttpKernel\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/http-kernel',
         ),
-        'Symfony\\Component\\HttpFoundation\\' => 
+        'Symfony\\Component\\HttpFoundation\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/http-foundation',
         ),
-        'Symfony\\Component\\Finder\\' => 
+        'Symfony\\Component\\Finder\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
         ),
-        'Symfony\\Component\\EventDispatcher\\' => 
+        'Symfony\\Component\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
-        'Symfony\\Component\\ErrorHandler\\' => 
+        'Symfony\\Component\\ErrorHandler\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/error-handler',
         ),
-        'Symfony\\Component\\CssSelector\\' => 
+        'Symfony\\Component\\CssSelector\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
-        'Symfony\\Component\\Console\\' => 
+        'Symfony\\Component\\Console\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
         ),
-        'Ramsey\\Uuid\\' => 
+        'Ramsey\\Uuid\\' =>
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
         ),
-        'Ramsey\\Collection\\' => 
+        'Ramsey\\Collection\\' =>
         array (
             0 => __DIR__ . '/..' . '/ramsey/collection/src',
         ),
-        'Psy\\' => 
+        'Psy\\' =>
         array (
             0 => __DIR__ . '/..' . '/psy/psysh/src',
         ),
-        'Psr\\SimpleCache\\' => 
+        'Psr\\SimpleCache\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
-        'Psr\\Http\\Message\\' => 
+        'Psr\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\EventDispatcher\\' => 
+        'Psr\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
         ),
-        'Psr\\Container\\' => 
+        'Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Prophecy\\' => 
+        'Prophecy\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
         ),
-        'PhpParser\\' => 
+        'PhpParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
-        'PhpOption\\' => 
+        'PhpOption\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
         ),
-        'Opis\\Closure\\' => 
+        'Opis\\Closure\\' =>
         array (
             0 => __DIR__ . '/..' . '/opis/closure/src',
         ),
-        'NunoMaduro\\Collision\\' => 
+        'NunoMaduro\\Collision\\' =>
         array (
             0 => __DIR__ . '/..' . '/nunomaduro/collision/src',
         ),
-        'Monolog\\' => 
+        'Monolog\\' =>
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
-        'League\\OAuth1\\' => 
+        'League\\OAuth1\\' =>
         array (
             0 => __DIR__ . '/..' . '/league/oauth1-client/src',
         ),
-        'League\\Flysystem\\' => 
+        'League\\Flysystem\\' =>
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
         ),
-        'League\\CommonMark\\' => 
+        'League\\CommonMark\\' =>
         array (
             0 => __DIR__ . '/..' . '/league/commonmark/src',
         ),
-        'Laravel\\Ui\\' => 
+        'Laravel\\Ui\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/ui/src',
         ),
-        'Laravel\\Tinker\\' => 
+        'Laravel\\Tinker\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/tinker/src',
         ),
-        'Laravel\\Socialite\\' => 
+        'Laravel\\Socialite\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/socialite/src',
         ),
-        'Illuminate\\Foundation\\Auth\\' => 
+        'Illuminate\\Foundation\\Auth\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/ui/auth-backend',
         ),
-        'Illuminate\\' => 
+        'Illuminate\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
         ),
-        'GuzzleHttp\\Psr7\\' => 
+        'GuzzleHttp\\Psr7\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' => 
+        'GuzzleHttp\\Promise\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' => 
+        'GuzzleHttp\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Fruitcake\\Cors\\' => 
+        'Fruitcake\\Cors\\' =>
         array (
             0 => __DIR__ . '/..' . '/fruitcake/laravel-cors/src',
         ),
-        'Fideloper\\Proxy\\' => 
+        'Fideloper\\Proxy\\' =>
         array (
             0 => __DIR__ . '/..' . '/fideloper/proxy/src',
         ),
-        'Faker\\' => 
+        'Faker\\' =>
         array (
             0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
         ),
-        'Facade\\Ignition\\' => 
+        'Facade\\Ignition\\' =>
         array (
             0 => __DIR__ . '/..' . '/facade/ignition/src',
         ),
-        'Facade\\IgnitionContracts\\' => 
+        'Facade\\IgnitionContracts\\' =>
         array (
             0 => __DIR__ . '/..' . '/facade/ignition-contracts/src',
         ),
-        'Facade\\FlareClient\\' => 
+        'Facade\\FlareClient\\' =>
         array (
             0 => __DIR__ . '/..' . '/facade/flare-client-php/src',
         ),
-        'Egulias\\EmailValidator\\' => 
+        'Egulias\\EmailValidator\\' =>
         array (
             0 => __DIR__ . '/..' . '/egulias/email-validator/src',
         ),
-        'Dotenv\\' => 
+        'Dotenv\\' =>
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
-        'Doctrine\\Instantiator\\' => 
+        'Doctrine\\Instantiator\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
         ),
-        'Doctrine\\Inflector\\' => 
+        'Doctrine\\Inflector\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
         ),
-        'Doctrine\\Common\\Lexer\\' => 
+        'Doctrine\\Common\\Lexer\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
         ),
-        'DeepCopy\\' => 
+        'DeepCopy\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'Cron\\' => 
+        'Cron\\' =>
         array (
             0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
         ),
-        'Carbon\\' => 
+        'Carbon\\' =>
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
-        'Brick\\Math\\' => 
+        'Brick\\Math\\' =>
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
         ),
-        'Asm89\\Stack\\' => 
+        'Asm89\\Stack\\' =>
         array (
             0 => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack',
         ),
-        'App\\' => 
+        'App\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'M' => 
+        'M' =>
         array (
-            'Mockery' => 
+            'Mockery' =>
             array (
                 0 => __DIR__ . '/..' . '/mockery/mockery/library',
             ),
         ),
-        'H' => 
+        'H' =>
         array (
-            'Highlight\\' => 
+            'Highlight\\' =>
             array (
                 0 => __DIR__ . '/..' . '/scrivo/highlight.php',
             ),
-            'HighlightUtilities\\' => 
+            'HighlightUtilities\\' =>
             array (
                 0 => __DIR__ . '/..' . '/scrivo/highlight.php',
             ),
@@ -495,17 +495,212 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
     );
 
     public static $classMap = array (
+        'AddressSeeder' => __DIR__ . '/../..' . '/database/seeds/AddressSeeder.php',
         'App\\Address' => __DIR__ . '/../..' . '/app/Address.php',
         'App\\Agenda' => __DIR__ . '/../..' . '/app/Agenda.php',
+        'App\\Allergy' => __DIR__ . '/../..' . '/app/Allergy.php',
+        'App\\ApiToken' => __DIR__ . '/../..' . '/app/ApiToken.php',
+        'App\\AuditLog' => __DIR__ . '/../..' . '/app/AuditLog.php',
+        'App\\BodyMeasurement' => __DIR__ . '/../..' . '/app/BodyMeasurement.php',
+        'App\\BranchProductAvailability' => __DIR__ . '/../..' . '/app/BranchProductAvailability.php',
         'App\\Brand' => __DIR__ . '/../..' . '/app/Brand.php',
+        'App\\Budget' => __DIR__ . '/../..' . '/app/Budget.php',
+        'App\\BudgetAlert' => __DIR__ . '/../..' . '/app/BudgetAlert.php',
+        'App\\BudgetCategory' => __DIR__ . '/../..' . '/app/BudgetCategory.php',
+        'App\\BudgetMovement' => __DIR__ . '/../..' . '/app/BudgetMovement.php',
+        'App\\BudgetProjection' => __DIR__ . '/../..' . '/app/BudgetProjection.php',
         'App\\Category' => __DIR__ . '/../..' . '/app/Category.php',
+        'App\\City' => __DIR__ . '/../..' . '/app/City.php',
         'App\\Comment' => __DIR__ . '/../..' . '/app/Comment.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\DemoScenario' => __DIR__ . '/../..' . '/app/DemoScenario.php',
         'App\\Diet' => __DIR__ . '/../..' . '/app/Diet.php',
         'App\\DietRecord' => __DIR__ . '/../..' . '/app/DietRecord.php',
+        'App\\DietaryRestriction' => __DIR__ . '/../..' . '/app/DietaryRestriction.php',
+        'App\\Exceptions\\Auth\\AuthException' => __DIR__ . '/../..' . '/app/Exceptions/Auth/AuthException.php',
+        'App\\Exceptions\\BodyMeasurement\\BodyMeasurementException' => __DIR__ . '/../..' . '/app/Exceptions/BodyMeasurement/BodyMeasurementException.php',
+        'App\\Exceptions\\Budgets\\BudgetException' => __DIR__ . '/../..' . '/app/Exceptions/Budgets/BudgetException.php',
+        'App\\Exceptions\\FamilyGroup\\FamilyGroupException' => __DIR__ . '/../..' . '/app/Exceptions/FamilyGroup/FamilyGroupException.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Exceptions\\HealthPreferences\\HealthPreferenceException' => __DIR__ . '/../..' . '/app/Exceptions/HealthPreferences/HealthPreferenceException.php',
+        'App\\Exceptions\\IngredientCategories\\IngredientCategoryException' => __DIR__ . '/../..' . '/app/Exceptions/IngredientCategories/IngredientCategoryException.php',
+        'App\\Exceptions\\Ingredients\\IngredientException' => __DIR__ . '/../..' . '/app/Exceptions/Ingredients/IngredientException.php',
+        'App\\Exceptions\\MealPlanGeneration\\MealPlanGenerationException' => __DIR__ . '/../..' . '/app/Exceptions/MealPlanGeneration/MealPlanGenerationException.php',
+        'App\\Exceptions\\MealPlanIncompatibilities\\MealPlanIncompatibilityException' => __DIR__ . '/../..' . '/app/Exceptions/MealPlanIncompatibilities/MealPlanIncompatibilityException.php',
+        'App\\Exceptions\\MealPlanItems\\MealPlanItemException' => __DIR__ . '/../..' . '/app/Exceptions/MealPlanItems/MealPlanItemException.php',
+        'App\\Exceptions\\MealPlanPortions\\MealPlanPortionException' => __DIR__ . '/../..' . '/app/Exceptions/MealPlanPortions/MealPlanPortionException.php',
+        'App\\Exceptions\\MealPlans\\MealPlanException' => __DIR__ . '/../..' . '/app/Exceptions/MealPlans/MealPlanException.php',
+        'App\\Exceptions\\MealTypes\\MealTypeException' => __DIR__ . '/../..' . '/app/Exceptions/MealTypes/MealTypeException.php',
+        'App\\Exceptions\\Notifications\\NotificationException' => __DIR__ . '/../..' . '/app/Exceptions/Notifications/NotificationException.php',
+        'App\\Exceptions\\Nutrients\\NutrientException' => __DIR__ . '/../..' . '/app/Exceptions/Nutrients/NutrientException.php',
+        'App\\Exceptions\\Objectives\\ObjectivesException' => __DIR__ . '/../..' . '/app/Exceptions/Objectives/ObjectivesException.php',
+        'App\\Exceptions\\Professional\\ProfessionalException' => __DIR__ . '/../..' . '/app/Exceptions/Professional/ProfessionalException.php',
+        'App\\Exceptions\\Purchases\\PurchaseException' => __DIR__ . '/../..' . '/app/Exceptions/Purchases/PurchaseException.php',
+        'App\\Exceptions\\Rbac\\RbacException' => __DIR__ . '/../..' . '/app/Exceptions/Rbac/RbacException.php',
+        'App\\Exceptions\\RecipeAvailability\\RecipeAvailabilityException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeAvailability/RecipeAvailabilityException.php',
+        'App\\Exceptions\\RecipeCategories\\RecipeCategoryException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeCategories/RecipeCategoryException.php',
+        'App\\Exceptions\\RecipeCost\\RecipeCostException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeCost/RecipeCostException.php',
+        'App\\Exceptions\\RecipeFavoritesCooked\\RecipeFavoritesCookedException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeFavoritesCooked/RecipeFavoritesCookedException.php',
+        'App\\Exceptions\\RecipeImportCandidates\\RecipeImportCandidatesException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeImportCandidates/RecipeImportCandidatesException.php',
+        'App\\Exceptions\\RecipeImportUrl\\RecipeImportUrlException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeImportUrl/RecipeImportUrlException.php',
+        'App\\Exceptions\\RecipeIngredients\\RecipeIngredientException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeIngredients/RecipeIngredientException.php',
+        'App\\Exceptions\\RecipeNutrition\\RecipeNutritionException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeNutrition/RecipeNutritionException.php',
+        'App\\Exceptions\\RecipeSharingBranch\\RecipeSharingBranchException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeSharingBranch/RecipeSharingBranchException.php',
+        'App\\Exceptions\\RecipeSteps\\RecipeStepException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeSteps/RecipeStepException.php',
+        'App\\Exceptions\\RecipeSubstitutions\\RecipeSubstitutionsException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeSubstitutions/RecipeSubstitutionsException.php',
+        'App\\Exceptions\\RecipeTags\\RecipeTagException' => __DIR__ . '/../..' . '/app/Exceptions/RecipeTags/RecipeTagException.php',
+        'App\\Exceptions\\Recipes\\RecipeException' => __DIR__ . '/../..' . '/app/Exceptions/Recipes/RecipeException.php',
+        'App\\Exceptions\\ReportExports\\ReportExportException' => __DIR__ . '/../..' . '/app/Exceptions/ReportExports/ReportExportException.php',
+        'App\\Exceptions\\Units\\UnitException' => __DIR__ . '/../..' . '/app/Exceptions/Units/UnitException.php',
+        'App\\Exceptions\\UserProfile\\UserProfileException' => __DIR__ . '/../..' . '/app/Exceptions/UserProfile/UserProfileException.php',
+        'App\\Exceptions\\UserSupplements\\UserSupplementException' => __DIR__ . '/../..' . '/app/Exceptions/UserSupplements/UserSupplementException.php',
+        'App\\FamilyGroup' => __DIR__ . '/../..' . '/app/FamilyGroup.php',
+        'App\\FamilyGroupInvitation' => __DIR__ . '/../..' . '/app/FamilyGroupInvitation.php',
+        'App\\FamilyGroupMember' => __DIR__ . '/../..' . '/app/FamilyGroupMember.php',
+        'App\\FamilyGroupPreference' => __DIR__ . '/../..' . '/app/FamilyGroupPreference.php',
+        'App\\FeatureFlag' => __DIR__ . '/../..' . '/app/FeatureFlag.php',
+        'App\\FoodTag' => __DIR__ . '/../..' . '/app/FoodTag.php',
+        'App\\Foundation\\Application' => __DIR__ . '/../..' . '/app/Foundation/Application.php',
+        'App\\GeocodeCache' => __DIR__ . '/../..' . '/app/GeocodeCache.php',
         'App\\Group' => __DIR__ . '/../..' . '/app/Group.php',
+        'App\\HealthCondition' => __DIR__ . '/../..' . '/app/HealthCondition.php',
+        'App\\Http\\Controllers\\AddressController' => __DIR__ . '/../..' . '/app/Http/Controllers/AddressController.php',
+        'App\\Http\\Controllers\\AdminWebScreenController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminWebScreenController.php',
         'App\\Http\\Controllers\\AgendaController' => __DIR__ . '/../..' . '/app/Http/Controllers/AgendaController.php',
+        'App\\Http\\Controllers\\Api\\V1\\AdminReports\\AdminReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/AdminReports/AdminReportController.php',
+        'App\\Http\\Controllers\\Api\\V1\\AdminThesisDocuments\\AdminThesisDocumentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/AdminThesisDocuments/AdminThesisDocumentController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\AuditLogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/AuditLogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\LoginLogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/LoginLogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/PermissionAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\RoleAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/RoleAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\RolePermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/RolePermissionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\UserAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/UserAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Admin\\UserRoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/UserRoleController.php',
+        'App\\Http\\Controllers\\Api\\V1\\AiFoundation\\AiFoundationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/AiFoundation/AiFoundationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Auth\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Auth/AuthController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Auth\\GoogleAuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Auth/GoogleAuthController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Auth\\PasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Auth/PasswordController.php',
+        'App\\Http\\Controllers\\Api\\V1\\BodyMeasurement\\BodyMeasurementController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/BodyMeasurement/BodyMeasurementController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Brands\\AdminBrandController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Brands/AdminBrandController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Brands\\BrandCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Brands/BrandCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Budgets\\BudgetAlertController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Budgets/BudgetAlertController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Budgets\\BudgetCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Budgets/BudgetCategoryController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Budgets\\BudgetController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Budgets/BudgetController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Budgets\\BudgetMovementController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Budgets/BudgetMovementController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Budgets\\BudgetSummaryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Budgets/BudgetSummaryController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Cities\\AdminCityController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Cities/AdminCityController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Cities\\CityCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Cities/CityCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Consents\\UserConsentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Consents/UserConsentController.php',
+        'App\\Http\\Controllers\\Api\\V1\\DemoScenarios\\DemoScenarioController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/DemoScenarios/DemoScenarioController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FamilyGroup\\FamilyGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FamilyGroup/FamilyGroupController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FamilyGroup\\FamilyGroupInvitationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FamilyGroup/FamilyGroupInvitationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FamilyGroup\\FamilyGroupMemberController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FamilyGroup/FamilyGroupMemberController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FamilyGroup\\FamilyGroupPreferenceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FamilyGroup/FamilyGroupPreferenceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FeatureFlags\\FeatureFlagController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FeatureFlags/FeatureFlagController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FoodTags\\AdminFoodTagController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FoodTags/AdminFoodTagController.php',
+        'App\\Http\\Controllers\\Api\\V1\\FoodTags\\FoodTagCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/FoodTags/FoodTagCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\GroupReports\\GroupReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/GroupReports/GroupReportController.php',
+        'App\\Http\\Controllers\\Api\\V1\\HealthPreferences\\AdminHealthPreferenceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/HealthPreferences/AdminHealthPreferenceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\HealthPreferences\\CatalogHealthPreferenceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/HealthPreferences/CatalogHealthPreferenceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\HealthPreferences\\UserHealthPreferenceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/HealthPreferences/UserHealthPreferenceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\HouseholdStock\\HouseholdStockController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/HouseholdStock/HouseholdStockController.php',
+        'App\\Http\\Controllers\\Api\\V1\\IngredientCategories\\IngredientCategoryAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/IngredientCategories/IngredientCategoryAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\IngredientCategories\\IngredientCategoryCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/IngredientCategories/IngredientCategoryCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\IngredientEquivalences\\AdminIngredientEquivalenceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/IngredientEquivalences/AdminIngredientEquivalenceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Ingredients\\AdminIngredientController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Ingredients/AdminIngredientController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Ingredients\\IngredientCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Ingredients/IngredientCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealPlanGeneration\\MealPlanGenerationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealPlanGeneration/MealPlanGenerationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealPlanIncompatibilities\\MealPlanIncompatibilityController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealPlanIncompatibilities/MealPlanIncompatibilityController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealPlanItemStatus\\MealPlanItemStatusController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealPlanItemStatus/MealPlanItemStatusController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealPlanItems\\MealPlanItemController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealPlanItems/MealPlanItemController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealPlanPortions\\MealPlanPortionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealPlanPortions/MealPlanPortionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealPlans\\MealPlanController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealPlans/MealPlanController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealTypes\\MealTypeAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealTypes/MealTypeAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\MealTypes\\MealTypeCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/MealTypes/MealTypeCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Notifications/NotificationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Nutrients\\AdminNutrientController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Nutrients/AdminNutrientController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Nutrients\\IngredientNutrientController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Nutrients/IngredientNutrientController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Nutrients\\ProductNutrientController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Nutrients/ProductNutrientController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Objectives\\AdminObjectiveController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Objectives/AdminObjectiveController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Objectives\\CatalogObjectiveController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Objectives/CatalogObjectiveController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Objectives\\UserObjectiveController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Objectives/UserObjectiveController.php',
+        'App\\Http\\Controllers\\Api\\V1\\PaymentMethods\\AdminPaymentMethodController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/PaymentMethods/AdminPaymentMethodController.php',
+        'App\\Http\\Controllers\\Api\\V1\\PaymentMethods\\PaymentMethodCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/PaymentMethods/PaymentMethodCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\PaymentMethods\\UserPaymentMethodController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/PaymentMethods/UserPaymentMethodController.php',
+        'App\\Http\\Controllers\\Api\\V1\\PersonalReports\\PersonalReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/PersonalReports/PersonalReportController.php',
+        'App\\Http\\Controllers\\Api\\V1\\PriceRefreshRequests\\PriceRefreshRequestController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/PriceRefreshRequests/PriceRefreshRequestController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ProductCategories\\ProductCategoryAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ProductCategories/ProductCategoryAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ProductCategories\\ProductCategoryCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ProductCategories/ProductCategoryCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ProductReports\\AdminProductReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ProductReports/AdminProductReportController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ProductReports\\ProductReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ProductReports/ProductReportController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Products\\AdminProductBarcodeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Products/AdminProductBarcodeController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Products\\AdminProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Products/AdminProductController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Products\\AdminProductImageController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Products/AdminProductImageController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Products\\ProductCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Products/ProductCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Professional\\ProfessionalLinkController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Professional/ProfessionalLinkController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Professional\\ProfessionalPanelController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Professional/ProfessionalPanelController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Promotions\\AdminPromotionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Promotions/AdminPromotionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Promotions\\BranchPromotionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Promotions/BranchPromotionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Purchases\\PurchaseConfirmationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Purchases/PurchaseConfirmationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Purchases\\PurchaseController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Purchases/PurchaseController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Purchases\\PurchaseItemController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Purchases/PurchaseItemController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeAvailability\\RecipeAvailabilityController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeAvailability/RecipeAvailabilityController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeCategories\\RecipeCategoryAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeCategories/RecipeCategoryAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeCategories\\RecipeCategoryCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeCategories/RecipeCategoryCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeCost\\RecipeCostController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeCost/RecipeCostController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeFavoritesCooked\\RecipeFavoritesCookedController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeFavoritesCooked/RecipeFavoritesCookedController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeImportCandidates\\RecipeImportCandidatesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeImportCandidates/RecipeImportCandidatesController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeImportText\\RecipeImportTextController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeImportText/RecipeImportTextController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeImportUrl\\RecipeImportUrlController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeImportUrl/RecipeImportUrlController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeIngredients\\RecipeIngredientController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeIngredients/RecipeIngredientController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeNutrition\\RecipeNutritionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeNutrition/RecipeNutritionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeScraping\\RecipeScrapingJobController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeScraping/RecipeScrapingJobController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeSearch\\RecipeSearchController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeSearch/RecipeSearchController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeSharingBranch\\RecipeSharingBranchController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeSharingBranch/RecipeSharingBranchController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeSteps\\RecipeStepController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeSteps/RecipeStepController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeSubstitutions\\RecipeSubstitutionsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeSubstitutions/RecipeSubstitutionsController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeSuggestions\\RecipeSuggestionsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeSuggestions/RecipeSuggestionsController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeTags\\RecipeTagAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeTags/RecipeTagAdminController.php',
+        'App\\Http\\Controllers\\Api\\V1\\RecipeTags\\RecipeTagCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/RecipeTags/RecipeTagCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Recipes\\AdminRecipeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Recipes/AdminRecipeController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Recipes\\RecipeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Recipes/RecipeController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ReportExports\\ReportExportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ReportExports/ReportExportController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ScrapingAlerts\\ScrapingAlertController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ScrapingAlerts/ScrapingAlertController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ScrapingCandidates\\ScrapingCandidateController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ScrapingCandidates/ScrapingCandidateController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Scraping\\ScrapingJobController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Scraping/ScrapingJobController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Scraping\\ScrapingSourceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Scraping/ScrapingSourceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ShoppingAlternatives\\ShoppingAlternativeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ShoppingAlternatives/ShoppingAlternativeController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ShoppingListGeneration\\ShoppingListGenerationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ShoppingListGeneration/ShoppingListGenerationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ShoppingListItems\\ShoppingListItemController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ShoppingListItems/ShoppingListItemController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ShoppingListPreview\\ShoppingListPreviewController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ShoppingListPreview/ShoppingListPreviewController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ShoppingLists\\ShoppingListController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ShoppingLists/ShoppingListController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ShoppingSessions\\ShoppingSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ShoppingSessions/ShoppingSessionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\StockAlerts\\StockAlertController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/StockAlerts/StockAlertController.php',
+        'App\\Http\\Controllers\\Api\\V1\\StockAlerts\\StockMinimumRuleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/StockAlerts/StockMinimumRuleController.php',
+        'App\\Http\\Controllers\\Api\\V1\\StockLocations\\StockLocationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/StockLocations/StockLocationController.php',
+        'App\\Http\\Controllers\\Api\\V1\\StockMovements\\StockMovementController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/StockMovements/StockMovementController.php',
+        'App\\Http\\Controllers\\Api\\V1\\StockScan\\StockScanController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/StockScan/StockScanController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketBranches\\AdminSupermarketBranchController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketBranches/AdminSupermarketBranchController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketBranches\\SupermarketBranchCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketBranches/SupermarketBranchCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketComparison\\SupermarketComparisonController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketComparison/SupermarketComparisonController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketPrices\\AdminSupermarketPriceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketPrices/AdminSupermarketPriceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketProducts\\AdminSupermarketProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketProducts/AdminSupermarketProductController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketProducts\\BranchProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketProducts/BranchProductController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SupermarketProducts\\ProductPriceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SupermarketProducts/ProductPriceController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Supermarkets\\AdminSupermarketChainController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Supermarkets/AdminSupermarketChainController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Supermarkets\\SupermarketCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Supermarkets/SupermarketCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\SystemSettings\\SystemSettingController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/SystemSettings/SystemSettingController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ThesisDocuments\\ThesisCommentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ThesisDocuments/ThesisCommentController.php',
+        'App\\Http\\Controllers\\Api\\V1\\ThesisDocuments\\ThesisDocumentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/ThesisDocuments/ThesisDocumentController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Units\\AdminUnitController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Units/AdminUnitController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Units\\AdminUnitConversionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Units/AdminUnitConversionController.php',
+        'App\\Http\\Controllers\\Api\\V1\\Units\\UnitCatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Units/UnitCatalogController.php',
+        'App\\Http\\Controllers\\Api\\V1\\UserProfile\\UserPrioritySettingController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/UserProfile/UserPrioritySettingController.php',
+        'App\\Http\\Controllers\\Api\\V1\\UserProfile\\UserProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/UserProfile/UserProfileController.php',
+        'App\\Http\\Controllers\\Api\\V1\\UserSupplements\\SupplementScheduleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/UserSupplements/SupplementScheduleController.php',
+        'App\\Http\\Controllers\\Api\\V1\\UserSupplements\\UserSupplementController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/UserSupplements/UserSupplementController.php',
+        'App\\Http\\Controllers\\Api\\V1\\WasteReports\\WasteReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/WasteReports/WasteReportController.php',
+        'App\\Http\\Controllers\\AppScreenController' => __DIR__ . '/../..' . '/app/Http/Controllers/AppScreenController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
@@ -528,10 +723,15 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'App\\Http\\Controllers\\SocialAuthGoogleController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialAuthGoogleController.php',
         'App\\Http\\Controllers\\StepController' => __DIR__ . '/../..' . '/app/Http/Controllers/StepController.php',
         'App\\Http\\Controllers\\SupplyController' => __DIR__ . '/../..' . '/app/Http/Controllers/SupplyController.php',
+        'App\\Http\\Controllers\\TeacherWebScreenController' => __DIR__ . '/../..' . '/app/Http/Controllers/TeacherWebScreenController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
+        'App\\Http\\Controllers\\UserWebScreenController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserWebScreenController.php',
         'App\\Http\\Controllers\\UtensilController' => __DIR__ . '/../..' . '/app/Http/Controllers/UtensilController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\AdminMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/AdminMiddleware.php',
+        'App\\Http\\Middleware\\Api\\AuthenticateApiToken' => __DIR__ . '/../..' . '/app/Http/Middleware/Api/AuthenticateApiToken.php',
+        'App\\Http\\Middleware\\Api\\RequirePermission' => __DIR__ . '/../..' . '/app/Http/Middleware/Api/RequirePermission.php',
+        'App\\Http\\Middleware\\Api\\TraceId' => __DIR__ . '/../..' . '/app/Http/Middleware/Api/TraceId.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CheckForMaintenanceMode' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckForMaintenanceMode.php',
         'App\\Http\\Middleware\\ChefMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/ChefMiddleware.php',
@@ -545,12 +745,300 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\AssignPermissionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/AssignPermissionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\AssignRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/AssignRoleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\CreateRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/CreateRoleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\CreateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/CreateUserRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\ListAuditLogsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/ListAuditLogsRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\ListLoginLogsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/ListLoginLogsRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\ListPermissionsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/ListPermissionsRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\ListRolesRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/ListRolesRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\ListUsersRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/ListUsersRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\UpdateRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/UpdateRoleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Admin\\UpdateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Admin/UpdateUserRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\AiFoundation\\TestSuggestionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/AiFoundation/TestSuggestionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Auth\\ForgotPasswordRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Auth/ForgotPasswordRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Auth\\GoogleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Auth/GoogleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Auth/LoginRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Auth\\RegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Auth/RegisterRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Auth\\ResetPasswordRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Auth/ResetPasswordRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Auth\\UpdateProfileRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Auth/UpdateProfileRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\BodyMeasurement\\CreateBodyMeasurementRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/BodyMeasurement/CreateBodyMeasurementRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\BodyMeasurement\\UpdateBodyMeasurementRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/BodyMeasurement/UpdateBodyMeasurementRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Brands\\StoreBrandRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Brands/StoreBrandRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Brands\\UpdateBrandRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Brands/UpdateBrandRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Budgets\\CreateAdjustmentRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Budgets/CreateAdjustmentRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Budgets\\CreateBudgetCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Budgets/CreateBudgetCategoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Budgets\\CreateBudgetRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Budgets/CreateBudgetRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Budgets\\UpdateBudgetCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Budgets/UpdateBudgetCategoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Budgets\\UpdateBudgetRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Budgets/UpdateBudgetRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Cities\\StoreCityRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Cities/StoreCityRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Cities\\UpdateCityRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Cities/UpdateCityRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Consents\\UpdateConsentsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Consents/UpdateConsentsRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\DemoScenarios\\CreateDemoScenarioRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/DemoScenarios/CreateDemoScenarioRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\DemoScenarios\\UpdateDemoScenarioRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/DemoScenarios/UpdateDemoScenarioRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FamilyGroup\\AddMemberRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FamilyGroup/AddMemberRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FamilyGroup\\CreateFamilyGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FamilyGroup/CreateFamilyGroupRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FamilyGroup\\CreateInvitationRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FamilyGroup/CreateInvitationRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FamilyGroup\\UpdateFamilyGroupRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FamilyGroup/UpdateFamilyGroupRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FamilyGroup\\UpdateMemberRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FamilyGroup/UpdateMemberRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FamilyGroup\\UpdatePreferencesRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FamilyGroup/UpdatePreferencesRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FeatureFlags\\UpdateFeatureFlagRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FeatureFlags/UpdateFeatureFlagRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FoodTags\\StoreFoodTagRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FoodTags/StoreFoodTagRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\FoodTags\\UpdateFoodTagRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/FoodTags/UpdateFoodTagRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\HealthPreferences\\HealthPreferenceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/HealthPreferences/HealthPreferenceRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\HealthPreferences\\UserHealthPreferenceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/HealthPreferences/UserHealthPreferenceRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\HouseholdStock\\StoreStockItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/HouseholdStock/StoreStockItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\HouseholdStock\\UpdateStockItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/HouseholdStock/UpdateStockItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\IngredientCategories\\IngredientCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/IngredientCategories/IngredientCategoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\IngredientEquivalences\\StoreIngredientEquivalenceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/IngredientEquivalences/StoreIngredientEquivalenceRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\IngredientEquivalences\\UpdateIngredientEquivalenceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/IngredientEquivalences/UpdateIngredientEquivalenceRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Ingredients\\StoreIngredientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Ingredients/StoreIngredientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Ingredients\\UpdateIngredientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Ingredients/UpdateIngredientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlanGeneration\\GenerateMealPlanRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlanGeneration/GenerateMealPlanRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlanItemStatus\\MealPlanItemStatusRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlanItemStatus/MealPlanItemStatusRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlanItems\\StoreMealPlanItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlanItems/StoreMealPlanItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlanItems\\UpdateMealPlanItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlanItems/UpdateMealPlanItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlanPortions\\StoreMealPlanPortionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlanPortions/StoreMealPlanPortionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlanPortions\\UpdateMealPlanPortionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlanPortions/UpdateMealPlanPortionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlans\\StoreMealPlanRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlans/StoreMealPlanRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealPlans\\UpdateMealPlanRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealPlans/UpdateMealPlanRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealTypes\\StoreMealTypeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealTypes/StoreMealTypeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\MealTypes\\UpdateMealTypeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/MealTypes/UpdateMealTypeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Notifications\\UpdateNotificationPreferencesRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Notifications/UpdateNotificationPreferencesRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Nutrients\\StoreIngredientNutrientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Nutrients/StoreIngredientNutrientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Nutrients\\StoreNutrientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Nutrients/StoreNutrientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Nutrients\\StoreProductNutrientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Nutrients/StoreProductNutrientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Nutrients\\UpdateIngredientNutrientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Nutrients/UpdateIngredientNutrientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Nutrients\\UpdateNutrientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Nutrients/UpdateNutrientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Objectives\\CreateObjectiveRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Objectives/CreateObjectiveRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Objectives\\StoreUserObjectiveRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Objectives/StoreUserObjectiveRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Objectives\\UpdateObjectiveRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Objectives/UpdateObjectiveRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Objectives\\UpdateUserObjectiveRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Objectives/UpdateUserObjectiveRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\PaymentMethods\\StorePaymentMethodRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/PaymentMethods/StorePaymentMethodRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\PaymentMethods\\StoreUserPaymentMethodRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/PaymentMethods/StoreUserPaymentMethodRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\PaymentMethods\\UpdatePaymentMethodRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/PaymentMethods/UpdatePaymentMethodRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\PriceRefreshRequests\\StorePriceRefreshRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/PriceRefreshRequests/StorePriceRefreshRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ProductCategories\\StoreProductCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ProductCategories/StoreProductCategoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ProductCategories\\UpdateProductCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ProductCategories/UpdateProductCategoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ProductReports\\CreateProductReportRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ProductReports/CreateProductReportRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ProductReports\\ResolveProductReportRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ProductReports/ResolveProductReportRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Products\\StoreBarcodeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Products/StoreBarcodeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Products\\StoreProductImageRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Products/StoreProductImageRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Products\\StoreProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Products/StoreProductRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Products\\UpdateProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Products/UpdateProductRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Professional\\CreateLinkRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Professional/CreateLinkRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Professional\\ProfessionalUpdateMealPlanRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Professional/ProfessionalUpdateMealPlanRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Professional\\UpdateLinkRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Professional/UpdateLinkRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Promotions\\StorePromotionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Promotions/StorePromotionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Promotions\\UpdatePromotionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Promotions/UpdatePromotionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Purchases/CreatePurchaseItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Purchases/CreatePurchaseRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Purchases\\ListPurchasesRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Purchases/ListPurchasesRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Purchases/UpdatePurchaseItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Purchases/UpdatePurchaseRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeCategories\\RecipeCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeCategories/RecipeCategoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeFavoritesCooked\\CookRecipeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeFavoritesCooked/CookRecipeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeImportCandidates\\CreateRecipeFromCandidateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeImportCandidates/CreateRecipeFromCandidateRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeImportCandidates\\MapIngredientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeImportCandidates/MapIngredientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeImportCandidates\\RejectCandidateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeImportCandidates/RejectCandidateRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeImportCandidates\\UpdateCandidateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeImportCandidates/UpdateCandidateRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeImportText\\RecipeImportTextRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeImportText/RecipeImportTextRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeImportUrl\\RecipeImportUrlRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeImportUrl/RecipeImportUrlRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeIngredients\\RecipeIngredientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeIngredients/RecipeIngredientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeScraping\\CreateRecipeScrapingJobRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeScraping/CreateRecipeScrapingJobRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeSearch\\RecipeSearchRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeSearch/RecipeSearchRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeSteps\\RecipeStepRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeSteps/RecipeStepRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeSubstitutions\\RecipeSubstitutionsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeSubstitutions/RecipeSubstitutionsRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\RecipeTags\\RecipeTagRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/RecipeTags/RecipeTagRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Recipes\\AdminRecipeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Recipes/AdminRecipeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Recipes\\RecipeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Recipes/RecipeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ReportExports\\CreateReportExportRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ReportExports/CreateReportExportRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ScrapingAlerts\\ResolveScrapingAlertRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ScrapingAlerts/ResolveScrapingAlertRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ScrapingCandidates\\AssignIngredientRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ScrapingCandidates/AssignIngredientRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ScrapingCandidates\\CreateProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ScrapingCandidates/CreateProductRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ScrapingCandidates\\MatchProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ScrapingCandidates/MatchProductRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ScrapingCandidates\\RejectCandidateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ScrapingCandidates/RejectCandidateRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Scraping\\StoreJobRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Scraping/StoreJobRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Scraping\\StoreSourceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Scraping/StoreSourceRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingAlternatives\\SelectShoppingAlternativeRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingAlternatives/SelectShoppingAlternativeRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingListGeneration\\GenerateFromHistoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingListGeneration/GenerateFromHistoryRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingListGeneration\\GenerateFromMealPlanRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingListGeneration/GenerateFromMealPlanRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingListItems\\StoreShoppingListItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingListItems/StoreShoppingListItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingListItems\\UpdateShoppingListItemRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingListItems/UpdateShoppingListItemRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingLists\\StoreShoppingListRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingLists/StoreShoppingListRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingLists\\UpdateShoppingListRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingLists/UpdateShoppingListRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingSessions\\ScanShoppingSessionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingSessions/ScanShoppingSessionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ShoppingSessions\\UpdateShoppingSessionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ShoppingSessions/UpdateShoppingSessionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockAlerts\\StoreStockMinimumRuleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockAlerts/StoreStockMinimumRuleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockAlerts\\UpdateStockMinimumRuleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockAlerts/UpdateStockMinimumRuleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockLocations\\StoreStockLocationRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockLocations/StoreStockLocationRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockLocations\\UpdateStockLocationRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockLocations/UpdateStockLocationRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockMovements\\AdjustStockRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockMovements/AdjustStockRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockMovements\\StockDecreaseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockMovements/StockDecreaseRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\StockScan\\StockScanRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/StockScan/StockScanRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SupermarketBranches\\NearbyRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SupermarketBranches/NearbyRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SupermarketBranches\\StoreSupermarketBranchRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SupermarketBranches/StoreSupermarketBranchRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SupermarketBranches\\UpdateSupermarketBranchRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SupermarketBranches/UpdateSupermarketBranchRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SupermarketPrices/StorePriceRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SupermarketProducts\\StoreSupermarketProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SupermarketProducts/StoreSupermarketProductRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SupermarketProducts\\UpdateSupermarketProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SupermarketProducts/UpdateSupermarketProductRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Supermarkets\\StoreSupermarketChainRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Supermarkets/StoreSupermarketChainRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Supermarkets\\UpdateSupermarketChainRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Supermarkets/UpdateSupermarketChainRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\SystemSettings\\UpdateSystemSettingRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/SystemSettings/UpdateSystemSettingRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ThesisDocuments\\CreateThesisCommentRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ThesisDocuments/CreateThesisCommentRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ThesisDocuments\\CreateThesisDocumentRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ThesisDocuments/CreateThesisDocumentRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ThesisDocuments\\CreateThesisSectionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ThesisDocuments/CreateThesisSectionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ThesisDocuments\\UpdateThesisDocumentRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ThesisDocuments/UpdateThesisDocumentRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\ThesisDocuments\\UpdateThesisSectionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/ThesisDocuments/UpdateThesisSectionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Units\\StoreUnitConversionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Units/StoreUnitConversionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Units\\StoreUnitRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Units/StoreUnitRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Units\\UpdateUnitConversionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Units/UpdateUnitConversionRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\Units\\UpdateUnitRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/Units/UpdateUnitRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserProfile\\UpdatePrioritySettingsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserProfile/UpdatePrioritySettingsRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserProfile\\UpdateUserProfileRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserProfile/UpdateUserProfileRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserSupplements\\CreateSupplementLogRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserSupplements/CreateSupplementLogRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserSupplements\\CreateSupplementScheduleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserSupplements/CreateSupplementScheduleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserSupplements\\CreateUserSupplementRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserSupplements/CreateUserSupplementRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserSupplements\\UpdateSupplementScheduleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserSupplements/UpdateSupplementScheduleRequest.php',
+        'App\\Http\\Requests\\Api\\V1\\UserSupplements\\UpdateUserSupplementRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Api/V1/UserSupplements/UpdateUserSupplementRequest.php',
+        'App\\Http\\Resources\\Api\\V1\\Admin\\AuditLogResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Admin/AuditLogResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Admin\\LoginLogResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Admin/LoginLogResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Admin\\PermissionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Admin/PermissionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Admin\\RoleResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Admin/RoleResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Admin\\UserAdminResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Admin/UserAdminResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Auth\\UserResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Auth/UserResource.php',
+        'App\\Http\\Resources\\Api\\V1\\BodyMeasurement\\BodyMeasurementResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/BodyMeasurement/BodyMeasurementResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Brands\\BrandResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Brands/BrandResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Budgets\\BudgetResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Budgets/BudgetResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Cities\\CityResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Cities/CityResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Consents\\UserConsentStateResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Consents/UserConsentStateResource.php',
+        'App\\Http\\Resources\\Api\\V1\\FamilyGroup\\FamilyGroupInvitationResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/FamilyGroup/FamilyGroupInvitationResource.php',
+        'App\\Http\\Resources\\Api\\V1\\FamilyGroup\\FamilyGroupMemberResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/FamilyGroup/FamilyGroupMemberResource.php',
+        'App\\Http\\Resources\\Api\\V1\\FamilyGroup\\FamilyGroupPreferenceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/FamilyGroup/FamilyGroupPreferenceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\FamilyGroup\\FamilyGroupResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/FamilyGroup/FamilyGroupResource.php',
+        'App\\Http\\Resources\\Api\\V1\\FeatureFlags\\FeatureFlagResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/FeatureFlags/FeatureFlagResource.php',
+        'App\\Http\\Resources\\Api\\V1\\FoodTags\\FoodTagResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/FoodTags/FoodTagResource.php',
+        'App\\Http\\Resources\\Api\\V1\\HealthPreferences\\CatalogHealthPreferenceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/HealthPreferences/CatalogHealthPreferenceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\HealthPreferences\\HealthPreferenceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/HealthPreferences/HealthPreferenceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\HealthPreferences\\UserHealthPreferenceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/HealthPreferences/UserHealthPreferenceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\HouseholdStock\\StockItemResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/HouseholdStock/StockItemResource.php',
+        'App\\Http\\Resources\\Api\\V1\\IngredientCategories\\IngredientCategoryResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/IngredientCategories/IngredientCategoryResource.php',
+        'App\\Http\\Resources\\Api\\V1\\IngredientCategories\\IngredientCategoryTreeResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/IngredientCategories/IngredientCategoryTreeResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Ingredients\\IngredientEquivalenceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Ingredients/IngredientEquivalenceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Ingredients\\IngredientNutritionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Ingredients/IngredientNutritionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Ingredients\\IngredientResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Ingredients/IngredientResource.php',
+        'App\\Http\\Resources\\Api\\V1\\MealPlanIncompatibilities\\MealPlanIncompatibilityResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/MealPlanIncompatibilities/MealPlanIncompatibilityResource.php',
+        'App\\Http\\Resources\\Api\\V1\\MealPlanPortions\\MealPlanPortionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/MealPlanPortions/MealPlanPortionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\MealPlans\\MealPlanItemResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/MealPlans/MealPlanItemResource.php',
+        'App\\Http\\Resources\\Api\\V1\\MealPlans\\MealPlanResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/MealPlans/MealPlanResource.php',
+        'App\\Http\\Resources\\Api\\V1\\MealTypes\\MealTypeResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/MealTypes/MealTypeResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Nutrients\\IngredientNutrientResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Nutrients/IngredientNutrientResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Nutrients\\NutrientResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Nutrients/NutrientResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Nutrients\\ProductNutrientResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Nutrients/ProductNutrientResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Objectives\\CatalogObjectiveResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Objectives/CatalogObjectiveResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Objectives\\ObjectiveResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Objectives/ObjectiveResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Objectives\\UserObjectiveResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Objectives/UserObjectiveResource.php',
+        'App\\Http\\Resources\\Api\\V1\\PaymentMethods\\PaymentMethodResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/PaymentMethods/PaymentMethodResource.php',
+        'App\\Http\\Resources\\Api\\V1\\PaymentMethods\\UserPaymentMethodResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/PaymentMethods/UserPaymentMethodResource.php',
+        'App\\Http\\Resources\\Api\\V1\\PriceRefreshRequests\\PriceRefreshRequestResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/PriceRefreshRequests/PriceRefreshRequestResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ProductCategories\\ProductCategoryResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ProductCategories/ProductCategoryResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ProductCategories\\ProductCategoryTreeResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ProductCategories/ProductCategoryTreeResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ProductReports\\ProductReportResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ProductReports/ProductReportResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Products\\ProductImageResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Products/ProductImageResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Products\\ProductPriceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Products/ProductPriceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Products\\ProductResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Products/ProductResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Professional\\LinkedUserResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Professional/LinkedUserResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Professional\\MealPlanResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Professional/MealPlanResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Professional\\ProfessionalLinkResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Professional/ProfessionalLinkResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Promotions\\PromotionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Promotions/PromotionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Purchases\\PurchaseItemResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Purchases/PurchaseItemResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Purchases\\PurchaseResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Purchases/PurchaseResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeCategories\\RecipeCategoryResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeCategories/RecipeCategoryResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeCategories\\RecipeCategoryTreeResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeCategories/RecipeCategoryTreeResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeCost\\RecipeCostResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeCost/RecipeCostResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeFavoritesCooked\\RecipeCookLogResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeFavoritesCooked/RecipeCookLogResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeFavoritesCooked\\RecipeFavoriteResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeFavoritesCooked/RecipeFavoriteResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeImportCandidates\\RecipeImportCandidateDetailResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeImportCandidates/RecipeImportCandidateDetailResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeImportUrl\\ImportedRecipeCandidateResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeImportUrl/ImportedRecipeCandidateResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeIngredients\\RecipeIngredientResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeIngredients/RecipeIngredientResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeNutrition\\RecipeNutritionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeNutrition/RecipeNutritionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeSearch\\RecipeSearchResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeSearch/RecipeSearchResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeSharingBranch\\RecipeSharingBranchResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeSharingBranch/RecipeSharingBranchResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeSteps\\RecipeStepResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeSteps/RecipeStepResource.php',
+        'App\\Http\\Resources\\Api\\V1\\RecipeTags\\RecipeTagResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/RecipeTags/RecipeTagResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Recipes\\RecipeIngredientResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Recipes/RecipeIngredientResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Recipes\\RecipeResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Recipes/RecipeResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ScrapingAlerts\\ScrapingAlertResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ScrapingAlerts/ScrapingAlertResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ScrapingCandidates\\ScrapedProductCandidateResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ScrapingCandidates/ScrapedProductCandidateResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Scraping\\ScrapingJobLogResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Scraping/ScrapingJobLogResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Scraping\\ScrapingJobResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Scraping/ScrapingJobResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Scraping\\ScrapingSourceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Scraping/ScrapingSourceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ShoppingListItems\\ShoppingListItemResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ShoppingListItems/ShoppingListItemResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ShoppingListPreview\\GeneratedShoppingListResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ShoppingListPreview/GeneratedShoppingListResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ShoppingListPreview\\ShoppingListPreviewResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ShoppingListPreview/ShoppingListPreviewResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ShoppingLists\\ShoppingListResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ShoppingLists/ShoppingListResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ShoppingSessions\\ShoppingSessionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ShoppingSessions/ShoppingSessionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\ShoppingSessions\\ShoppingSessionScanResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/ShoppingSessions/ShoppingSessionScanResource.php',
+        'App\\Http\\Resources\\Api\\V1\\StockAlerts\\StockAlertResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/StockAlerts/StockAlertResource.php',
+        'App\\Http\\Resources\\Api\\V1\\StockAlerts\\StockMinimumRuleResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/StockAlerts/StockMinimumRuleResource.php',
+        'App\\Http\\Resources\\Api\\V1\\StockLocations\\StockLocationResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/StockLocations/StockLocationResource.php',
+        'App\\Http\\Resources\\Api\\V1\\StockMovements\\StockMovementResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/StockMovements/StockMovementResource.php',
+        'App\\Http\\Resources\\Api\\V1\\StockScan\\StockScanResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/StockScan/StockScanResource.php',
+        'App\\Http\\Resources\\Api\\V1\\SupermarketBranches\\SupermarketBranchResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/SupermarketBranches/SupermarketBranchResource.php',
+        'App\\Http\\Resources\\Api\\V1\\SupermarketPrices\\PriceResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/SupermarketPrices/PriceResource.php',
+        'App\\Http\\Resources\\Api\\V1\\SupermarketProducts\\SupermarketProductResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/SupermarketProducts/SupermarketProductResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Supermarkets\\SupermarketChainResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Supermarkets/SupermarketChainResource.php',
+        'App\\Http\\Resources\\Api\\V1\\SystemSettings\\SystemSettingResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/SystemSettings/SystemSettingResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Units\\UnitConversionResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Units/UnitConversionResource.php',
+        'App\\Http\\Resources\\Api\\V1\\Units\\UnitResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/Units/UnitResource.php',
+        'App\\Http\\Resources\\Api\\V1\\UserProfile\\UserPrioritySettingResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/UserProfile/UserPrioritySettingResource.php',
+        'App\\Http\\Resources\\Api\\V1\\UserProfile\\UserProfileResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/UserProfile/UserProfileResource.php',
+        'App\\Http\\Resources\\Api\\V1\\WasteReports\\WasteReportResource' => __DIR__ . '/../..' . '/app/Http/Resources/Api/V1/WasteReports/WasteReportResource.php',
+        'App\\ImportedRecipeCandidate' => __DIR__ . '/../..' . '/app/ImportedRecipeCandidate.php',
+        'App\\Ingredient' => __DIR__ . '/../..' . '/app/Ingredient.php',
+        'App\\IngredientCategory' => __DIR__ . '/../..' . '/app/IngredientCategory.php',
+        'App\\IngredientEquivalence' => __DIR__ . '/../..' . '/app/IngredientEquivalence.php',
+        'App\\IngredientNutrient' => __DIR__ . '/../..' . '/app/IngredientNutrient.php',
+        'App\\IngredientTag' => __DIR__ . '/../..' . '/app/IngredientTag.php',
+        'App\\Jobs\\GenerateReportExportJob' => __DIR__ . '/../..' . '/app/Jobs/GenerateReportExportJob.php',
+        'App\\Jobs\\RunRecipeScrapingJob' => __DIR__ . '/../..' . '/app/Jobs/RunRecipeScrapingJob.php',
+        'App\\Jobs\\RunScrapingJob' => __DIR__ . '/../..' . '/app/Jobs/RunScrapingJob.php',
         'App\\Liist' => __DIR__ . '/../..' . '/app/Liist.php',
+        'App\\LoginLog' => __DIR__ . '/../..' . '/app/LoginLog.php',
         'App\\Market' => __DIR__ . '/../..' . '/app/Market.php',
+        'App\\MealConsumptionLog' => __DIR__ . '/../..' . '/app/MealConsumptionLog.php',
+        'App\\MealPlan' => __DIR__ . '/../..' . '/app/MealPlan.php',
+        'App\\MealPlanIncompatibility' => __DIR__ . '/../..' . '/app/MealPlanIncompatibility.php',
+        'App\\MealPlanItem' => __DIR__ . '/../..' . '/app/MealPlanItem.php',
+        'App\\MealPlanItemPortion' => __DIR__ . '/../..' . '/app/MealPlanItemPortion.php',
+        'App\\MealPlanPreference' => __DIR__ . '/../..' . '/app/MealPlanPreference.php',
+        'App\\MealPlanSuggestion' => __DIR__ . '/../..' . '/app/MealPlanSuggestion.php',
+        'App\\MealType' => __DIR__ . '/../..' . '/app/MealType.php',
+        'App\\Notification' => __DIR__ . '/../..' . '/app/Notification.php',
+        'App\\NotificationChannel' => __DIR__ . '/../..' . '/app/NotificationChannel.php',
+        'App\\NotificationPreference' => __DIR__ . '/../..' . '/app/NotificationPreference.php',
+        'App\\Nutrient' => __DIR__ . '/../..' . '/app/Nutrient.php',
         'App\\Nutritionist' => __DIR__ . '/../..' . '/app/Nutritionist.php',
+        'App\\Objective' => __DIR__ . '/../..' . '/app/Objective.php',
+        'App\\PaymentMethod' => __DIR__ . '/../..' . '/app/PaymentMethod.php',
+        'App\\Permission' => __DIR__ . '/../..' . '/app/Permission.php',
+        'App\\PriceRefreshRequest' => __DIR__ . '/../..' . '/app/PriceRefreshRequest.php',
         'App\\Product' => __DIR__ . '/../..' . '/app/Product.php',
+        'App\\ProductAlias' => __DIR__ . '/../..' . '/app/ProductAlias.php',
+        'App\\ProductBarcode' => __DIR__ . '/../..' . '/app/ProductBarcode.php',
+        'App\\ProductCategory' => __DIR__ . '/../..' . '/app/ProductCategory.php',
+        'App\\ProductImage' => __DIR__ . '/../..' . '/app/ProductImage.php',
+        'App\\ProductMatchCandidate' => __DIR__ . '/../..' . '/app/ProductMatchCandidate.php',
+        'App\\ProductNutrient' => __DIR__ . '/../..' . '/app/ProductNutrient.php',
+        'App\\ProductPreference' => __DIR__ . '/../..' . '/app/ProductPreference.php',
         'App\\ProductRecord' => __DIR__ . '/../..' . '/app/ProductRecord.php',
+        'App\\ProductReport' => __DIR__ . '/../..' . '/app/ProductReport.php',
+        'App\\ProductTag' => __DIR__ . '/../..' . '/app/ProductTag.php',
+        'App\\ProfessionalUserLink' => __DIR__ . '/../..' . '/app/ProfessionalUserLink.php',
         'App\\Profile' => __DIR__ . '/../..' . '/app/Profile.php',
+        'App\\Promotion' => __DIR__ . '/../..' . '/app/Promotion.php',
+        'App\\PromotionPaymentMethod' => __DIR__ . '/../..' . '/app/PromotionPaymentMethod.php',
         'App\\Property' => __DIR__ . '/../..' . '/app/Property.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
@@ -558,15 +1046,298 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Providers\\SocialGoogleAccountService' => __DIR__ . '/../..' . '/app/Providers/SocialGoogleAccountService.php',
+        'App\\Purchase' => __DIR__ . '/../..' . '/app/Purchase.php',
+        'App\\PurchaseItem' => __DIR__ . '/../..' . '/app/PurchaseItem.php',
         'App\\QueryFilters\\Filter' => __DIR__ . '/../..' . '/app/QueryFilters/Filter.php',
         'App\\QueryFilters\\Sort' => __DIR__ . '/../..' . '/app/QueryFilters/Sort.php',
         'App\\QueryFilters\\Supply' => __DIR__ . '/../..' . '/app/QueryFilters/Supply.php',
         'App\\Recipe' => __DIR__ . '/../..' . '/app/Recipe.php',
+        'App\\RecipeBranch' => __DIR__ . '/../..' . '/app/RecipeBranch.php',
+        'App\\RecipeCategory' => __DIR__ . '/../..' . '/app/RecipeCategory.php',
+        'App\\RecipeCookLog' => __DIR__ . '/../..' . '/app/RecipeCookLog.php',
+        'App\\RecipeCostSnapshot' => __DIR__ . '/../..' . '/app/RecipeCostSnapshot.php',
+        'App\\RecipeFavorite' => __DIR__ . '/../..' . '/app/RecipeFavorite.php',
+        'App\\RecipeImage' => __DIR__ . '/../..' . '/app/RecipeImage.php',
+        'App\\RecipeIngredient' => __DIR__ . '/../..' . '/app/RecipeIngredient.php',
+        'App\\RecipeNutrition' => __DIR__ . '/../..' . '/app/RecipeNutrition.php',
         'App\\RecipeRecord' => __DIR__ . '/../..' . '/app/RecipeRecord.php',
+        'App\\RecipeReviewLog' => __DIR__ . '/../..' . '/app/RecipeReviewLog.php',
+        'App\\RecipeSource' => __DIR__ . '/../..' . '/app/RecipeSource.php',
+        'App\\RecipeStep' => __DIR__ . '/../..' . '/app/RecipeStep.php',
+        'App\\RecipeSubstitution' => __DIR__ . '/../..' . '/app/RecipeSubstitution.php',
+        'App\\RecipeTag' => __DIR__ . '/../..' . '/app/RecipeTag.php',
+        'App\\RecipeTagPivot' => __DIR__ . '/../..' . '/app/RecipeTagPivot.php',
+        'App\\ReportExport' => __DIR__ . '/../..' . '/app/ReportExport.php',
+        'App\\ReportSnapshot' => __DIR__ . '/../..' . '/app/ReportSnapshot.php',
+        'App\\Repositories\\Admin\\AuditLogRepository' => __DIR__ . '/../..' . '/app/Repositories/Admin/AuditLogRepository.php',
+        'App\\Repositories\\Admin\\LoginLogRepository' => __DIR__ . '/../..' . '/app/Repositories/Admin/LoginLogRepository.php',
+        'App\\Repositories\\Admin\\PermissionRepository' => __DIR__ . '/../..' . '/app/Repositories/Admin/PermissionRepository.php',
+        'App\\Repositories\\Admin\\RoleRepository' => __DIR__ . '/../..' . '/app/Repositories/Admin/RoleRepository.php',
+        'App\\Repositories\\Admin\\UserRepository' => __DIR__ . '/../..' . '/app/Repositories/Admin/UserRepository.php',
+        'App\\Repositories\\BodyMeasurement\\BodyMeasurementRepository' => __DIR__ . '/../..' . '/app/Repositories/BodyMeasurement/BodyMeasurementRepository.php',
+        'App\\Repositories\\Brands\\BrandRepository' => __DIR__ . '/../..' . '/app/Repositories/Brands/BrandRepository.php',
+        'App\\Repositories\\Budgets\\BudgetAlertRepository' => __DIR__ . '/../..' . '/app/Repositories/Budgets/BudgetAlertRepository.php',
+        'App\\Repositories\\Budgets\\BudgetCategoryRepository' => __DIR__ . '/../..' . '/app/Repositories/Budgets/BudgetCategoryRepository.php',
+        'App\\Repositories\\Budgets\\BudgetMovementRepository' => __DIR__ . '/../..' . '/app/Repositories/Budgets/BudgetMovementRepository.php',
+        'App\\Repositories\\Budgets\\BudgetRepository' => __DIR__ . '/../..' . '/app/Repositories/Budgets/BudgetRepository.php',
+        'App\\Repositories\\Cities\\CityRepository' => __DIR__ . '/../..' . '/app/Repositories/Cities/CityRepository.php',
+        'App\\Repositories\\Consents\\UserConsentRepository' => __DIR__ . '/../..' . '/app/Repositories/Consents/UserConsentRepository.php',
+        'App\\Repositories\\DemoScenarios\\DemoScenarioRepository' => __DIR__ . '/../..' . '/app/Repositories/DemoScenarios/DemoScenarioRepository.php',
+        'App\\Repositories\\FamilyGroup\\FamilyGroupInvitationRepository' => __DIR__ . '/../..' . '/app/Repositories/FamilyGroup/FamilyGroupInvitationRepository.php',
+        'App\\Repositories\\FamilyGroup\\FamilyGroupMemberRepository' => __DIR__ . '/../..' . '/app/Repositories/FamilyGroup/FamilyGroupMemberRepository.php',
+        'App\\Repositories\\FamilyGroup\\FamilyGroupPreferenceRepository' => __DIR__ . '/../..' . '/app/Repositories/FamilyGroup/FamilyGroupPreferenceRepository.php',
+        'App\\Repositories\\FamilyGroup\\FamilyGroupRepository' => __DIR__ . '/../..' . '/app/Repositories/FamilyGroup/FamilyGroupRepository.php',
+        'App\\Repositories\\FeatureFlags\\FeatureFlagRepository' => __DIR__ . '/../..' . '/app/Repositories/FeatureFlags/FeatureFlagRepository.php',
+        'App\\Repositories\\FoodTags\\FoodTagRepository' => __DIR__ . '/../..' . '/app/Repositories/FoodTags/FoodTagRepository.php',
+        'App\\Repositories\\HealthPreferences\\HealthPreferenceRepository' => __DIR__ . '/../..' . '/app/Repositories/HealthPreferences/HealthPreferenceRepository.php',
+        'App\\Repositories\\HealthPreferences\\UserHealthPreferenceRepository' => __DIR__ . '/../..' . '/app/Repositories/HealthPreferences/UserHealthPreferenceRepository.php',
+        'App\\Repositories\\HouseholdStock\\HouseholdStockRepository' => __DIR__ . '/../..' . '/app/Repositories/HouseholdStock/HouseholdStockRepository.php',
+        'App\\Repositories\\IngredientCategories\\IngredientCategoryRepository' => __DIR__ . '/../..' . '/app/Repositories/IngredientCategories/IngredientCategoryRepository.php',
+        'App\\Repositories\\IngredientEquivalences\\IngredientEquivalenceRepository' => __DIR__ . '/../..' . '/app/Repositories/IngredientEquivalences/IngredientEquivalenceRepository.php',
+        'App\\Repositories\\Ingredients\\IngredientRepository' => __DIR__ . '/../..' . '/app/Repositories/Ingredients/IngredientRepository.php',
+        'App\\Repositories\\MealPlanGeneration\\MealPlanGenerationRepository' => __DIR__ . '/../..' . '/app/Repositories/MealPlanGeneration/MealPlanGenerationRepository.php',
+        'App\\Repositories\\MealPlanIncompatibilities\\MealPlanIncompatibilityRepository' => __DIR__ . '/../..' . '/app/Repositories/MealPlanIncompatibilities/MealPlanIncompatibilityRepository.php',
+        'App\\Repositories\\MealPlanItemStatus\\MealPlanItemStatusRepository' => __DIR__ . '/../..' . '/app/Repositories/MealPlanItemStatus/MealPlanItemStatusRepository.php',
+        'App\\Repositories\\MealPlanItems\\MealPlanItemRepository' => __DIR__ . '/../..' . '/app/Repositories/MealPlanItems/MealPlanItemRepository.php',
+        'App\\Repositories\\MealPlanPortions\\MealPlanPortionRepository' => __DIR__ . '/../..' . '/app/Repositories/MealPlanPortions/MealPlanPortionRepository.php',
+        'App\\Repositories\\MealPlans\\MealPlanRepository' => __DIR__ . '/../..' . '/app/Repositories/MealPlans/MealPlanRepository.php',
+        'App\\Repositories\\MealTypes\\MealTypeRepository' => __DIR__ . '/../..' . '/app/Repositories/MealTypes/MealTypeRepository.php',
+        'App\\Repositories\\Notifications\\NotificationPreferenceRepository' => __DIR__ . '/../..' . '/app/Repositories/Notifications/NotificationPreferenceRepository.php',
+        'App\\Repositories\\Notifications\\NotificationRepository' => __DIR__ . '/../..' . '/app/Repositories/Notifications/NotificationRepository.php',
+        'App\\Repositories\\Nutrients\\IngredientNutrientRepository' => __DIR__ . '/../..' . '/app/Repositories/Nutrients/IngredientNutrientRepository.php',
+        'App\\Repositories\\Nutrients\\NutrientRepository' => __DIR__ . '/../..' . '/app/Repositories/Nutrients/NutrientRepository.php',
+        'App\\Repositories\\Nutrients\\ProductNutrientRepository' => __DIR__ . '/../..' . '/app/Repositories/Nutrients/ProductNutrientRepository.php',
+        'App\\Repositories\\Objectives\\ObjectiveRepository' => __DIR__ . '/../..' . '/app/Repositories/Objectives/ObjectiveRepository.php',
+        'App\\Repositories\\Objectives\\UserObjectiveRepository' => __DIR__ . '/../..' . '/app/Repositories/Objectives/UserObjectiveRepository.php',
+        'App\\Repositories\\PaymentMethods\\PaymentMethodRepository' => __DIR__ . '/../..' . '/app/Repositories/PaymentMethods/PaymentMethodRepository.php',
+        'App\\Repositories\\PriceRefreshRequests\\PriceRefreshRequestRepository' => __DIR__ . '/../..' . '/app/Repositories/PriceRefreshRequests/PriceRefreshRequestRepository.php',
+        'App\\Repositories\\ProductCategories\\ProductCategoryRepository' => __DIR__ . '/../..' . '/app/Repositories/ProductCategories/ProductCategoryRepository.php',
+        'App\\Repositories\\ProductReports\\ProductReportRepository' => __DIR__ . '/../..' . '/app/Repositories/ProductReports/ProductReportRepository.php',
+        'App\\Repositories\\Products\\ProductRepository' => __DIR__ . '/../..' . '/app/Repositories/Products/ProductRepository.php',
+        'App\\Repositories\\Professional\\ProfessionalLinkRepository' => __DIR__ . '/../..' . '/app/Repositories/Professional/ProfessionalLinkRepository.php',
+        'App\\Repositories\\Professional\\ProfessionalMealPlanRepository' => __DIR__ . '/../..' . '/app/Repositories/Professional/ProfessionalMealPlanRepository.php',
+        'App\\Repositories\\Promotions\\PromotionRepository' => __DIR__ . '/../..' . '/app/Repositories/Promotions/PromotionRepository.php',
+        'App\\Repositories\\Purchases\\PurchaseItemRepository' => __DIR__ . '/../..' . '/app/Repositories/Purchases/PurchaseItemRepository.php',
+        'App\\Repositories\\Purchases\\PurchaseRepository' => __DIR__ . '/../..' . '/app/Repositories/Purchases/PurchaseRepository.php',
+        'App\\Repositories\\RecipeAvailability\\RecipeAvailabilityRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeAvailability/RecipeAvailabilityRepository.php',
+        'App\\Repositories\\RecipeCategories\\RecipeCategoryRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeCategories/RecipeCategoryRepository.php',
+        'App\\Repositories\\RecipeCost\\RecipeCostRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeCost/RecipeCostRepository.php',
+        'App\\Repositories\\RecipeFavoritesCooked\\RecipeFavoritesCookedRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeFavoritesCooked/RecipeFavoritesCookedRepository.php',
+        'App\\Repositories\\RecipeImportCandidates\\RecipeImportCandidatesRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeImportCandidates/RecipeImportCandidatesRepository.php',
+        'App\\Repositories\\RecipeImportUrl\\RecipeImportUrlRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeImportUrl/RecipeImportUrlRepository.php',
+        'App\\Repositories\\RecipeIngredients\\RecipeIngredientRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeIngredients/RecipeIngredientRepository.php',
+        'App\\Repositories\\RecipeNutrition\\RecipeNutritionRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeNutrition/RecipeNutritionRepository.php',
+        'App\\Repositories\\RecipeScraping\\RecipeScrapingRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeScraping/RecipeScrapingRepository.php',
+        'App\\Repositories\\RecipeSearch\\RecipeSearchRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeSearch/RecipeSearchRepository.php',
+        'App\\Repositories\\RecipeSharingBranch\\RecipeSharingBranchRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeSharingBranch/RecipeSharingBranchRepository.php',
+        'App\\Repositories\\RecipeSteps\\RecipeStepRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeSteps/RecipeStepRepository.php',
+        'App\\Repositories\\RecipeSubstitutions\\RecipeSubstitutionsRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeSubstitutions/RecipeSubstitutionsRepository.php',
+        'App\\Repositories\\RecipeSuggestions\\RecipeSuggestionsRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeSuggestions/RecipeSuggestionsRepository.php',
+        'App\\Repositories\\RecipeTags\\RecipeTagRepository' => __DIR__ . '/../..' . '/app/Repositories/RecipeTags/RecipeTagRepository.php',
+        'App\\Repositories\\Recipes\\RecipeRepository' => __DIR__ . '/../..' . '/app/Repositories/Recipes/RecipeRepository.php',
+        'App\\Repositories\\ReportExports\\ReportExportRepository' => __DIR__ . '/../..' . '/app/Repositories/ReportExports/ReportExportRepository.php',
+        'App\\Repositories\\ScrapingAlerts\\ScrapingAlertRepository' => __DIR__ . '/../..' . '/app/Repositories/ScrapingAlerts/ScrapingAlertRepository.php',
+        'App\\Repositories\\ScrapingCandidates\\ScrapingCandidateRepository' => __DIR__ . '/../..' . '/app/Repositories/ScrapingCandidates/ScrapingCandidateRepository.php',
+        'App\\Repositories\\Scraping\\ScrapingRepository' => __DIR__ . '/../..' . '/app/Repositories/Scraping/ScrapingRepository.php',
+        'App\\Repositories\\ShoppingAlternatives\\ShoppingAlternativeRepository' => __DIR__ . '/../..' . '/app/Repositories/ShoppingAlternatives/ShoppingAlternativeRepository.php',
+        'App\\Repositories\\ShoppingListGeneration\\ShoppingListGenerationRepository' => __DIR__ . '/../..' . '/app/Repositories/ShoppingListGeneration/ShoppingListGenerationRepository.php',
+        'App\\Repositories\\ShoppingListItems\\ShoppingListItemRepository' => __DIR__ . '/../..' . '/app/Repositories/ShoppingListItems/ShoppingListItemRepository.php',
+        'App\\Repositories\\ShoppingListPreview\\ShoppingListPreviewRepository' => __DIR__ . '/../..' . '/app/Repositories/ShoppingListPreview/ShoppingListPreviewRepository.php',
+        'App\\Repositories\\ShoppingLists\\ShoppingListRepository' => __DIR__ . '/../..' . '/app/Repositories/ShoppingLists/ShoppingListRepository.php',
+        'App\\Repositories\\ShoppingSessions\\ShoppingSessionRepository' => __DIR__ . '/../..' . '/app/Repositories/ShoppingSessions/ShoppingSessionRepository.php',
+        'App\\Repositories\\StockAlerts\\StockAlertRepository' => __DIR__ . '/../..' . '/app/Repositories/StockAlerts/StockAlertRepository.php',
+        'App\\Repositories\\StockLocations\\StockLocationRepository' => __DIR__ . '/../..' . '/app/Repositories/StockLocations/StockLocationRepository.php',
+        'App\\Repositories\\StockMovements\\StockMovementRepository' => __DIR__ . '/../..' . '/app/Repositories/StockMovements/StockMovementRepository.php',
+        'App\\Repositories\\StockScan\\StockScanRepository' => __DIR__ . '/../..' . '/app/Repositories/StockScan/StockScanRepository.php',
+        'App\\Repositories\\SupermarketComparison\\SupermarketComparisonRepository' => __DIR__ . '/../..' . '/app/Repositories/SupermarketComparison/SupermarketComparisonRepository.php',
+        'App\\Repositories\\SupermarketProducts\\SupermarketProductRepository' => __DIR__ . '/../..' . '/app/Repositories/SupermarketProducts/SupermarketProductRepository.php',
+        'App\\Repositories\\Supermarkets\\SupermarketBranchRepository' => __DIR__ . '/../..' . '/app/Repositories/Supermarkets/SupermarketBranchRepository.php',
+        'App\\Repositories\\Supermarkets\\SupermarketChainRepository' => __DIR__ . '/../..' . '/app/Repositories/Supermarkets/SupermarketChainRepository.php',
+        'App\\Repositories\\SystemSettings\\SystemSettingRepository' => __DIR__ . '/../..' . '/app/Repositories/SystemSettings/SystemSettingRepository.php',
+        'App\\Repositories\\ThesisDocuments\\ThesisCommentRepository' => __DIR__ . '/../..' . '/app/Repositories/ThesisDocuments/ThesisCommentRepository.php',
+        'App\\Repositories\\ThesisDocuments\\ThesisDocumentAdminRepository' => __DIR__ . '/../..' . '/app/Repositories/ThesisDocuments/ThesisDocumentAdminRepository.php',
+        'App\\Repositories\\ThesisDocuments\\ThesisDocumentRepository' => __DIR__ . '/../..' . '/app/Repositories/ThesisDocuments/ThesisDocumentRepository.php',
+        'App\\Repositories\\Units\\UnitConversionRepository' => __DIR__ . '/../..' . '/app/Repositories/Units/UnitConversionRepository.php',
+        'App\\Repositories\\Units\\UnitRepository' => __DIR__ . '/../..' . '/app/Repositories/Units/UnitRepository.php',
+        'App\\Repositories\\UserProfile\\UserPrioritySettingRepository' => __DIR__ . '/../..' . '/app/Repositories/UserProfile/UserPrioritySettingRepository.php',
+        'App\\Repositories\\UserProfile\\UserProfileRepository' => __DIR__ . '/../..' . '/app/Repositories/UserProfile/UserProfileRepository.php',
+        'App\\Repositories\\UserSupplements\\SupplementLogRepository' => __DIR__ . '/../..' . '/app/Repositories/UserSupplements/SupplementLogRepository.php',
+        'App\\Repositories\\UserSupplements\\SupplementScheduleRepository' => __DIR__ . '/../..' . '/app/Repositories/UserSupplements/SupplementScheduleRepository.php',
+        'App\\Repositories\\UserSupplements\\UserSupplementRepository' => __DIR__ . '/../..' . '/app/Repositories/UserSupplements/UserSupplementRepository.php',
+        'App\\Repositories\\WasteReports\\WasteReportRepository' => __DIR__ . '/../..' . '/app/Repositories/WasteReports/WasteReportRepository.php',
+        'App\\Role' => __DIR__ . '/../..' . '/app/Role.php',
+        'App\\RolePermission' => __DIR__ . '/../..' . '/app/RolePermission.php',
+        'App\\ScrapedProductCandidate' => __DIR__ . '/../..' . '/app/ScrapedProductCandidate.php',
+        'App\\ScrapingAlert' => __DIR__ . '/../..' . '/app/ScrapingAlert.php',
+        'App\\ScrapingError' => __DIR__ . '/../..' . '/app/ScrapingError.php',
+        'App\\ScrapingJob' => __DIR__ . '/../..' . '/app/ScrapingJob.php',
+        'App\\ScrapingJobLog' => __DIR__ . '/../..' . '/app/ScrapingJobLog.php',
+        'App\\ScrapingSource' => __DIR__ . '/../..' . '/app/ScrapingSource.php',
+        'App\\Scraping\\Adapters\\CarrefourScraper' => __DIR__ . '/../..' . '/app/Scraping/Adapters/CarrefourScraper.php',
+        'App\\Scraping\\Adapters\\ChangomasScraper' => __DIR__ . '/../..' . '/app/Scraping/Adapters/ChangomasScraper.php',
+        'App\\Scraping\\Adapters\\CookpadRecipeScraper' => __DIR__ . '/../..' . '/app/Scraping/Adapters/CookpadRecipeScraper.php',
+        'App\\Scraping\\Adapters\\LaAnonimaScraper' => __DIR__ . '/../..' . '/app/Scraping/Adapters/LaAnonimaScraper.php',
+        'App\\Scraping\\Contracts\\SupermarketScraperInterface' => __DIR__ . '/../..' . '/app/Scraping/Contracts/SupermarketScraperInterface.php',
+        'App\\Scraping\\DTOs\\RecipeScrapingResult' => __DIR__ . '/../..' . '/app/Scraping/DTOs/RecipeScrapingResult.php',
+        'App\\Scraping\\DTOs\\ScrapedProductDTO' => __DIR__ . '/../..' . '/app/Scraping/DTOs/ScrapedProductDTO.php',
+        'App\\Scraping\\DTOs\\ScrapedRecipeDTO' => __DIR__ . '/../..' . '/app/Scraping/DTOs/ScrapedRecipeDTO.php',
+        'App\\Scraping\\DTOs\\ScrapingResult' => __DIR__ . '/../..' . '/app/Scraping/DTOs/ScrapingResult.php',
+        'App\\Scraping\\Parsers\\CarrefourParser' => __DIR__ . '/../..' . '/app/Scraping/Parsers/CarrefourParser.php',
+        'App\\Scraping\\ScraperResolver' => __DIR__ . '/../..' . '/app/Scraping/ScraperResolver.php',
+        'App\\Services\\AdminReports\\AdminReportService' => __DIR__ . '/../..' . '/app/Services/AdminReports/AdminReportService.php',
+        'App\\Services\\Admin\\AuditAdminService' => __DIR__ . '/../..' . '/app/Services/Admin/AuditAdminService.php',
+        'App\\Services\\Admin\\LoginLogAdminService' => __DIR__ . '/../..' . '/app/Services/Admin/LoginLogAdminService.php',
+        'App\\Services\\Admin\\RoleAdminService' => __DIR__ . '/../..' . '/app/Services/Admin/RoleAdminService.php',
+        'App\\Services\\Admin\\RolePermissionService' => __DIR__ . '/../..' . '/app/Services/Admin/RolePermissionService.php',
+        'App\\Services\\Admin\\UserAdminService' => __DIR__ . '/../..' . '/app/Services/Admin/UserAdminService.php',
+        'App\\Services\\Admin\\UserRoleService' => __DIR__ . '/../..' . '/app/Services/Admin/UserRoleService.php',
+        'App\\Services\\Ai\\AiFoundationService' => __DIR__ . '/../..' . '/app/Services/Ai/AiFoundationService.php',
+        'App\\Services\\Ai\\AiSuggestionProviderInterface' => __DIR__ . '/../..' . '/app/Services/Ai/AiSuggestionProviderInterface.php',
+        'App\\Services\\Ai\\FakeAiSuggestionProvider' => __DIR__ . '/../..' . '/app/Services/Ai/FakeAiSuggestionProvider.php',
+        'App\\Services\\Auth\\ApiTokenService' => __DIR__ . '/../..' . '/app/Services/Auth/ApiTokenService.php',
+        'App\\Services\\Auth\\AuthService' => __DIR__ . '/../..' . '/app/Services/Auth/AuthService.php',
+        'App\\Services\\BodyMeasurement\\BodyMeasurementService' => __DIR__ . '/../..' . '/app/Services/BodyMeasurement/BodyMeasurementService.php',
+        'App\\Services\\Brands\\BrandService' => __DIR__ . '/../..' . '/app/Services/Brands/BrandService.php',
+        'App\\Services\\Budgets\\BudgetAlertService' => __DIR__ . '/../..' . '/app/Services/Budgets/BudgetAlertService.php',
+        'App\\Services\\Budgets\\BudgetCategoryService' => __DIR__ . '/../..' . '/app/Services/Budgets/BudgetCategoryService.php',
+        'App\\Services\\Budgets\\BudgetMovementService' => __DIR__ . '/../..' . '/app/Services/Budgets/BudgetMovementService.php',
+        'App\\Services\\Budgets\\BudgetService' => __DIR__ . '/../..' . '/app/Services/Budgets/BudgetService.php',
+        'App\\Services\\Budgets\\BudgetSummaryService' => __DIR__ . '/../..' . '/app/Services/Budgets/BudgetSummaryService.php',
+        'App\\Services\\Cities\\CityService' => __DIR__ . '/../..' . '/app/Services/Cities/CityService.php',
+        'App\\Services\\Consents\\UserConsentService' => __DIR__ . '/../..' . '/app/Services/Consents/UserConsentService.php',
+        'App\\Services\\DemoScenarios\\DemoScenarioService' => __DIR__ . '/../..' . '/app/Services/DemoScenarios/DemoScenarioService.php',
+        'App\\Services\\FamilyGroup\\FamilyGroupInvitationService' => __DIR__ . '/../..' . '/app/Services/FamilyGroup/FamilyGroupInvitationService.php',
+        'App\\Services\\FamilyGroup\\FamilyGroupMemberService' => __DIR__ . '/../..' . '/app/Services/FamilyGroup/FamilyGroupMemberService.php',
+        'App\\Services\\FamilyGroup\\FamilyGroupPreferenceService' => __DIR__ . '/../..' . '/app/Services/FamilyGroup/FamilyGroupPreferenceService.php',
+        'App\\Services\\FamilyGroup\\FamilyGroupService' => __DIR__ . '/../..' . '/app/Services/FamilyGroup/FamilyGroupService.php',
+        'App\\Services\\FeatureFlags\\FeatureFlagService' => __DIR__ . '/../..' . '/app/Services/FeatureFlags/FeatureFlagService.php',
+        'App\\Services\\FoodTags\\FoodTagService' => __DIR__ . '/../..' . '/app/Services/FoodTags/FoodTagService.php',
+        'App\\Services\\GroupReports\\GroupReportService' => __DIR__ . '/../..' . '/app/Services/GroupReports/GroupReportService.php',
+        'App\\Services\\HealthPreferences\\HealthPreferenceAdminService' => __DIR__ . '/../..' . '/app/Services/HealthPreferences/HealthPreferenceAdminService.php',
+        'App\\Services\\HealthPreferences\\UserHealthPreferenceService' => __DIR__ . '/../..' . '/app/Services/HealthPreferences/UserHealthPreferenceService.php',
+        'App\\Services\\HouseholdStock\\HouseholdStockService' => __DIR__ . '/../..' . '/app/Services/HouseholdStock/HouseholdStockService.php',
+        'App\\Services\\IngredientCategories\\IngredientCategoryService' => __DIR__ . '/../..' . '/app/Services/IngredientCategories/IngredientCategoryService.php',
+        'App\\Services\\IngredientEquivalences\\IngredientEquivalenceService' => __DIR__ . '/../..' . '/app/Services/IngredientEquivalences/IngredientEquivalenceService.php',
+        'App\\Services\\Ingredients\\IngredientService' => __DIR__ . '/../..' . '/app/Services/Ingredients/IngredientService.php',
+        'App\\Services\\MealPlanGeneration\\MealPlanGenerationService' => __DIR__ . '/../..' . '/app/Services/MealPlanGeneration/MealPlanGenerationService.php',
+        'App\\Services\\MealPlanIncompatibilities\\MealPlanIncompatibilityService' => __DIR__ . '/../..' . '/app/Services/MealPlanIncompatibilities/MealPlanIncompatibilityService.php',
+        'App\\Services\\MealPlanItemStatus\\MealPlanItemStatusService' => __DIR__ . '/../..' . '/app/Services/MealPlanItemStatus/MealPlanItemStatusService.php',
+        'App\\Services\\MealPlanItems\\MealPlanItemService' => __DIR__ . '/../..' . '/app/Services/MealPlanItems/MealPlanItemService.php',
+        'App\\Services\\MealPlanPortions\\MealPlanPortionService' => __DIR__ . '/../..' . '/app/Services/MealPlanPortions/MealPlanPortionService.php',
+        'App\\Services\\MealPlans\\MealPlanService' => __DIR__ . '/../..' . '/app/Services/MealPlans/MealPlanService.php',
+        'App\\Services\\MealTypes\\MealTypeService' => __DIR__ . '/../..' . '/app/Services/MealTypes/MealTypeService.php',
+        'App\\Services\\Notifications\\NotificationService' => __DIR__ . '/../..' . '/app/Services/Notifications/NotificationService.php',
+        'App\\Services\\Nutrients\\IngredientNutrientService' => __DIR__ . '/../..' . '/app/Services/Nutrients/IngredientNutrientService.php',
+        'App\\Services\\Nutrients\\NutrientService' => __DIR__ . '/../..' . '/app/Services/Nutrients/NutrientService.php',
+        'App\\Services\\Nutrients\\ProductNutrientService' => __DIR__ . '/../..' . '/app/Services/Nutrients/ProductNutrientService.php',
+        'App\\Services\\Objectives\\ObjectiveAdminService' => __DIR__ . '/../..' . '/app/Services/Objectives/ObjectiveAdminService.php',
+        'App\\Services\\Objectives\\UserObjectiveService' => __DIR__ . '/../..' . '/app/Services/Objectives/UserObjectiveService.php',
+        'App\\Services\\PaymentMethods\\PaymentMethodService' => __DIR__ . '/../..' . '/app/Services/PaymentMethods/PaymentMethodService.php',
+        'App\\Services\\PersonalReports\\PersonalReportService' => __DIR__ . '/../..' . '/app/Services/PersonalReports/PersonalReportService.php',
+        'App\\Services\\PriceRefreshRequests\\PriceRefreshRequestService' => __DIR__ . '/../..' . '/app/Services/PriceRefreshRequests/PriceRefreshRequestService.php',
+        'App\\Services\\ProductCategories\\ProductCategoryService' => __DIR__ . '/../..' . '/app/Services/ProductCategories/ProductCategoryService.php',
+        'App\\Services\\ProductReports\\ProductReportService' => __DIR__ . '/../..' . '/app/Services/ProductReports/ProductReportService.php',
+        'App\\Services\\Products\\ProductBarcodeService' => __DIR__ . '/../..' . '/app/Services/Products/ProductBarcodeService.php',
+        'App\\Services\\Products\\ProductImageService' => __DIR__ . '/../..' . '/app/Services/Products/ProductImageService.php',
+        'App\\Services\\Products\\ProductService' => __DIR__ . '/../..' . '/app/Services/Products/ProductService.php',
+        'App\\Services\\Professional\\ProfessionalLinkService' => __DIR__ . '/../..' . '/app/Services/Professional/ProfessionalLinkService.php',
+        'App\\Services\\Professional\\ProfessionalPanelService' => __DIR__ . '/../..' . '/app/Services/Professional/ProfessionalPanelService.php',
+        'App\\Services\\Promotions\\PromotionService' => __DIR__ . '/../..' . '/app/Services/Promotions/PromotionService.php',
+        'App\\Services\\Purchases\\PurchaseConfirmationService' => __DIR__ . '/../..' . '/app/Services/Purchases/PurchaseConfirmationService.php',
+        'App\\Services\\Purchases\\PurchaseItemService' => __DIR__ . '/../..' . '/app/Services/Purchases/PurchaseItemService.php',
+        'App\\Services\\Purchases\\PurchaseService' => __DIR__ . '/../..' . '/app/Services/Purchases/PurchaseService.php',
+        'App\\Services\\RecipeAvailability\\RecipeAvailabilityService' => __DIR__ . '/../..' . '/app/Services/RecipeAvailability/RecipeAvailabilityService.php',
+        'App\\Services\\RecipeCategories\\RecipeCategoryService' => __DIR__ . '/../..' . '/app/Services/RecipeCategories/RecipeCategoryService.php',
+        'App\\Services\\RecipeCost\\RecipeCostService' => __DIR__ . '/../..' . '/app/Services/RecipeCost/RecipeCostService.php',
+        'App\\Services\\RecipeFavoritesCooked\\RecipeFavoritesCookedService' => __DIR__ . '/../..' . '/app/Services/RecipeFavoritesCooked/RecipeFavoritesCookedService.php',
+        'App\\Services\\RecipeImportCandidates\\RecipeImportCandidatesService' => __DIR__ . '/../..' . '/app/Services/RecipeImportCandidates/RecipeImportCandidatesService.php',
+        'App\\Services\\RecipeImportText\\RecipeImportTextService' => __DIR__ . '/../..' . '/app/Services/RecipeImportText/RecipeImportTextService.php',
+        'App\\Services\\RecipeImportText\\RecipeTextParser' => __DIR__ . '/../..' . '/app/Services/RecipeImportText/RecipeTextParser.php',
+        'App\\Services\\RecipeImportUrl\\RecipeImportUrlService' => __DIR__ . '/../..' . '/app/Services/RecipeImportUrl/RecipeImportUrlService.php',
+        'App\\Services\\RecipeImportUrl\\RecipeUrlParser' => __DIR__ . '/../..' . '/app/Services/RecipeImportUrl/RecipeUrlParser.php',
+        'App\\Services\\RecipeImportUrl\\SupportedSourceRegistry' => __DIR__ . '/../..' . '/app/Services/RecipeImportUrl/SupportedSourceRegistry.php',
+        'App\\Services\\RecipeIngredients\\RecipeIngredientService' => __DIR__ . '/../..' . '/app/Services/RecipeIngredients/RecipeIngredientService.php',
+        'App\\Services\\RecipeNutrition\\RecipeNutritionService' => __DIR__ . '/../..' . '/app/Services/RecipeNutrition/RecipeNutritionService.php',
+        'App\\Services\\RecipeScraping\\RecipeScrapingService' => __DIR__ . '/../..' . '/app/Services/RecipeScraping/RecipeScrapingService.php',
+        'App\\Services\\RecipeSearch\\RecipeSearchService' => __DIR__ . '/../..' . '/app/Services/RecipeSearch/RecipeSearchService.php',
+        'App\\Services\\RecipeSharingBranch\\RecipeSharingBranchService' => __DIR__ . '/../..' . '/app/Services/RecipeSharingBranch/RecipeSharingBranchService.php',
+        'App\\Services\\RecipeSteps\\RecipeStepService' => __DIR__ . '/../..' . '/app/Services/RecipeSteps/RecipeStepService.php',
+        'App\\Services\\RecipeSubstitutions\\RecipeSubstitutionsService' => __DIR__ . '/../..' . '/app/Services/RecipeSubstitutions/RecipeSubstitutionsService.php',
+        'App\\Services\\RecipeSuggestions\\RecipeSuggestionsService' => __DIR__ . '/../..' . '/app/Services/RecipeSuggestions/RecipeSuggestionsService.php',
+        'App\\Services\\RecipeTags\\RecipeTagService' => __DIR__ . '/../..' . '/app/Services/RecipeTags/RecipeTagService.php',
+        'App\\Services\\Recipes\\RecipeService' => __DIR__ . '/../..' . '/app/Services/Recipes/RecipeService.php',
+        'App\\Services\\ReportExports\\ReportExportService' => __DIR__ . '/../..' . '/app/Services/ReportExports/ReportExportService.php',
+        'App\\Services\\ScrapingAlerts\\ScrapingAlertService' => __DIR__ . '/../..' . '/app/Services/ScrapingAlerts/ScrapingAlertService.php',
+        'App\\Services\\ScrapingCandidates\\ScrapingCandidateService' => __DIR__ . '/../..' . '/app/Services/ScrapingCandidates/ScrapingCandidateService.php',
+        'App\\Services\\Scraping\\ScrapingService' => __DIR__ . '/../..' . '/app/Services/Scraping/ScrapingService.php',
+        'App\\Services\\ShoppingAlternatives\\ShoppingAlternativeService' => __DIR__ . '/../..' . '/app/Services/ShoppingAlternatives/ShoppingAlternativeService.php',
+        'App\\Services\\ShoppingListGeneration\\ShoppingListGenerationService' => __DIR__ . '/../..' . '/app/Services/ShoppingListGeneration/ShoppingListGenerationService.php',
+        'App\\Services\\ShoppingListItems\\ShoppingListItemService' => __DIR__ . '/../..' . '/app/Services/ShoppingListItems/ShoppingListItemService.php',
+        'App\\Services\\ShoppingListPreview\\ShoppingListPreviewService' => __DIR__ . '/../..' . '/app/Services/ShoppingListPreview/ShoppingListPreviewService.php',
+        'App\\Services\\ShoppingLists\\ShoppingListService' => __DIR__ . '/../..' . '/app/Services/ShoppingLists/ShoppingListService.php',
+        'App\\Services\\ShoppingSessions\\ShoppingSessionService' => __DIR__ . '/../..' . '/app/Services/ShoppingSessions/ShoppingSessionService.php',
+        'App\\Services\\StockAlerts\\StockAlertService' => __DIR__ . '/../..' . '/app/Services/StockAlerts/StockAlertService.php',
+        'App\\Services\\StockLocations\\StockLocationService' => __DIR__ . '/../..' . '/app/Services/StockLocations/StockLocationService.php',
+        'App\\Services\\StockMovements\\StockMovementService' => __DIR__ . '/../..' . '/app/Services/StockMovements/StockMovementService.php',
+        'App\\Services\\StockScan\\StockScanService' => __DIR__ . '/../..' . '/app/Services/StockScan/StockScanService.php',
+        'App\\Services\\SupermarketComparison\\SupermarketComparisonService' => __DIR__ . '/../..' . '/app/Services/SupermarketComparison/SupermarketComparisonService.php',
+        'App\\Services\\SupermarketProducts\\SupermarketProductService' => __DIR__ . '/../..' . '/app/Services/SupermarketProducts/SupermarketProductService.php',
+        'App\\Services\\Supermarkets\\SupermarketBranchService' => __DIR__ . '/../..' . '/app/Services/Supermarkets/SupermarketBranchService.php',
+        'App\\Services\\Supermarkets\\SupermarketChainService' => __DIR__ . '/../..' . '/app/Services/Supermarkets/SupermarketChainService.php',
+        'App\\Services\\SystemSettings\\SystemSettingService' => __DIR__ . '/../..' . '/app/Services/SystemSettings/SystemSettingService.php',
+        'App\\Services\\ThesisDocuments\\ThesisCommentService' => __DIR__ . '/../..' . '/app/Services/ThesisDocuments/ThesisCommentService.php',
+        'App\\Services\\ThesisDocuments\\ThesisDocumentAdminService' => __DIR__ . '/../..' . '/app/Services/ThesisDocuments/ThesisDocumentAdminService.php',
+        'App\\Services\\ThesisDocuments\\ThesisDocumentService' => __DIR__ . '/../..' . '/app/Services/ThesisDocuments/ThesisDocumentService.php',
+        'App\\Services\\Units\\UnitConversionService' => __DIR__ . '/../..' . '/app/Services/Units/UnitConversionService.php',
+        'App\\Services\\Units\\UnitService' => __DIR__ . '/../..' . '/app/Services/Units/UnitService.php',
+        'App\\Services\\UserProfile\\UserPrioritySettingService' => __DIR__ . '/../..' . '/app/Services/UserProfile/UserPrioritySettingService.php',
+        'App\\Services\\UserProfile\\UserProfileService' => __DIR__ . '/../..' . '/app/Services/UserProfile/UserProfileService.php',
+        'App\\Services\\UserSupplements\\SupplementScheduleService' => __DIR__ . '/../..' . '/app/Services/UserSupplements/SupplementScheduleService.php',
+        'App\\Services\\UserSupplements\\UserSupplementService' => __DIR__ . '/../..' . '/app/Services/UserSupplements/UserSupplementService.php',
+        'App\\Services\\WasteReports\\WasteReportService' => __DIR__ . '/../..' . '/app/Services/WasteReports/WasteReportService.php',
+        'App\\ShoppingList' => __DIR__ . '/../..' . '/app/ShoppingList.php',
+        'App\\ShoppingListItem' => __DIR__ . '/../..' . '/app/ShoppingListItem.php',
+        'App\\ShoppingListItemAlternative' => __DIR__ . '/../..' . '/app/ShoppingListItemAlternative.php',
+        'App\\ShoppingSession' => __DIR__ . '/../..' . '/app/ShoppingSession.php',
+        'App\\ShoppingSessionScan' => __DIR__ . '/../..' . '/app/ShoppingSessionScan.php',
+        'App\\SocialAccount' => __DIR__ . '/../..' . '/app/SocialAccount.php',
         'App\\SocialGoogleAccount' => __DIR__ . '/../..' . '/app/SocialGoogleAccount.php',
         'App\\Step' => __DIR__ . '/../..' . '/app/Step.php',
+        'App\\StockAlert' => __DIR__ . '/../..' . '/app/StockAlert.php',
+        'App\\StockItem' => __DIR__ . '/../..' . '/app/StockItem.php',
+        'App\\StockLocation' => __DIR__ . '/../..' . '/app/StockLocation.php',
+        'App\\StockMinimumRule' => __DIR__ . '/../..' . '/app/StockMinimumRule.php',
+        'App\\StockMovement' => __DIR__ . '/../..' . '/app/StockMovement.php',
+        'App\\StockWasteLog' => __DIR__ . '/../..' . '/app/StockWasteLog.php',
+        'App\\SupermarketBranch' => __DIR__ . '/../..' . '/app/SupermarketBranch.php',
+        'App\\SupermarketChain' => __DIR__ . '/../..' . '/app/SupermarketChain.php',
+        'App\\SupermarketProduct' => __DIR__ . '/../..' . '/app/SupermarketProduct.php',
+        'App\\SupermarketProductPrice' => __DIR__ . '/../..' . '/app/SupermarketProductPrice.php',
+        'App\\SupplementLog' => __DIR__ . '/../..' . '/app/SupplementLog.php',
+        'App\\SupplementSchedule' => __DIR__ . '/../..' . '/app/SupplementSchedule.php',
+        'App\\SupplementType' => __DIR__ . '/../..' . '/app/SupplementType.php',
         'App\\Supply' => __DIR__ . '/../..' . '/app/Supply.php',
+        'App\\Support\\HealthPreferenceTypes' => __DIR__ . '/../..' . '/app/Support/HealthPreferenceTypes.php',
+        'App\\Support\\Sanitizer' => __DIR__ . '/../..' . '/app/Support/Sanitizer.php',
+        'App\\SystemSetting' => __DIR__ . '/../..' . '/app/SystemSetting.php',
+        'App\\ThesisComment' => __DIR__ . '/../..' . '/app/ThesisComment.php',
+        'App\\ThesisDocument' => __DIR__ . '/../..' . '/app/ThesisDocument.php',
+        'App\\ThesisDocumentSection' => __DIR__ . '/../..' . '/app/ThesisDocumentSection.php',
+        'App\\ThesisDocumentVersion' => __DIR__ . '/../..' . '/app/ThesisDocumentVersion.php',
+        'App\\UnitConversion' => __DIR__ . '/../..' . '/app/UnitConversion.php',
+        'App\\UnitMeasure' => __DIR__ . '/../..' . '/app/UnitMeasure.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
+        'App\\UserAllergy' => __DIR__ . '/../..' . '/app/UserAllergy.php',
+        'App\\UserConsent' => __DIR__ . '/../..' . '/app/UserConsent.php',
+        'App\\UserDietaryRestriction' => __DIR__ . '/../..' . '/app/UserDietaryRestriction.php',
+        'App\\UserHealthCondition' => __DIR__ . '/../..' . '/app/UserHealthCondition.php',
+        'App\\UserNutritionTarget' => __DIR__ . '/../..' . '/app/UserNutritionTarget.php',
+        'App\\UserObjective' => __DIR__ . '/../..' . '/app/UserObjective.php',
+        'App\\UserPaymentMethod' => __DIR__ . '/../..' . '/app/UserPaymentMethod.php',
+        'App\\UserPrioritySetting' => __DIR__ . '/../..' . '/app/UserPrioritySetting.php',
+        'App\\UserProfile' => __DIR__ . '/../..' . '/app/UserProfile.php',
+        'App\\UserRole' => __DIR__ . '/../..' . '/app/UserRole.php',
+        'App\\UserSupplement' => __DIR__ . '/../..' . '/app/UserSupplement.php',
         'App\\Utensil' => __DIR__ . '/../..' . '/app/Utensil.php',
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
         'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',
@@ -660,6 +1431,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Carbon\\Traits\\Week' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Week.php',
         'Carbon\\Translator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Translator.php',
         'CategorySeeder' => __DIR__ . '/../..' . '/database/seeds/CategorySeeder.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/CronExpression.php',
         'Cron\\DayOfMonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/DayOfMonthField.php',
@@ -694,6 +1466,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'DeepCopy\\TypeFilter\\Spl\\SplDoublyLinkedListFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/Spl/SplDoublyLinkedListFilter.php',
         'DeepCopy\\TypeFilter\\TypeFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/TypeFilter.php',
         'DeepCopy\\TypeMatcher\\TypeMatcher' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeMatcher/TypeMatcher.php',
+        'DemoDataSeeder' => __DIR__ . '/../..' . '/database/seeds/DemoDataSeeder.php',
         'Doctrine\\Common\\Lexer\\AbstractLexer' => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php',
         'Doctrine\\Inflector\\CachedWordInflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/CachedWordInflector.php',
         'Doctrine\\Inflector\\GenericLanguageInflectorFactory' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/GenericLanguageInflectorFactory.php',
@@ -1294,6 +2067,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Faker\\Provider\\nl_BE\\Payment' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_BE/Payment.php',
         'Faker\\Provider\\nl_BE\\Person' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_BE/Person.php',
         'Faker\\Provider\\nl_BE\\PhoneNumber' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_BE/PhoneNumber.php',
+        'Faker\\Provider\\nl_BE\\Text' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_BE/Text.php',
         'Faker\\Provider\\nl_NL\\Address' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_NL/Address.php',
         'Faker\\Provider\\nl_NL\\Color' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_NL/Color.php',
         'Faker\\Provider\\nl_NL\\Company' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/nl_NL/Company.php',
@@ -2441,6 +3215,9 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Illuminate\\View\\ViewFinderInterface' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewFinderInterface.php',
         'Illuminate\\View\\ViewName' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewName.php',
         'Illuminate\\View\\ViewServiceProvider' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
+        'IngredientCatalogSeeder' => __DIR__ . '/../..' . '/database/seeds/IngredientCatalogSeeder.php',
+        'IngredientCategoryTaxonomySeeder' => __DIR__ . '/../..' . '/database/seeds/IngredientCategoryTaxonomySeeder.php',
+        'IngredientSupportingTaxonomiesSeeder' => __DIR__ . '/../..' . '/database/seeds/IngredientSupportingTaxonomiesSeeder.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Laravel\\Socialite\\AbstractUser' => __DIR__ . '/..' . '/laravel/socialite/src/AbstractUser.php',
         'Laravel\\Socialite\\Contracts\\Factory' => __DIR__ . '/..' . '/laravel/socialite/src/Contracts/Factory.php',
@@ -2754,6 +3531,8 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'League\\OAuth1\\Client\\Signature\\PlainTextSignature' => __DIR__ . '/..' . '/league/oauth1-client/src/Client/Signature/PlainTextSignature.php',
         'League\\OAuth1\\Client\\Signature\\Signature' => __DIR__ . '/..' . '/league/oauth1-client/src/Client/Signature/Signature.php',
         'League\\OAuth1\\Client\\Signature\\SignatureInterface' => __DIR__ . '/..' . '/league/oauth1-client/src/Client/Signature/SignatureInterface.php',
+        'MarketSeeder' => __DIR__ . '/../..' . '/database/seeds/MarketSeeder.php',
+        'MealTypeSeeder' => __DIR__ . '/../..' . '/database/seeds/MealTypeSeeder.php',
         'Mockery' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'Mockery\\Adapter\\Phpunit\\Legacy\\TestListenerForV5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/Legacy/TestListenerForV5.php',
         'Mockery\\Adapter\\Phpunit\\Legacy\\TestListenerForV6' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/Legacy/TestListenerForV6.php',
@@ -4069,6 +4848,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
         'Ramsey\\Uuid\\Validator\\GenericValidator' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/GenericValidator.php',
         'Ramsey\\Uuid\\Validator\\ValidatorInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/ValidatorInterface.php',
+        'ScrapingSourceSeeder' => __DIR__ . '/../..' . '/database/seeds/ScrapingSourceSeeder.php',
         'SebastianBergmann\\CodeCoverage\\CodeCoverage' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/CodeCoverage.php',
         'SebastianBergmann\\CodeCoverage\\CoveredCodeNotExecutedException' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Exception/CoveredCodeNotExecutedException.php',
         'SebastianBergmann\\CodeCoverage\\Driver\\Driver' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Driver/Driver.php',
@@ -4181,8 +4961,12 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'SecuritySeeder' => __DIR__ . '/../..' . '/database/seeds/SecuritySeeder.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'SupermarketCatalogSeeder' => __DIR__ . '/../..' . '/database/seeds/SupermarketCatalogSeeder.php',
+        'SupplementTypeSeeder' => __DIR__ . '/../..' . '/database/seeds/SupplementTypeSeeder.php',
         'SupplySeeder' => __DIR__ . '/../..' . '/database/seeds/SupplySeeder.php',
+        'SupportingSystemSeeder' => __DIR__ . '/../..' . '/database/seeds/SupportingSystemSeeder.php',
         'Symfony\\Component\\Console\\Application' => __DIR__ . '/..' . '/symfony/console/Application.php',
         'Symfony\\Component\\Console\\CommandLoader\\CommandLoaderInterface' => __DIR__ . '/..' . '/symfony/console/CommandLoader/CommandLoaderInterface.php',
         'Symfony\\Component\\Console\\CommandLoader\\ContainerCommandLoader' => __DIR__ . '/..' . '/symfony/console/CommandLoader/ContainerCommandLoader.php',
@@ -4341,7 +5125,6 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Symfony\\Component\\EventDispatcher\\Debug\\TraceableEventDispatcher' => __DIR__ . '/..' . '/symfony/event-dispatcher/Debug/TraceableEventDispatcher.php',
         'Symfony\\Component\\EventDispatcher\\Debug\\WrappedListener' => __DIR__ . '/..' . '/symfony/event-dispatcher/Debug/WrappedListener.php',
         'Symfony\\Component\\EventDispatcher\\DependencyInjection\\AddEventAliasesPass' => __DIR__ . '/..' . '/symfony/event-dispatcher/DependencyInjection/AddEventAliasesPass.php',
-        'Symfony\\Component\\EventDispatcher\\DependencyInjection\\ExtractingEventDispatcher' => __DIR__ . '/..' . '/symfony/event-dispatcher/DependencyInjection/RegisterListenersPass.php',
         'Symfony\\Component\\EventDispatcher\\DependencyInjection\\RegisterListenersPass' => __DIR__ . '/..' . '/symfony/event-dispatcher/DependencyInjection/RegisterListenersPass.php',
         'Symfony\\Component\\EventDispatcher\\EventDispatcher' => __DIR__ . '/..' . '/symfony/event-dispatcher/EventDispatcher.php',
         'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => __DIR__ . '/..' . '/symfony/event-dispatcher/EventDispatcherInterface.php',
@@ -4703,7 +5486,6 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Symfony\\Component\\Routing\\Loader\\GlobFileLoader' => __DIR__ . '/..' . '/symfony/routing/Loader/GlobFileLoader.php',
         'Symfony\\Component\\Routing\\Loader\\ObjectLoader' => __DIR__ . '/..' . '/symfony/routing/Loader/ObjectLoader.php',
         'Symfony\\Component\\Routing\\Loader\\PhpFileLoader' => __DIR__ . '/..' . '/symfony/routing/Loader/PhpFileLoader.php',
-        'Symfony\\Component\\Routing\\Loader\\ProtectedPhpFileLoader' => __DIR__ . '/..' . '/symfony/routing/Loader/PhpFileLoader.php',
         'Symfony\\Component\\Routing\\Loader\\XmlFileLoader' => __DIR__ . '/..' . '/symfony/routing/Loader/XmlFileLoader.php',
         'Symfony\\Component\\Routing\\Loader\\YamlFileLoader' => __DIR__ . '/..' . '/symfony/routing/Loader/YamlFileLoader.php',
         'Symfony\\Component\\Routing\\Matcher\\CompiledUrlMatcher' => __DIR__ . '/..' . '/symfony/routing/Matcher/CompiledUrlMatcher.php',
@@ -4889,9 +5671,118 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'Symfony\\Polyfill\\Php73\\Php73' => __DIR__ . '/..' . '/symfony/polyfill-php73/Php73.php',
         'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
         'Tests\\CreatesApplication' => __DIR__ . '/../..' . '/tests/CreatesApplication.php',
+        'Tests\\Feature\\Api\\V1\\AdminRecipes\\AdminRecipesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/AdminRecipes/AdminRecipesTest.php',
+        'Tests\\Feature\\Api\\V1\\AdminReports\\AdminReportsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/AdminReports/AdminReportsTest.php',
+        'Tests\\Feature\\Api\\V1\\AdminThesisDocuments\\AdminThesisDocumentsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/AdminThesisDocuments/AdminThesisDocumentsTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\AuditAuditLogTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/AuditAuditLogTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\AuditLoginLogTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/AuditLoginLogTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\AuditResourceAuditTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/AuditResourceAuditTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\RbacPermissionAdminTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/RbacPermissionAdminTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\RbacRoleAdminTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/RbacRoleAdminTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\RbacRolePermissionTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/RbacRolePermissionTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\RbacUserAdminTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/RbacUserAdminTest.php',
+        'Tests\\Feature\\Api\\V1\\Admin\\RbacUserRoleTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Admin/RbacUserRoleTest.php',
+        'Tests\\Feature\\Api\\V1\\AiFoundation\\AiFoundationTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/AiFoundation/AiFoundationTest.php',
+        'Tests\\Feature\\Api\\V1\\Auth\\GoogleAuthTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Auth/GoogleAuthTest.php',
+        'Tests\\Feature\\Api\\V1\\Auth\\LoginTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Auth/LoginTest.php',
+        'Tests\\Feature\\Api\\V1\\Auth\\LogoutTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Auth/LogoutTest.php',
+        'Tests\\Feature\\Api\\V1\\Auth\\MeTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Auth/MeTest.php',
+        'Tests\\Feature\\Api\\V1\\Auth\\PasswordResetTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Auth/PasswordResetTest.php',
+        'Tests\\Feature\\Api\\V1\\Auth\\RegisterTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Auth/RegisterTest.php',
+        'Tests\\Feature\\Api\\V1\\Barcodes\\BarcodesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Barcodes/BarcodesTest.php',
+        'Tests\\Feature\\Api\\V1\\BodyMeasurement\\BodyMeasurementTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/BodyMeasurement/BodyMeasurementTest.php',
+        'Tests\\Feature\\Api\\V1\\Brands\\BrandsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Brands/BrandsTest.php',
+        'Tests\\Feature\\Api\\V1\\BudgetAlerts\\BudgetAlertsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/BudgetAlerts/BudgetAlertsTest.php',
+        'Tests\\Feature\\Api\\V1\\BudgetCategories\\BudgetCategoriesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/BudgetCategories/BudgetCategoriesTest.php',
+        'Tests\\Feature\\Api\\V1\\BudgetMovements\\BudgetMovementsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/BudgetMovements/BudgetMovementsTest.php',
+        'Tests\\Feature\\Api\\V1\\BudgetSummary\\BudgetSummaryTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/BudgetSummary/BudgetSummaryTest.php',
+        'Tests\\Feature\\Api\\V1\\Budgets\\BudgetsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Budgets/BudgetsTest.php',
+        'Tests\\Feature\\Api\\V1\\Cities\\CitiesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Cities/CitiesTest.php',
+        'Tests\\Feature\\Api\\V1\\Consents\\ConsentsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Consents/ConsentsTest.php',
+        'Tests\\Feature\\Api\\V1\\DemoScenarios\\DemoScenariosTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/DemoScenarios/DemoScenariosTest.php',
+        'Tests\\Feature\\Api\\V1\\FamilyGroup\\FamilyGroupInvitationTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/FamilyGroup/FamilyGroupInvitationTest.php',
+        'Tests\\Feature\\Api\\V1\\FamilyGroup\\FamilyGroupMemberTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/FamilyGroup/FamilyGroupMemberTest.php',
+        'Tests\\Feature\\Api\\V1\\FamilyGroup\\FamilyGroupPreferenceTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/FamilyGroup/FamilyGroupPreferenceTest.php',
+        'Tests\\Feature\\Api\\V1\\FamilyGroup\\FamilyGroupTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/FamilyGroup/FamilyGroupTest.php',
+        'Tests\\Feature\\Api\\V1\\FeatureFlags\\FeatureFlagsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/FeatureFlags/FeatureFlagsTest.php',
+        'Tests\\Feature\\Api\\V1\\FoodTags\\FoodTagsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/FoodTags/FoodTagsTest.php',
+        'Tests\\Feature\\Api\\V1\\GroupReports\\GroupReportsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/GroupReports/GroupReportsTest.php',
+        'Tests\\Feature\\Api\\V1\\HealthPreferences\\HealthPreferencesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/HealthPreferences/HealthPreferencesTest.php',
+        'Tests\\Feature\\Api\\V1\\HouseholdStock\\HouseholdStockTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/HouseholdStock/HouseholdStockTest.php',
+        'Tests\\Feature\\Api\\V1\\IngredientCategories\\IngredientCategoriesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/IngredientCategories/IngredientCategoriesTest.php',
+        'Tests\\Feature\\Api\\V1\\IngredientEquivalences\\IngredientEquivalencesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/IngredientEquivalences/IngredientEquivalencesTest.php',
+        'Tests\\Feature\\Api\\V1\\Ingredients\\IngredientsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Ingredients/IngredientsTest.php',
+        'Tests\\Feature\\Api\\V1\\MealPlanGeneration\\MealPlanGenerationTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealPlanGeneration/MealPlanGenerationTest.php',
+        'Tests\\Feature\\Api\\V1\\MealPlanIncompatibilities\\MealPlanIncompatibilitiesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealPlanIncompatibilities/MealPlanIncompatibilitiesTest.php',
+        'Tests\\Feature\\Api\\V1\\MealPlanItemStatus\\MealPlanItemStatusTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealPlanItemStatus/MealPlanItemStatusTest.php',
+        'Tests\\Feature\\Api\\V1\\MealPlanItems\\MealPlanItemsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealPlanItems/MealPlanItemsTest.php',
+        'Tests\\Feature\\Api\\V1\\MealPlanPortions\\MealPlanPortionsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealPlanPortions/MealPlanPortionsTest.php',
+        'Tests\\Feature\\Api\\V1\\MealPlans\\MealPlansTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealPlans/MealPlansTest.php',
+        'Tests\\Feature\\Api\\V1\\MealTypes\\MealTypesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/MealTypes/MealTypesTest.php',
+        'Tests\\Feature\\Api\\V1\\Notifications\\NotificationsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Notifications/NotificationsTest.php',
+        'Tests\\Feature\\Api\\V1\\Nutrients\\NutrientsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Nutrients/NutrientsTest.php',
+        'Tests\\Feature\\Api\\V1\\Objectives\\ObjectivesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Objectives/ObjectivesTest.php',
+        'Tests\\Feature\\Api\\V1\\PaymentMethods\\PaymentMethodsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/PaymentMethods/PaymentMethodsTest.php',
+        'Tests\\Feature\\Api\\V1\\PersonalReports\\PersonalReportsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/PersonalReports/PersonalReportsTest.php',
+        'Tests\\Feature\\Api\\V1\\PriceRefreshRequests\\PriceRefreshRequestsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/PriceRefreshRequests/PriceRefreshRequestsTest.php',
+        'Tests\\Feature\\Api\\V1\\ProductCategories\\ProductCategoriesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ProductCategories/ProductCategoriesTest.php',
+        'Tests\\Feature\\Api\\V1\\ProductImages\\ProductImagesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ProductImages/ProductImagesTest.php',
+        'Tests\\Feature\\Api\\V1\\ProductReports\\ProductReportsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ProductReports/ProductReportsTest.php',
+        'Tests\\Feature\\Api\\V1\\Products\\ProductsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Products/ProductsTest.php',
+        'Tests\\Feature\\Api\\V1\\Professional\\ProfessionalTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Professional/ProfessionalTest.php',
+        'Tests\\Feature\\Api\\V1\\Promotions\\PromotionsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Promotions/PromotionsTest.php',
+        'Tests\\Feature\\Api\\V1\\PurchaseConfirmation\\PurchaseConfirmationTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/PurchaseConfirmation/PurchaseConfirmationTest.php',
+        'Tests\\Feature\\Api\\V1\\PurchaseItems\\PurchaseItemsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/PurchaseItems/PurchaseItemsTest.php',
+        'Tests\\Feature\\Api\\V1\\Purchases\\PurchasesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Purchases/PurchasesTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeAvailability\\RecipeAvailabilityTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeAvailability/RecipeAvailabilityTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeCategories\\RecipeCategoriesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeCategories/RecipeCategoriesTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeCost\\RecipeCostTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeCost/RecipeCostTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeFavoritesCooked\\RecipeFavoritesCookedTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeFavoritesCooked/RecipeFavoritesCookedTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeImportCandidates\\RecipeImportCandidatesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeImportCandidates/RecipeImportCandidatesTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeImportText\\RecipeImportTextTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeImportText/RecipeImportTextTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeImportUrl\\RecipeImportUrlTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeImportUrl/RecipeImportUrlTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeIngredients\\RecipeIngredientsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeIngredients/RecipeIngredientsTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeNutrition\\RecipeNutritionTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeNutrition/RecipeNutritionTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeScraping\\RecipeScrapingTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeScraping/RecipeScrapingTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeSearch\\RecipeSearchTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeSearch/RecipeSearchTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeSharingBranch\\RecipeSharingBranchTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeSharingBranch/RecipeSharingBranchTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeSteps\\RecipeStepsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeSteps/RecipeStepsTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeSubstitutions\\RecipeSubstitutionsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeSubstitutions/RecipeSubstitutionsTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeSuggestions\\RecipeSuggestionsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeSuggestions/RecipeSuggestionsTest.php',
+        'Tests\\Feature\\Api\\V1\\RecipeTags\\RecipeTagsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/RecipeTags/RecipeTagsTest.php',
+        'Tests\\Feature\\Api\\V1\\Recipes\\RecipesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Recipes/RecipesTest.php',
+        'Tests\\Feature\\Api\\V1\\ReportExports\\ReportExportsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ReportExports/ReportExportsTest.php',
+        'Tests\\Feature\\Api\\V1\\ScrapingAlerts\\ScrapingAlertsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ScrapingAlerts/ScrapingAlertsTest.php',
+        'Tests\\Feature\\Api\\V1\\ScrapingCandidates\\ScrapingCandidatesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ScrapingCandidates/ScrapingCandidatesTest.php',
+        'Tests\\Feature\\Api\\V1\\Scraping\\ScrapingTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Scraping/ScrapingTest.php',
+        'Tests\\Feature\\Api\\V1\\ShoppingAlternatives\\ShoppingAlternativesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ShoppingAlternatives/ShoppingAlternativesTest.php',
+        'Tests\\Feature\\Api\\V1\\ShoppingListGeneration\\ShoppingListGenerationTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ShoppingListGeneration/ShoppingListGenerationTest.php',
+        'Tests\\Feature\\Api\\V1\\ShoppingListItems\\ShoppingListItemsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ShoppingListItems/ShoppingListItemsTest.php',
+        'Tests\\Feature\\Api\\V1\\ShoppingListPreview\\ShoppingListPreviewTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ShoppingListPreview/ShoppingListPreviewTest.php',
+        'Tests\\Feature\\Api\\V1\\ShoppingLists\\ShoppingListsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ShoppingLists/ShoppingListsTest.php',
+        'Tests\\Feature\\Api\\V1\\ShoppingSessions\\ShoppingSessionsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ShoppingSessions/ShoppingSessionsTest.php',
+        'Tests\\Feature\\Api\\V1\\StockAlerts\\StockAlertsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/StockAlerts/StockAlertsTest.php',
+        'Tests\\Feature\\Api\\V1\\StockLocations\\StockLocationsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/StockLocations/StockLocationsTest.php',
+        'Tests\\Feature\\Api\\V1\\StockMovements\\StockMovementsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/StockMovements/StockMovementsTest.php',
+        'Tests\\Feature\\Api\\V1\\StockScan\\StockScanTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/StockScan/StockScanTest.php',
+        'Tests\\Feature\\Api\\V1\\SupermarketBranches\\SupermarketBranchesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/SupermarketBranches/SupermarketBranchesTest.php',
+        'Tests\\Feature\\Api\\V1\\SupermarketComparison\\SupermarketComparisonTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/SupermarketComparison/SupermarketComparisonTest.php',
+        'Tests\\Feature\\Api\\V1\\SupermarketPrices\\SupermarketPricesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/SupermarketPrices/SupermarketPricesTest.php',
+        'Tests\\Feature\\Api\\V1\\SupermarketProducts\\SupermarketProductsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/SupermarketProducts/SupermarketProductsTest.php',
+        'Tests\\Feature\\Api\\V1\\Supermarkets\\SupermarketsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Supermarkets/SupermarketsTest.php',
+        'Tests\\Feature\\Api\\V1\\SupplementSchedules\\SupplementSchedulesTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/SupplementSchedules/SupplementSchedulesTest.php',
+        'Tests\\Feature\\Api\\V1\\SystemSettings\\SystemSettingsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/SystemSettings/SystemSettingsTest.php',
+        'Tests\\Feature\\Api\\V1\\ThesisComments\\ThesisCommentsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ThesisComments/ThesisCommentsTest.php',
+        'Tests\\Feature\\Api\\V1\\ThesisDocuments\\ThesisDocumentsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/ThesisDocuments/ThesisDocumentsTest.php',
+        'Tests\\Feature\\Api\\V1\\Units\\UnitsAndConversionsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/Units/UnitsAndConversionsTest.php',
+        'Tests\\Feature\\Api\\V1\\UserProfile\\UserPrioritySettingTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/UserProfile/UserPrioritySettingTest.php',
+        'Tests\\Feature\\Api\\V1\\UserProfile\\UserProfileTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/UserProfile/UserProfileTest.php',
+        'Tests\\Feature\\Api\\V1\\UserSupplements\\UserSupplementsTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/UserSupplements/UserSupplementsTest.php',
+        'Tests\\Feature\\Api\\V1\\WasteReport\\WasteReportTest' => __DIR__ . '/../..' . '/tests/Feature/Api/V1/WasteReport/WasteReportTest.php',
         'Tests\\Feature\\ExampleTest' => __DIR__ . '/../..' . '/tests/Feature/ExampleTest.php',
         'Tests\\TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
         'Tests\\Unit\\ExampleTest' => __DIR__ . '/../..' . '/tests/Unit/ExampleTest.php',
+        'Tests\\Unit\\RoutesAuditTest' => __DIR__ . '/../..' . '/tests/Unit/RoutesAuditTest.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'TheSeer\\Tokenizer\\Exception' => __DIR__ . '/..' . '/theseer/tokenizer/src/Exception.php',
         'TheSeer\\Tokenizer\\NamespaceUri' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUri.php',
@@ -4907,6 +5798,7 @@ class ComposerStaticInitc94fd3fc31742453bde4a88b6efa0e90
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Property\\Property' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Property/Property.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
+        'UserProfileCatalogSeeder' => __DIR__ . '/../..' . '/database/seeds/UserProfileCatalogSeeder.php',
         'UserSeeder' => __DIR__ . '/../..' . '/database/seeds/UserSeeder.php',
         'UtensilSeeder' => __DIR__ . '/../..' . '/database/seeds/UtensilSeeder.php',
         'UtensilsSeeder' => __DIR__ . '/../..' . '/database/seeds/UtensilsSeeder.php',

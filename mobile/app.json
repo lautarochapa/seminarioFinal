@@ -1,0 +1,81 @@
+{
+  "expo": {
+    "name": "CocinaComidaControl",
+    "slug": "cccontrol-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "cccontrol",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cccontrol.mobile"
+    },
+    "android": {
+      "package": "com.cccontrol.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "android.permission.CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "backgroundColor": "#04AC85",
+          "resizeMode": "contain"
+        }
+      ],
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "CocinaComidaControl usa tu ubicación solo cuando la solicitás, para mostrar sucursales cercanas."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "CocinaComidaControl usa la cámara solo cuando tocás \"Escanear código\", para leer códigos de barras de productos.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b8defe12-ded6-4f3b-9055-2e1f5129f45d"
+      }
+    }
+  }
+}

@@ -300,7 +300,7 @@ class Request
 
         if ($_POST) {
             $request->request = new InputBag($_POST);
-        } elseif (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
+        } elseif (0 === strpos($request->headers->get('CONTENT_TYPE', ''), 'application/x-www-form-urlencoded')
             && \in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), ['PUT', 'DELETE', 'PATCH'])
         ) {
             parse_str($request->getContent(), $data);

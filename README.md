@@ -1,79 +1,201 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# CC Control - Seminario Final
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Aplicacion Laravel para gestion familiar de alimentacion, stock, compras, presupuesto, recetas, reportes y documentacion de tesis.
 
-## About Laravel
+## Requisitos locales
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Windows con PowerShell.
+- PostgreSQL instalado. En esta PC se uso `C:\Program Files\PostgreSQL\18`.
+- Base local recomendada: `cccontrol`.
+- Usuario local por defecto: `postgres`.
+- Password local por defecto: `1234`.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+El proyecto incluye un runtime PHP en `.runtime\php8229\php.exe`, usado por los scripts para evitar incompatibilidades con otras instalaciones de PHP.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Inicializar la base de datos local
 
-## Learning Laravel
+Desde la raiz del proyecto:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-database.ps1
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Ese comando:
 
-## Laravel Sponsors
+- Copia/configura el `.env` local.
+- Crea la base PostgreSQL `cccontrol` si no existe.
+- Ejecuta todas las migrations en orden.
+- Ejecuta una pasada final de `artisan migrate` para aplicar cualquier migration nueva pendiente.
+- Ejecuta los seeds basicos de catalogos, roles, permisos, canales y feature flags.
+- Crea/actualiza el usuario administrador local.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Credenciales iniciales:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
-- [云软科技](http://www.yunruan.ltd/)
+```text
+Email: admin@cccontrol.test
+Password: password123
+```
 
-## Contributing
+Si PostgreSQL esta en otra ruta o la password local cambia:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-database.ps1 -Database cccontrol -DbUsername postgres -DbPassword 1234 -PostgresBin "C:\Program Files\PostgreSQL\18\bin"
+```
 
-## Code of Conduct
+## Levantar la app
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start-app.ps1
+```
 
-## Security Vulnerabilities
+Luego abrir:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```text
+http://127.0.0.1:8000
+```
 
-## License
+## Deploy en Render
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+El repo ya queda preparado para desplegar en Render usando Docker:
+
+- `Dockerfile`
+- `.dockerignore`
+- `render.yaml`
+- health check web en `/healthz`
+
+### Opcion recomendada
+
+En Render, crear un **Web Service** con:
+
+- `Runtime`: `Docker`
+- `Docker Build Context Directory`: `.`
+- `Dockerfile Path`: `./Dockerfile`
+- `Health Check Path`: `/healthz`
+- `Pre-Deploy Command`: `php artisan migrate --force`
+
+### Variables obligatorias
+
+Configurar manualmente en Render:
+
+```text
+APP_KEY=base64:...
+APP_URL=https://<tu-servicio>.onrender.com
+ASSET_URL=https://<tu-servicio>.onrender.com
+DB_HOST=<host de postgres>
+DB_DATABASE=<db>
+DB_USERNAME=<user>
+DB_PASSWORD=<password>
+```
+
+Y dejar:
+
+```text
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=pgsql
+DB_PORT=5432
+DB_SSLMODE=require
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+```
+
+### Importante
+
+- No usar `.env.qa` como archivo secreto tal cual está hoy si contiene credenciales reales.
+- Conviene rotar la password de la base si alguna vez quedó commiteada o compartida.
+- Si Render no completa el primer deploy por una migration, volver a correr el deploy luego de revisar logs suele alcanzar.
+
+## Ambientes
+
+- `.env` queda apuntando a PostgreSQL local.
+- `.env.qa` queda apuntando a la base QA de Render.
+- `.env.qa.example` queda como plantilla sin secretos para compartir.
+
+## Roles principales
+
+- `user`: usuario comun.
+- `dietologist`: dietologo / profesional.
+- `catalog_admin`: admin catalogo.
+- `supermarket_admin`: admin supermercados.
+- `recipe_admin`: admin recetas / chef.
+- `teacher`: docente.
+- `super_admin`: control total.
+- `system_jobs`: procesos automaticos del sistema.
+
+Los roles y permisos se cargan de forma idempotente desde `SecuritySeeder` y tambien desde la migration `2026_06_15_000015_seed_actor_roles.php`.
+
+## Script maestro real
+
+El script que hoy debe usarse para dejar una base nueva completamente inicializada es:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-database.ps1
+```
+
+Ese script llama a `scripts/bootstrap-local.ps1` y ahora tambien ejecuta una pasada final de `artisan migrate --force`, para no perder migrations nuevas como permisos o pantallas agregadas despues.
+
+Si una PC nueva devuelve `403` en pantallas web o APIs protegidas, normalmente significa que no se aplicaron migrations de permisos/roles. En ese caso, volver a correr el script anterior deberia corregirlo.
+
+## Validacion de cierre
+
+Backend:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File .\scripts\run-test-suite.ps1
+```
+
+Mobile:
+
+```powershell
+cd mobile
+npm.cmd test -- --runInBand
+npm.cmd run typecheck
+```
+
+## Stock vencido
+
+El procesamiento automatico de vencimientos se ejecuta con:
+
+```powershell
+C:\xampp\php74\php.exe artisan stock:process-expired
+```
+
+El comando es idempotente: usa `stock_waste_logs.stock_item_id` para no procesar dos veces el mismo item, crea un movimiento `expiration`, deja el stock en cantidad cero y registra alerta, notificacion y auditoria. Esta programado diariamente en `app/Console/Kernel.php`.
+
+## Mobile en dispositivo fisico
+
+La app mobile toma la URL del backend desde `EXPO_PUBLIC_API_URL`. No dejar IPs LAN hardcodeadas en el codigo fuente.
+
+Para probar en un celular fisico dentro de la misma red:
+
+```powershell
+C:\xampp\php74\php.exe artisan serve --host=0.0.0.0 --port=8000
+cd mobile
+$env:EXPO_PUBLIC_API_URL="http://<IP-LAN-DE-LA-PC>:8000"
+$env:EXPO_PUBLIC_ALLOW_INSECURE_API="true"
+npx eas-cli@latest build --platform android --profile preview
+```
+
+Para produccion, usar una URL HTTPS real y no activar `EXPO_PUBLIC_ALLOW_INSECURE_API`.
+
+## Presupuesto
+
+El presupuesto no almacena un gasto acumulado duplicado. El total gastado se calcula dinamicamente a partir de las compras confirmadas o con stock cargado (`confirmed`, `stock_added`) y excluye compras canceladas, eliminadas o no confirmadas.
+
+## Taxonomias de ingredientes
+
+Las categorias y taxonomias de soporte de ingredientes quedan versionadas en:
+
+```text
+database/data/ingredient_categories.json
+database/data/ingredient_supporting_taxonomies.json
+```
+
+Se cargan con:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\migrate-ingredient-taxonomies.ps1
+```
+
+El script agrega las columnas necesarias a `ingredient_categories` y carga categorias, `food_tags` y `allergies` de forma idempotente.

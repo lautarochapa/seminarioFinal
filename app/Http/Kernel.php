@@ -46,6 +46,27 @@ class Kernel extends HttpKernel
     ];
 
     /**
+     * The priority-sorted list of middleware.
+     *
+     * Forces Bearer token authentication to run before Laravel's auth
+     * middleware checks the active guard.
+     *
+     * @var array
+     */
+    protected $middlewarePriority = [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\Api\AuthenticateApiToken::class,
+        \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+        \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        \Illuminate\Session\Middleware\AuthenticateSession::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        \Illuminate\Auth\Middleware\Authorize::class,
+    ];
+
+    /**
      * The application's route middleware.
      *
      * These middleware may be assigned to groups or used individually.
@@ -62,6 +83,9 @@ class Kernel extends HttpKernel
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'verified'  => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'trace_id'  => \App\Http\Middleware\Api\TraceId::class,
+        'permission' => \App\Http\Middleware\Api\RequirePermission::class,
+        'api_token' => \App\Http\Middleware\Api\AuthenticateApiToken::class,
     ];
 }

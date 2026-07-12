@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \App\Console\Commands\ProcessExpiredStock::class,
+        \App\Console\Commands\SeedDemoE2ERecipeStockBarcode::class,
+        \App\Console\Commands\RepairUnprocessedShoppingStock::class,
     ];
 
     /**
@@ -24,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('stock:process-expired')->daily();
     }
 
     /**
