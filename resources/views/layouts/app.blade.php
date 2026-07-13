@@ -30,6 +30,7 @@
 
 
    <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
+   @yield('page_styles')
                 
 </head>
 <style>
