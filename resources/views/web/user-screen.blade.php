@@ -2303,6 +2303,9 @@
                         </select>
                         <input class="form-control" name="start_date" type="date" required>
                         <input class="form-control" name="end_date" type="date" required>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:12px">
+                            <input type="checkbox" data-meal-plan-respect-budget> Respetar el presupuesto al generar
+                        </label>
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
                             <button type="submit" class="btn-main" data-meal-plan-generate-submit>Generar menu</button>
                             <button type="button" class="btn-secondary-web" data-meal-plan-approve>Aprobar seleccionado</button>

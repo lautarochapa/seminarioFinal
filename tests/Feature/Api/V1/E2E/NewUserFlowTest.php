@@ -356,4 +356,84 @@ class NewUserFlowTest extends TestCase
         $this->assertEqualsWithDelta($polloBefore, $this->stockQty($groupA, '7791111000070'), 0.01);
         $this->assertSame(0, DB::table('recipe_cook_logs')->where('family_group_id', $groupA)->count());
     }
+
+    // ─────────────────────────────── meal plan preferences (respetar presupuesto)
+
+    /** Nombres de receta usados en el plan (via meal_plan_items). */
+    private function planRecipeNames(int $planId): array
+    {
+        return DB::table('meal_plan_items as i')
+            ->join('recipes as r', 'r.id', '=', 'i.recipe_id')
+            ->where('i.meal_plan_id', $planId)
+            ->distinct()->pluck('r.normalized_name')->map(fn ($n) => strtolower($n))->all();
+    }
+
+    public function test_new_user_configures_meal_plan_preferences_to_respect_budget(): void
+    {
+        $a = $this->register('planner.' . uniqid() . '@example.test');
+        $gid = $this->createGroup($a, 'Grupo Planner');
+
+        // Presupuesto chico: solo alcanzan las recetas con costo <= 3000
+        // (excluye "arroz con pollo" $5200 y "pollo al horno con papas" $5600).
+        $this->actingApi($a)->postJson("/api/v1/family-groups/{$gid}/budgets", [
+            'year' => (int) now()->year, 'month' => (int) now()->month, 'total_amount' => 3000, 'currency' => 'ARS',
+        ])->assertStatus(201);
+
+        // GET de preferencias antes de configurarlas: devuelve los defaults (sin crear fila).
+        $this->actingApi($a)->getJson("/api/v1/family-groups/{$gid}/meal-plan-preferences")
+            ->assertStatus(200)
+            ->assertJsonPath('data.family_group_id', $gid)
+            ->assertJsonPath('data.respect_budget', true);
+        $this->assertDatabaseMissing('meal_plan_preferences', ['family_group_id' => $gid]);
+
+        // 1) Sin preferencia guardada -> el generador NO filtra por presupuesto:
+        //    las recetas caras aparecen igual.
+        $planNoPref = $this->generateAndApprovePlan($a, $gid);
+        $this->assertContains('arroz con pollo', $this->planRecipeNames($planNoPref));
+
+        // 2) El usuario configura la preferencia por API.
+        $this->actingApi($a)->patchJson("/api/v1/family-groups/{$gid}/meal-plan-preferences", [
+            'respect_budget' => true,
+            'avoid_repetition' => true,
+        ])->assertStatus(200)->assertJsonPath('data.respect_budget', true);
+        $this->assertDatabaseHas('meal_plan_preferences', [
+            'family_group_id' => $gid, 'user_id' => null, 'respect_budget' => true,
+        ]);
+
+        // 3) Nuevo plan -> ahora SÍ respeta el presupuesto: las recetas caras quedan afuera.
+        $planWithPref = $this->generateAndApprovePlan($a, $gid);
+        $names = $this->planRecipeNames($planWithPref);
+        $this->assertNotContains('arroz con pollo', $names, 'La receta de $5200 supera el presupuesto de $3000.');
+        $this->assertNotContains('pollo al horno con papas', $names, 'La receta de $5600 supera el presupuesto de $3000.');
+        $this->assertContains('panqueques', $names);
+        foreach ($names as $n) {
+            $this->assertNotContains($n, ['arroz con pollo', 'pollo al horno con papas']);
+        }
+
+        // Se puede volver a desactivar.
+        $this->actingApi($a)->patchJson("/api/v1/family-groups/{$gid}/meal-plan-preferences", [
+            'respect_budget' => false,
+        ])->assertStatus(200)->assertJsonPath('data.respect_budget', false);
+    }
+
+    public function test_meal_plan_preferences_are_isolated_and_require_membership(): void
+    {
+        $a = $this->register('pref.a.' . uniqid() . '@example.test');
+        $b = $this->register('pref.b.' . uniqid() . '@example.test');
+        $groupA = $this->createGroup($a, 'Grupo Pref A');
+        $this->createGroup($b, 'Grupo Pref B');
+
+        // B (no miembro de A) no puede leer ni modificar las preferencias de A.
+        $this->assertRejected($this->actingApi($b)->getJson("/api/v1/family-groups/{$groupA}/meal-plan-preferences"));
+        $this->assertRejected($this->actingApi($b)->patchJson("/api/v1/family-groups/{$groupA}/meal-plan-preferences", [
+            'respect_budget' => false,
+        ]));
+        $this->assertDatabaseMissing('meal_plan_preferences', ['family_group_id' => $groupA]);
+
+        // El owner de A sí puede.
+        $this->actingApi($a)->patchJson("/api/v1/family-groups/{$groupA}/meal-plan-preferences", [
+            'respect_budget' => false,
+        ])->assertStatus(200);
+        $this->assertDatabaseHas('meal_plan_preferences', ['family_group_id' => $groupA, 'respect_budget' => false]);
+    }
 }

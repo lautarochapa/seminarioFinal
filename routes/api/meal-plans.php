@@ -19,6 +19,10 @@ Route::post('family-groups/{id}/meal-plans/{planId}/items/{itemId}/skip',       
 Route::patch('family-groups/{id}/meal-plans/{planId}/items/{itemId}',                   [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'update']);
 Route::delete('family-groups/{id}/meal-plans/{planId}/items/{itemId}',                  [\App\Http\Controllers\Api\V1\MealPlanItems\MealPlanItemController::class, 'destroy']);
 
+// Meal plan preferences (group-level knobs used by the generator: respect_budget, etc.)
+Route::get('family-groups/{id}/meal-plan-preferences',   [\App\Http\Controllers\Api\V1\MealPlanPreferences\MealPlanPreferenceController::class, 'show']);
+Route::patch('family-groups/{id}/meal-plan-preferences', [\App\Http\Controllers\Api\V1\MealPlanPreferences\MealPlanPreferenceController::class, 'update']);
+
 // Meal plan generation and shopping list preview — before CRUD {planId} to avoid shadowing
 Route::post('family-groups/{id}/meal-plans/generate',             [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'generate']);
 Route::post('family-groups/{id}/meal-plans/{planId}/approve',     [\App\Http\Controllers\Api\V1\MealPlanGeneration\MealPlanGenerationController::class, 'approve']);

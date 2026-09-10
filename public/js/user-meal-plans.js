@@ -569,11 +569,27 @@
                     return null;
                 }
                 return loadMembers(root).then(function () {
+                    return loadPreferences(root);
+                }).then(function () {
                     return loadPlans(root);
                 });
             })
             .catch(function (error) {
                 handleError(root, error);
+            });
+    }
+
+    function loadPreferences(root) {
+        var checkbox = qs('[data-meal-plan-respect-budget]', root);
+        if (!checkbox) {
+            return Promise.resolve();
+        }
+        return window.CCApi.request(groupPath('/meal-plan-preferences'))
+            .then(function (response) {
+                checkbox.checked = !!(response && response.data && response.data.respect_budget);
+            })
+            .catch(function () {
+                // No bloquea la planificacion si no se pueden leer las preferencias.
             });
     }
 
@@ -958,9 +974,20 @@
         if (submit) {
             submit.disabled = true;
         }
-        return window.CCApi.request(groupPath('/meal-plans/generate'), {
-            method: 'POST',
-            body: buildGenerationPayload(form),
+        var respectBudgetEl = qs('[data-meal-plan-respect-budget]', root);
+        var savePref = respectBudgetEl
+            ? window.CCApi.request(groupPath('/meal-plan-preferences'), {
+                method: 'PATCH',
+                body: { respect_budget: respectBudgetEl.checked },
+            }).catch(function () {
+                // Si falla, se genera igual con la preferencia previa.
+            })
+            : Promise.resolve();
+        return savePref.then(function () {
+            return window.CCApi.request(groupPath('/meal-plans/generate'), {
+                method: 'POST',
+                body: buildGenerationPayload(form),
+            });
         }).then(function (response) {
             showMessage(root, 'success', 'Menu sugerido generado. Revisalo y aprobalo si esta correcto.');
             state.selectedPlan = response.data || null;
