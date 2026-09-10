@@ -28,11 +28,11 @@ class MealPlanItemService
         $this->groupRepo = $groupRepo;
     }
 
-    public function list(User $user, int $groupId, int $planId): Collection
+    public function list(User $user, int $groupId, int $planId, ?string $date = null): Collection
     {
         $this->assertMember($user, $groupId);
         $this->assertPlanForGroup($planId, $groupId);
-        return $this->itemRepo->listForPlan($planId);
+        return $this->itemRepo->listForPlan($planId, $date);
     }
 
     public function create(User $user, int $groupId, int $planId, array $input, string $ip, string $ua): MealPlanItem

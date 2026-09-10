@@ -19,8 +19,10 @@ class MealPlanItemResource extends JsonResource
             ]),
             'recipe_id'            => $this->recipe_id,
             'recipe'               => $this->whenLoaded('recipe', fn () => $this->recipe ? [
-                'id'     => $this->recipe->id,
-                'nombre' => $this->recipe->nombre,
+                'id'       => $this->recipe->id,
+                'nombre'   => $this->recipe->nombre,
+                'name'     => $this->recipe->name,
+                'servings' => $this->recipe->servings,
             ] : null),
             'free_meal_description'=> $this->free_meal_description,
             'is_eating_out'        => (bool) $this->is_eating_out,

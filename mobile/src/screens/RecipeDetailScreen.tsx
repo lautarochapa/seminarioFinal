@@ -200,6 +200,17 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
         {groupId ? (
           <>
             <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Planificación</Text>
+              <Text style={styles.hint}>Agregá esta receta a un plan de comidas y elegí fecha y porciones.</Text>
+              <AppButton
+                title="Agregar al plan"
+                variant="outline"
+                fullWidth
+                onPress={() => router.push({ pathname: '/(app)/meal-plans' as never, params: { addRecipeId: String(recipeId), addRecipeName: data.name } })}
+              />
+            </View>
+
+            <View style={styles.section}>
               <Text style={styles.sectionTitle}>Disponibilidad con Mi cocina</Text>
               <View style={styles.servingsRow}><Text style={styles.hint}>Porciones</Text><AppButton title="−" variant="outline" disabled={effectiveServings <= 1 || availabilityLoading} onPress={() => setServings(Math.max(1, effectiveServings - 1))} /><Text style={styles.servingsValue}>{servings ?? effectiveServings}</Text><AppButton title="+" variant="outline" disabled={availabilityLoading} onPress={() => setServings(Math.min(100, effectiveServings + 1))} /></View>
               {availabilityLoading ? <Text style={styles.hint}>Verificando disponibilidad...</Text> : null}

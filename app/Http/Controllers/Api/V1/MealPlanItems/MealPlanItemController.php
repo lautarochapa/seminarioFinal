@@ -21,7 +21,8 @@ class MealPlanItemController extends Controller
 
     public function index(Request $request, int $id, int $planId): JsonResponse
     {
-        $items = $this->service->list($request->user(), $id, $planId);
+        $date  = $request->query('date') ? (string) $request->query('date') : null;
+        $items = $this->service->list($request->user(), $id, $planId, $date);
         return response()->json(['data' => MealPlanItemResource::collection($items)]);
     }
 

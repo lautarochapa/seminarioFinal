@@ -77,7 +77,7 @@ import type {
   RecipeShoppingListRequest,
   RecipeShoppingListResult,
 } from '@/types/recipe';
-import type { MealPlan, MealPlanEntry, MealPlanFilters } from '@/types/mealPlan';
+import type { MealPlan, MealPlanEntry, MealPlanFilters, MealType, MealPlanItemCreate, MealPlanItemUpdate, MealPlanCreate } from '@/types/mealPlan';
 import { normalizeRecipeSuggestions } from '@/utils/recipeSuggestions';
 import type {
   BranchFilters,
@@ -480,6 +480,24 @@ export const mealPlansApi = {
   },
   generateShoppingList(groupId: number, planId: number): Promise<ApiResponse<GenerateShoppingListResult>> {
     return apiClient.post<ApiResponse<GenerateShoppingListResult>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/generate-shopping-list`);
+  },
+  createPlan(groupId: number, payload: MealPlanCreate): Promise<ApiResponse<MealPlan>> {
+    return apiClient.post<ApiResponse<MealPlan>>(`/api/v1/family-groups/${groupId}/meal-plans`, payload);
+  },
+  createItem(groupId: number, planId: number, payload: MealPlanItemCreate): Promise<ApiResponse<MealPlanEntry>> {
+    return apiClient.post<ApiResponse<MealPlanEntry>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items`, payload);
+  },
+  updateItem(groupId: number, planId: number, itemId: number, payload: MealPlanItemUpdate): Promise<ApiResponse<MealPlanEntry>> {
+    return apiClient.patch<ApiResponse<MealPlanEntry>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items/${itemId}`, payload);
+  },
+  deleteItem(groupId: number, planId: number, itemId: number): Promise<{ message: string }> {
+    return apiClient.delete<{ message: string }>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items/${itemId}`);
+  },
+};
+
+export const mealTypesApi = {
+  list(): Promise<ApiResponse<MealType[]>> {
+    return apiClient.get<ApiResponse<MealType[]>>('/api/v1/meal-types');
   },
 };
 

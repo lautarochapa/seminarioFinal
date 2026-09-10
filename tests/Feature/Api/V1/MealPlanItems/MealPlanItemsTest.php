@@ -207,6 +207,209 @@ class MealPlanItemsTest extends TestCase
         $this->assertSoftDeleted('meal_plan_items', ['id' => $item->id]);
     }
 
+    public function test_leer_plan_filtra_por_fecha()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt   = $this->mealType();
+        $plan = $this->plan($group->id, $user->id);
+        $this->item($plan->id, $mt->id, ['date' => '2026-06-16']);
+        $this->item($plan->id, $mt->id, ['date' => '2026-06-18']);
+
+        $this->actingAs($user)
+            ->getJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items?date=2026-06-18")
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.date', '2026-06-18');
+    }
+
+    public function test_servings_total_se_persiste_y_se_devuelve()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt     = $this->mealType();
+        $recipe = $this->recipe();
+        $plan   = $this->plan($group->id, $user->id);
+
+        $response = $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'           => '2026-06-16',
+                'meal_type_id'   => $mt->id,
+                'recipe_id'      => $recipe->id,
+                'servings_total' => 3.5,
+            ]);
+
+        $response->assertStatus(201)->assertJsonPath('data.servings_total', '3.50');
+        $this->assertDatabaseHas('meal_plan_items', ['id' => $response->json('data.id'), 'servings_total' => 3.5]);
+
+        $this->actingAs($user)
+            ->patchJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items/{$response->json('data.id')}", [
+                'servings_total' => 6,
+            ])
+            ->assertStatus(200)
+            ->assertJsonPath('data.servings_total', '6.00');
+    }
+
+    public function test_servings_total_negativo_retorna_422()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt   = $this->mealType();
+        $plan = $this->plan($group->id, $user->id);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'           => '2026-06-16',
+                'meal_type_id'   => $mt->id,
+                'free_meal_description' => 'x',
+                'servings_total' => -2,
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_fecha_invalida_retorna_422()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt   = $this->mealType();
+        $plan = $this->plan($group->id, $user->id);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'                 => 'no-es-fecha',
+                'meal_type_id'         => $mt->id,
+                'free_meal_description' => 'x',
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_meal_type_inexistente_retorna_422()
+    {
+        [$user, $group] = $this->memberUser();
+        $plan = $this->plan($group->id, $user->id);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'                 => '2026-06-16',
+                'meal_type_id'         => 999999,
+                'free_meal_description' => 'x',
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_MEAL_TYPE_NOT_FOUND');
+    }
+
+    public function test_meal_type_inactivo_retorna_422()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt   = $this->mealType();
+        $mt->update(['status' => 'inactive']);
+        $plan = $this->plan($group->id, $user->id);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'                 => '2026-06-16',
+                'meal_type_id'         => $mt->id,
+                'free_meal_description' => 'x',
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_MEAL_TYPE_NOT_FOUND');
+    }
+
+    public function test_receta_inactiva_retorna_422()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt     = $this->mealType();
+        $recipe = $this->recipe(['status' => 'inactive']);
+        $plan   = $this->plan($group->id, $user->id);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'         => '2026-06-16',
+                'meal_type_id' => $mt->id,
+                'recipe_id'    => $recipe->id,
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_RECIPE_NOT_FOUND');
+    }
+
+    public function test_duplicado_fecha_y_meal_type_retorna_409()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt   = $this->mealType();
+        $plan = $this->plan($group->id, $user->id);
+        $this->item($plan->id, $mt->id, ['date' => '2026-06-17']);
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items", [
+                'date'                 => '2026-06-17',
+                'meal_type_id'         => $mt->id,
+                'free_meal_description' => 'otra comida',
+            ])
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_DUPLICATE');
+    }
+
+    public function test_update_a_fecha_meal_type_ocupado_retorna_409()
+    {
+        [$user, $group] = $this->memberUser();
+        $mt   = $this->mealType();
+        $plan = $this->plan($group->id, $user->id);
+        $this->item($plan->id, $mt->id, ['date' => '2026-06-16']);
+        $moving = $this->item($plan->id, $mt->id, ['date' => '2026-06-17']);
+
+        $this->actingAs($user)
+            ->patchJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items/{$moving->id}", [
+                'date' => '2026-06-16',
+            ])
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_DUPLICATE');
+    }
+
+    public function test_no_puede_agregar_item_a_plan_de_otro_grupo()
+    {
+        [$userA, $groupA] = $this->memberUser();
+        [$userB, $groupB] = $this->memberUser();
+        $mt    = $this->mealType();
+        $planB = $this->plan($groupB->id, $userB->id);
+
+        $this->actingAs($userA)
+            ->postJson("/api/v1/family-groups/{$groupA->id}/meal-plans/{$planB->id}/items", [
+                'date'                 => '2026-06-16',
+                'meal_type_id'         => $mt->id,
+                'free_meal_description' => 'x',
+            ])
+            ->assertStatus(404)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_PLAN_NOT_FOUND');
+    }
+
+    public function test_no_puede_editar_ni_borrar_item_de_plan_de_otro_grupo()
+    {
+        [$userA, $groupA] = $this->memberUser();
+        [$userB, $groupB] = $this->memberUser();
+        $mt    = $this->mealType();
+        $planB = $this->plan($groupB->id, $userB->id);
+        $itemB = $this->item($planB->id, $mt->id);
+
+        $this->actingAs($userA)
+            ->patchJson("/api/v1/family-groups/{$groupA->id}/meal-plans/{$planB->id}/items/{$itemB->id}", ['notes' => 'hack'])
+            ->assertStatus(404);
+
+        $this->actingAs($userA)
+            ->deleteJson("/api/v1/family-groups/{$groupA->id}/meal-plans/{$planB->id}/items/{$itemB->id}")
+            ->assertStatus(404);
+
+        $this->assertDatabaseHas('meal_plan_items', ['id' => $itemB->id, 'notes' => null]);
+    }
+
+    public function test_editar_item_inexistente_retorna_404()
+    {
+        [$user, $group] = $this->memberUser();
+        $plan = $this->plan($group->id, $user->id);
+
+        $this->actingAs($user)
+            ->patchJson("/api/v1/family-groups/{$group->id}/meal-plans/{$plan->id}/items/999999", ['notes' => 'x'])
+            ->assertStatus(404)
+            ->assertJsonPath('error.code', 'MEAL_PLAN_ITEM_NOT_FOUND');
+    }
+
     public function test_auditoria_al_crear_item()
     {
         [$user, $group] = $this->memberUser();
