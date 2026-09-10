@@ -44,7 +44,7 @@ class StockScanService
         }
 
         return DB::transaction(function () use ($groupId, $userId, $data, $locationId, $product, $unitId, $ip, $ua) {
-            $duplicate = $this->stock->findDuplicate($groupId, $product->id, $locationId);
+            $duplicate = StockItem::resolveActiveLot($groupId, (int) $product->id, $locationId, $unitId, null);
 
             if ($duplicate) {
                 $old = $this->payload($duplicate);

@@ -63,6 +63,7 @@ import type {
   RecipeCategory,
   RecipeCost,
   RecipeDetail,
+  CookedRecipeLog,
   RecipeFavorite,
   RecipeFilters,
   CookRecipeRequest,
@@ -415,6 +416,10 @@ export const recipesApi = {
   },
   categories(): Promise<PaginatedResponse<RecipeCategory>> {
     return apiClient.get<PaginatedResponse<RecipeCategory>>('/api/v1/recipe-categories?per_page=100');
+  },
+  cookedHistory(filters?: { page?: number; per_page?: number }): Promise<PaginatedResponse<CookedRecipeLog>> {
+    const qs = toQueryString({ per_page: 30, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<CookedRecipeLog>>(`/api/v1/users/me/cooked-recipes${qs}`);
   },
 };
 

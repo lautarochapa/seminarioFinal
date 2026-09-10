@@ -45,6 +45,8 @@ class DemoScenarioSeeder extends GlobalCatalogSeeder
         $this->ensureStock($groupId, $this->productIds, $this->units);
         $this->ensureMinimumRules($groupId, $this->productIds, $this->units);
 
+        $this->cleanupEmptyDemoLists($groupId);
+
         $this->say('DemoScenario listo. Usuario: ' . self::USER_EMAIL . ' / ' . self::USER_PASS);
     }
 
@@ -67,7 +69,19 @@ class DemoScenarioSeeder extends GlobalCatalogSeeder
                 'deleted_at'        => null,
             ]
         );
-        return (int) DB::table('users')->where('email', self::USER_EMAIL)->value('id');
+        $userId = (int) DB::table('users')->where('email', self::USER_EMAIL)->value('id');
+
+        // Rol por defecto: el mismo que recibe cualquier usuario que se registra.
+        // Habilita las pantallas de usuario final (/web/*) via el RBAC existente.
+        $userRoleId = DB::table('roles')->where('code', 'user')->where('status', 'active')->value('id');
+        if ($userRoleId) {
+            DB::table('user_roles')->updateOrInsert(
+                ['user_id' => $userId, 'role_id' => $userRoleId],
+                ['created_at' => $this->now]
+            );
+        }
+
+        return $userId;
     }
 
     private function ensureProfile(int $userId): void
@@ -179,6 +193,43 @@ class DemoScenarioSeeder extends GlobalCatalogSeeder
                 'deleted_at'   => null,
             ]
         );
+    }
+
+    /**
+     * Elimina listas de compra residuales del grupo demo: las que NO tienen
+     * ningun rastro de uso real (0 items, 0 sesiones de compra, 0 compras,
+     * 0 movimientos de presupuesto), sin importar su estado. Cualquier lista con
+     * el minimo contenido o actividad se conserva. `demo:prepare` es un
+     * "restaurar escenario", asi que esto deja una pizarra limpia sin borrar
+     * nada real. No usa IDs hardcodeados: opera sobre el grupo demo resuelto.
+     */
+    private function cleanupEmptyDemoLists(int $groupId): void
+    {
+        $emptyIds = DB::table('shopping_lists as sl')
+            ->where('sl.family_group_id', $groupId)
+            ->whereNull('sl.deleted_at')
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))->from('shopping_list_items')
+                    ->whereColumn('shopping_list_items.shopping_list_id', 'sl.id');
+            })
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))->from('shopping_sessions')
+                    ->whereColumn('shopping_sessions.shopping_list_id', 'sl.id');
+            })
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))->from('purchases')
+                    ->whereColumn('purchases.shopping_list_id', 'sl.id');
+            })
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))->from('budget_movements')
+                    ->whereColumn('budget_movements.related_shopping_list_id', 'sl.id');
+            })
+            ->pluck('sl.id');
+
+        if ($emptyIds->isNotEmpty()) {
+            DB::table('shopping_lists')->whereIn('id', $emptyIds)->delete();
+            $this->say('DemoScenario: se limpiaron ' . $emptyIds->count() . ' lista(s) de compra vacia(s) del grupo demo.');
+        }
     }
 
     private function ensureMealPlanPreferences(int $groupId): void

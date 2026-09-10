@@ -66,12 +66,18 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'lastname' => $data['lastname'],
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        // Un usuario nuevo debe recibir el rol por defecto para poder usar las
+        // pantallas de usuario final (/web/*). Misma logica que el registro por API.
+        $user->assignDefaultRole();
+
+        return $user;
     }
 }

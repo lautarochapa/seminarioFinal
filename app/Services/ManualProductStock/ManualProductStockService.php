@@ -119,7 +119,13 @@ class ManualProductStockService
 
     private function createOrUpdateStock(int $groupId, int $userId, Product $product, array $data): array
     {
-        $duplicate = $this->repo->findStockDuplicate($groupId, $product->id, $data['stock_location_id'] ?? null);
+        $duplicate = \App\StockItem::resolveActiveLot(
+            $groupId,
+            (int) $product->id,
+            isset($data['stock_location_id']) ? (int) $data['stock_location_id'] : null,
+            (int) $data['unit_id'],
+            $data['expiration_date'] ?? null
+        );
 
         if ($duplicate) {
             $old = $this->stockPayload($duplicate);

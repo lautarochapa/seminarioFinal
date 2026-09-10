@@ -61,4 +61,53 @@ class StockItem extends Model
     {
         return $this->hasMany(StockAlert::class);
     }
+
+    /**
+     * Resuelve el lote de stock activo en el que debe acumularse un alta.
+     *
+     * Un "lote" es la combinacion grupo + producto + unidad + vencimiento, y la
+     * ubicacion cuando se indica una. Criterio unico para las tres vias de alta
+     * (scanner, "Mi cocina" y producto manual):
+     *
+     *  - Con ubicacion: coincide grupo+producto+unidad+vencimiento+ubicacion.
+     *  - Sin ubicacion: primero se busca una fila sin ubicacion; si no hay y
+     *    existe UN solo lote candidato (cualquier ubicacion) se acumula ahi, en
+     *    vez de crear una fila huerfana.
+     *  - Lotes con distinta ubicacion o distinto vencimiento se mantienen
+     *    separados: son lotes reales distintos y la UI los muestra por separado.
+     *
+     * NO deduplica por nombre.
+     */
+    public static function resolveActiveLot(int $groupId, int $productId, ?int $locationId, int $unitId, $expirationDate): ?self
+    {
+        $expDate = $expirationDate instanceof \DateTimeInterface
+            ? $expirationDate->format('Y-m-d')
+            : ($expirationDate !== null ? (string) $expirationDate : null);
+
+        $base = function () use ($groupId, $productId, $unitId, $expDate) {
+            return static::where('family_group_id', $groupId)
+                ->where('product_id', $productId)
+                ->where('unit_id', $unitId)
+                ->where('status', 'active')
+                ->whereNull('deleted_at')
+                ->where(function ($q) use ($expDate) {
+                    $expDate === null
+                        ? $q->whereNull('expiration_date')
+                        : $q->whereDate('expiration_date', $expDate);
+                });
+        };
+
+        if ($locationId !== null) {
+            return $base()->where('stock_location_id', $locationId)->first();
+        }
+
+        $withoutLocation = $base()->whereNull('stock_location_id')->first();
+        if ($withoutLocation) {
+            return $withoutLocation;
+        }
+
+        $candidates = $base()->get();
+
+        return $candidates->count() === 1 ? $candidates->first() : null;
+    }
 }

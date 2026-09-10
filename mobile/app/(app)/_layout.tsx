@@ -47,6 +47,7 @@ export default function AppLayout() {
       <Tabs.Screen name="budgets/index" options={{ ...hidden, title: 'Presupuesto' }} />
       <Tabs.Screen name="budgets/[id]" options={{ ...hidden, title: 'Detalle de presupuesto' }} />
       <Tabs.Screen name="recipes/[id]" options={{ ...hidden, title: 'Detalle de receta' }} />
+      <Tabs.Screen name="recipes/cooked" options={{ ...hidden, title: 'Recetas cocinadas' }} />
       <Tabs.Screen name="recipe-favorites" options={{ ...hidden, title: 'Favoritos' }} />
       <Tabs.Screen name="recipe-suggestions" options={{ ...hidden, title: 'Sugerencias' }} />
       <Tabs.Screen name="meal-plans/index" options={{ ...hidden, title: 'Planes' }} />

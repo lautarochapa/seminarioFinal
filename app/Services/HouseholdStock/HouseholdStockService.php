@@ -41,10 +41,12 @@ class HouseholdStockService
         $this->validateRelations($groupId, $data);
 
         return DB::transaction(function () use ($groupId, $userId, $data, $ip, $ua) {
-            $duplicate = $this->stock->findDuplicate(
+            $duplicate = \App\StockItem::resolveActiveLot(
                 $groupId,
                 (int) $data['product_id'],
-                $data['stock_location_id'] ?? null
+                isset($data['stock_location_id']) ? (int) $data['stock_location_id'] : null,
+                (int) $data['unit_id'],
+                $data['expiration_date'] ?? null
             );
 
             if ($duplicate) {

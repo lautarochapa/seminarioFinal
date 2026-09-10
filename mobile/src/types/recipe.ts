@@ -113,6 +113,17 @@ export interface RecipeSuggestion {
   available_ingredients_count?: number | null;
 }
 
+export interface CookedRecipeLog {
+  id: number;
+  recipe_id: number;
+  family_group_id: number | null;
+  servings: number | null;
+  cooked_at: string | null;
+  stock_discounted: boolean;
+  notes: string | null;
+  recipe?: RecipeSummary | null;
+}
+
 export interface GenerateShoppingListRequest {
   mode?: string;
 }

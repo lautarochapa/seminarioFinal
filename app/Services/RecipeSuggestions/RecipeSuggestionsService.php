@@ -203,7 +203,11 @@ class RecipeSuggestionsService
         $expiringIds = $this->repo->expiringIngredientIds($groupId);
 
         return $recipes->map(function ($recipe) use ($user, $groupId, $expiringIds) {
-            $avail = $this->availabilityService->availability($user, $recipe->id, $groupId, $recipe->servings ?: 1);
+            // Semantica unica de disponibilidad: se evalua SIEMPRE al tamaño de
+            // porcion base de la receta (mismo criterio que GET /recipes/{id}/availability
+            // cuando no se pide un servings distinto). Asi una receta no puede
+            // aparecer en "Para cocinar ahora" y quedar bloqueada en el detalle.
+            $avail = $this->availabilityService->availability($user, $recipe->id, $groupId);
             $expiring = $recipe->ingredients->filter(fn ($item) => in_array((int) $item->ingredient_id, $expiringIds, true))->count();
             return array_merge($this->recipeData($recipe), [
                 'availability'          => $avail['status'], 'availability_status' => $avail['status'], 'can_cook' => $avail['can_cook'],

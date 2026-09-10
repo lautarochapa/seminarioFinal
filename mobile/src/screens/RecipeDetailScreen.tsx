@@ -35,15 +35,22 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   const [cooking, setCooking] = useState(false);
   const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
   const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
-  const [servings, setServings] = useState(1);
+  // `null` hasta conocer las porciones base de la receta: asi la disponibilidad
+  // se consulta SIEMPRE al mismo tamaño de porcion que usa "Qué puedo cocinar hoy"
+  // (evita el estado transitorio en el que el detalle decia "posible" a 1 porcion).
+  const [servings, setServings] = useState<number | null>(null);
   const [availability, setAvailability] = useState<RecipeAvailability | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const effectiveServings = servings ?? data?.servings ?? 1;
 
-  useEffect(() => { const timer = setTimeout(() => { if (data?.servings) setServings(data.servings); }, 0); return () => clearTimeout(timer); }, [data?.servings]);
+  useEffect(() => {
+    if (!data) return;
+    setServings((prev) => (prev ?? (data.servings && data.servings > 0 ? data.servings : 1)));
+  }, [data]);
 
   const refreshAvailability = useCallback(async () => {
-    if (!groupId || !recipeId || servings < 1) { setAvailability(null); return; }
+    if (!groupId || !recipeId || servings == null || servings < 1) { setAvailability(null); return; }
     setAvailabilityLoading(true); setAvailabilityError(null);
     try { setAvailability((await recipesApi.availability(recipeId, groupId, servings)).data); }
     catch (err) { setAvailabilityError(err instanceof ApiError ? err.normalized.message : 'No pudimos verificar el stock.'); }
@@ -63,7 +70,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
     setResult(null);
     try {
       const res = await recipeShoppingListApi.generate(groupId, recipeId, {
-        servings,
+        servings: effectiveServings,
         supermarket_chain_id: selectedChainId ?? undefined,
         supermarket_branch_id: selectedBranchId ?? undefined,
       });
@@ -96,7 +103,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
             const key = `${recipeId}-${groupId}-${Date.now()}`;
             setCooking(true);
             recipesApi.cook(recipeId, {
-              servings,
+              servings: effectiveServings,
               family_group_id: groupId,
               deduct_stock: true,
               idempotency_key: key,
@@ -194,7 +201,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
           <>
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Disponibilidad con Mi cocina</Text>
-              <View style={styles.servingsRow}><Text style={styles.hint}>Porciones</Text><AppButton title="−" variant="outline" disabled={servings <= 1 || availabilityLoading} onPress={() => setServings((value) => Math.max(1, value - 1))} /><Text style={styles.servingsValue}>{servings}</Text><AppButton title="+" variant="outline" disabled={availabilityLoading} onPress={() => setServings((value) => Math.min(100, value + 1))} /></View>
+              <View style={styles.servingsRow}><Text style={styles.hint}>Porciones</Text><AppButton title="−" variant="outline" disabled={effectiveServings <= 1 || availabilityLoading} onPress={() => setServings(Math.max(1, effectiveServings - 1))} /><Text style={styles.servingsValue}>{servings ?? effectiveServings}</Text><AppButton title="+" variant="outline" disabled={availabilityLoading} onPress={() => setServings(Math.min(100, effectiveServings + 1))} /></View>
               {availabilityLoading ? <Text style={styles.hint}>Verificando disponibilidad...</Text> : null}
               {availabilityError ? <><Text style={styles.availabilityError}>{availabilityError}</Text><AppButton title="Reintentar" variant="outline" onPress={() => void refreshAvailability()} /></> : null}
               {availability ? <AvailabilityPanel availability={availability} /> : null}

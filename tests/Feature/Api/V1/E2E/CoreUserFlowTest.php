@@ -211,4 +211,106 @@ class CoreUserFlowTest extends TestCase
             fwrite(STDERR, "  ahorro ganador vs mas caro: \$" . number_format(max($totals) - min($totals), 2) . "\n");
         }
     }
+
+    /**
+     * BUG-002: una lista generada desde un meal plan en web debe verse en mobile
+     * (mismos endpoints que consumen ShoppingListsScreen / ShoppingListDetailScreen)
+     * con TODOS sus items, y desde ahi se puede "Comenzar compra".
+     */
+    public function test_web_generated_list_is_visible_and_startable_from_mobile_endpoints(): void
+    {
+        $g = $this->groupId;
+
+        // "Web": generar plan + aprobar + generar lista desde el plan.
+        $planId = (int) $this->actingAs($this->laura)->postJson(
+            "/api/v1/family-groups/{$g}/meal-plans/generate",
+            ['period_type' => 'weekly', 'start_date' => now()->toDateString(), 'end_date' => now()->addDays(6)->toDateString()]
+        )->assertStatus(201)->json('data.id');
+        $this->actingAs($this->laura)->postJson("/api/v1/family-groups/{$g}/meal-plans/{$planId}/approve")->assertStatus(200);
+        $listId = (int) $this->actingAs($this->laura)
+            ->postJson("/api/v1/family-groups/{$g}/meal-plans/{$planId}/generate-shopping-list")
+            ->assertStatus(201)->json('data.id');
+
+        $expectedItemCount = ShoppingListItem::where('shopping_list_id', $listId)->count();
+        $this->assertGreaterThan(0, $expectedItemCount);
+
+        // "Mobile" — pantalla de listas (GET /shopping-lists): la MISMA lista aparece.
+        $index = $this->actingAs($this->laura)
+            ->getJson("/api/v1/family-groups/{$g}/shopping-lists")
+            ->assertStatus(200)->json('data');
+        $found = collect($index)->firstWhere('id', $listId);
+        $this->assertNotNull($found, 'La lista generada en web debe aparecer en el listado mobile.');
+        $this->assertSame('meal_plan', $found['source_type']);
+        $this->assertSame('active', $found['status']);
+        $this->assertSame($g, (int) $found['family_group_id']);
+
+        // "Mobile" — detalle (GET /shopping-lists/{id}): trae todos los items con nombre/unidad/cantidad.
+        $detail = $this->actingAs($this->laura)
+            ->getJson("/api/v1/family-groups/{$g}/shopping-lists/{$listId}")
+            ->assertStatus(200)->json('data');
+        $this->assertCount($expectedItemCount, $detail['items']);
+        foreach ($detail['items'] as $it) {
+            $this->assertNotEmpty($it['display_name']);
+            $this->assertNotNull($it['unit']);
+            $this->assertGreaterThan(0, (float) $it['quantity']);
+        }
+
+        // "Mobile" — endpoint /items (el que usa ShoppingListDetailScreen para la lista de articulos).
+        $items = $this->actingAs($this->laura)
+            ->getJson("/api/v1/family-groups/{$g}/shopping-lists/{$listId}/items")
+            ->assertStatus(200)->json('data');
+        $this->assertCount($expectedItemCount, $items);
+
+        // "Mobile" — Comenzar compra con escaner.
+        $this->actingAs($this->laura)
+            ->postJson("/api/v1/family-groups/{$g}/shopping-lists/{$listId}/start-session")
+            ->assertStatus(201);
+        $this->assertDatabaseHas('shopping_lists', ['id' => $listId, 'status' => 'in_progress']);
+
+        // Una lista VACIA no se puede empezar (coincide con el guard del boton mobile).
+        $emptyListId = (int) $this->actingAs($this->laura)
+            ->postJson("/api/v1/family-groups/{$g}/shopping-lists", ['source_type' => 'manual', 'status' => 'active'])
+            ->assertStatus(201)->json('data.id');
+        $this->actingAs($this->laura)
+            ->postJson("/api/v1/family-groups/{$g}/shopping-lists/{$emptyListId}/start-session")
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_EMPTY');
+        $this->actingAs($this->laura)
+            ->postJson("/api/v1/family-groups/{$g}/shopping-lists/{$emptyListId}/start")
+            ->assertStatus(422)
+            ->assertJsonPath('error.code', 'SHOPPING_LIST_EMPTY');
+    }
+
+    /**
+     * BUG-002: demo:prepare no crea listas; y al re-ejecutarlo limpia las listas
+     * demo residuales vacias (0 items / 0 uso) sin tocar las que tienen contenido.
+     */
+    public function test_demo_prepare_creates_no_lists_and_purges_empty_residual_ones(): void
+    {
+        $g = $this->groupId;
+
+        // Recien sembrado: el grupo demo no tiene ninguna lista.
+        $this->assertSame(0, ShoppingList::where('family_group_id', $g)->count());
+
+        // Simulamos residuo de QA: 3 listas vacias/sin uso (varios estados) + 1 con contenido.
+        $emptyA = ShoppingList::create(['family_group_id' => $g, 'created_by' => $this->laura->id, 'source_type' => 'manual', 'status' => 'active']);
+        $emptyB = ShoppingList::create(['family_group_id' => $g, 'created_by' => $this->laura->id, 'source_type' => 'recipe', 'status' => 'draft']);
+        $emptyC = ShoppingList::create(['family_group_id' => $g, 'created_by' => $this->laura->id, 'source_type' => 'manual', 'status' => 'completed']);
+        $withItems = ShoppingList::create(['family_group_id' => $g, 'created_by' => $this->laura->id, 'source_type' => 'manual', 'status' => 'active']);
+        ShoppingListItem::create([
+            'shopping_list_id' => $withItems->id,
+            'product_id' => DB::table('product_barcodes')->where('barcode', '7791111000063')->value('product_id'),
+            'quantity' => 1,
+            'unit_id' => DB::table('unit_measures')->where('code', 'kg')->value('id'),
+            'status' => 'pending',
+        ]);
+
+        // Re-ejecutar demo:prepare (idempotente).
+        $this->seed(\DemoScenarioSeeder::class);
+
+        $this->assertNull(ShoppingList::find($emptyA->id));
+        $this->assertNull(ShoppingList::find($emptyB->id));
+        $this->assertNull(ShoppingList::find($emptyC->id));
+        $this->assertNotNull(ShoppingList::find($withItems->id), 'Una lista con contenido no debe borrarse.');
+    }
 }

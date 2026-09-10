@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { EmptyState } from '@/components/EmptyState';
@@ -35,7 +36,7 @@ export function RecipeSuggestionsScreen() {
   }, [selectedGroup]);
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
   const open = (item: RecipeSuggestion) => router.push({ pathname: '/(app)/recipes/[id]' as never, params: { id: String(item.recipe.id) } });
-  return <View style={styles.fill}><AppHeader title="Qué puedo cocinar hoy" showBack onBack={goBackOrHome} /><FamilyGroupSelector />
+  return <View style={styles.fill}><AppHeader title="Qué puedo cocinar hoy" showBack onBack={goBackOrHome} rightAction={<Pressable accessibilityRole="button" accessibilityLabel="Recetas cocinadas" hitSlop={8} onPress={() => router.push('/(app)/recipes/cooked' as never)}><MaterialCommunityIcons name="history" size={22} color={COLORS.textInverse} /></Pressable>} /><FamilyGroupSelector />
     {loading ? <LoadingScreen message="Revisando tu stock..." /> : error ? <ErrorState message={error.normalized.message} traceId={error.normalized.traceId} onRetry={refresh} type="server" /> : !selectedGroup ? <EmptyState icon="account-group-outline" message="Seleccioná un grupo familiar." /> :
       <ScrollView contentContainerStyle={styles.list}>
         <Text style={styles.heading}>Para cocinar ahora</Text>

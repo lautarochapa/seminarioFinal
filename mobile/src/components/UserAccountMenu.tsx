@@ -23,6 +23,7 @@ const ITEMS = [
   ['allergy', 'Restricciones y alergias', '/(app)/restrictions'],
   ['calendar-month-outline', 'Mis planes', '/(app)/meal-plans'],
   ['clipboard-list-outline', 'Mis listas', '/(app)/shopping-lists'],
+  ['pot-steam-outline', 'Recetas cocinadas', '/(app)/recipes/cooked'],
   ['cog-outline', 'Configuración', '/(app)/settings'],
   ['help-circle-outline', 'Ayuda', 'soon:help'],
 ] as const;
