@@ -92,6 +92,39 @@ class RecipeAvailabilityRepository
         return $map;
     }
 
+    public function allActiveConversions(): Collection
+    {
+        return UnitConversion::where('status', 'active')->get()->groupBy('from_unit_id');
+    }
+
+    /**
+     * Returns [ product_id => [ unit_id => total_qty ] ] for the given products,
+     * counting only active, non-deleted, non-expired stock.
+     */
+    public function stockByProducts(int $familyGroupId, array $productIds): array
+    {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        $rows = DB::table('stock_items as si')
+            ->where('si.family_group_id', $familyGroupId)
+            ->whereIn('si.product_id', $productIds)
+            ->where('si.status', 'active')
+            ->whereNull('si.deleted_at')
+            ->where(function ($q) { $q->whereNull('si.expiration_date')->orWhereDate('si.expiration_date', '>=', now()->toDateString()); })
+            ->select('si.product_id', 'si.unit_id', DB::raw('SUM(si.quantity) as total_qty'))
+            ->groupBy('si.product_id', 'si.unit_id')
+            ->get();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[(int) $row->product_id][(int) $row->unit_id] = (float) $row->total_qty;
+        }
+
+        return $map;
+    }
+
     public function findConversionFactor(int $fromUnitId, int $toUnitId, ?int $ingredientId): ?float
     {
         if ($fromUnitId === $toUnitId) {

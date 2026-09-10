@@ -51,31 +51,27 @@ class RecipeSuggestionsService
 
         $canManage = $user->hasPermission('recipes.manage');
         $recipes   = $this->repo->candidateRecipes($user->id, $canManage);
-        $stockMap  = $this->repo->stockSummary($groupId);
-        $convs     = $this->repo->allConversions();
+        $batch     = $this->availabilityService->availabilityBatch($recipes, $groupId);
 
-        $scored = $recipes->map(function ($recipe) use ($expiringIds, $stockMap, $convs) {
-            $ingredients    = $recipe->ingredients ?? collect();
-            $expiringMatch  = 0;
-
-            foreach ($ingredients as $ri) {
-                if (in_array((int) $ri->ingredient_id, $expiringIds, true)) {
-                    $expiringMatch++;
-                }
-            }
+        $scored = $recipes->map(function ($recipe) use ($expiringIds, $batch) {
+            $expiringMatch = collect($recipe->ingredients ?? [])
+                ->filter(fn ($ri) => in_array((int) $ri->ingredient_id, $expiringIds, true))
+                ->count();
 
             if ($expiringMatch === 0) {
                 return null;
             }
 
-            $avail = $this->recipeAvailability($recipe, $stockMap, $convs);
+            $avail = $batch[$recipe->id];
 
             return array_merge($this->recipeData($recipe), [
-                'availability'        => $avail['status'],
-                'max_possible_servings' => $avail['max_servings'],
-                'expiring_ingredients'=> $expiringMatch,
-                'score'               => $expiringMatch,
-                'reasons'             => ['uses_expiring_stock'],
+                'availability'          => $avail['status'],
+                'max_possible_servings' => $avail['max_possible_servings'],
+                'coverage_percentage'   => $avail['coverage_percentage'],
+                'missing_ingredients_count' => $avail['missing_ingredients_count'],
+                'expiring_ingredients'  => $expiringMatch,
+                'score'                 => $expiringMatch,
+                'reasons'               => ['uses_expiring_stock'],
             ]);
         })->filter()->sortByDesc('score')->values();
 
@@ -152,30 +148,26 @@ class RecipeSuggestionsService
         $canManage = $user->hasPermission('recipes.manage');
         $recipes   = $this->repo->candidateRecipes($user->id, $canManage);
 
-        $stockMap     = $groupId !== null ? $this->repo->stockSummary($groupId) : [];
-        $convs        = $this->repo->allConversions();
-        $expiringIds  = $groupId !== null ? $this->repo->expiringIngredientIds($groupId) : [];
+        $expiringIds = $groupId !== null ? $this->repo->expiringIngredientIds($groupId) : [];
+        $batch       = $groupId !== null ? $this->availabilityService->availabilityBatch($recipes, $groupId) : [];
 
-        $scored = $recipes->map(function ($recipe) use ($stockMap, $convs, $expiringIds, $groupId) {
+        $scored = $recipes->map(function ($recipe) use ($batch, $expiringIds, $groupId) {
             $score   = 0;
             $reasons = [];
 
-            if ($groupId !== null && count($stockMap) > 0) {
-                $avail = $this->recipeAvailability($recipe, $stockMap, $convs);
-                if ($avail['status'] === self::STATUS_POSSIBLE) {
+            if ($groupId !== null) {
+                $status = $batch[$recipe->id]['status'];
+                if ($status === RecipeAvailabilityService::STATUS_POSSIBLE) {
                     $score += 3;
                     $reasons[] = 'available_with_stock';
-                } elseif ($avail['status'] === self::STATUS_ALMOST_POSSIBLE) {
+                } elseif ($status === RecipeAvailabilityService::STATUS_ALMOST_POSSIBLE) {
                     $score += 1;
                     $reasons[] = 'almost_available';
                 }
 
-                $expiringMatch = 0;
-                foreach ($recipe->ingredients as $ri) {
-                    if (in_array((int) $ri->ingredient_id, $expiringIds, true)) {
-                        $expiringMatch++;
-                    }
-                }
+                $expiringMatch = collect($recipe->ingredients ?? [])
+                    ->filter(fn ($ri) => in_array((int) $ri->ingredient_id, $expiringIds, true))
+                    ->count();
                 if ($expiringMatch > 0) {
                     $score += $expiringMatch;
                     $reasons[] = 'uses_expiring_stock';
@@ -188,8 +180,9 @@ class RecipeSuggestionsService
             }
 
             return array_merge($this->recipeData($recipe), [
-                'score'   => $score,
-                'reasons' => $reasons,
+                'availability' => $groupId !== null ? $batch[$recipe->id]['status'] : null,
+                'score'        => $score,
+                'reasons'      => $reasons,
             ]);
         })->sortByDesc('score')->values();
 
@@ -201,14 +194,14 @@ class RecipeSuggestionsService
         $canManage = $user->hasPermission('recipes.manage');
         $recipes   = $this->repo->candidateRecipes($user->id, $canManage);
         $expiringIds = $this->repo->expiringIngredientIds($groupId);
+        $batch     = $this->availabilityService->availabilityBatch($recipes, $groupId);
 
-        return $recipes->map(function ($recipe) use ($user, $groupId, $expiringIds) {
-            // Semantica unica de disponibilidad: se evalua SIEMPRE al tamaño de
-            // porcion base de la receta (mismo criterio que GET /recipes/{id}/availability
-            // cuando no se pide un servings distinto). Asi una receta no puede
-            // aparecer en "Para cocinar ahora" y quedar bloqueada en el detalle.
-            $avail = $this->availabilityService->availability($user, $recipe->id, $groupId);
-            $expiring = $recipe->ingredients->filter(fn ($item) => in_array((int) $item->ingredient_id, $expiringIds, true))->count();
+        return $recipes->map(function ($recipe) use ($expiringIds, $batch) {
+            $avail = $batch[$recipe->id];
+            $expiring = collect($recipe->ingredients ?? [])
+                ->filter(fn ($item) => in_array((int) $item->ingredient_id, $expiringIds, true))
+                ->count();
+
             return array_merge($this->recipeData($recipe), [
                 'availability'          => $avail['status'], 'availability_status' => $avail['status'], 'can_cook' => $avail['can_cook'],
                 'max_possible_servings' => $avail['max_possible_servings'], 'coverage_percentage' => $avail['coverage_percentage'],
@@ -216,67 +209,6 @@ class RecipeSuggestionsService
                 'missing_ingredients_count' => $avail['missing_ingredients_count'], 'expiring_ingredients_count' => $expiring,
             ]);
         });
-    }
-
-    private function recipeAvailability($recipe, array $stockMap, Collection $convs): array
-    {
-        $ingredients     = $recipe->ingredients ?? collect();
-        $requiredServings = ($recipe->servings !== null && $recipe->servings > 0) ? (int) $recipe->servings : 1;
-
-        if ($ingredients->isEmpty()) {
-            return ['status' => self::STATUS_NOT_POSSIBLE, 'max_servings' => 0, 'coverage_pct' => 0.0];
-        }
-
-        $maxServings = PHP_INT_MAX;
-        $totalReq    = 0;
-        $totalAvail  = 0;
-
-        foreach ($ingredients as $ri) {
-            $ingredientId = (int) $ri->ingredient_id;
-            $requiredQty  = (float) $ri->quantity;
-            $recipeUnitId = (int) $ri->unit_id;
-            $perServing   = $requiredQty / $requiredServings;
-
-            $ingStock     = $stockMap[$ingredientId] ?? [];
-            $availableQty = 0.0;
-
-            foreach ($ingStock as $stockUnitId => $stockQty) {
-                $factor = $this->findConversionFactor($convs, $stockUnitId, $recipeUnitId, $ingredientId);
-                if ($factor !== null) {
-                    $availableQty += $stockQty * $factor;
-                }
-            }
-
-            $maxFromThis = $perServing > 0 ? (int) floor($availableQty / $perServing) : ($availableQty >= $requiredQty ? PHP_INT_MAX : 0);
-            $maxServings = min($maxServings, $maxFromThis);
-
-            $totalReq   += $requiredQty;
-            $totalAvail += min($availableQty, $requiredQty);
-        }
-
-        if ($maxServings === PHP_INT_MAX) {
-            $maxServings = $requiredServings;
-        }
-
-        $status      = $maxServings >= $requiredServings ? self::STATUS_POSSIBLE : ($maxServings > 0 ? self::STATUS_ALMOST_POSSIBLE : self::STATUS_NOT_POSSIBLE);
-        $coveragePct = $totalReq > 0 ? round(min(100.0, ($totalAvail / $totalReq) * 100), 1) : 0.0;
-
-        return ['status' => $status, 'max_servings' => $maxServings, 'coverage_pct' => $coveragePct];
-    }
-
-    private function findConversionFactor(Collection $convs, int $fromUnit, int $toUnit, int $ingredientId): ?float
-    {
-        if ($fromUnit === $toUnit) {
-            return 1.0;
-        }
-
-        $candidates = $convs->get($fromUnit, collect())->where('to_unit_id', $toUnit);
-        $specific   = $candidates->first(fn ($c) => (int) $c->ingredient_id === $ingredientId);
-        if ($specific) {
-            return (float) $specific->factor;
-        }
-        $generic = $candidates->first(fn ($c) => $c->ingredient_id === null);
-        return $generic ? (float) $generic->factor : null;
     }
 
     private function recipeData($recipe): array

@@ -5,6 +5,7 @@ namespace App\Services\RecipeAvailability;
 use App\Exceptions\RecipeAvailability\RecipeAvailabilityException;
 use App\Repositories\RecipeAvailability\RecipeAvailabilityRepository;
 use App\User;
+use Illuminate\Support\Collection;
 
 class RecipeAvailabilityService
 {
@@ -22,13 +23,16 @@ class RecipeAvailabilityService
     public function availability(User $user, $recipeId, int $familyGroupId, ?int $servings = null): array
     {
         $recipe = $this->resolveRecipe($user, $recipeId, $familyGroupId);
-        return $this->compute($recipe, $familyGroupId, false, $servings);
+        list($stockByIngredient, $stockByProduct, $conversions) = $this->loadStockContext($familyGroupId, collect([$recipe]));
+
+        return $this->compute($recipe, $stockByIngredient, $stockByProduct, $conversions, false, $servings);
     }
 
     public function missingIngredients(User $user, $recipeId, int $familyGroupId): array
     {
         $recipe = $this->resolveRecipe($user, $recipeId, $familyGroupId);
-        $result = $this->compute($recipe, $familyGroupId, false);
+        list($stockByIngredient, $stockByProduct, $conversions) = $this->loadStockContext($familyGroupId, collect([$recipe]));
+        $result = $this->compute($recipe, $stockByIngredient, $stockByProduct, $conversions, false);
 
         $missing = array_values(array_filter($result['ingredients'], function ($ing) {
             return $ing['status'] !== 'available';
@@ -42,6 +46,39 @@ class RecipeAvailabilityService
             'recipe_id'  => $result['recipe_id'],
             'status'     => $result['status'],
             'missing'    => $missing,
+        ];
+    }
+
+    /**
+     * Availability for many already-loaded, already-visible recipes against a
+     * single family group, sharing one stock/conversion load. Same per-recipe
+     * shape as availability(). Returns [ recipe_id => result ].
+     */
+    public function availabilityBatch(Collection $recipes, int $familyGroupId, ?int $servings = null): array
+    {
+        list($stockByIngredient, $stockByProduct, $conversions) = $this->loadStockContext($familyGroupId, $recipes);
+
+        $out = [];
+        foreach ($recipes as $recipe) {
+            $out[$recipe->id] = $this->compute($recipe, $stockByIngredient, $stockByProduct, $conversions, false, $servings);
+        }
+
+        return $out;
+    }
+
+    private function loadStockContext(int $familyGroupId, Collection $recipes): array
+    {
+        $productIds = $recipes->flatMap(function ($recipe) {
+            return collect($recipe->ingredients ?? [])
+                ->pluck('specific_product_id')
+                ->filter()
+                ->map(fn ($id) => (int) $id);
+        })->unique()->values()->all();
+
+        return [
+            $this->repo->stockByIngredient($familyGroupId),
+            $this->repo->stockByProducts($familyGroupId, $productIds),
+            $this->repo->allActiveConversions(),
         ];
     }
 
@@ -72,13 +109,12 @@ class RecipeAvailabilityService
         return $recipe;
     }
 
-    private function compute($recipe, int $familyGroupId, bool $includeOptional, ?int $requestedServings = null): array
+    private function compute($recipe, array $stockByIngredient, array $stockByProduct, Collection $conversions, bool $includeOptional, ?int $requestedServings = null): array
     {
-        $ingredients     = $recipe->ingredients;
+        $ingredients     = $recipe->ingredients ?? collect();
         $baseServings = ($recipe->servings !== null && $recipe->servings > 0) ? (int) $recipe->servings : 1;
         $requiredServings = $requestedServings ?: $baseServings;
         $servingFactor = $requiredServings / $baseServings;
-        $stockMap        = $this->repo->stockByIngredient($familyGroupId);
 
         $breakdown   = [];
         $maxServings = PHP_INT_MAX;
@@ -95,15 +131,14 @@ class RecipeAvailabilityService
             $recipeUnitId = (int) $ri->unit_id;
             $ingName      = $ri->ingredient ? $ri->ingredient->name : null;
 
-            // Gather stock for this ingredient, converting each unit to the recipe unit
             if ($ri->specific_product_id) {
-                $sourceStock = $this->repo->stockByProduct($familyGroupId, (int) $ri->specific_product_id);
-                $availableQty = $this->sumConvertedStock($sourceStock, $recipeUnitId, $ingredientId);
+                $sourceStock = $stockByProduct[(int) $ri->specific_product_id] ?? [];
             } else {
-                $sourceStock  = $stockMap[$ingredientId] ?? [];
-                $availableQty = $this->sumConvertedStock($sourceStock, $recipeUnitId, $ingredientId);
+                $sourceStock = $stockByIngredient[$ingredientId] ?? [];
             }
-            $unitCompatible = empty($sourceStock) || $this->hasCompatibleUnit($sourceStock, $recipeUnitId, $ingredientId);
+
+            $availableQty    = $this->sumConvertedStock($sourceStock, $recipeUnitId, $ingredientId, $conversions);
+            $unitCompatible  = empty($sourceStock) || $this->hasCompatibleUnit($sourceStock, $recipeUnitId, $ingredientId, $conversions);
 
             $missingQty  = max(0.0, $requiredQty - $availableQty);
             $covered     = $availableQty >= $requiredQty;
@@ -126,6 +161,7 @@ class RecipeAvailabilityService
                 'unit_name'          => $ri->unit ? $ri->unit->name : null,
                 'unit_symbol'        => $ri->unit ? $ri->unit->symbol : null,
                 'unit_compatible'    => $unitCompatible,
+                'specific_product_id' => $ri->specific_product_id ? (int) $ri->specific_product_id : null,
                 'is_available'       => $covered,
                 'status'             => $itemStatus,
                 'is_optional'        => (bool) $ri->is_optional,
@@ -163,11 +199,11 @@ class RecipeAvailabilityService
         ];
     }
 
-    private function sumConvertedStock(array $unitQtyMap, int $targetUnitId, int $ingredientId): float
+    private function sumConvertedStock(array $unitQtyMap, int $targetUnitId, int $ingredientId, Collection $conversions): float
     {
         $total = 0.0;
         foreach ($unitQtyMap as $unitId => $qty) {
-            $factor = $this->repo->findConversionFactor($unitId, $targetUnitId, $ingredientId);
+            $factor = $this->resolveFactor($conversions, (int) $unitId, $targetUnitId, $ingredientId);
             if ($factor !== null) {
                 $total += $qty * $factor;
             }
@@ -175,14 +211,47 @@ class RecipeAvailabilityService
         return $total;
     }
 
-    private function hasCompatibleUnit(array $unitQtyMap, int $targetUnitId, int $ingredientId): bool
+    private function hasCompatibleUnit(array $unitQtyMap, int $targetUnitId, int $ingredientId, Collection $conversions): bool
     {
         foreach ($unitQtyMap as $unitId => $qty) {
-            if ((float) $qty > 0 && $this->repo->findConversionFactor($unitId, $targetUnitId, $ingredientId) !== null) {
+            if ((float) $qty > 0 && $this->resolveFactor($conversions, (int) $unitId, $targetUnitId, $ingredientId) !== null) {
                 return true;
             }
         }
         return false;
+    }
+
+    private function resolveFactor(Collection $conversions, int $from, int $to, ?int $ingredientId): ?float
+    {
+        if ($from === $to) {
+            return 1.0;
+        }
+
+        $direct = $this->pickConversion($conversions->get($from, collect()), $to, $ingredientId);
+        if ($direct !== null) {
+            return (float) $direct->factor;
+        }
+
+        $inverse = $this->pickConversion($conversions->get($to, collect()), $from, $ingredientId);
+        if ($inverse !== null && (float) $inverse->factor > 0) {
+            return 1 / (float) $inverse->factor;
+        }
+
+        return null;
+    }
+
+    private function pickConversion($fromGroup, int $to, ?int $ingredientId)
+    {
+        $candidates = collect($fromGroup)->where('to_unit_id', $to);
+
+        if ($ingredientId) {
+            $specific = $candidates->first(fn ($c) => (int) $c->ingredient_id === $ingredientId);
+            if ($specific) {
+                return $specific;
+            }
+        }
+
+        return $candidates->first(fn ($c) => $c->ingredient_id === null);
     }
 
     private function overallStatus(int $maxServings, int $requiredServings): string
