@@ -352,8 +352,8 @@ class RecipeFavoritesCookedTest extends TestCase
         $ing    = $this->ingredient($grams);
         $prod   = $this->product($ing, $grams);
         $this->addIngredient($recipe, $ing, $grams, 250.0);
-        $later = $this->stockItem($group, $prod, $grams, 200.0, ['expiration_date' => '2026-12-31']);
-        $first = $this->stockItem($group, $prod, $grams, 100.0, ['expiration_date' => '2026-08-01']);
+        $later = $this->stockItem($group, $prod, $grams, 200.0, ['expiration_date' => now()->addDays(60)->toDateString()]);
+        $first = $this->stockItem($group, $prod, $grams, 100.0, ['expiration_date' => now()->addDays(10)->toDateString()]);
 
         $this->actingAs($user)->postJson('/api/v1/recipes/' . $recipe->id . '/cook', [
             'servings'        => 1,

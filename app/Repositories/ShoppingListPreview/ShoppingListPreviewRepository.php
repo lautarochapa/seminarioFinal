@@ -65,6 +65,21 @@ class ShoppingListPreviewRepository
         return $conversion ? (float) $conversion->factor : null;
     }
 
+    /**
+     * Picks a purchasable product for a generic recipe ingredient, reusing the existing
+     * products.ingredient_id link (there is no dedicated "default product per ingredient"
+     * table). Returns null when no active product is linked to the ingredient.
+     */
+    public function resolveProductForIngredient(int $ingredientId): ?\App\Product
+    {
+        return \App\Product::where('ingredient_id', $ingredientId)
+            ->where('status', 'active')
+            ->where('is_active', true)
+            ->whereNull('deleted_at')
+            ->orderBy('id')
+            ->first();
+    }
+
     public function existingList(int $groupId, int $planId): ?ShoppingList
     {
         // Only reuse a list that hasn't been started/finished/cancelled yet. Regenerating on top of
@@ -88,14 +103,22 @@ class ShoppingListPreviewRepository
         ShoppingListItem::where('shopping_list_id', $list->id)->delete();
 
         foreach ($items as $item) {
+            // When the ingredient could be resolved to a purchasable product (with a known
+            // package size), the item carries product_id + a whole number of packages priced
+            // in the product's own unit. That is what makes the generated list comparable
+            // between supermarkets (compare-supermarkets skips items with no product_id).
+            // Otherwise we fall back to the ingredient + the recipe's own unit/quantity.
+            $hasProduct = ! empty($item['resolved_product_id']);
+
             ShoppingListItem::create([
                 'shopping_list_id' => $list->id,
-                'ingredient_id' => $item['ingredient']['id'],
-                'product_id' => null,
-                'quantity' => $item['missing_quantity'],
-                'unit_id' => $item['unit']['id'],
-                'status' => 'pending',
-                'notes' => $this->notes($item),
+                'ingredient_id'    => $hasProduct ? null : $item['ingredient']['id'],
+                'product_id'       => $hasProduct ? $item['resolved_product_id'] : null,
+                'quantity'         => $hasProduct ? $item['purchase_quantity'] : $item['missing_quantity'],
+                'unit_id'          => $hasProduct ? $item['purchase_unit_id'] : $item['unit']['id'],
+                'estimated_price'  => $hasProduct ? ($item['estimated_price'] ?? null) : null,
+                'status'           => 'pending',
+                'notes'            => $this->notes($item),
             ]);
         }
     }

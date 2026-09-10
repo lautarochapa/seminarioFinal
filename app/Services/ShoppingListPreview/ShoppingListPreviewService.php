@@ -7,6 +7,7 @@ use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Exceptions\MealPlanItems\MealPlanItemException;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingListPreview\ShoppingListPreviewRepository;
+use App\Services\RecipeShoppingList\RecipePriceEstimator;
 use App\ShoppingList;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +16,16 @@ class ShoppingListPreviewService
 {
     private $groups;
     private $repo;
+    private $priceEstimator;
 
-    public function __construct(FamilyGroupRepository $groups, ShoppingListPreviewRepository $repo)
-    {
+    public function __construct(
+        FamilyGroupRepository $groups,
+        ShoppingListPreviewRepository $repo,
+        RecipePriceEstimator $priceEstimator
+    ) {
         $this->groups = $groups;
         $this->repo = $repo;
+        $this->priceEstimator = $priceEstimator;
     }
 
     public function preview(User $user, int $groupId, int $planId): array
@@ -38,6 +44,7 @@ class ShoppingListPreviewService
     public function generate(User $user, int $groupId, int $planId, string $ip, string $ua): array
     {
         $items = $this->preview($user, $groupId, $planId);
+        $items = $this->resolvePurchasableProducts($groupId, $items);
 
         return DB::transaction(function () use ($user, $groupId, $planId, $items, $ip, $ua) {
             $existing = $this->repo->existingList($groupId, $planId);
@@ -90,6 +97,50 @@ class ShoppingListPreviewService
         } catch (FamilyGroupException $e) {
             throw MealPlanItemException::groupNotFound();
         }
+    }
+
+    /**
+     * Enriches each missing requirement with a purchasable product when one can be
+     * resolved from the ingredient link and has a known package size. The missing
+     * quantity (in the recipe's unit) is converted into a whole number of packages
+     * priced in the product's own unit, so the generated list can be compared between
+     * supermarkets. Requirements with no resolvable product are left untouched and keep
+     * their ingredient + recipe-unit fallback.
+     */
+    private function resolvePurchasableProducts(int $groupId, array $items): array
+    {
+        foreach ($items as $index => $item) {
+            $ingredientId = (int) $item['ingredient']['id'];
+            $recipeUnitId = (int) $item['unit']['id'];
+            $missingQty   = (float) $item['missing_quantity'];
+
+            $product = $this->repo->resolveProductForIngredient($ingredientId);
+            if (! $product || ! $product->net_quantity || ! $product->package_unit_id) {
+                continue;
+            }
+
+            $packageUnitId = (int) $product->package_unit_id;
+            $factor = $this->repo->conversionFactor($recipeUnitId, $packageUnitId, $ingredientId);
+            if ($factor === null) {
+                continue;
+            }
+
+            $neededInPackageUnit = $missingQty * $factor;
+            $packages = max(1, (int) ceil($neededInPackageUnit / (float) $product->net_quantity));
+
+            // compare-supermarkets keys the price lookup on products.default_unit_id, so the
+            // item must carry that unit. The demo dataset keeps default_unit_id == package_unit_id.
+            $purchaseUnitId = (int) ($product->default_unit_id ?: $packageUnitId);
+
+            $price = $this->priceEstimator->resolve((int) $product->id, $groupId, null, null);
+
+            $items[$index]['resolved_product_id'] = (int) $product->id;
+            $items[$index]['purchase_quantity']   = $packages;
+            $items[$index]['purchase_unit_id']    = $purchaseUnitId;
+            $items[$index]['estimated_price']     = $price['unit_price'];
+        }
+
+        return $items;
     }
 
     private function requirements($plan): array

@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useStock } from '@/hooks/useStock';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { FamilyGroupSelector } from '@/components/FamilyGroupSelector';
+import { StockAlertsBanner } from '@/components/StockAlertsBanner';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { AppButton } from '@/components/AppButton';
@@ -116,6 +117,8 @@ export function StockScreen() {
         />
       ) : (
         <>
+          <StockAlertsBanner groupId={groupId} />
+
           {/* Header bar */}
           <View style={styles.barRow}>
             {meta ? (
