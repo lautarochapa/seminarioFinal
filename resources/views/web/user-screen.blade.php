@@ -52,6 +52,22 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'onboarding')
+        <section data-user-onboarding>
+            <div class="alert" data-onboarding-message style="display:none"></div>
+            <article class="panel">
+                <h2>Tu progreso</h2>
+                <p class="muted" data-onboarding-progress>Cargando tu progreso...</p>
+                <ol class="onboarding-steps" data-onboarding-steps style="list-style:none;padding:0;display:grid;gap:10px">
+                    <li class="muted">Cargando pasos...</li>
+                </ol>
+                <div class="web-tools" data-onboarding-done style="display:none;margin-top:14px">
+                    <a class="btn-main" href="{{ url('/web') }}">Ir al inicio</a>
+                    <a class="btn-secondary-web" href="{{ url('/web/stock') }}">Cargar mi cocina</a>
+                </div>
+            </article>
+        </section>
+
     @elseif($screenKey === 'stock')
         <section data-user-stock-locations data-can-manage-catalog="{{ auth()->user() && auth()->user()->hasPermission('catalog.manage') ? '1' : '0' }}">
             <div class="alert" data-stock-locations-message style="display:none"></div>

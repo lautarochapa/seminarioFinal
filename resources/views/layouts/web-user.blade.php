@@ -10,6 +10,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
+    <script src="{{ asset('js/user-onboarding.js') }}?v={{ file_exists(public_path('js/user-onboarding.js')) ? filemtime(public_path('js/user-onboarding.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-home.js') }}?v={{ file_exists(public_path('js/user-home.js')) ? filemtime(public_path('js/user-home.js')) : time() }}" defer></script>
     <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-profile.js') }}?v={{ file_exists(public_path('js/user-profile.js')) ? filemtime(public_path('js/user-profile.js')) : time() }}" defer></script>

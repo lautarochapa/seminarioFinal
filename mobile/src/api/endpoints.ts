@@ -12,6 +12,7 @@ import type {
 } from '@/types/auth';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
 import type { Profile, ProfileUpdateRequest, HealthPreferenceCatalogItem, HealthPreferenceType, UserHealthPreference } from '@/types/profile';
+import type { OnboardingStatus } from '@/types/onboarding';
 import type {
   FamilyGroup,
   FamilyGroupMember,
@@ -123,6 +124,12 @@ export const profileApi = {
   },
   update(payload: ProfileUpdateRequest): Promise<ApiResponse<Profile>> {
     return apiClient.patch<ApiResponse<Profile>>('/api/v1/users/me/profile', payload);
+  },
+};
+
+export const onboardingApi = {
+  status(): Promise<ApiResponse<OnboardingStatus>> {
+    return apiClient.get<ApiResponse<OnboardingStatus>>('/api/v1/users/me/onboarding');
   },
 };
 

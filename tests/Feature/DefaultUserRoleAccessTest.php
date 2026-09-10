@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\FamilyGroup;
+use App\Objective;
 use App\User;
+use App\UserProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
@@ -27,6 +31,32 @@ class DefaultUserRoleAccessTest extends TestCase
         'barcode-scanner', 'supermarkets', 'branches',
     ];
 
+    private function completeOnboarding(User $user): void
+    {
+        UserProfile::updateOrCreate(
+            ['user_id' => $user->id],
+            ['height_cm' => 170, 'current_weight_kg' => 70, 'meals_per_day' => 4]
+        );
+
+        $objective = Objective::firstOrCreate(
+            ['code' => 'onboarding_test_obj'],
+            ['name' => 'Objetivo test', 'status' => 'active']
+        );
+        DB::table('user_objectives')->updateOrInsert(
+            ['user_id' => $user->id, 'objective_id' => $objective->id],
+            ['is_active' => true, 'created_at' => now(), 'updated_at' => now()]
+        );
+
+        $group = FamilyGroup::create([
+            'name' => 'Hogar test', 'owner_user_id' => $user->id, 'status' => 'active',
+        ]);
+        DB::table('family_group_members')->insert([
+            'family_group_id' => $group->id, 'user_id' => $user->id,
+            'role_in_group' => 'owner', 'status' => 'active', 'joined_at' => now(),
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+    }
+
     public function test_assign_default_role_is_idempotent(): void
     {
         $user = factory(User::class)->create();
@@ -45,6 +75,7 @@ class DefaultUserRoleAccessTest extends TestCase
     {
         $user = factory(User::class)->create();
         $user->assignDefaultRole();
+        $this->completeOnboarding($user);
 
         $this->assertTrue($user->hasRole('user'));
 
@@ -91,6 +122,7 @@ class DefaultUserRoleAccessTest extends TestCase
 
         $user = User::where('email', 'nueva.persona.web@example.test')->firstOrFail();
         $this->assertTrue($user->hasRole('user'), 'El registro web legacy debe asignar el rol por defecto.');
+        $this->completeOnboarding($user);
 
         $this->actingAs($user)->get('/web')->assertStatus(200);
         $this->actingAs($user)->get('/web/shopping-list')->assertStatus(200);
@@ -108,6 +140,7 @@ class DefaultUserRoleAccessTest extends TestCase
 
         $user = User::findOrFail((int) $res->json('data.id'));
         $this->assertTrue($user->hasRole('user'));
+        $this->completeOnboarding($user);
 
         $this->actingAs($user)->get('/web')->assertStatus(200);
         $this->actingAs($user)->get('/web/planning')->assertStatus(200);

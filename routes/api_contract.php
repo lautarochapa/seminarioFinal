@@ -114,6 +114,7 @@ Route::prefix('family-groups')->middleware(['trace_id', 'api_token', 'auth'])->g
 });
 
 Route::prefix('users/me')->middleware(['trace_id', 'api_token', 'auth'])->group(function () {
+    Route::get('onboarding', [\App\Http\Controllers\Api\V1\Onboarding\OnboardingController::class, 'show']);
     Route::get('profile', [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'show']);
     Route::patch('profile', [\App\Http\Controllers\Api\V1\UserProfile\UserProfileController::class, 'update']);
     Route::get('priority-settings', [\App\Http\Controllers\Api\V1\UserProfile\UserPrioritySettingController::class, 'show']);

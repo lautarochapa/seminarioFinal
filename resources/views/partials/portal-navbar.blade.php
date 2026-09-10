@@ -5,6 +5,7 @@
             'permission' => 'web.user.dashboard',
             'items' => [
                 ['Dashboard', '/web', 'web.user.dashboard'],
+                ['Puesta en marcha', '/web/onboarding', 'web.user.onboarding'],
                 ['Stock del hogar', '/web/stock', 'web.user.stock'],
                 ['Recetas', '/web/recipes', 'web.user.recipes'],
                 ['Buscar recetas', '/web/recipe-search', 'web.user.recipe-search'],

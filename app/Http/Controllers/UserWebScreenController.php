@@ -13,6 +13,7 @@ use App\ShoppingList;
 use App\StockAlert;
 use App\StockItem;
 use App\UserObjective;
+use App\Services\Onboarding\OnboardingStatusService;
 
 class UserWebScreenController extends Controller
 {
@@ -26,6 +27,10 @@ class UserWebScreenController extends Controller
 
         if (! $this->canAccessScreen($screen)) {
             abort(403);
+        }
+
+        if ($redirect = $this->maybeRedirectToOnboarding($screen)) {
+            return $redirect;
         }
 
         return view('web.user-screen', [
@@ -200,6 +205,15 @@ class UserWebScreenController extends Controller
                 'metrics' => ['family_groups'],
                 'panels' => ['Miembros', 'Invitaciones', 'Roles del grupo', 'Preferencias'],
             ],
+            'onboarding' => [
+                'title' => 'Puesta en marcha',
+                'module' => 'Onboarding',
+                'description' => 'Completa tus datos, objetivo, comidas por dia y grupo familiar para empezar a usar stock y recetas.',
+                'primary' => 'Continuar',
+                'secondary' => 'Ver mi perfil',
+                'metrics' => ['objectives', 'family_groups'],
+                'panels' => ['Datos basicos', 'Preferencias alimentarias', 'Comidas por dia', 'Grupo familiar'],
+            ],
             'profile-objectives' => [
                 'title' => 'Perfil y objetivos',
                 'module' => 'Perfil',
@@ -274,5 +288,23 @@ class UserWebScreenController extends Controller
         $permission = $screens[$screen]['permission'] ?? 'web.user.' . $screen;
 
         return $user && $user->hasPermission($permission);
+    }
+
+    private function maybeRedirectToOnboarding($screen)
+    {
+        if ($screen !== 'dashboard') {
+            return null;
+        }
+
+        $user = request()->user();
+        if (! $user || ! $user->hasPermission('web.user.onboarding')) {
+            return null;
+        }
+
+        if (app(OnboardingStatusService::class)->isComplete($user->id)) {
+            return null;
+        }
+
+        return redirect('/web/onboarding');
     }
 }

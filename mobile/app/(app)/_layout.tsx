@@ -27,6 +27,7 @@ export default function AppLayout() {
       <Tabs.Screen name="planning" options={{ title: 'Plan', headerShown: false, tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="calendar-month-outline" color={color} size={size} /> }} />
       <Tabs.Screen name="shopping-lists/index" options={{ title: 'Compras', headerShown: false, tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="cart-outline" color={color} size={size} /> }} />
 
+      <Tabs.Screen name="onboarding" options={{ ...hidden, title: 'Puesta en marcha' }} />
       <Tabs.Screen name="catalog" options={{ ...hidden, title: 'Catalogo' }} />
       <Tabs.Screen name="profile" options={{ ...hidden, title: 'Perfil' }} />
       <Tabs.Screen name="goals" options={{ ...hidden, title: 'Mis objetivos' }} />
