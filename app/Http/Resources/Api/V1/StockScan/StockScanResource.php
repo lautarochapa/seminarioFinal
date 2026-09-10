@@ -15,6 +15,7 @@ class StockScanResource extends JsonResource
             'stock_location_id' => $this->stock_location_id,
             'quantity' => $this->quantity,
             'unit_id' => $this->unit_id,
+            'expiration_date' => $this->expiration_date ? $this->expiration_date->toDateString() : null,
             'status' => $this->status,
             'product' => $this->whenLoaded('product', function () {
                 if (! $this->product) {

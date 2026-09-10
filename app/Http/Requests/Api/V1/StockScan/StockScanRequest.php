@@ -18,6 +18,7 @@ class StockScanRequest extends FormRequest
             'stock_location_id' => 'required|integer|min:1',
             'quantity' => 'required|numeric|min:0.0001',
             'unit_id' => 'sometimes|integer|min:1',
+            'expiration_date' => 'sometimes|nullable|date',
         ];
     }
 

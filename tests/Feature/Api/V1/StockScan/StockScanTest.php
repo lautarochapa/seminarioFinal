@@ -205,6 +205,176 @@ class StockScanTest extends TestCase
             ->assertJsonPath('data.quantity', '5.0000');
     }
 
+    public function test_scan_persiste_expiration_date_del_payload()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product] = $this->productWithBarcode();
+        $location = $this->location($group);
+        $vto = now()->addDays(45)->toDateString();
+
+        $response = $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $location->id,
+            'quantity' => 2,
+            'expiration_date' => $vto,
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.expiration_date', $vto);
+
+        $this->assertDatabaseHas('stock_items', [
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'expiration_date' => $vto,
+        ]);
+    }
+
+    public function test_scan_mismo_lote_mismo_vencimiento_acumula()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product] = $this->productWithBarcode();
+        $location = $this->location($group);
+        $vto = now()->addDays(30)->toDateString();
+
+        $payload = [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $location->id,
+            'quantity' => 2,
+            'expiration_date' => $vto,
+        ];
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', $payload)->assertStatus(201);
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan',
+            array_merge($payload, ['quantity' => 3]))->assertStatus(200)
+            ->assertJsonPath('data.quantity', '5.0000');
+
+        $this->assertEquals(1, StockItem::where('product_id', $product->id)->count());
+    }
+
+    public function test_scan_distinto_vencimiento_crea_lote_separado()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product] = $this->productWithBarcode();
+        $location = $this->location($group);
+
+        $base = [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $location->id,
+            'quantity' => 2,
+        ];
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan',
+            array_merge($base, ['expiration_date' => now()->addDays(10)->toDateString()]))->assertStatus(201);
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan',
+            array_merge($base, ['expiration_date' => now()->addDays(60)->toDateString()]))->assertStatus(201);
+
+        $lots = StockItem::where('product_id', $product->id)->get();
+        $this->assertCount(2, $lots);
+        $this->assertEqualsCanonicalizing(['2.0000', '2.0000'], $lots->pluck('quantity')->map(fn ($q) => (string) $q)->all());
+    }
+
+    public function test_scan_distinta_ubicacion_crea_lote_separado()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product] = $this->productWithBarcode();
+        $locA = $this->location($group);
+        $locB = $this->location($group);
+        $vto = now()->addDays(20)->toDateString();
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890', 'stock_location_id' => $locA->id, 'quantity' => 1, 'expiration_date' => $vto,
+        ])->assertStatus(201);
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890', 'stock_location_id' => $locB->id, 'quantity' => 1, 'expiration_date' => $vto,
+        ])->assertStatus(201);
+
+        $this->assertEquals(2, StockItem::where('product_id', $product->id)->count());
+    }
+
+    public function test_scan_no_crea_producto_nuevo()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product] = $this->productWithBarcode();
+        $location = $this->location($group);
+        $before = Product::count();
+
+        $payload = ['barcode' => '7791234567890', 'stock_location_id' => $location->id, 'quantity' => 1];
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', $payload)
+            ->assertStatus(201)
+            ->assertJsonPath('data.product.id', $product->id);
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', $payload)->assertStatus(200);
+
+        $this->assertEquals($before, Product::count());
+    }
+
+    public function test_scan_carga_stock_solo_en_el_grupo_del_usuario()
+    {
+        [$memberA, $groupA] = $this->groupWithMember();
+        [$memberB, $groupB] = $this->groupWithMember();
+        [$product] = $this->productWithBarcode();
+
+        $this->actingAs($memberA)->postJson('/api/v1/family-groups/'.$groupA->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $this->location($groupA)->id,
+            'quantity' => 4,
+        ])->assertStatus(201);
+
+        $this->assertEquals(1, StockItem::where('family_group_id', $groupA->id)->count());
+        $this->assertEquals(0, StockItem::where('family_group_id', $groupB->id)->count());
+    }
+
+    public function test_scan_quantity_cero_rechazado()
+    {
+        [$member, $group] = $this->groupWithMember();
+        $this->productWithBarcode();
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $this->location($group)->id,
+            'quantity' => 0,
+        ])->assertStatus(422)->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_scan_unit_id_inexistente_rechazado()
+    {
+        [$member, $group] = $this->groupWithMember();
+        $this->productWithBarcode();
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $this->location($group)->id,
+            'quantity' => 1,
+            'unit_id' => 987654,
+        ])->assertStatus(422)->assertJsonPath('error.code', 'STOCK_UNIT_INVALID');
+    }
+
+    public function test_stock_vencido_no_cuenta_como_disponible()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product, $ingredient, $unit] = $this->productWithBarcode();
+
+        StockItem::create([
+            'family_group_id' => $group->id, 'product_id' => $product->id,
+            'stock_location_id' => $this->location($group)->id,
+            'quantity' => 10, 'unit_id' => $unit->id, 'status' => 'active',
+            'expiration_date' => now()->subDay()->toDateString(),
+        ]);
+        StockItem::create([
+            'family_group_id' => $group->id, 'product_id' => $product->id,
+            'stock_location_id' => $this->location($group)->id,
+            'quantity' => 3, 'unit_id' => $unit->id, 'status' => 'active',
+            'expiration_date' => now()->addDays(30)->toDateString(),
+        ]);
+
+        $repo = app(\App\Repositories\RecipeAvailability\RecipeAvailabilityRepository::class);
+
+        $byProduct = $repo->stockByProduct($group->id, $product->id);
+        $this->assertSame(3.0, $byProduct[$unit->id] ?? null);
+
+        $byIngredient = $repo->stockByIngredient($group->id);
+        $this->assertSame(3.0, $byIngredient[$ingredient->id][$unit->id] ?? null);
+    }
+
     public function test_scan_audits_create_and_update()
     {
         [$member, $group] = $this->groupWithMember();

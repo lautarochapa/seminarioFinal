@@ -43,8 +43,10 @@ class StockScanService
             throw new FamilyGroupException('STOCK_UNIT_INVALID', 'La unidad indicada no existe o no esta activa.', 422);
         }
 
-        return DB::transaction(function () use ($groupId, $userId, $data, $locationId, $product, $unitId, $ip, $ua) {
-            $duplicate = StockItem::resolveActiveLot($groupId, (int) $product->id, $locationId, $unitId, null);
+        $expiration = ! empty($data['expiration_date']) ? $data['expiration_date'] : null;
+
+        return DB::transaction(function () use ($groupId, $userId, $data, $locationId, $product, $unitId, $expiration, $ip, $ua) {
+            $duplicate = StockItem::resolveActiveLot($groupId, (int) $product->id, $locationId, $unitId, $expiration);
 
             if ($duplicate) {
                 $old = $this->payload($duplicate);
@@ -57,14 +59,19 @@ class StockScanService
                 return [$updated, 200];
             }
 
-            $item = $this->stock->create([
+            $create = [
                 'family_group_id' => $groupId,
                 'product_id' => $product->id,
                 'stock_location_id' => $locationId,
                 'quantity' => $data['quantity'],
                 'unit_id' => $unitId,
                 'status' => 'active',
-            ])->fresh(['product.ingredient', 'location', 'unit']);
+            ];
+            if ($expiration !== null) {
+                $create['expiration_date'] = $expiration;
+            }
+
+            $item = $this->stock->create($create)->fresh(['product.ingredient', 'location', 'unit']);
 
             $this->audit($userId, 'stock-item.created', $item->id, null, $this->payload($item), $ip, $ua);
 
@@ -93,6 +100,7 @@ class StockScanService
             'stock_location_id' => $item->stock_location_id,
             'quantity' => $item->quantity,
             'unit_id' => $item->unit_id,
+            'expiration_date' => $item->expiration_date ? $item->expiration_date->toDateString() : null,
             'status' => $item->status,
         ];
     }

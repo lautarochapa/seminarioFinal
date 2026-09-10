@@ -33,6 +33,7 @@ export function BarcodeScannerScreen() {
   const [knownQuantity, setKnownQuantity] = useState('1');
   const [knownUnitId, setKnownUnitId] = useState<number | null>(null);
   const [knownLocationId, setKnownLocationId] = useState<number | null>(null);
+  const [knownExpiration, setKnownExpiration] = useState('');
   const [locations, setLocations] = useState<StockLocation[]>([]);
   const [addingKnownStock, setAddingKnownStock] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -114,6 +115,7 @@ export function BarcodeScannerScreen() {
       return;
     }
     setKnownQuantity('1');
+    setKnownExpiration('');
     setKnownUnitId(product.unit?.id ?? manualUnitId ?? units[0]?.id ?? null);
     setKnownLocationId(knownLocationId ?? locations[0]?.id ?? null);
     setKnownStockVisible(true);
@@ -130,6 +132,7 @@ export function BarcodeScannerScreen() {
         stock_location_id: knownLocationId,
         quantity: Number(knownQuantity),
         unit_id: knownUnitId,
+        expiration_date: knownExpiration.trim() || null,
       });
       setKnownStockVisible(false);
       Alert.alert('Stock actualizado', 'El producto quedo cargado en tu stock.');
@@ -308,6 +311,15 @@ export function BarcodeScannerScreen() {
               placeholderTextColor={COLORS.textHint}
               keyboardType="decimal-pad"
               accessibilityLabel="Cantidad"
+            />
+            <TextInput
+              style={styles.modalInput}
+              value={knownExpiration}
+              onChangeText={setKnownExpiration}
+              placeholder="Vencimiento (YYYY-MM-DD, opcional)"
+              placeholderTextColor={COLORS.textHint}
+              autoCapitalize="none"
+              accessibilityLabel="Fecha de vencimiento"
             />
             <View style={styles.unitWrap}>
               {locations.map((location) => (
