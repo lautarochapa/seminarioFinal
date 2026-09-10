@@ -13,10 +13,18 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class RecipeImportCandidatesService
 {
     private RecipeImportCandidatesRepository $repo;
+    private IngredientMatchService $matcher;
 
-    public function __construct(RecipeImportCandidatesRepository $repo)
+    public function __construct(RecipeImportCandidatesRepository $repo, IngredientMatchService $matcher)
     {
-        $this->repo = $repo;
+        $this->repo    = $repo;
+        $this->matcher = $matcher;
+    }
+
+    public function ingredientSuggestions(User $user, int $id): array
+    {
+        $this->assertPermission($user);
+        return $this->matcher->suggestForCandidate($this->findOrFail($id));
     }
 
     public function list(User $user, array $filters): LengthAwarePaginator

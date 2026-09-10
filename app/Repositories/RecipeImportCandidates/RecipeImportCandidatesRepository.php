@@ -107,6 +107,10 @@ class RecipeImportCandidatesRepository
         return DB::transaction(function () use ($candidate, $input, $userId) {
             $parsed = $candidate->parsed_recipe_json ?? [];
 
+            $servings   = $parsed['servings'] ?? null;
+            $prepMinutes = $parsed['prep_minutes'] ?? $parsed['prep_time_minutes'] ?? null;
+            $cookMinutes = $parsed['cook_minutes'] ?? $parsed['cook_time_minutes'] ?? null;
+
             $recipe = Recipe::create([
                 'name'               => $candidate->raw_title,
                 'nombre'             => $candidate->raw_title,
@@ -115,7 +119,7 @@ class RecipeImportCandidatesRepository
                 'tiempo'             => '',
                 'img'                => $candidate->raw_image_url ?? '',
                 'video'              => '',
-                'porcion'            => isset($parsed['servings']) ? (string) $parsed['servings'] : '',
+                'porcion'            => $servings !== null ? (string) $servings : '',
                 'calorias'           => 0,
                 'source_url'         => $candidate->source_url,
                 'source_site'        => $candidate->source_site,
@@ -125,9 +129,9 @@ class RecipeImportCandidatesRepository
                 'is_official'        => false,
                 'is_verified'        => false,
                 'status'             => 'active',
-                'servings'           => $parsed['servings'] ?? null,
-                'prep_time_minutes'  => $parsed['prep_minutes'] ?? null,
-                'cook_time_minutes'  => $parsed['cook_minutes'] ?? null,
+                'servings'           => $servings,
+                'prep_time_minutes'  => $prepMinutes,
+                'cook_time_minutes'  => $cookMinutes,
             ]);
 
             $mappings = $parsed['ingredient_mappings'] ?? [];

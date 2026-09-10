@@ -36,9 +36,14 @@ class RecipeScrapingService
             'job_type'        => RecipeScrapingRepository::JOB_TYPE,
             'requested_by'    => $user->id,
             'status'          => 'pending',
-            'parameters_json' => [
-                'max_pages' => min((int) ($input['max_pages'] ?? 1), 50),
-            ],
+            'parameters_json' => array_filter([
+                'max_pages'   => min((int) ($input['max_pages'] ?? 1), 50),
+                'max_recipes' => isset($input['max_recipes']) ? min((int) $input['max_recipes'], 200) : null,
+                'delay_ms'    => isset($input['delay_ms']) ? (int) $input['delay_ms'] : null,
+                'search_term' => isset($input['search_term']) && trim((string) $input['search_term']) !== ''
+                    ? trim((string) $input['search_term'])
+                    : null,
+            ], function ($v) { return $v !== null; }),
         ]);
 
         RunRecipeScrapingJob::dispatch($job->id);

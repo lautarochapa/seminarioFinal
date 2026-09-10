@@ -43,8 +43,11 @@ class RecipeImportCandidatesController extends Controller
         $traceId   = $request->attributes->get('trace_id');
         $candidate = $this->service->show($request->user(), (int) $id);
 
+        $data = (new RecipeImportCandidateDetailResource($candidate))->toArray($request);
+        $data['ingredient_suggestions'] = $this->service->ingredientSuggestions($request->user(), (int) $id);
+
         return response()->json([
-            'data'     => new RecipeImportCandidateDetailResource($candidate),
+            'data'     => $data,
             'trace_id' => $traceId,
         ])->header('X-Trace-Id', $traceId);
     }

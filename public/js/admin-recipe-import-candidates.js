@@ -155,6 +155,23 @@
         return null;
     }
 
+    function suggestionFor(candidate, index) {
+        var list = candidate && Array.isArray(candidate.ingredient_suggestions) ? candidate.ingredient_suggestions : [];
+        for (var i = 0; i < list.length; i += 1) {
+            if (Number(list[i].index) === Number(index)) {
+                return list[i];
+            }
+        }
+        return null;
+    }
+
+    function suggestionLabel(suggestion) {
+        if (!suggestion || !suggestion.suggested_ingredient_id) {
+            return 'sin sugerencia';
+        }
+        return 'sugerido: ' + suggestion.suggested_ingredient_name + ' (#' + suggestion.suggested_ingredient_id + ', ' + suggestion.confidence + ')';
+    }
+
     function option(label, value) {
         return '<option value="' + escapeHtml(value) + '">' + escapeHtml(label) + '</option>';
     }
@@ -250,7 +267,9 @@
         var ingredientList = ingredients.length ? ingredients.map(function (item, index) {
             var mapping = mappingFor(candidate, index);
             var mapped = mapping ? ' -> ingrediente #' + mapping.ingredient_id + ', unidad #' + mapping.unit_id : ' -> sin mapear';
-            return '<li>' + escapeHtml(ingredientText(item)) + '<span class="muted">' + escapeHtml(mapped) + '</span></li>';
+            var suggestion = suggestionFor(candidate, index);
+            var hint = suggestion ? '<br><span class="muted" style="font-size:12px">' + escapeHtml(suggestionLabel(suggestion)) + '</span>' : '';
+            return '<li>' + escapeHtml(ingredientText(item)) + '<span class="muted">' + escapeHtml(mapped) + '</span>' + hint + '</li>';
         }).join('') : '<li class="muted">Sin ingredientes parseados.</li>';
         var stepList = steps.length ? steps.map(function (item) {
             return '<li>' + escapeHtml(stepText(item)) + '</li>';
@@ -288,6 +307,8 @@
             map.quantity.value = '';
             map.notes.value = '';
             map.is_optional.checked = false;
+            var hint = qs('[data-import-candidates-suggestion]', root);
+            if (hint) { hint.textContent = ''; }
         }
         if (reject) {
             reject.id.value = candidate ? candidate.id : '';
@@ -298,6 +319,31 @@
                 return option((index + 1) + '. ' + ingredientText(item), index);
             }).join('') : '';
             indexSelect.innerHTML = '<option value="">Ingrediente parseado</option>' + options;
+        }
+    }
+
+    function applySuggestionToMapForm(root) {
+        var form = qs('[data-import-candidates-map-form]', root);
+        var hint = qs('[data-import-candidates-suggestion]', root);
+        if (!form || !state.selected) {
+            return;
+        }
+        var index = form.ingredient_index.value;
+        if (index === '') {
+            if (hint) { hint.textContent = ''; }
+            return;
+        }
+        var suggestion = suggestionFor(state.selected, Number(index));
+        if (hint) {
+            hint.textContent = suggestion
+                ? suggestionLabel(suggestion) + (suggestion.parsed_quantity != null ? ' - cantidad detectada: ' + suggestion.parsed_quantity : '')
+                : '';
+        }
+        if (suggestion && suggestion.suggested_ingredient_id && !form.ingredient_id.value) {
+            form.ingredient_id.value = String(suggestion.suggested_ingredient_id);
+        }
+        if (suggestion && suggestion.parsed_quantity != null && form.quantity.value === '') {
+            form.quantity.value = String(suggestion.parsed_quantity);
         }
     }
 
@@ -484,6 +530,12 @@
                 event.preventDefault();
                 saveMapping(root, mapForm);
             });
+            var indexSelect = qs('[data-import-candidates-ingredient-index]', root);
+            if (indexSelect) {
+                indexSelect.addEventListener('change', function () {
+                    applySuggestionToMapForm(root);
+                });
+            }
         }
         if (rejectForm) {
             rejectForm.addEventListener('submit', function (event) {

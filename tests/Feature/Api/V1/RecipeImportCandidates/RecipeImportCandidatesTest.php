@@ -52,6 +52,15 @@ class RecipeImportCandidatesTest extends TestCase
         ]);
     }
 
+    private function makeIngredient(string $name): Ingredient
+    {
+        return Ingredient::create([
+            'name'            => $name,
+            'normalized_name' => mb_strtolower($name, 'UTF-8'),
+            'status'          => 'active',
+        ]);
+    }
+
     private function unit(): UnitMeasure
     {
         return UnitMeasure::create([
@@ -225,6 +234,115 @@ class RecipeImportCandidatesTest extends TestCase
             ])
             ->assertStatus(409)
             ->assertJsonPath('error.code', 'IMPORT_CANDIDATE_ALREADY_FINALIZED');
+    }
+
+    public function test_show_sugiere_ingredientes_por_texto_y_deja_null_sin_match()
+    {
+        $user = $this->adminUser();
+        $this->makeIngredient('Huevo');
+        $this->makeIngredient('Harina');
+
+        $candidate = $this->parsedCandidate([
+            'source_url'           => 'https://cookpad.com/ar/recetas/55501',
+            'raw_ingredients_json' => ['2 huevos', '200 g de harina', 'un ingrediente inexistente xyz'],
+        ]);
+
+        $response = $this->actingAs($user)
+            ->getJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id);
+
+        $response->assertStatus(200);
+        $suggestions = $response->json('data.ingredient_suggestions');
+        $this->assertCount(3, $suggestions);
+
+        $this->assertSame(0, $suggestions[0]['index']);
+        $this->assertSame('Huevo', $suggestions[0]['suggested_ingredient_name']);
+        $this->assertEquals(2, $suggestions[0]['parsed_quantity']);
+
+        $this->assertSame('Harina', $suggestions[1]['suggested_ingredient_name']);
+        $this->assertEquals(200, $suggestions[1]['parsed_quantity']);
+        $this->assertSame('g', $suggestions[1]['parsed_unit_text']);
+
+        $this->assertNull($suggestions[2]['suggested_ingredient_id']);
+        $this->assertNull($suggestions[2]['confidence']);
+    }
+
+    public function test_crear_receta_persiste_servings_y_tiempos_de_la_fuente()
+    {
+        $user       = $this->adminUser();
+        $ingredient = $this->ingredient();
+        $unit       = $this->unit();
+
+        $candidate = $this->parsedCandidate([
+            'source_url'           => 'https://cookpad.com/ar/recetas/55502',
+            'raw_ingredients_json' => ['200 g fideos'],
+            'parsed_recipe_json'   => ['servings' => 4, 'prep_time_minutes' => 15, 'cook_time_minutes' => 30],
+        ]);
+
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/map-ingredient', [
+            'ingredient_index' => 0,
+            'ingredient_id'    => $ingredient->id,
+            'unit_id'          => $unit->id,
+            'quantity'         => 200,
+        ])->assertStatus(200);
+
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/approve')
+            ->assertStatus(200);
+
+        $response = $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/create-recipe', [
+            'is_public' => false,
+        ]);
+
+        $response->assertStatus(201);
+        $recipeId = $response->json('data.id');
+
+        $this->assertDatabaseHas('recipes', [
+            'id'                => $recipeId,
+            'servings'          => 4,
+            'prep_time_minutes' => 15,
+            'cook_time_minutes' => 30,
+        ]);
+        $this->assertDatabaseHas('recipe_ingredients', [
+            'recipe_id'     => $recipeId,
+            'ingredient_id' => $ingredient->id,
+            'unit_id'       => $unit->id,
+            'quantity'      => 200,
+        ]);
+    }
+
+    public function test_crear_receta_con_titulo_utf8()
+    {
+        $user = $this->adminUser();
+
+        $candidate = $this->parsedCandidate([
+            'source_url' => 'https://cookpad.com/ar/recetas/55503',
+            'raw_title'  => 'Ñoquis de papá con crema y jamón',
+        ]);
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/approve')
+            ->assertStatus(200);
+
+        $response = $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/create-recipe', [
+            'is_public' => false,
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.name', 'Ñoquis de papá con crema y jamón');
+        $this->assertDatabaseHas('recipes', ['name' => 'Ñoquis de papá con crema y jamón']);
+    }
+
+    public function test_crear_receta_duplicada_por_source_url_retorna_409()
+    {
+        $user = $this->adminUser();
+
+        $first = $this->parsedCandidate(['source_url' => 'https://cookpad.com/ar/recetas/55504']);
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $first->id . '/approve')->assertStatus(200);
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $first->id . '/create-recipe')->assertStatus(201);
+
+        $second = $this->parsedCandidate(['source_url' => 'https://cookpad.com/ar/recetas/55504']);
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $second->id . '/approve')->assertStatus(200);
+
+        $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $second->id . '/create-recipe')
+            ->assertStatus(409)
+            ->assertJsonPath('error.code', 'IMPORT_CANDIDATE_DUPLICATE_RECIPE');
     }
 
     public function test_auditoria_al_actualizar_candidata()

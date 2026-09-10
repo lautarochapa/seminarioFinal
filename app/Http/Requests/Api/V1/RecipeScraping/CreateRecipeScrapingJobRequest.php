@@ -14,7 +14,10 @@ class CreateRecipeScrapingJobRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'max_pages' => 'sometimes|integer|min:1|max:50',
+            'max_pages'    => 'sometimes|integer|min:1|max:50',
+            'max_recipes'  => 'sometimes|integer|min:1|max:200',
+            'delay_ms'     => 'sometimes|integer|min:0|max:60000',
+            'search_term'  => 'sometimes|string|max:60',
         ];
     }
 }

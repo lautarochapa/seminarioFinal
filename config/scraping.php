@@ -3,6 +3,7 @@
 return [
     'request_delay_ms' => (int) env('SCRAPING_REQUEST_DELAY_MS', 1500),
     'recipe_request_delay_ms' => (int) env('RECIPE_SCRAPING_REQUEST_DELAY_MS', 2500),
+    'recipe_search_term' => env('RECIPE_SCRAPING_SEARCH_TERM', 'comida'),
     'connect_timeout_seconds' => (int) env('SCRAPING_CONNECT_TIMEOUT_SECONDS', 5),
     'timeout_seconds' => (int) env('SCRAPING_TIMEOUT_SECONDS', 20),
     'max_retries' => (int) env('SCRAPING_MAX_RETRIES', 2),

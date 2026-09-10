@@ -3112,6 +3112,7 @@
                         <select class="form-control" name="ingredient_index" data-import-candidates-ingredient-index required>
                             <option value="">Ingrediente parseado</option>
                         </select>
+                        <div class="muted" data-import-candidates-suggestion style="font-size:12px"></div>
                         <select class="form-control" name="ingredient_id" data-import-candidates-ingredient required>
                             <option value="">Ingrediente del catalogo</option>
                         </select>

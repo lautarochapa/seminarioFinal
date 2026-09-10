@@ -22,6 +22,7 @@ class CookpadRecipeScraper
     private $http;
     private $rateLimiter;
     private $urlValidator;
+    private $blocked = false;
 
     public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator)
     {
@@ -39,11 +40,20 @@ class CookpadRecipeScraper
     {
         $result   = new RecipeScrapingResult();
         $metrics  = new ScrapingMetrics();
-        $requestedMaxPages = (int) (($job->parameters_json['max_pages'] ?? 1));
+        $params   = $job->parameters_json ?? [];
+        $requestedMaxPages = (int) ($params['max_pages'] ?? 1);
         $maxPages = min($requestedMaxPages, (int) config('scraping.limits.recipe_max_pages', 10));
         $maxRecipes = (int) config('scraping.limits.recipe_max_items', 200);
+        if (isset($params['max_recipes']) && (int) $params['max_recipes'] > 0) {
+            $maxRecipes = min($maxRecipes, (int) $params['max_recipes']);
+        }
+        $delayOverrideMs = isset($params['delay_ms']) && (int) $params['delay_ms'] >= 0
+            ? (int) $params['delay_ms']
+            : null;
         $baseUrl  = rtrim($source->base_url ?? 'https://cookpad.com/ar', '/');
+        $searchTerm = $this->resolveSearchTerm($params);
         $seenUrls = [];
+        $this->blocked = false;
 
         for ($page = 1; $page <= $maxPages; $page++) {
             if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
@@ -51,8 +61,14 @@ class CookpadRecipeScraper
                 break;
             }
 
-            $listingUrl = $baseUrl . '/busca/recetas?page=' . $page;
+            $listingUrl = $baseUrl . '/buscar/' . rawurlencode($searchTerm) . '?page=' . $page;
             $html       = $this->fetchHtml($source->code, $listingUrl, $metrics, true);
+
+            if ($this->blocked) {
+                $result->errorMessage = 'Fuente bloqueada o con verificacion anti-bot. Corrida detenida.';
+                $result->finalReason = 'blocked';
+                break;
+            }
 
             if ($html === null) {
                 $result->errorMessage = 'Failed to fetch listing page ' . $page;
@@ -84,6 +100,13 @@ class CookpadRecipeScraper
                 $seenUrls[$recipeUrl] = true;
 
                 $recipeHtml = $this->fetchHtml($source->code, $recipeUrl, $metrics, true);
+
+                if ($this->blocked) {
+                    $result->errorMessage = 'Fuente bloqueada o con verificacion anti-bot. Corrida detenida.';
+                    $result->finalReason = 'blocked';
+                    break 2;
+                }
+
                 if ($recipeHtml === null) {
                     continue;
                 }
@@ -102,7 +125,7 @@ class CookpadRecipeScraper
                     break 2;
                 }
 
-                $this->rateLimiter->pauseForRecipe();
+                $this->rateLimiter->pauseForRecipe($delayOverrideMs);
             }
 
             if (count($recipeLinks) < self::RECIPES_PER_PAGE) {
@@ -110,7 +133,7 @@ class CookpadRecipeScraper
             }
 
             if ($page < $maxPages) {
-                $this->rateLimiter->pauseForRecipe();
+                $this->rateLimiter->pauseForRecipe($delayOverrideMs);
             }
         }
 
@@ -165,20 +188,40 @@ class CookpadRecipeScraper
     public function extractRecipeLinks(string $html, string $baseUrl): array
     {
         $links = [];
-        preg_match_all('/href=["\'](' . preg_quote($baseUrl, '/') . '\/recetas\/\d+[^"\']*)["\']/', $html, $matches);
-        if (isset($matches[1])) {
-            $links = array_unique($matches[1]);
-        }
 
-        // Also match relative links
-        preg_match_all('/href=["\'](\/recetas\/\d+[^"\']*)["\']/', $html, $relMatches);
-        if (isset($relMatches[1])) {
-            foreach ($relMatches[1] as $rel) {
-                $links[] = $baseUrl . $rel;
+        if (preg_match_all('#href=["\']([^"\']*/recetas/\d+[^"\']*)["\']#', $html, $matches)) {
+            $host = $this->schemeHost($baseUrl);
+            foreach ($matches[1] as $href) {
+                $href = html_entity_decode($href, ENT_QUOTES);
+                if (strpos($href, 'http') === 0) {
+                    $links[] = $href;
+                } elseif (strpos($href, '/') === 0 && $host !== '') {
+                    $links[] = $host . $href;
+                }
             }
         }
 
-        return array_unique(array_values($links));
+        return array_values(array_unique($links));
+    }
+
+    private function schemeHost(string $url): string
+    {
+        $parts = parse_url($url);
+        if (empty($parts['scheme']) || empty($parts['host'])) {
+            return '';
+        }
+
+        return $parts['scheme'] . '://' . $parts['host'];
+    }
+
+    private function resolveSearchTerm(array $params): string
+    {
+        $term = isset($params['search_term']) ? trim((string) $params['search_term']) : '';
+        if ($term === '') {
+            $term = trim((string) config('scraping.recipe_search_term', 'comida'));
+        }
+
+        return $term !== '' ? $term : 'comida';
     }
 
     private function fromJsonLd(array $data, string $sourceUrl): ScrapedRecipeDTO
@@ -249,8 +292,19 @@ class CookpadRecipeScraper
                 'require_supported_source' => true,
             ]);
 
-            return $response->body();
+            $body = $response->body();
+
+            if ($this->looksBlocked($body)) {
+                $this->blocked = true;
+                Log::warning('cookpad_scraper_blocked', ['url' => mb_substr($url, 0, 300)]);
+                return null;
+            }
+
+            return $body;
         } catch (ScrapingHttpException $e) {
+            if (in_array($e->statusCode(), [401, 403, 429], true)) {
+                $this->blocked = true;
+            }
             Log::warning('cookpad_scraper_fetch_error', [
                 'url' => mb_substr($url, 0, 300),
                 'status_code' => $e->statusCode(),
@@ -262,5 +316,19 @@ class CookpadRecipeScraper
             Log::warning('cookpad_scraper_fetch_error', ['url' => $url, 'error' => mb_substr($e->getMessage(), 0, 200)]);
             return null;
         }
+    }
+
+    private function looksBlocked(string $body): bool
+    {
+        $head = mb_strtolower(mb_substr($body, 0, 4096), 'UTF-8');
+
+        foreach (['captcha', 'unusual traffic', 'access denied', 'verify you are human',
+                  'cf-browser-verification', 'attention required', 'are you a robot'] as $marker) {
+            if (mb_strpos($head, $marker) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

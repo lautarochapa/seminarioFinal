@@ -22,9 +22,13 @@ class ScrapingRateLimiter
         $this->pause($delay);
     }
 
-    public function pauseForRecipe(): void
+    public function pauseForRecipe(?int $overrideMs = null): void
     {
-        $this->pause((int) config('scraping.recipe_request_delay_ms', 2500));
+        $delay = $overrideMs !== null && $overrideMs >= 0
+            ? $overrideMs
+            : (int) config('scraping.recipe_request_delay_ms', 2500);
+
+        $this->pause($delay);
     }
 
     public function pauseSeconds(int $seconds): void
