@@ -28,6 +28,7 @@ class CarrefourParser
             $productId = $item['productId'] ?? $item['id'] ?? null;
             $itemId    = null;
             $imageUrl  = null;
+            $eanCandidates = [];
             $link      = $item['link'] ?? $item['url'] ?? null;
 
             // Formato Vtex (items con sellers)
@@ -36,6 +37,20 @@ class CarrefourParser
                 $itemId   = $vtexItem['itemId'] ?? null;
                 $imageUrl = $vtexItem['images'][0]['imageUrl'] ?? null;
                 $price    = $vtexItem['sellers'][0]['commertialOffer']['Price'] ?? null;
+
+                if (isset($vtexItem['ean'])) {
+                    $eanCandidates[] = $vtexItem['ean'];
+                }
+
+                // Vtex a veces expone el EAN dentro de referenceId
+                if (!empty($vtexItem['referenceId'])) {
+                    foreach ($vtexItem['referenceId'] as $ref) {
+                        $key = strtolower((string) ($ref['Key'] ?? ''));
+                        if (in_array($key, ['ean', 'ean13', 'gtin', 'codigodebarras'], true) && isset($ref['Value'])) {
+                            $eanCandidates[] = $ref['Value'];
+                        }
+                    }
+                }
             }
 
             // Formato simplificado (usado en fixtures de tests)
@@ -43,6 +58,13 @@ class CarrefourParser
                 $price    = (float) $item['price'];
                 $itemId   = $item['id'] ?? null;
                 $imageUrl = $item['image_url'] ?? null;
+            }
+
+            if (isset($item['ean'])) {
+                $eanCandidates[] = $item['ean'];
+            }
+            if (isset($item['barcode'])) {
+                $eanCandidates[] = $item['barcode'];
             }
 
             if ($price === null || (float) $price <= 0) {
@@ -58,10 +80,52 @@ class CarrefourParser
             $dto->externalProductId = (string) ($productId ?? '');
             $dto->externalSku      = (string) ($itemId ?? $productId ?? '');
             $dto->rawImageUrl      = $imageUrl;
+            $dto->rawEan           = $this->firstValidEan($eanCandidates);
 
             $products[] = $dto;
         }
 
         return $products;
+    }
+
+    /**
+     * Devuelve el primer EAN valido de una lista de candidatos.
+     *
+     * @param array $candidates
+     */
+    private function firstValidEan(array $candidates): ?string
+    {
+        foreach ($candidates as $candidate) {
+            $normalized = $this->normalizeEan($candidate);
+            if ($normalized !== null) {
+                return $normalized;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normaliza un EAN/GTIN: solo digitos, longitud EAN-8..GTIN-14, descarta placeholders.
+     *
+     * @param mixed $value
+     */
+    private function normalizeEan($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $digits = preg_replace('/\D+/', '', (string) $value);
+
+        if ($digits === null || $digits === '' || strlen($digits) < 8 || strlen($digits) > 14) {
+            return null;
+        }
+
+        if (preg_match('/^0+$/', $digits)) {
+            return null;
+        }
+
+        return $digits;
     }
 }

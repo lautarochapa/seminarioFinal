@@ -13,4 +13,5 @@ class ScrapedProductDTO
     public ?string $externalProductId = null;
     public ?string $externalSku = null;
     public ?string $rawImageUrl = null;
+    public ?string $rawEan = null;
 }

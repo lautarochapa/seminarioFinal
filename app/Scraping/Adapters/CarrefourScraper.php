@@ -41,6 +41,12 @@ class CarrefourScraper implements SupermarketScraperInterface
         $requestedMaxPages = (int) ($params['max_pages'] ?? 5);
         $maxPages = min($requestedMaxPages, (int) config('scraping.limits.supermarket_max_pages', 30));
         $maxItems = (int) config('scraping.limits.supermarket_max_items', 3000);
+        if (isset($params['max_products']) && (int) $params['max_products'] > 0) {
+            $maxItems = min($maxItems, (int) $params['max_products']);
+        }
+        $delayOverrideMs = isset($params['delay_ms']) && (int) $params['delay_ms'] >= 0
+            ? (int) $params['delay_ms']
+            : null;
         $perPage  = 50;
         $page     = 0;
         $seenKeys = [];
@@ -150,7 +156,7 @@ class CarrefourScraper implements SupermarketScraperInterface
 
             $page++;
             if ($page < $maxPages) {
-                $this->rateLimiter->pauseForSupermarket();
+                $this->rateLimiter->pauseForSupermarket($delayOverrideMs);
             }
         }
 

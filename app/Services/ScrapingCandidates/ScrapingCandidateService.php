@@ -69,6 +69,7 @@ class ScrapingCandidateService
             'brand_id'      => $data['brand_id'] ?? 0,
             'category_id'   => $data['category_id'] ?? null,
             'ingredient_id' => $data['ingredient_id'] ?? ($candidate->suggested_ingredient_id ?: null),
+            'barcode'       => $candidate->ean ?: null,
             'status'        => 'active',
         ];
 
@@ -143,6 +144,12 @@ class ScrapingCandidateService
 
         return DB::transaction(function () use ($actorId, $candidate, $chainId, $branchId, $ip, $userAgent) {
             $productId = $candidate->suggested_product_id;
+
+            // Vincular EAN al producto global (idempotente) para que el escaner mobile lo encuentre
+            $ean = $candidate->ean;
+            if ($ean) {
+                $this->repo->linkBarcode((int) $productId, $ean);
+            }
 
             // Buscar o crear SupermarketProduct
             $sp = $this->repo->findSupermarketProductMapping($chainId, $branchId, $productId);

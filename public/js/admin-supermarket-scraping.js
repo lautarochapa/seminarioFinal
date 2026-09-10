@@ -277,6 +277,15 @@
         if (form.elements.max_pages.value) {
             body.max_pages = parseInt(form.elements.max_pages.value, 10);
         }
+        if (form.elements.max_products && form.elements.max_products.value) {
+            body.max_products = parseInt(form.elements.max_products.value, 10);
+        }
+        if (form.elements.delay_ms && form.elements.delay_ms.value !== '') {
+            body.delay_ms = parseInt(form.elements.delay_ms.value, 10);
+        }
+        if (form.elements.dry_run && form.elements.dry_run.checked) {
+            body.dry_run = true;
+        }
         button.disabled = true;
         button.textContent = 'Ejecutando...';
         window.CCApi.request(endpoint('/admin/scraping/jobs'), { method: 'POST', body: body })
@@ -374,8 +383,11 @@
     function renderJobDetail(root, job) {
         var params = job.parameters ? JSON.stringify(job.parameters, null, 2) : '{}';
         var error = job.error_message ? '<div class="alert alert-danger" style="display:block">' + escapeHtml(job.error_message) + '</div>' : '';
+        var dryRun = job.parameters && job.parameters.dry_run
+            ? '<div class="alert alert-warning" style="display:block">DRY RUN: esta corrida no persiste candidatos, productos ni precios.</div>'
+            : '';
         qs('[data-scraping-job-detail]', root).innerHTML =
-            error +
+            dryRun + error +
             '<div class="table-line"><span class="muted">Job</span><strong>#' + escapeHtml(job.id) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Fuente</span><strong>' + escapeHtml(job.source ? job.source.name : job.source_id) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Estado</span><strong>' + statusChip(job.status) + '</strong></div>' +

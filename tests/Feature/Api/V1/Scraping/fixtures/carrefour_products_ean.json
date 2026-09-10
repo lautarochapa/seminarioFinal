@@ -1,0 +1,69 @@
+[
+  {
+    "productId": "p001",
+    "productName": "Leche Entera La Serenisima 1L",
+    "brand": "La Serenisima",
+    "link": "https://www.carrefour.com.ar/leche-entera-1l",
+    "items": [
+      {
+        "itemId": "sku001",
+        "ean": "7790895000860",
+        "images": [
+          {
+            "imageUrl": "https://img.carrefour.com.ar/leche.jpg"
+          }
+        ],
+        "sellers": [
+          {
+            "commertialOffer": {
+              "Price": 450.00
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productId": "p002",
+    "productName": "Aceite de Girasol Cocinero 1.5L",
+    "brand": "Cocinero",
+    "link": "https://www.carrefour.com.ar/aceite-girasol-cocinero-1-5l",
+    "items": [
+      {
+        "itemId": "sku002",
+        "ean": "0000000000000",
+        "referenceId": [
+          { "Key": "RefId", "Value": "INT-002" },
+          { "Key": "EAN", "Value": "77-9012345-0021" }
+        ],
+        "images": [],
+        "sellers": [
+          {
+            "commertialOffer": {
+              "Price": 1200.00
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productId": "p003",
+    "productName": "Yerba Mate Playadito 1kg",
+    "brand": "Playadito",
+    "link": "https://www.carrefour.com.ar/yerba-playadito-1kg",
+    "items": [
+      {
+        "itemId": "sku003",
+        "images": [],
+        "sellers": [
+          {
+            "commertialOffer": {
+              "Price": 2500.00
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

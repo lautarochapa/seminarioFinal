@@ -92,6 +92,12 @@ class RunScrapingJob implements ShouldQueue
             $params    = $job->parameters_json ?? [];
             $chainId   = isset($params['supermarket_chain_id']) ? (int) $params['supermarket_chain_id'] : 0;
             $branchId  = isset($params['supermarket_branch_id']) ? (int) $params['supermarket_branch_id'] : null;
+            $dryRun    = !empty($params['dry_run']);
+
+            if ($dryRun) {
+                $this->finishDryRun($repo, $job, $result);
+                return;
+            }
 
             $totalUpdated       = 0;
             $totalPendingReview = 0;
@@ -109,7 +115,7 @@ class RunScrapingJob implements ShouldQueue
                     'raw_image_url'       => $dto->rawImageUrl,
                     'raw_product_url'     => $dto->rawProductUrl,
                     'external_product_id' => $dto->externalProductId,
-                    'raw_payload_json'    => null,
+                    'raw_payload_json'    => $dto->rawEan ? ['ean' => $dto->rawEan] : null,
                     'review_status'       => 'pending',
                 ]);
                 if ($candidate->wasRecentlyCreated) {
@@ -219,6 +225,63 @@ class RunScrapingJob implements ShouldQueue
                     'error_message' => 'El job finalizo sin estado terminal.',
                 ]);
             }
+        }
+    }
+
+    /**
+     * Cierra un job en modo dry-run: NO persiste candidatos, SupermarketProduct ni precios.
+     * Solo deja el conteo detectado, cuantos traen EAN y una muestra en el log de la corrida.
+     */
+    private function finishDryRun($repo, $job, $result): void
+    {
+        $withEan = 0;
+        $preview = [];
+        foreach ($result->products as $dto) {
+            if (!empty($dto->rawEan)) {
+                $withEan++;
+            }
+            if (count($preview) < 10) {
+                $preview[] = [
+                    'name'        => $dto->rawName,
+                    'brand'       => $dto->rawBrand,
+                    'price'       => $dto->rawPrice,
+                    'ean'         => $dto->rawEan,
+                    'external_id' => $dto->externalProductId,
+                ];
+            }
+        }
+
+        $metrics = $result->metrics;
+        $metrics['dry_run']        = true;
+        $metrics['items_with_ean'] = $withEan;
+        $metrics['final_reason']   = $result->finalReason;
+        $metrics['candidates_created'] = 0;
+
+        $failed  = !$result->successful && $result->totalFound === 0;
+        $message = $failed
+            ? mb_substr((string) ($result->errorMessage ?: 'Dry run finalizado con error.'), 0, 500)
+            : null;
+
+        $repo->updateJob($job, [
+            'status'               => $failed ? 'failed' : 'completed',
+            'finished_at'          => now(),
+            'total_found'          => $result->totalFound,
+            'total_created'        => 0,
+            'total_updated'        => 0,
+            'total_pending_review' => 0,
+            'error_message'        => $message,
+        ]);
+
+        $repo->addLog(
+            $job,
+            $failed ? 'warning' : 'info',
+            'DRY RUN: ' . $result->totalFound . ' productos detectados (' . $withEan . ' con EAN). Sin persistencia.',
+            ['dry_run' => true, 'items_with_ean' => $withEan, 'preview' => $preview, 'metrics' => $metrics]
+        );
+
+        if ($failed) {
+            $repo->createErrorIfNotDuplicate($job, $result->finalReason, $message, null, ['metrics' => $metrics]);
+            $repo->createAlertIfNotDuplicate($job, $result->finalReason, $message, 'high');
         }
     }
 }

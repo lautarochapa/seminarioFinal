@@ -427,6 +427,157 @@ class ScrapingCandidatesTest extends TestCase
         $this->assertEquals(1, SupermarketProductPrice::where('supermarket_product_id', $sp->id)->count());
     }
 
+    public function test_approve_con_job_solo_chain_sin_branch_null()
+    {
+        $admin  = $this->admin();
+        $chain  = $this->chain();
+        $source = $this->source();
+        // Job SIN supermarket_branch_id -> approve() pasa branchId = null.
+        $job    = $this->job($source, ['supermarket_chain_id' => $chain->id]);
+        $prod   = $this->product();
+        $cand   = $this->candidate($job, [
+            'suggested_product_id' => $prod->id,
+            'review_status'        => 'matched',
+            'raw_price'            => 700.00,
+        ]);
+
+        $this->actingAs($admin)->postJson(
+            "/api/v1/admin/scraping/product-candidates/{$cand->id}/approve"
+        )->assertStatus(200)->assertJsonPath('data.review_status', 'approved');
+
+        $sp = SupermarketProduct::where('product_id', $prod->id)
+            ->where('supermarket_chain_id', $chain->id)
+            ->whereNull('supermarket_branch_id')
+            ->first();
+        $this->assertNotNull($sp, 'Debe crearse SupermarketProduct con branch NULL');
+
+        $this->assertDatabaseHas('supermarket_product_prices', [
+            'supermarket_product_id' => $sp->id,
+            'price'                  => 700.00,
+            'source'                 => 'scraper',
+        ]);
+
+        // Re-aprobar otro candidato del mismo par (chain, product, branch NULL) no duplica el mapping.
+        $cand2 = $this->candidate($job, [
+            'suggested_product_id' => $prod->id,
+            'review_status'        => 'matched',
+            'raw_price'            => 700.00,
+        ]);
+        $this->actingAs($admin)->postJson(
+            "/api/v1/admin/scraping/product-candidates/{$cand2->id}/approve"
+        )->assertStatus(200);
+
+        $this->assertEquals(
+            1,
+            SupermarketProduct::where('product_id', $prod->id)
+                ->where('supermarket_chain_id', $chain->id)
+                ->whereNull('supermarket_branch_id')
+                ->count()
+        );
+    }
+
+    public function test_approve_con_ean_crea_product_barcode()
+    {
+        $admin  = $this->admin();
+        $chain  = $this->chain();
+        $city   = $this->city();
+        $branch = $this->branch($chain, $city);
+        $source = $this->source();
+        $job    = $this->job($source, [
+            'supermarket_chain_id'  => $chain->id,
+            'supermarket_branch_id' => $branch->id,
+        ]);
+        $prod = $this->product();
+        $cand = $this->candidate($job, [
+            'suggested_product_id' => $prod->id,
+            'review_status'        => 'matched',
+            'raw_price'            => 500.00,
+            'raw_payload_json'     => ['ean' => '7790895000860'],
+        ]);
+
+        $this->actingAs($admin)->postJson(
+            "/api/v1/admin/scraping/product-candidates/{$cand->id}/approve"
+        )->assertStatus(200)->assertJsonPath('data.review_status', 'approved');
+
+        $this->assertDatabaseHas('product_barcodes', [
+            'product_id' => $prod->id,
+            'barcode'    => '7790895000860',
+            'status'     => 'active',
+        ]);
+    }
+
+    public function test_reaprobar_otro_candidato_con_mismo_ean_no_duplica_barcode()
+    {
+        $admin  = $this->admin();
+        $chain  = $this->chain();
+        $city   = $this->city();
+        $branch = $this->branch($chain, $city);
+        $source = $this->source();
+        $job    = $this->job($source, [
+            'supermarket_chain_id'  => $chain->id,
+            'supermarket_branch_id' => $branch->id,
+        ]);
+        $prod = $this->product();
+
+        $first = $this->candidate($job, [
+            'suggested_product_id' => $prod->id,
+            'review_status'        => 'matched',
+            'raw_price'            => 500.00,
+            'raw_payload_json'     => ['ean' => '7790895000860'],
+        ]);
+        $second = $this->candidate($job, [
+            'suggested_product_id' => $prod->id,
+            'review_status'        => 'matched',
+            'raw_price'            => 540.00,
+            'raw_payload_json'     => ['ean' => '7790895000860'],
+        ]);
+
+        $this->actingAs($admin)->postJson("/api/v1/admin/scraping/product-candidates/{$first->id}/approve")
+            ->assertStatus(200);
+        $this->actingAs($admin)->postJson("/api/v1/admin/scraping/product-candidates/{$second->id}/approve")
+            ->assertStatus(200);
+
+        $this->assertEquals(
+            1,
+            \App\ProductBarcode::where('barcode', '7790895000860')->count()
+        );
+    }
+
+    public function test_create_product_desde_candidato_con_ean_genera_barcode()
+    {
+        $admin  = $this->admin();
+        $source = $this->source();
+        $job    = $this->job($source);
+        $cand   = $this->candidate($job, [
+            'raw_name'         => 'Producto Con EAN Test',
+            'raw_payload_json' => ['ean' => '7791234567895'],
+        ]);
+
+        $response = $this->actingAs($admin)->postJson(
+            "/api/v1/admin/scraping/product-candidates/{$cand->id}/create-product",
+            []
+        );
+        $response->assertStatus(201)->assertJsonPath('data.review_status', 'created');
+
+        $productId = ScrapedProductCandidate::find($cand->id)->suggested_product_id;
+        $this->assertDatabaseHas('product_barcodes', [
+            'product_id' => $productId,
+            'barcode'    => '7791234567895',
+        ]);
+    }
+
+    public function test_candidato_expone_ean_en_detalle()
+    {
+        $admin  = $this->admin();
+        $source = $this->source();
+        $job    = $this->job($source);
+        $cand   = $this->candidate($job, ['raw_payload_json' => ['ean' => '7790895000860']]);
+
+        $this->actingAs($admin)->getJson("/api/v1/admin/scraping/product-candidates/{$cand->id}")
+            ->assertStatus(200)
+            ->assertJsonPath('data.ean', '7790895000860');
+    }
+
     public function test_auditoria_creada_al_aprobar()
     {
         $admin  = $this->admin();

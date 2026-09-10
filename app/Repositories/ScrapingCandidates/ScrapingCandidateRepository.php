@@ -2,6 +2,7 @@
 
 namespace App\Repositories\ScrapingCandidates;
 
+use App\ProductBarcode;
 use App\ScrapedProductCandidate;
 use App\SupermarketProduct;
 use App\SupermarketProductPrice;
@@ -59,8 +60,10 @@ class ScrapingCandidateRepository
         return $candidate;
     }
 
-    public function findSupermarketProductMapping(int $chainId, int $branchId, int $productId): ?SupermarketProduct
+    public function findSupermarketProductMapping(int $chainId, ?int $branchId, int $productId): ?SupermarketProduct
     {
+        // $branchId puede ser null cuando el job trae solo supermarket_chain_id.
+        // Eloquent traduce where('col', null) a "col IS NULL".
         return SupermarketProduct::where('supermarket_chain_id', $chainId)
             ->where('supermarket_branch_id', $branchId)
             ->where('product_id', $productId)
@@ -87,5 +90,38 @@ class ScrapingCandidateRepository
             ['supermarket_product_id' => $supermarketProductId],
             $data
         ));
+    }
+
+    /**
+     * Vincula un EAN al producto global de forma idempotente.
+     * - Si el barcode ya existe (para este u otro producto) no se duplica.
+     * - Si ya existe para este producto, se reactiva.
+     *
+     * @return string 'created' | 'reactivated' | 'exists_same' | 'exists_other'
+     */
+    public function linkBarcode(int $productId, string $barcode): string
+    {
+        $existing = ProductBarcode::where('barcode', $barcode)->orderBy('id')->first();
+
+        if ($existing) {
+            if ((int) $existing->product_id === $productId) {
+                if ($existing->status !== 'active') {
+                    $existing->status = 'active';
+                    $existing->save();
+                    return 'reactivated';
+                }
+                return 'exists_same';
+            }
+            return 'exists_other';
+        }
+
+        ProductBarcode::create([
+            'product_id' => $productId,
+            'barcode'    => $barcode,
+            'type'       => 'EAN',
+            'status'     => 'active',
+        ]);
+
+        return 'created';
     }
 }

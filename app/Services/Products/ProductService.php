@@ -288,7 +288,10 @@ class ProductService
 
     private function normalizeName($name)
     {
-        return strtolower(preg_replace('/\s+/', ' ', trim((string) $name)));
+        // mb_strtolower: strtolower() opera byte a byte y corrompe el byte inicial
+        // de caracteres UTF-8 acentuados (0xC3 -> 0xE3), generando texto invalido
+        // que PostgreSQL rechaza al comparar normalized_name.
+        return mb_strtolower(preg_replace('/\s+/', ' ', trim((string) $name)), 'UTF-8');
     }
 
     private function auditPayload(Product $product)

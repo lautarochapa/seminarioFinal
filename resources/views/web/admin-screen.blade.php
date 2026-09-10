@@ -2430,7 +2430,13 @@
                         <select class="form-control" name="supermarket_branch_id" data-scraping-job-branch>
                             <option value="">Sucursal opcional</option>
                         </select>
-                        <input class="form-control" name="max_pages" type="number" min="1" max="50" placeholder="Max paginas">
+                        <input class="form-control" name="max_pages" type="number" min="1" max="50" placeholder="Max paginas (QA: 1)">
+                        <input class="form-control" name="max_products" type="number" min="1" max="3000" placeholder="Max productos (QA: 10)">
+                        <input class="form-control" name="delay_ms" type="number" min="0" max="60000" step="500" placeholder="Delay entre requests ms (QA: 5000)">
+                        <label class="muted" style="display:flex;gap:8px;align-items:center">
+                            <input type="checkbox" name="dry_run" value="1">
+                            Dry run (no persiste nada)
+                        </label>
                         <button type="submit" class="btn-main" data-scraping-job-submit>Ejecutar</button>
                     </form>
                 </article>

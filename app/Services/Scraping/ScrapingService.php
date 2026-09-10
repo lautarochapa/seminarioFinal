@@ -78,6 +78,12 @@ class ScrapingService
                 ? (int) $data['supermarket_branch_id'] : null,
             'max_pages'             => isset($data['max_pages'])
                 ? (int) $data['max_pages'] : 5,
+            'max_products'          => isset($data['max_products'])
+                ? (int) $data['max_products'] : null,
+            'delay_ms'              => isset($data['delay_ms'])
+                ? (int) $data['delay_ms'] : null,
+            'dry_run'               => array_key_exists('dry_run', $data)
+                ? (bool) $data['dry_run'] : null,
         ], function ($v) { return $v !== null; });
 
         $job = $this->repo->createJob([

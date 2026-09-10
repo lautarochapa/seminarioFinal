@@ -826,6 +826,161 @@ class ScrapingTest extends TestCase
         $this->assertEquals(1, \App\ScrapedProductCandidate::where('scraping_job_id', $response->json('data.id'))->count());
     }
 
+    private function fixtureEanJson(): array
+    {
+        return json_decode(
+            file_get_contents(__DIR__ . '/fixtures/carrefour_products_ean.json'),
+            true
+        );
+    }
+
+    public function test_parser_carrefour_extrae_ean_de_items_y_reference_id()
+    {
+        $parser   = new CarrefourParser();
+        $products = $parser->parse($this->fixtureEanJson());
+
+        $this->assertCount(3, $products);
+
+        // EAN directo en items[0].ean
+        $this->assertEquals('7790895000860', $products[0]->rawEan);
+        // EAN placeholder de ceros -> se toma el de referenceId (solo digitos)
+        $this->assertEquals('7790123450021', $products[1]->rawEan);
+        // Sin EAN disponible
+        $this->assertNull($products[2]->rawEan);
+    }
+
+    public function test_ean_se_persiste_en_el_candidato()
+    {
+        Http::fake(['*' => Http::response(json_encode($this->fixtureEanJson()), 200)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+        $response->assertStatus(202);
+
+        $jobId = $response->json('data.id');
+
+        $withEan = \App\ScrapedProductCandidate::where('scraping_job_id', $jobId)
+            ->where('raw_name', 'Leche Entera La Serenisima 1L')
+            ->first();
+        $this->assertNotNull($withEan);
+        $this->assertEquals('7790895000860', $withEan->ean);
+        $this->assertEquals(['ean' => '7790895000860'], $withEan->raw_payload_json);
+
+        $withoutEan = \App\ScrapedProductCandidate::where('scraping_job_id', $jobId)
+            ->where('raw_name', 'Yerba Mate Playadito 1kg')
+            ->first();
+        $this->assertNotNull($withoutEan);
+        $this->assertNull($withoutEan->ean);
+    }
+
+    public function test_parametros_de_ejecucion_segura_se_persisten_en_el_job()
+    {
+        Queue::fake();
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id'    => $source->id,
+            'max_pages'    => 1,
+            'max_products' => 10,
+            'delay_ms'     => 5000,
+            'dry_run'      => true,
+        ]);
+
+        $response->assertStatus(202);
+        $params = ScrapingJob::find($response->json('data.id'))->parameters_json;
+
+        $this->assertSame(1, $params['max_pages']);
+        $this->assertSame(10, $params['max_products']);
+        $this->assertSame(5000, $params['delay_ms']);
+        $this->assertTrue($params['dry_run']);
+    }
+
+    public function test_max_products_limita_la_cantidad_de_candidatos()
+    {
+        Http::fake(['*' => Http::response(json_encode($this->fixtureEanJson()), 200)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id'    => $source->id,
+            'max_products' => 1,
+        ]);
+        $response->assertStatus(202);
+
+        $this->assertEquals(
+            1,
+            \App\ScrapedProductCandidate::where('scraping_job_id', $response->json('data.id'))->count()
+        );
+    }
+
+    public function test_dry_run_no_persiste_candidatos_ni_precios()
+    {
+        Http::fake(['*' => Http::response(json_encode($this->fixtureEanJson()), 200)]);
+
+        $admin  = $this->admin();
+        $chain  = $this->chain();
+        $city   = $this->city();
+        $branch = $this->branch($chain, $city);
+        $sp     = $this->supermarketProduct($branch, [
+            'supermarket_chain_id' => $chain->id,
+            'external_sku'         => 'sku001',
+            'external_product_id'  => 'p001',
+        ]);
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id'             => $source->id,
+            'supermarket_chain_id'  => $chain->id,
+            'supermarket_branch_id' => $branch->id,
+            'dry_run'               => true,
+        ]);
+        $response->assertStatus(202);
+
+        $jobId = $response->json('data.id');
+        $job   = ScrapingJob::find($jobId);
+
+        $this->assertEquals('completed', $job->status);
+        $this->assertEquals(3, $job->total_found);
+        $this->assertEquals(0, $job->total_created);
+        $this->assertEquals(0, \App\ScrapedProductCandidate::where('scraping_job_id', $jobId)->count());
+        $this->assertEquals(0, SupermarketProductPrice::where('supermarket_product_id', $sp->id)->count());
+
+        $this->assertDatabaseHas('scraping_job_logs', [
+            'scraping_job_id' => $jobId,
+            'level'           => 'info',
+        ]);
+        $log = \App\ScrapingJobLog::where('scraping_job_id', $jobId)
+            ->where('message', 'like', 'DRY RUN:%')->first();
+        $this->assertNotNull($log);
+        $this->assertTrue($log->context_json['dry_run']);
+        $this->assertEquals(2, $log->context_json['items_with_ean']);
+    }
+
+    public function test_dry_run_ante_403_corta_y_marca_job_fallido()
+    {
+        Http::fake(['*' => Http::response('Forbidden', 403)]);
+
+        $admin  = $this->admin();
+        $source = $this->source(['code' => 'carrefour']);
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+            'dry_run'   => true,
+        ]);
+        $response->assertStatus(202);
+        Http::assertSentCount(1);
+
+        $job = ScrapingJob::find($response->json('data.id'));
+        $this->assertEquals('failed', $job->status);
+        $this->assertTrue(app(\App\Services\Scraping\ScrapingCircuitBreaker::class)->isOpen('carrefour'));
+    }
+
     public function test_reintento_del_mismo_job_no_duplica_candidatos()
     {
         Http::fake(['*' => Http::response(json_encode($this->fixtureJson()), 200)]);
