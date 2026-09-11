@@ -28,6 +28,8 @@ const ITEMS = [
   ['help-circle-outline', 'Ayuda', 'soon:help'],
 ] as const;
 
+const MVP_ITEM_TARGETS = ['/(app)/profile', '/(app)/groups'] as const;
+
 export function UserAccountMenu({ visible, user, group, onClose, onNavigate, onLogout }: Props) {
   const insets = useSafeAreaInsets();
   const name = user ? `${user.name} ${user.lastname}`.trim() || user.email : '';
@@ -60,7 +62,7 @@ export function UserAccountMenu({ visible, user, group, onClose, onNavigate, onL
             </View>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {ITEMS.map(([icon, label, target]) => (
+            {ITEMS.filter(([, , target]) => MVP_ITEM_TARGETS.some((visibleTarget) => visibleTarget === target)).map(([icon, label, target]) => (
               <Pressable key={label} style={({ pressed }) => [styles.item, pressed && styles.pressed]} onPress={() => activate(target)} accessibilityRole="button" accessibilityLabel={label}>
                 <MaterialCommunityIcons name={icon} size={23} color={COLORS.textSecondary} />
                 <Text style={styles.itemText}>{label}</Text>

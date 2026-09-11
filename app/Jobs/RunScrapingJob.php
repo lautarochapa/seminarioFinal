@@ -115,7 +115,15 @@ class RunScrapingJob implements ShouldQueue
                     'raw_image_url'       => $dto->rawImageUrl,
                     'raw_product_url'     => $dto->rawProductUrl,
                     'external_product_id' => $dto->externalProductId,
-                    'raw_payload_json'    => $dto->rawEan ? ['ean' => $dto->rawEan] : null,
+                    'raw_payload_json'    => array_filter([
+                        'ean' => $dto->rawEan,
+                        'net_quantity' => $dto->rawNetQuantity,
+                        'package_unit_code' => $dto->rawPackageUnitCode,
+                        'source_category_path' => $dto->sourceCategoryPath,
+                        'source_category_id' => $dto->sourceCategoryId,
+                    ], function ($value) {
+                        return $value !== null && $value !== '';
+                    }) ?: null,
                     'review_status'       => 'pending',
                 ]);
                 if ($candidate->wasRecentlyCreated) {

@@ -11,6 +11,7 @@
         groups: [],
         currentGroupId: null,
         locations: [],
+        units: [],
         lastBarcode: '',
         lastProduct: null,
     };
@@ -174,6 +175,73 @@
         }).join('');
     }
 
+    function renderUnits(root) {
+        var select = qs('[data-barcode-unit-select]', root);
+        if (!select) {
+            return;
+        }
+        var current = select.value;
+        select.innerHTML = '<option value="">Selecciona unidad</option>' + state.units.map(function (unit) {
+            return '<option value="' + unit.id + '">' + escapeHtml(unit.name) +
+                (unit.symbol ? ' (' + escapeHtml(unit.symbol) + ')' : '') + '</option>';
+        }).join('');
+        select.value = current;
+    }
+
+    function existingUnits(product) {
+        return product && product.stock_entry_suggestion && product.stock_entry_suggestion.existing_units
+            ? product.stock_entry_suggestion.existing_units
+            : [];
+    }
+
+    function unitNames(units) {
+        return units.map(function (unit) {
+            return unit.name || unit.symbol || unit.code;
+        }).join(', ');
+    }
+
+    function updateUnitWarning(root) {
+        var select = qs('[data-barcode-unit-select]', root);
+        var warning = qs('[data-barcode-unit-warning]', root);
+        var units = existingUnits(state.lastProduct);
+        var differs = select && select.value && units.length && !units.some(function (unit) {
+            return String(unit.id) === String(select.value);
+        });
+        if (warning) {
+            warning.textContent = differs
+                ? 'Ya tenés este producto cargado en ' + unitNames(units) + '. Si elegís otra unidad se creará un lote separado.'
+                : '';
+            warning.style.display = differs ? 'block' : 'none';
+        }
+        return !!differs;
+    }
+
+    function applyStockSuggestion(root, product) {
+        var suggestion = product && product.stock_entry_suggestion ? product.stock_entry_suggestion : {};
+        var quantity = qs('[data-barcode-quantity]', root);
+        var unit = qs('[data-barcode-unit-select]', root);
+        var note = qs('[data-barcode-unit-note]', root);
+
+        if (quantity) {
+            quantity.value = suggestion.quantity !== null && suggestion.quantity !== undefined ? suggestion.quantity : '';
+        }
+        if (unit) {
+            unit.value = suggestion.unit_id || '';
+        }
+        if (note) {
+            if (suggestion.source === 'existing_stock') {
+                note.textContent = 'Unidad usada actualmente para este producto: ' + unitNames(existingUnits(product)) + '.';
+            } else if (suggestion.source === 'package') {
+                note.textContent = 'Cantidad y unidad tomadas de la presentacion del producto.';
+            } else if (suggestion.source === 'default_unit') {
+                note.textContent = 'Unidad predeterminada del producto.';
+            } else {
+                note.textContent = product ? 'Este producto no tiene una unidad conocida. Selecciona una antes de guardar.' : '';
+            }
+        }
+        updateUnitWarning(root);
+    }
+
     function loadGroups(root) {
         return window.CCApi.request(endpoint('/family-groups'))
             .then(function (response) {
@@ -209,6 +277,19 @@
             });
     }
 
+    function loadUnits(root) {
+        return window.CCApi.request(endpoint('/units?per_page=100'))
+            .then(function (response) {
+                state.units = response.data || [];
+                renderUnits(root);
+            })
+            .catch(function (error) {
+                state.units = [];
+                renderUnits(root);
+                showMessage(root, 'danger', apiErrorMessage(error));
+            });
+    }
+
     function searchBarcode(root) {
         clearMessage(root);
         var input = qs('[data-barcode-code-input]', root);
@@ -223,6 +304,7 @@
 
         state.lastBarcode = code;
         state.lastProduct = null;
+        applyStockSuggestion(root, null);
         renderStockResult(root, null);
 
         if (resultEl) {
@@ -241,6 +323,7 @@
             .then(function (response) {
                 state.lastProduct = response.data || null;
                 renderResult(root, state.lastProduct);
+                applyStockSuggestion(root, state.lastProduct);
             })
             .catch(function (error) {
                 if (resultEl && error.status === 404) {
@@ -262,6 +345,7 @@
         clearMessage(root);
         var location = qs('[data-barcode-location-select]', root);
         var quantity = qs('[data-barcode-quantity]', root);
+        var unit = qs('[data-barcode-unit-select]', root);
         var button = qs('[data-barcode-stock-submit]', root);
         var code = state.lastBarcode || (qs('[data-barcode-code-input]', root) ? qs('[data-barcode-code-input]', root).value.trim() : '');
 
@@ -281,6 +365,13 @@
             showMessage(root, 'danger', 'La cantidad debe ser mayor que cero.');
             return;
         }
+        if (!unit || !unit.value) {
+            showMessage(root, 'danger', 'Selecciona una unidad para cargar el producto.');
+            return;
+        }
+        if (updateUnitWarning(root) && !window.confirm('Ya tenés este producto cargado en otra unidad. Si continuás se creará un lote separado. ¿Querés continuar?')) {
+            return;
+        }
 
         if (button) {
             button.disabled = true;
@@ -292,6 +383,7 @@
                 barcode: code,
                 stock_location_id: Number(location.value),
                 quantity: Number(quantity.value),
+                unit_id: Number(unit.value),
             },
         }).then(function (response) {
             renderStockResult(root, response.data || null);
@@ -405,6 +497,7 @@
         var cameraStop = qs('[data-barcode-camera-stop]', root);
         var groupSelect = qs('[data-barcode-group-select]', root);
         var stockSubmit = qs('[data-barcode-stock-submit]', root);
+        var unitSelect = qs('[data-barcode-unit-select]', root);
 
         if (submitBtn) {
             submitBtn.addEventListener('click', function () {
@@ -436,7 +529,14 @@
         if (groupSelect) {
             groupSelect.addEventListener('change', function () {
                 state.currentGroupId = groupSelect.value || null;
+                state.lastProduct = null;
+                applyStockSuggestion(root, null);
                 loadLocations(root);
+            });
+        }
+        if (unitSelect) {
+            unitSelect.addEventListener('change', function () {
+                updateUnitWarning(root);
             });
         }
         if (stockSubmit) {
@@ -471,6 +571,7 @@
             return;
         }
         bind(root);
+        loadUnits(root);
         loadGroups(root);
 
         var primaryBtn = document.querySelector('[data-screen-primary-action]');

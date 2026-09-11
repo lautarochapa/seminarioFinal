@@ -273,6 +273,177 @@ class StockScanTest extends TestCase
         $this->assertEqualsCanonicalizing(['2.0000', '2.0000'], $lots->pluck('quantity')->map(fn ($q) => (string) $q)->all());
     }
 
+    public function test_scan_distinta_unidad_no_mezcla_stock()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product, $ingredient, $grams] = $this->productWithBarcode();
+        $cups = $this->unit();
+        $location = $this->location($group);
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $location->id,
+            'quantity' => 520,
+            'unit_id' => $grams->id,
+        ])->assertStatus(201);
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $location->id,
+            'quantity' => 1,
+            'unit_id' => $cups->id,
+        ])->assertStatus(201);
+
+        $this->assertSame(2, StockItem::where('product_id', $product->id)->count());
+        $this->assertDatabaseHas('stock_items', ['product_id' => $product->id, 'unit_id' => $grams->id, 'quantity' => 520]);
+        $this->assertDatabaseHas('stock_items', ['product_id' => $product->id, 'unit_id' => $cups->id, 'quantity' => 1]);
+    }
+
+    public function test_barcode_lookup_preselecciona_unidad_existente_inequivoca()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product, $ingredient, $grams] = $this->productWithBarcode();
+        StockItem::create([
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'stock_location_id' => $this->location($group)->id,
+            'quantity' => 520,
+            'unit_id' => $grams->id,
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($member)
+            ->getJson('/api/v1/products/barcode/7791234567890?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.stock_entry_suggestion.unit_id', $grams->id)
+            ->assertJsonPath('data.stock_entry_suggestion.source', 'existing_stock')
+            // Sin net_quantity, la cantidad NO debe "inventarse" como 1: debe
+            // quedar null para que el usuario la complete explicitamente.
+            ->assertJsonPath('data.stock_entry_suggestion.quantity', null)
+            ->assertJsonPath('data.stock_entry_suggestion.existing_units.0.name', 'Unidad');
+    }
+
+    public function test_barcode_lookup_producto_normalizado_propone_cantidad_y_unidad_del_paquete()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product, $ingredient, $grams] = $this->productWithBarcode('7790580146115', [
+            'name' => 'Pure de tomate 520 g',
+            'net_quantity' => 520,
+            'package_unit_id' => null,
+        ]);
+        $product->package_unit_id = $grams->id;
+        $product->save();
+
+        $this->actingAs($member)
+            ->getJson('/api/v1/products/barcode/7790580146115?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.stock_entry_suggestion.quantity', 520)
+            ->assertJsonPath('data.stock_entry_suggestion.unit_id', $grams->id)
+            ->assertJsonPath('data.stock_entry_suggestion.source', 'package');
+    }
+
+    public function test_barcode_lookup_producto_25_gramos_propone_25_g_no_1()
+    {
+        // Caso real reportado: "Canela molida Alicante sobre 25 g." (product_id=50
+        // en el ambiente de desarrollo) tenia net_quantity=25/package_unit_id=Gramo
+        // correctamente normalizados, pero el mobile mostraba cantidad=1 en el modal.
+        [$member, $group] = $this->groupWithMember();
+        [$product, $ingredient, $grams] = $this->productWithBarcode('7790150435380', [
+            'name' => 'Canela molida Alicante sobre 25 g.',
+            'net_quantity' => 25,
+            'package_unit_id' => null,
+        ]);
+        $product->package_unit_id = $grams->id;
+        $product->save();
+
+        $this->actingAs($member)
+            ->getJson('/api/v1/products/barcode/7790150435380?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.stock_entry_suggestion.quantity', 25)
+            ->assertJsonPath('data.stock_entry_suggestion.unit_id', $grams->id)
+            ->assertJsonPath('data.stock_entry_suggestion.source', 'package');
+    }
+
+    public function test_barcode_lookup_producto_900_mililitros_propone_900_ml()
+    {
+        [$member, $group] = $this->groupWithMember();
+        $ml = UnitMeasure::create(['code' => 'ml', 'name' => 'Mililitro', 'type' => 'volume', 'symbol' => 'ml', 'status' => 'active']);
+        [$product] = $this->productWithBarcode('7790000000900', [
+            'name' => 'Aceite de girasol 900 ml',
+            'net_quantity' => 900,
+            'package_unit_id' => $ml->id,
+        ]);
+
+        $this->actingAs($member)
+            ->getJson('/api/v1/products/barcode/7790000000900?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.stock_entry_suggestion.quantity', 900)
+            ->assertJsonPath('data.stock_entry_suggestion.unit_id', $ml->id)
+            ->assertJsonPath('data.stock_entry_suggestion.source', 'package');
+    }
+
+    public function test_barcode_lookup_producto_sin_datos_requiere_seleccion_explicita()
+    {
+        [$member, $group] = $this->groupWithMember();
+        $this->productWithBarcode('7790000000000', [
+            'default_unit_id' => null,
+            'package_unit_id' => null,
+            'ingredient_id' => null,
+        ]);
+
+        $this->actingAs($member)
+            ->getJson('/api/v1/products/barcode/7790000000000?family_group_id='.$group->id)
+            ->assertStatus(200)
+            ->assertJsonPath('data.stock_entry_suggestion.quantity', null)
+            ->assertJsonPath('data.stock_entry_suggestion.unit_id', null)
+            ->assertJsonPath('data.stock_entry_suggestion.requires_unit_selection', true);
+    }
+
+    public function test_scan_sin_unidad_conocida_requiere_seleccion_explicita()
+    {
+        [$member, $group] = $this->groupWithMember();
+        $this->productWithBarcode('7791234567890', [
+            'default_unit_id' => null,
+            'package_unit_id' => null,
+            'ingredient_id' => null,
+        ]);
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $this->location($group)->id,
+            'quantity' => 1,
+        ])->assertStatus(422)
+            ->assertJsonPath('error.code', 'STOCK_UNIT_REQUIRED');
+
+        $this->assertDatabaseCount('stock_items', 0);
+    }
+
+    public function test_scan_sin_unit_id_reutiliza_unidad_existente_del_producto()
+    {
+        [$member, $group] = $this->groupWithMember();
+        [$product, $ingredient, $grams] = $this->productWithBarcode('7791234567890', ['default_unit_id' => null]);
+        $location = $this->location($group);
+        $item = StockItem::create([
+            'family_group_id' => $group->id,
+            'product_id' => $product->id,
+            'stock_location_id' => $location->id,
+            'quantity' => 520,
+            'unit_id' => $grams->id,
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($member)->postJson('/api/v1/family-groups/'.$group->id.'/stock/scan', [
+            'barcode' => '7791234567890',
+            'stock_location_id' => $location->id,
+            'quantity' => 20,
+        ])->assertStatus(200)
+            ->assertJsonPath('data.id', $item->id)
+            ->assertJsonPath('data.quantity', '540.0000')
+            ->assertJsonPath('data.unit_id', $grams->id);
+
+        $this->assertSame(1, StockItem::where('product_id', $product->id)->count());
+    }
+
     public function test_scan_distinta_ubicacion_crea_lote_separado()
     {
         [$member, $group] = $this->groupWithMember();

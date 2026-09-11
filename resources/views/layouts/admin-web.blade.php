@@ -79,7 +79,8 @@
         .metric strong { display:block; font-size:27px; }
         .metric span { color:var(--muted); text-transform:capitalize; font-size:13px; }
         .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-        .panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:15px; min-height:170px; min-width:0; }
+        .panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:15px; min-height:170px; min-width:0; transition:box-shadow .3s ease; }
+        .panel.highlight-focus { box-shadow:0 0 0 3px rgba(4,172,133,.5); }
         .panel h2 { font-size:16px; font-weight:900; margin:0 0 10px; }
         .line { display:flex; justify-content:space-between; gap:10px; border-bottom:1px solid #edf1f4; padding:8px 0; font-size:14px; }
         .line:last-child { border-bottom:0; }

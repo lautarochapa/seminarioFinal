@@ -54,10 +54,18 @@ class ScrapingRepository
         return ScrapingSource::create($data);
     }
 
-    public function paginateJobs(array $filters)
+    /**
+     * $jobType acota el listado a un job_type especifico (ej. 'product_prices').
+     * La tabla scraping_jobs es compartida con recipe_scraping; sin este
+     * filtro, el listado de un modulo mostraria tambien jobs del otro.
+     */
+    public function paginateJobs(array $filters, ?string $jobType = null)
     {
         $query = ScrapingJob::with('source');
 
+        if ($jobType !== null) {
+            $query->where('job_type', $jobType);
+        }
         if (!empty($filters['source_id'])) {
             $query->where('source_id', (int) $filters['source_id']);
         }
@@ -69,9 +77,23 @@ class ScrapingRepository
         return $query->orderByDesc('created_at')->paginate($perPage);
     }
 
-    public function findJobOrFail(int $id): ScrapingJob
+    /**
+     * $expectedJobType acota la busqueda a un job_type especifico. La tabla
+     * scraping_jobs es compartida entre product scraping (product_prices) y
+     * recipe scraping (recipe_scraping): sin este filtro, una accion de un
+     * modulo podria encontrar y modificar/exponer un job del otro modulo con
+     * el mismo id (ver bug de cancelacion cruzada detectado en job #15). Los
+     * llamadores internos que ya conocen el id de su propio job (los Jobs de
+     * cola) siguen usando la forma sin filtro.
+     */
+    public function findJobOrFail(int $id, ?string $expectedJobType = null): ScrapingJob
     {
-        $job = ScrapingJob::with('source')->find($id);
+        $query = ScrapingJob::with('source')->where('id', $id);
+        if ($expectedJobType !== null) {
+            $query->where('job_type', $expectedJobType);
+        }
+
+        $job = $query->first();
         if (!$job) {
             throw new IngredientException('SCRAPING_JOB_NOT_FOUND', 'Job de scraping no encontrado.', 404);
         }

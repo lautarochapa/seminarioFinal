@@ -13,19 +13,19 @@ jest.mock('../src/api/endpoints', () => ({ homeApi: { summary: jest.fn().mockRes
 
 describe('HomeScreen account navigation', () => {
   beforeEach(() => jest.clearAllMocks());
-  it('opens the account menu and shows user data and all personal routes', async () => {
+  it('opens the account menu and shows only MVP personal routes', async () => {
     const screen = await render(<UserAccountMenu visible user={{ id: 1, name: 'Demo', lastname: 'User', email: 'demo@test.com' } as never} group={{ id: 2, name: 'Familia Demo', owner_user_id: 1 } as never} onClose={jest.fn()} onNavigate={mockPush} onLogout={jest.fn()} />);
     expect(screen.getByText('Demo User')).toBeTruthy();
     expect(screen.getByText(/Familia Demo/)).toBeTruthy();
     expect(screen.getByText('Mi perfil')).toBeTruthy();
-    expect(screen.getByText('Mis objetivos')).toBeTruthy();
-    expect(screen.getByText('Preferencias alimentarias')).toBeTruthy();
-    expect(screen.getByText('Restricciones y alergias')).toBeTruthy();
+    expect(screen.getByText('Grupo familiar')).toBeTruthy();
+    expect(screen.queryByText('Mis objetivos')).toBeNull();
+    expect(screen.queryByText('Recetas cocinadas')).toBeNull();
+    expect(screen.queryByText('Configuración')).toBeNull();
   });
-  it('navigates to goals instead of settings', async () => {
-    const screen = await render(<UserAccountMenu visible user={{ id: 1, name: 'Demo', lastname: 'User', email: 'demo@test.com' } as never} group={{ id: 2, name: 'Familia Demo', owner_user_id: 1 } as never} onClose={jest.fn()} onNavigate={mockPush} onLogout={jest.fn()} />); fireEvent.press(screen.getByText('Mis objetivos'));
-    expect(mockPush).toHaveBeenCalledWith('/(app)/goals');
-    expect(mockPush).not.toHaveBeenCalledWith('/(app)/settings');
+  it('navigates to the family group from the account menu', async () => {
+    const screen = await render(<UserAccountMenu visible user={{ id: 1, name: 'Demo', lastname: 'User', email: 'demo@test.com' } as never} group={{ id: 2, name: 'Familia Demo', owner_user_id: 1 } as never} onClose={jest.fn()} onNavigate={mockPush} onLogout={jest.fn()} />); fireEvent.press(screen.getByText('Grupo familiar'));
+    expect(mockPush).toHaveBeenCalledWith('/(app)/groups');
   });
   it('navigates summary cards with filters', async () => {
     const screen = await render(<HomeScreen />); await waitFor(() => expect(screen.getByLabelText('2 por vencer')).toBeTruthy()); fireEvent.press(screen.getByLabelText('2 por vencer'));

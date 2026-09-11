@@ -48,10 +48,9 @@ export function BarcodeScannerScreen() {
       .then((res) => {
         const loaded = res.data || [];
         setUnits(loaded);
-        if (!manualUnitId && loaded[0]) setManualUnitId(loaded[0].id);
       })
       .catch(() => setUnits([]));
-  }, [manualUnitId]);
+  }, []);
 
   useEffect(() => {
     if (!groupId) {
@@ -77,7 +76,7 @@ export function BarcodeScannerScreen() {
         ? await productsApi.findByBarcode(code, groupId)
         : await productsApi.findByBarcode(code);
       setProduct(res.data);
-      if (res.data.unit?.id) setKnownUnitId(res.data.unit.id);
+      setKnownUnitId(res.data.stock_entry_suggestion?.unit_id ?? null);
     } catch (err) {
       if (err instanceof ApiError && err.normalized.status === 404) {
         setNotFound(true);
@@ -114,14 +113,14 @@ export function BarcodeScannerScreen() {
       Alert.alert('Selecciona un grupo', 'Necesitas un grupo familiar activo para cargar stock.');
       return;
     }
-    setKnownQuantity('1');
     setKnownExpiration('');
-    setKnownUnitId(product.unit?.id ?? manualUnitId ?? units[0]?.id ?? null);
+    setKnownQuantity(product.stock_entry_suggestion?.quantity != null ? String(product.stock_entry_suggestion.quantity) : '');
+    setKnownUnitId(product.stock_entry_suggestion?.unit_id ?? null);
     setKnownLocationId(knownLocationId ?? locations[0]?.id ?? null);
     setKnownStockVisible(true);
   }
 
-  async function handleKnownStockSubmit() {
+  async function submitKnownStock() {
     if (!lastCode || !groupId || addingKnownStock) return;
     if (!knownLocationId || !knownUnitId || !knownQuantity || Number(knownQuantity) <= 0) return;
 
@@ -143,6 +142,24 @@ export function BarcodeScannerScreen() {
     } finally {
       setAddingKnownStock(false);
     }
+  }
+
+  function handleKnownStockSubmit() {
+    if (!knownUnitId) return;
+    const existingUnits = product?.stock_entry_suggestion?.existing_units ?? [];
+    const differs = existingUnits.length > 0 && !existingUnits.some((unit) => unit.id === knownUnitId);
+    if (differs) {
+      Alert.alert(
+        'Se creará un lote separado',
+        `Ya tenés este producto cargado en ${unitNames(existingUnits)}. Si elegís otra unidad se creará un lote separado.`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Continuar', onPress: () => { void submitKnownStock(); } },
+        ],
+      );
+      return;
+    }
+    void submitKnownStock();
   }
 
   async function handleManualProductSubmit() {
@@ -349,6 +366,19 @@ export function BarcodeScannerScreen() {
                 </Pressable>
               ))}
             </View>
+            {product?.stock_entry_suggestion?.source === 'existing_stock' ? (
+              <Text style={styles.modalHint}>Unidad usada actualmente: {unitNames(product.stock_entry_suggestion.existing_units)}.</Text>
+            ) : product?.stock_entry_suggestion?.source === 'package' ? (
+              <Text style={styles.modalHint}>Cantidad y unidad tomadas de la presentación del producto.</Text>
+            ) : !knownUnitId ? (
+              <Text style={styles.warningText}>Este producto no tiene una unidad conocida. Elegí una antes de guardar.</Text>
+            ) : null}
+            {knownUnitId && (product?.stock_entry_suggestion?.existing_units ?? []).length > 0 &&
+              !(product?.stock_entry_suggestion?.existing_units ?? []).some((unit) => unit.id === knownUnitId) ? (
+                <Text style={styles.warningText}>
+                  Ya tenés este producto cargado en {unitNames(product?.stock_entry_suggestion?.existing_units ?? [])}. Si elegís otra unidad se creará un lote separado.
+                </Text>
+              ) : null}
             <View style={styles.modalActions}>
               <Pressable
                 onPress={() => setKnownStockVisible(false)}
@@ -379,6 +409,10 @@ function stockStatus(product: ProductDetail): string {
   return summary.items_count === 1 ? 'Ya tenes 1 item en stock.' : `Ya tenes ${summary.items_count} items en stock.`;
 }
 
+function unitNames(units: Array<{ name: string; symbol?: string; code?: string }>): string {
+  return units.map((unit) => unit.name || unit.symbol || unit.code || '').filter(Boolean).join(', ');
+}
+
 const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: COLORS.background },
   resultWrap: { flex: 1, padding: SPACING.md, justifyContent: 'center' },
@@ -392,6 +426,7 @@ const styles = StyleSheet.create({
   modalCard: { width: '100%', backgroundColor: COLORS.surface, borderRadius: RADIUS.md, padding: SPACING.lg, gap: SPACING.md },
   modalTitle: { fontSize: FONT.subtitleSize, fontWeight: '700', color: COLORS.textPrimary },
   modalHint: { fontSize: FONT.captionSize, color: COLORS.textSecondary },
+  warningText: { fontSize: FONT.captionSize, color: COLORS.warning, fontWeight: '600' },
   modalInput: {
     minHeight: TOUCH_TARGET,
     borderWidth: 1,

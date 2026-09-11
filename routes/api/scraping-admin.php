@@ -11,6 +11,10 @@ Route::post('admin/scraping/product-candidates/{id}/match-product', [\App\Http\C
     ->middleware('permission:catalog.manage');
 Route::post('admin/scraping/product-candidates/{id}/create-product', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'createProduct'])
     ->middleware('permission:catalog.manage');
+Route::post('admin/scraping/product-candidates/{id}/create-and-approve', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'createAndApprove'])
+    ->middleware('permission:catalog.manage');
+Route::post('admin/scraping/product-candidates/bulk-create-and-approve', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'bulkCreateAndApprove'])
+    ->middleware('permission:catalog.manage');
 Route::post('admin/scraping/product-candidates/{id}/assign-ingredient', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'assignIngredient'])
     ->middleware('permission:catalog.manage');
 Route::get('admin/scraping/product-candidates/{id}', [\App\Http\Controllers\Api\V1\ScrapingCandidates\ScrapingCandidateController::class, 'show'])

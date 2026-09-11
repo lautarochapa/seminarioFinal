@@ -69,7 +69,10 @@ class RunRecipeScrapingJob implements ShouldQueue
             }
 
             $repo->updateJob($job, ['status' => 'running', 'started_at' => now()]);
-            $repo->addLog($job, 'info', 'Iniciando scraping de recetas', ['source' => $job->source->code]);
+            $repo->addLog($job, 'info', 'Iniciando scraping de recetas', [
+                'source'      => $job->source->code,
+                'search_term' => $job->parameters_json['search_term'] ?? null,
+            ]);
 
             if (!$scraper->isAvailable()) {
                 $msg = 'Scraper de recetas no disponible: ' . $job->source->code;
@@ -147,9 +150,10 @@ class RunRecipeScrapingJob implements ShouldQueue
             }
 
             $repo->addLog($job, $finalStatus === 'completed' ? 'info' : 'warning', 'Scraping de recetas finalizado', [
-                'found'   => $result->totalFound,
-                'created' => $totalCreated,
-                'metrics' => $metrics,
+                'found'       => $result->totalFound,
+                'created'     => $totalCreated,
+                'search_term' => $job->parameters_json['search_term'] ?? null,
+                'metrics'     => $metrics,
             ]);
         } catch (\Throwable $e) {
             $errorMsg = mb_substr($e->getMessage(), 0, 500);

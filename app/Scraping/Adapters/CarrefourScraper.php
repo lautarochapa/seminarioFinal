@@ -47,6 +47,8 @@ class CarrefourScraper implements SupermarketScraperInterface
         $delayOverrideMs = isset($params['delay_ms']) && (int) $params['delay_ms'] >= 0
             ? (int) $params['delay_ms']
             : null;
+        $searchTerm = isset($params['search_term']) ? trim((string) $params['search_term']) : '';
+        $eanSearch = $searchTerm !== '' && preg_match('/^\d{8,14}$/', $searchTerm) === 1;
         $perPage  = 50;
         $page     = 0;
         $seenKeys = [];
@@ -79,13 +81,28 @@ class CarrefourScraper implements SupermarketScraperInterface
             $previousFrom = $from;
 
             try {
-                $response = $this->http->getJson($source->code, "{$source->base_url}/api/catalog_system/pub/products/search", [
+                $query = [
                     '_from' => $from,
                     '_to'   => $to,
-                ], $metrics, ['page' => $page, 'offset' => $from]);
+                ];
+                if ($searchTerm !== '') {
+                    $query['ft'] = $searchTerm;
+                }
+
+                $response = $this->http->getJson($source->code, "{$source->base_url}/api/catalog_system/pub/products/search", $query, $metrics, [
+                    'page' => $page,
+                    'offset' => $from,
+                    'search_term' => $searchTerm !== '' ? $searchTerm : null,
+                ]);
 
                 $data     = $response->json();
                 $products = $this->parser->parse(is_array($data) ? $data : []);
+                if ($eanSearch) {
+                    $products = $this->prioritizeExactEan($products, $searchTerm);
+                    $metrics->increment('exact_ean_matches', count(array_filter($products, function ($product) use ($searchTerm) {
+                        return $product->rawEan === $searchTerm;
+                    })));
+                }
                 $newProducts = [];
                 foreach ($products as $product) {
                     $key = $product->externalProductId ?: ($product->externalSku ?: md5($product->rawName . '|' . $product->rawProductUrl));
@@ -108,6 +125,7 @@ class CarrefourScraper implements SupermarketScraperInterface
                     'request_number' => $metrics->all()['requests_total'],
                     'status_code' => $response->status(),
                     'items_found' => count($newProducts),
+                    'search_term' => $searchTerm !== '' ? $searchTerm : null,
                 ]);
 
                 if (count($result->products) >= $maxItems) {
@@ -168,5 +186,17 @@ class CarrefourScraper implements SupermarketScraperInterface
         $result->metrics = $metrics->all();
 
         return $result;
+    }
+
+    private function prioritizeExactEan(array $products, string $ean): array
+    {
+        $exact = array_filter($products, function ($product) use ($ean) {
+            return $product->rawEan === $ean;
+        });
+        $related = array_filter($products, function ($product) use ($ean) {
+            return $product->rawEan !== $ean;
+        });
+
+        return array_values(array_merge($exact, $related));
     }
 }

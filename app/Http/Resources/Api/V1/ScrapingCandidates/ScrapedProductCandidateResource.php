@@ -54,6 +54,7 @@ class ScrapedProductCandidateResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // raw_payload_json excluido intencionalmente (puede contener datos sensibles)
+            'enrichment' => $this->enrichment ?: null,
         ];
     }
 }

@@ -89,7 +89,23 @@
         ],
     ];
     $currentUser = Auth::user();
-    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/family-group', '/web/profile-objectives', '/web/barcode-scanner'];
+    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/family-group', '/web/profile-objectives'];
+    $adminMainRoutes = [
+        '/admin-web',
+        '/admin-web/users',
+        '/admin-web/objectives',
+        '/admin-web/health-preferences',
+        '/admin-web/ingredients',
+        '/admin-web/units-conversions',
+        '/admin-web/products',
+        '/admin-web/barcodes',
+        '/admin-web/supermarkets',
+        '/admin-web/supermarket-scraping',
+        '/admin-web/scraped-products',
+        '/admin-web/recipe-scraping',
+        '/admin-web/imported-recipes',
+        '/admin-web/official-recipes',
+    ];
     $userMainLabels = [
         '/web' => 'Inicio',
         '/web/stock' => 'Mi cocina',
@@ -109,6 +125,10 @@
             if ($label === 'Usuario') {
                 $visibleItems = array_values(array_filter($visibleItems, function ($item) use ($userMainRoutes) {
                     return in_array($item[1], $userMainRoutes, true);
+                }));
+            } elseif ($label === 'Admin') {
+                $visibleItems = array_values(array_filter($visibleItems, function ($item) use ($adminMainRoutes) {
+                    return in_array($item[1], $adminMainRoutes, true);
                 }));
             }
         @endphp

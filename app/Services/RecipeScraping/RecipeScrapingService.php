@@ -25,6 +25,8 @@ class RecipeScrapingService
     {
         $this->assertPermission($user);
 
+        $this->repo->reconcileStaleJobs();
+
         $source = $this->repo->findOrCreateCookpadSource();
 
         if ($this->repo->hasActiveJob($source->id)) {
@@ -65,6 +67,7 @@ class RecipeScrapingService
     public function list(User $user, array $filters): LengthAwarePaginator
     {
         $this->assertPermission($user);
+        $this->repo->reconcileStaleJobs();
         return $this->repo->paginateJobs($filters);
     }
 

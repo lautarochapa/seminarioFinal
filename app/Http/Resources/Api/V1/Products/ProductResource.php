@@ -85,6 +85,7 @@ class ProductResource extends JsonResource
                     'items_count' => $this->stockItems->count(),
                 ];
             }),
+            'stock_entry_suggestion' => $this->stock_entry_suggestion,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

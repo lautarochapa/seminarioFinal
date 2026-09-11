@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -47,6 +48,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
 
   const [productId, setProductId] = useState<number | null>(prefilledProductId ?? null);
   const [productName, setProductName] = useState<string>(prefilledProductName ?? '');
+  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(null);
   const [locationId, setLocationId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState('');
   const [unitId, setUnitId] = useState<number | null>(null);
@@ -83,10 +85,9 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
       .then((res) => {
         const loaded = res.data || [];
         setUnits(loaded);
-        if (!manualUnitId && loaded[0]) setManualUnitId(loaded[0].id);
       })
       .catch(() => setUnits([]));
-  }, [manualUnitId]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -97,13 +98,15 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
   const handleSelectProduct = useCallback((p: ProductSummary) => {
     setProductId(p.id);
     setProductName(p.name);
-    if (p.unit) {
-      setUnitId(p.unit.id);
-      setUnitDisplay(p.unit.symbol || p.unit.code || p.unit.name);
-    }
+    setSelectedProduct(p);
+    const suggestedUnitId = p.stock_entry_suggestion?.unit_id ?? null;
+    const suggestedUnit = units.find((unit) => unit.id === suggestedUnitId) ?? p.unit ?? p.package_unit ?? null;
+    setUnitId(suggestedUnitId);
+    setUnitDisplay(suggestedUnit ? suggestedUnit.symbol || suggestedUnit.code || suggestedUnit.name : '');
+    setQuantity(p.stock_entry_suggestion?.quantity != null ? String(p.stock_entry_suggestion.quantity) : '');
     setProductModalVisible(false);
     setFieldErrors((e) => ({ ...e, product_id: '', unit_id: '' }));
-  }, []);
+  }, [units]);
 
   function openManualProduct() {
     const name = productSearch.trim();
@@ -157,30 +160,50 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
       setProductName(pending.productName);
       setFieldErrors((e) => ({ ...e, product_id: '' }));
 
-      productsApi.get(pending.productId)
+      productsApi.get(pending.productId, groupId)
         .then((res) => {
-          if (res.data.unit) {
-            setUnitId(res.data.unit.id);
-            setUnitDisplay(res.data.unit.symbol || res.data.unit.code || res.data.unit.name);
-            setFieldErrors((e) => ({ ...e, unit_id: '' }));
-          }
+          setSelectedProduct(res.data);
+          const suggestedUnitId = res.data.stock_entry_suggestion?.unit_id ?? null;
+          const suggestedUnit = units.find((unit) => unit.id === suggestedUnitId) ?? res.data.unit ?? res.data.package_unit ?? null;
+          setUnitId(suggestedUnitId);
+          setUnitDisplay(suggestedUnit ? suggestedUnit.symbol || suggestedUnit.code || suggestedUnit.name : '');
+          setQuantity(res.data.stock_entry_suggestion?.quantity != null ? String(res.data.stock_entry_suggestion.quantity) : '');
+          setFieldErrors((e) => ({ ...e, unit_id: '' }));
         })
         .catch(() => { /* el usuario puede completar la unidad buscando el producto manualmente */ });
-    }, []),
+    }, [groupId, units]),
   );
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const errors: Record<string, string> = {};
     if (!productId) errors.product_id = 'Seleccioná un producto.';
     if (!quantity || isNaN(Number(quantity)) || Number(quantity) < 0) {
       errors.quantity = 'Ingresá una cantidad válida.';
     }
-    if (!unitId) errors.unit_id = 'El producto seleccionado no tiene unidad. Elegí otro.';
+    if (!unitId) errors.unit_id = 'Seleccioná una unidad.';
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
     }
     if (!groupId) return;
+
+    if (hasDifferentExistingUnit(selectedProduct, unitId)) {
+      Alert.alert(
+        'Se creará un lote separado',
+        `Ya tenés este producto cargado en ${unitNames(selectedProduct?.stock_entry_suggestion?.existing_units ?? [])}. Si elegís otra unidad se creará un lote separado.`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Continuar', onPress: () => { void submitStock(); } },
+        ],
+      );
+      return;
+    }
+
+    void submitStock();
+  }
+
+  async function submitStock() {
+    if (!groupId || !productId || !unitId) return;
 
     setSubmitting(true);
     setSubmitError(null);
@@ -188,10 +211,10 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
 
     try {
       await stockApi.create(groupId, {
-        product_id: productId!,
+        product_id: productId,
         stock_location_id: locationId,
         quantity: Number(quantity),
-        unit_id: unitId!,
+        unit_id: unitId,
         expiration_date: expirationDate || null,
         purchase_price: purchasePrice ? Number(purchasePrice) : null,
       });
@@ -320,17 +343,38 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
             error={fieldErrors.quantity}
           />
 
-          {unitDisplay ? (
-            <View style={styles.readonlyField}>
-              <Text style={styles.label}>Unidad</Text>
-              <Text style={styles.readonlyValue}>{unitDisplay}</Text>
-            </View>
-          ) : productId ? (
-            <View style={styles.readonlyField}>
-              <Text style={styles.label}>Unidad</Text>
-              <Text style={[styles.readonlyValue, { color: COLORS.error }]}>
-                {fieldErrors.unit_id || 'Producto sin unidad. Elegí otro producto.'}
-              </Text>
+          {productId ? (
+            <View style={styles.field}>
+              <Text style={styles.label}>Unidad *</Text>
+              <View style={styles.chipRow}>
+                {units.map((unit) => (
+                  <Pressable
+                    key={unit.id}
+                    style={[styles.locationChip, unitId === unit.id && styles.locationChipSelected]}
+                    onPress={() => {
+                      setUnitId(unit.id);
+                      setUnitDisplay(unit.symbol || unit.code || unit.name);
+                      setFieldErrors((e) => ({ ...e, unit_id: '' }));
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={unit.name}
+                  >
+                    <Text style={[styles.chipText, unitId === unit.id && styles.chipTextSelected]}>{unit.symbol || unit.code || unit.name}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              {unitDisplay ? <Text style={styles.hintText}>Unidad seleccionada: {unitDisplay}</Text> : null}
+              {fieldErrors.unit_id ? <Text style={styles.fieldError}>{fieldErrors.unit_id}</Text> : null}
+              {selectedProduct?.stock_entry_suggestion?.source === 'existing_stock' ? (
+                <Text style={styles.hintText}>Unidad usada actualmente: {unitNames(selectedProduct.stock_entry_suggestion.existing_units)}.</Text>
+              ) : selectedProduct?.stock_entry_suggestion?.source === 'package' ? (
+                <Text style={styles.hintText}>Cantidad y unidad tomadas de la presentación del producto.</Text>
+              ) : !unitId ? (
+                <Text style={styles.warningText}>El producto no tiene una unidad conocida. Elegí una antes de guardar.</Text>
+              ) : null}
+              {hasDifferentExistingUnit(selectedProduct, unitId) ? (
+                <Text style={styles.warningText}>Ya tenés este producto cargado en {unitNames(selectedProduct?.stock_entry_suggestion?.existing_units ?? [])}. Si elegís otra unidad se creará un lote separado.</Text>
+              ) : null}
             </View>
           ) : null}
 
@@ -487,6 +531,15 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
   );
 }
 
+function hasDifferentExistingUnit(product: ProductSummary | null, unitId: number | null): boolean {
+  const existingUnits = product?.stock_entry_suggestion?.existing_units ?? [];
+  return Boolean(unitId && existingUnits.length > 0 && !existingUnits.some((unit) => unit.id === unitId));
+}
+
+function unitNames(units: Array<{ name: string; symbol?: string; code?: string }>): string {
+  return units.map((unit) => unit.name || unit.symbol || unit.code || '').filter(Boolean).join(', ');
+}
+
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   centered: { flex: 1, justifyContent: 'center' },
@@ -527,6 +580,11 @@ const styles = StyleSheet.create({
   fieldError: {
     fontSize: FONT_SIZE.xs,
     color: COLORS.error,
+  },
+  warningText: {
+    fontSize: FONT_SIZE.xs,
+    color: COLORS.warning,
+    fontWeight: '600',
   },
   scanBtn: {
     flexDirection: 'row',

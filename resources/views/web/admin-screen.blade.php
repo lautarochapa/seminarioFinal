@@ -2221,23 +2221,37 @@
                         <select class="form-control" data-candidates-source>
                             <option value="">Todas las fuentes</option>
                         </select>
+                        <select class="form-control" data-candidates-job>
+                            <option value="">Todos los jobs</option>
+                        </select>
+                        <select class="form-control" data-candidates-readiness>
+                            <option value="">Todos</option>
+                            <option value="ready">Listos para aprobar</option>
+                            <option value="review">Requieren revision</option>
+                        </select>
                         <button type="button" class="btn-ghost" data-candidates-refresh>Actualizar</button>
                         <span class="chip" data-candidates-count>0 candidatos</span>
+                    </div>
+                    <div class="admin-tools" style="margin-top:8px">
+                        <button type="button" class="btn-main" data-candidates-bulk-approve disabled>Aprobar seleccion (0)</button>
+                        <p class="muted" style="margin:0;font-size:13px">Solo se procesan candidatos pendientes; los que requieren revision se omiten y se reportan al finalizar.</p>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
+                                    <th><input type="checkbox" data-candidates-select-all title="Seleccionar todos los visibles"></th>
                                     <th>Producto scrapeado</th>
                                     <th>Fuente</th>
                                     <th>Precio</th>
                                     <th>Estado</th>
+                                    <th>Listo</th>
                                     <th>Match</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-candidates-body>
-                                <tr><td colspan="6" class="muted">Cargando candidatos...</td></tr>
+                                <tr><td colspan="8" class="muted">Cargando candidatos...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -2253,23 +2267,7 @@
                     <div data-candidate-detail class="muted">Selecciona un candidato.</div>
 
                     <div data-candidate-actions style="display:none">
-                        <h2 style="margin-top:18px">Mapear producto existente</h2>
-                        <form class="rbac-form" data-candidate-match-form>
-                            <select class="form-control" name="product_id" data-candidate-product required>
-                                <option value="">Producto</option>
-                            </select>
-                            <button type="submit" class="btn-main">Asociar producto</button>
-                        </form>
-
-                        <h2 style="margin-top:18px">Asignar ingrediente</h2>
-                        <form class="rbac-form" data-candidate-ingredient-form>
-                            <select class="form-control" name="ingredient_id" data-candidate-ingredient required>
-                                <option value="">Ingrediente</option>
-                            </select>
-                            <button type="submit" class="btn-main">Asignar ingrediente</button>
-                        </form>
-
-                        <h2 style="margin-top:18px">Crear producto nuevo</h2>
+                        <h2 style="margin-top:18px">Revisar y completar</h2>
                         <form class="rbac-form" data-candidate-create-product-form>
                             <input class="form-control" name="name" type="text" placeholder="Nombre del producto">
                             <select class="form-control" name="brand_id" data-candidate-brand>
@@ -2281,12 +2279,36 @@
                             <select class="form-control" name="ingredient_id" data-candidate-create-ingredient>
                                 <option value="">Ingrediente opcional</option>
                             </select>
-                            <button type="submit" class="btn-main">Crear y asociar</button>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                <button type="button" class="btn-main" data-candidate-create-and-approve>Crear y aprobar</button>
+                                <button type="submit" class="btn-ghost">Crear producto (sin aprobar)</button>
+                            </div>
                         </form>
+                        <p class="muted" style="font-size:13px">Los campos ya vienen precargados con lo detectado o sugerido por el scraping. Corregilos solo si es necesario antes de aprobar.</p>
 
-                        <div class="admin-tools" style="margin-top:18px">
-                            <button type="button" class="btn-main" data-candidate-approve>Aprobar</button>
+                        <div class="admin-tools" style="margin-top:12px">
+                            <button type="button" class="btn-main" data-candidate-approve>Aprobar (producto ya asociado)</button>
                         </div>
+
+                        <details style="margin-top:18px">
+                            <summary style="cursor:pointer">Opciones avanzadas (casos excepcionales)</summary>
+
+                            <h2 style="margin-top:14px">Asociar producto existente</h2>
+                            <form class="rbac-form" data-candidate-match-form>
+                                <select class="form-control" name="product_id" data-candidate-product required>
+                                    <option value="">Producto</option>
+                                </select>
+                                <button type="submit" class="btn-ghost">Asociar producto</button>
+                            </form>
+
+                            <h2 style="margin-top:14px">Asignar ingrediente</h2>
+                            <form class="rbac-form" data-candidate-ingredient-form>
+                                <select class="form-control" name="ingredient_id" data-candidate-ingredient required>
+                                    <option value="">Ingrediente</option>
+                                </select>
+                                <button type="submit" class="btn-ghost">Asignar ingrediente</button>
+                            </form>
+                        </details>
 
                         <h2 style="margin-top:18px">Rechazar</h2>
                         <form class="rbac-form" data-candidate-reject-form>
@@ -2301,7 +2323,7 @@
         <section data-admin-recipe-scraping>
             <div class="alert" data-recipe-scraping-message style="display:none"></div>
             <div class="rbac-layout">
-                <article class="panel" style="min-width:0">
+                <article class="panel" style="min-width:0" data-recipe-scraping-jobs-section>
                     <h2>Jobs Cookpad</h2>
                     <div class="admin-tools">
                         <select class="form-control" data-recipe-scraping-status>
@@ -2345,6 +2367,8 @@
                     <form class="rbac-form" data-recipe-scraping-form>
                         <label class="muted" for="recipe-scraping-max-pages">Paginas maximas</label>
                         <input id="recipe-scraping-max-pages" class="form-control" name="max_pages" type="number" min="1" max="50" value="1" required>
+                        <label class="muted" for="recipe-scraping-search-term">Buscar recetas (opcional)</label>
+                        <input id="recipe-scraping-search-term" class="form-control" name="search_term" type="text" maxlength="100" placeholder="Ej: arroz, pollo, milanesa">
                         <button type="submit" class="btn-main" data-recipe-scraping-submit>Ejecutar Cookpad</button>
                     </form>
                     <div class="line"><span>Fuente</span><strong>Cookpad Argentina</strong></div>
@@ -2430,6 +2454,10 @@
                         <select class="form-control" name="supermarket_branch_id" data-scraping-job-branch>
                             <option value="">Sucursal opcional</option>
                         </select>
+                        <label class="muted">
+                            Buscar producto (opcional)
+                            <input class="form-control" name="search_term" type="search" maxlength="120" placeholder="Ej: arroz, tomate, 7790580146115">
+                        </label>
                         <input class="form-control" name="max_pages" type="number" min="1" max="50" placeholder="Max paginas (QA: 1)">
                         <input class="form-control" name="max_products" type="number" min="1" max="3000" placeholder="Max productos (QA: 10)">
                         <input class="form-control" name="delay_ms" type="number" min="0" max="60000" step="500" placeholder="Delay entre requests ms (QA: 5000)">

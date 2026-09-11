@@ -12,7 +12,12 @@ class ProductRepository
 {
     public function paginate(array $filters, $publicOnly = false)
     {
-        $query = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images']);
+        $relations = ['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'];
+        $familyGroupId = ! empty($filters['family_group_id']) ? (int) $filters['family_group_id'] : null;
+        if ($familyGroupId) {
+            $relations['stockItems'] = $this->stockItemsForGroup($familyGroupId);
+        }
+        $query = Product::with($relations);
 
         if ($publicOnly) {
             $familyGroupId = ! empty($filters['family_group_id']) ? (int) $filters['family_group_id'] : null;
@@ -97,7 +102,12 @@ class ProductRepository
 
     public function findPublicOrFail($id, ?int $familyGroupId = null)
     {
-        $product = Product::with(['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'])
+        $relations = ['brand', 'commercialCategory', 'ingredient', 'defaultUnit', 'packageUnit', 'barcodes', 'images'];
+        if ($familyGroupId) {
+            $relations['stockItems'] = $this->stockItemsForGroup($familyGroupId);
+        }
+
+        $product = Product::with($relations)
             ->where('id', $id)
             ->where(function ($scope) use ($familyGroupId) {
                 $scope->where(function ($active) {
@@ -258,6 +268,19 @@ class ProductRepository
         }
 
         return $product;
+    }
+
+    private function stockItemsForGroup(int $familyGroupId): callable
+    {
+        return function ($stock) use ($familyGroupId) {
+            $stock->with(['location', 'unit'])
+                ->where('family_group_id', $familyGroupId)
+                ->where('status', 'active')
+                ->whereNull('deleted_at')
+                ->orderByRaw('expiration_date is null')
+                ->orderBy('expiration_date')
+                ->orderBy('id');
+        };
     }
 
     public function findActiveBarcodeForProduct(int $productId, int $barcodeId)

@@ -20,5 +20,12 @@ return [
         'recipe_max_pages' => (int) env('RECIPE_SCRAPING_MAX_PAGES', 10),
         'recipe_max_items' => (int) env('RECIPE_SCRAPING_MAX_RECIPES_PER_RUN', 200),
     ],
+    // Corta la corrida de recetas antes de que el proceso (corre en linea bajo
+    // QUEUE_CONNECTION=sync) pueda ser matado externamente por un timeout del
+    // servidor web/php-fpm, dejando el job sin poder cerrar su propio estado.
+    'recipe_time_budget_seconds' => (int) env('RECIPE_SCRAPING_TIME_BUDGET_SECONDS', 180),
+    // Ventana tras la cual un job de recetas en pending/running sin actualizar
+    // se considera huerfano (proceso caido/matado) y se reconcilia a failed.
+    'recipe_stale_job_seconds' => (int) env('RECIPE_SCRAPING_STALE_JOB_SECONDS', 600),
     'user_agent' => env('SCRAPING_USER_AGENT', 'ComidaControlBot/1.0'),
 ];

@@ -21,6 +21,7 @@ class StoreJobRequest extends FormRequest
             'max_products'          => ['nullable', 'integer', 'between:1,3000'],
             'delay_ms'              => ['nullable', 'integer', 'between:0,60000'],
             'dry_run'               => ['nullable', 'boolean'],
+            'search_term'           => ['nullable', 'string', 'max:120'],
         ];
     }
 }

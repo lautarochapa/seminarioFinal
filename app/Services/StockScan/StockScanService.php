@@ -8,6 +8,7 @@ use App\Product;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\HouseholdStock\HouseholdStockRepository;
 use App\Repositories\StockScan\StockScanRepository;
+use App\Services\HouseholdStock\StockEntrySuggestionService;
 use App\StockItem;
 use Illuminate\Support\Facades\DB;
 
@@ -16,15 +17,18 @@ class StockScanService
     private $groups;
     private $stock;
     private $scan;
+    private $stockEntrySuggestions;
 
     public function __construct(
         FamilyGroupRepository $groups,
         HouseholdStockRepository $stock,
-        StockScanRepository $scan
+        StockScanRepository $scan,
+        StockEntrySuggestionService $stockEntrySuggestions
     ) {
         $this->groups = $groups;
         $this->stock = $stock;
         $this->scan = $scan;
+        $this->stockEntrySuggestions = $stockEntrySuggestions;
     }
 
     public function scan(int $groupId, int $userId, array $data, string $ip, string $ua): array
@@ -38,8 +42,13 @@ class StockScanService
             throw new FamilyGroupException('STOCK_LOCATION_NOT_FOUND', 'Ubicacion de stock no encontrada.', 404);
         }
 
-        $unitId = ! empty($data['unit_id']) ? (int) $data['unit_id'] : $this->resolveUnitId($product);
-        if (! $unitId || ! $this->stock->activeUnitExists($unitId)) {
+        $unitId = ! empty($data['unit_id'])
+            ? (int) $data['unit_id']
+            : $this->stockEntrySuggestions->forProduct($product, $groupId)['unit_id'];
+        if (! $unitId) {
+            throw new FamilyGroupException('STOCK_UNIT_REQUIRED', 'Selecciona una unidad para cargar este producto.', 422);
+        }
+        if (! $this->stock->activeUnitExists($unitId)) {
             throw new FamilyGroupException('STOCK_UNIT_INVALID', 'La unidad indicada no existe o no esta activa.', 422);
         }
 
@@ -77,19 +86,6 @@ class StockScanService
 
             return [$item, 201];
         });
-    }
-
-    private function resolveUnitId(Product $product): ?int
-    {
-        if ($product->default_unit_id) {
-            return (int) $product->default_unit_id;
-        }
-
-        if ($product->ingredient && $product->ingredient->base_unit_id) {
-            return (int) $product->ingredient->base_unit_id;
-        }
-
-        return null;
     }
 
     private function payload(StockItem $item): array

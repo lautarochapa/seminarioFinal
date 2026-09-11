@@ -6,6 +6,13 @@ use App\Scraping\DTOs\ScrapedProductDTO;
 
 class CarrefourParser
 {
+    private $packagePresentationParser;
+
+    public function __construct(?PackagePresentationParser $packagePresentationParser = null)
+    {
+        $this->packagePresentationParser = $packagePresentationParser ?: new PackagePresentationParser();
+    }
+
     /**
      * Parsea la respuesta del API de Carrefour (compatible con Vtex y fixture simplificado).
      *
@@ -81,11 +88,52 @@ class CarrefourParser
             $dto->externalSku      = (string) ($itemId ?? $productId ?? '');
             $dto->rawImageUrl      = $imageUrl;
             $dto->rawEan           = $this->firstValidEan($eanCandidates);
+            $package = $this->packagePresentationParser->parse($name);
+            if ($package) {
+                $dto->rawNetQuantity = $package['net_quantity'];
+                $dto->rawPackageUnitCode = $package['package_unit_code'];
+            }
+
+            $category = $this->extractCategory($item);
+            $dto->sourceCategoryPath = $category['path'];
+            $dto->sourceCategoryId   = $category['id'];
 
             $products[] = $dto;
         }
 
         return $products;
+    }
+
+    /**
+     * Extrae la categoria de origen VTEX. El API publico de catalog_system
+     * (Search API) devuelve por producto:
+     * - "categories": array de rutas completas, de mas especifica a menos
+     *   especifica, ej. ["/Almacen/Arroz/", "/Almacen/"]. Se usa la primera
+     *   (la mas especifica) como ruta de origen.
+     * - "categoryId": id de la categoria hoja (string numerico).
+     * Los fixtures simplificados de test pueden usar "category"/"category_id"
+     * en su lugar.
+     *
+     * @param array $item
+     * @return array{path: ?string, id: ?string}
+     */
+    private function extractCategory(array $item): array
+    {
+        if (!empty($item['categories'][0])) {
+            return [
+                'path' => (string) $item['categories'][0],
+                'id'   => isset($item['categoryId']) && $item['categoryId'] !== '' ? (string) $item['categoryId'] : null,
+            ];
+        }
+
+        if (!empty($item['category'])) {
+            return [
+                'path' => (string) $item['category'],
+                'id'   => isset($item['category_id']) && $item['category_id'] !== '' ? (string) $item['category_id'] : null,
+            ];
+        }
+
+        return ['path' => null, 'id' => null];
     }
 
     /**

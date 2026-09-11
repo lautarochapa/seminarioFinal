@@ -274,6 +274,9 @@
         if (form.elements.supermarket_branch_id.value) {
             body.supermarket_branch_id = parseInt(form.elements.supermarket_branch_id.value, 10);
         }
+        if (form.elements.search_term && form.elements.search_term.value.trim()) {
+            body.search_term = form.elements.search_term.value.trim();
+        }
         if (form.elements.max_pages.value) {
             body.max_pages = parseInt(form.elements.max_pages.value, 10);
         }
@@ -386,10 +389,14 @@
         var dryRun = job.parameters && job.parameters.dry_run
             ? '<div class="alert alert-warning" style="display:block">DRY RUN: esta corrida no persiste candidatos, productos ni precios.</div>'
             : '';
+        var searchTerm = job.parameters && job.parameters.search_term
+            ? '<div class="table-line"><span class="muted">Buscar producto</span><strong>' + escapeHtml(job.parameters.search_term) + '</strong></div>'
+            : '';
         qs('[data-scraping-job-detail]', root).innerHTML =
             dryRun + error +
             '<div class="table-line"><span class="muted">Job</span><strong>#' + escapeHtml(job.id) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Fuente</span><strong>' + escapeHtml(job.source ? job.source.name : job.source_id) + '</strong></div>' +
+            searchTerm +
             '<div class="table-line"><span class="muted">Estado</span><strong>' + statusChip(job.status) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Encontrados</span><strong>' + escapeHtml(job.total_found) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Creados</span><strong>' + escapeHtml(job.total_created) + '</strong></div>' +

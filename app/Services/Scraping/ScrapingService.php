@@ -8,6 +8,14 @@ use App\Exceptions\Ingredients\IngredientException;
 
 class ScrapingService
 {
+    /**
+     * scraping_jobs es una tabla compartida con recipe_scraping (ver
+     * App\Repositories\RecipeScraping\RecipeScrapingRepository::JOB_TYPE).
+     * Todas las operaciones de este service deben acotarse a este job_type
+     * para no poder leer/cancelar/reintentar jobs de recetas por id.
+     */
+    const JOB_TYPE = 'product_prices';
+
     private $repo;
 
     public function __construct(ScrapingRepository $repo)
@@ -43,12 +51,12 @@ class ScrapingService
 
     public function listJobs(array $filters)
     {
-        return $this->repo->paginateJobs($filters);
+        return $this->repo->paginateJobs($filters, self::JOB_TYPE);
     }
 
     public function showJob(int $id): \App\ScrapingJob
     {
-        return $this->repo->findJobOrFail($id);
+        return $this->repo->findJobOrFail($id, self::JOB_TYPE);
     }
 
     public function createJob(int $actorId, array $data): \App\ScrapingJob
@@ -84,11 +92,13 @@ class ScrapingService
                 ? (int) $data['delay_ms'] : null,
             'dry_run'               => array_key_exists('dry_run', $data)
                 ? (bool) $data['dry_run'] : null,
+            'search_term'           => isset($data['search_term']) && trim((string) $data['search_term']) !== ''
+                ? trim((string) $data['search_term']) : null,
         ], function ($v) { return $v !== null; });
 
         $job = $this->repo->createJob([
             'source_id'       => $source->id,
-            'job_type'        => 'product_prices',
+            'job_type'        => self::JOB_TYPE,
             'requested_by'    => $actorId,
             'status'          => 'pending',
             'parameters_json' => $params,
@@ -101,7 +111,7 @@ class ScrapingService
 
     public function retryJob(int $actorId, int $jobId): \App\ScrapingJob
     {
-        $job = $this->repo->findJobOrFail($jobId);
+        $job = $this->repo->findJobOrFail($jobId, self::JOB_TYPE);
 
         if (!in_array($job->status, ['failed', 'cancelled'])) {
             throw new IngredientException(
@@ -126,7 +136,7 @@ class ScrapingService
 
     public function cancelJob(int $actorId, int $jobId): \App\ScrapingJob
     {
-        $job = $this->repo->findJobOrFail($jobId);
+        $job = $this->repo->findJobOrFail($jobId, self::JOB_TYPE);
 
         if (!in_array($job->status, ['pending', 'running'])) {
             throw new IngredientException(
@@ -144,7 +154,7 @@ class ScrapingService
 
     public function jobLogs(int $jobId, array $filters)
     {
-        $this->repo->findJobOrFail($jobId);
+        $this->repo->findJobOrFail($jobId, self::JOB_TYPE);
         return $this->repo->paginateLogs($jobId, $filters);
     }
 }

@@ -36,6 +36,19 @@ class ScrapingCandidateRepository
         return $query->orderByDesc('created_at')->paginate($perPage);
     }
 
+    /**
+     * Carga varios candidatos por id en una sola consulta (para aprobacion
+     * masiva). Los ids no encontrados simplemente no aparecen en la coleccion.
+     *
+     * @param int[] $ids
+     */
+    public function findManyByIds(array $ids)
+    {
+        return ScrapedProductCandidate::with([
+            'source', 'job', 'suggestedProduct', 'suggestedIngredient', 'reviewer',
+        ])->whereIn('id', $ids)->get();
+    }
+
     public function findOrFail(int $id): ScrapedProductCandidate
     {
         $candidate = ScrapedProductCandidate::with([
@@ -58,6 +71,17 @@ class ScrapingCandidateRepository
         $candidate->fill($data);
         $candidate->save();
         return $candidate;
+    }
+
+    /**
+     * Busca un producto ya existente por EAN/barcode activo. Se usa para sugerir
+     * "asociar producto existente" en vez de crear un duplicado.
+     */
+    public function findProductIdByBarcode(string $barcode): ?int
+    {
+        $existing = ProductBarcode::where('barcode', $barcode)->where('status', 'active')->first();
+
+        return $existing ? (int) $existing->product_id : null;
     }
 
     public function findSupermarketProductMapping(int $chainId, ?int $branchId, int $productId): ?SupermarketProduct

@@ -46,6 +46,93 @@ class IngredientMatchService
     }
 
     /**
+     * Sugiere un ingredient_id a partir de un nombre de producto scrapeado
+     * ("Arroz largo fino Gallo 1 kg"). A diferencia de matchText() (pensado para
+     * lineas de ingrediente de receta), solo compara contra el inicio del nombre:
+     * el ingrediente debe ser la palabra/frase inicial, nunca una coincidencia en
+     * cualquier parte del texto. Esto evita falsos positivos como asignar "Arroz"
+     * a "Galletitas de arroz" o "Alfajor de arroz" solo porque la palabra aparece
+     * en el nombre.
+     *
+     * @return array<string, mixed>
+     */
+    public function matchProductName(string $rawName): array
+    {
+        $result = [
+            'suggested_ingredient_id'  => null,
+            'suggested_ingredient_name' => null,
+            'confidence'               => null,
+        ];
+
+        $phrase = $this->normalizeProductName($rawName);
+        if ($phrase === '') {
+            return $result;
+        }
+
+        $match = $this->lookupProductHead($phrase);
+        if ($match !== null) {
+            $result['suggested_ingredient_id']   = $match['id'];
+            $result['suggested_ingredient_name'] = $match['name'];
+            $result['confidence']                = $match['confidence'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Quita presentacion final (cantidad + unidad) del nombre de producto,
+     * ya que no forma parte del nombre del ingrediente ("... 1 kg" -> "...").
+     */
+    private function normalizeProductName(string $name): string
+    {
+        $s = mb_strtolower(trim($name), 'UTF-8');
+        $s = preg_replace('/\s+/', ' ', $s);
+        $unitAlternation = implode('|', array_map(function ($u) {
+            return preg_quote($u, '#');
+        }, self::UNIT_TOKENS));
+        $s = preg_replace(
+            '#\s+\d+(?:[.,]\d+)?\s*(' . $unitAlternation . ')\.?$#u',
+            '',
+            trim((string) $s)
+        );
+
+        return trim((string) $s);
+    }
+
+    /**
+     * Busca un ingrediente cuyo normalized_name sea exactamente la frase o
+     * coincida con su inicio respetando limite de palabra. Prefiere la
+     * coincidencia mas larga (mas especifica) cuando hay varias posibles.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function lookupProductHead(string $phrase): ?array
+    {
+        $base = Ingredient::query()->where('status', 'active')->whereNull('deleted_at');
+
+        $exact = (clone $base)
+            ->where(function ($q) use ($phrase) {
+                $q->where('normalized_name', $phrase)
+                  ->orWhere('name', 'ILIKE', $phrase);
+            })
+            ->orderByRaw('char_length(name) asc')
+            ->first();
+        if ($exact) {
+            return ['id' => $exact->id, 'name' => $exact->name, 'confidence' => 'exact'];
+        }
+
+        $prefix = (clone $base)
+            ->whereRaw('? ILIKE (normalized_name || \' %\')', [$phrase])
+            ->orderByRaw('char_length(normalized_name) desc')
+            ->first();
+        if ($prefix) {
+            return ['id' => $prefix->id, 'name' => $prefix->name, 'confidence' => 'strong'];
+        }
+
+        return null;
+    }
+
+    /**
      * Analiza un texto de ingrediente ("200 g de harina") y sugiere un ingredient_id
      * del catalogo. Conservador: exacto o cercano por nombre; si no hay match claro
      * devuelve suggested_ingredient_id = null.

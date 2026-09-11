@@ -122,6 +122,20 @@
         return parameters.max_pages || parameters.pages || '-';
     }
 
+    function searchTerm(job) {
+        var parameters = params(job);
+        return parameters.search_term || null;
+    }
+
+    function paramsLabel(job) {
+        var label = 'Max paginas: ' + escapeHtml(maxPages(job));
+        var term = searchTerm(job);
+        if (term) {
+            label += '<br>Buscar: ' + escapeHtml(term);
+        }
+        return label;
+    }
+
     function summary(job) {
         return [
             'Encontradas: ' + escapeHtml(job.total_found || 0),
@@ -156,7 +170,7 @@
                 '<td>#' + escapeHtml(job.id) + '<br><span class="muted">' + escapeHtml(job.job_type) + '</span></td>' +
                 '<td>' + escapeHtml(sourceName(job)) + '</td>' +
                 '<td>' + statusChip(job.status) + '</td>' +
-                '<td>Max paginas: ' + escapeHtml(maxPages(job)) + '</td>' +
+                '<td>' + paramsLabel(job) + '</td>' +
                 '<td>' + summary(job) + '</td>' +
                 '<td><span class="muted">Creado</span><br>' + escapeHtml(dateLabel(job.created_at)) + '<br><span class="muted">Fin</span><br>' + escapeHtml(dateLabel(job.finished_at)) + '</td>' +
                 '<td><button type="button" class="btn-ghost btn-sm" data-recipe-scraping-show="' + escapeHtml(job.id) + '">Ver</button> ' +
@@ -205,6 +219,7 @@
             '<div class="line"><span>Estado</span><strong>' + statusChip(job.status) + '</strong></div>' +
             '<div class="line"><span>Paginas</span><strong>' + escapeHtml(maxPages(job)) + '</strong></div>' +
             '</div>' +
+            (searchTerm(job) ? '<div class="line"><span>Buscar</span><strong>' + escapeHtml(searchTerm(job)) + '</strong></div>' : '') +
             '<div style="margin-top:12px">' + summary(job) + '</div>' +
             '<div class="line"><span>Inicio</span><strong>' + escapeHtml(dateLabel(job.started_at)) + '</strong></div>' +
             '<div class="line"><span>Fin</span><strong>' + escapeHtml(dateLabel(job.finished_at)) + '</strong></div>' +
@@ -257,13 +272,18 @@
     function createJob(root, form) {
         var submit = qs('[data-recipe-scraping-submit]', root);
         var maxPages = Number(form.max_pages.value || 1);
+        var term = form.search_term ? form.search_term.value.trim() : '';
+        var body = { max_pages: maxPages };
+        if (term) {
+            body.search_term = term;
+        }
         clearMessage(root);
         if (submit) {
             submit.disabled = true;
         }
         return request('/admin/recipes/scraping/jobs', {
             method: 'POST',
-            body: { max_pages: maxPages },
+            body: body,
         }).then(function (payload) {
             showMessage(root, 'success', 'Job Cookpad encolado.');
             if (payload.data && payload.data.id) {
@@ -347,6 +367,42 @@
                 retryJob(root, retryButton.getAttribute('data-recipe-scraping-retry'));
             }
         });
+
+        var primaryBtn = document.querySelector('[data-screen-primary-action]');
+        if (primaryBtn) {
+            primaryBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+                var runForm = qs('[data-recipe-scraping-form]', root);
+                if (!runForm) {
+                    return;
+                }
+                runForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                var firstField = runForm.querySelector('input:not([type=hidden])');
+                if (firstField) {
+                    firstField.focus();
+                }
+            });
+        }
+
+        var secondaryBtn = document.querySelector('[data-screen-secondary-action]');
+        if (secondaryBtn) {
+            secondaryBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+                highlightJobsSection(root);
+            });
+        }
+    }
+
+    function highlightJobsSection(root) {
+        var section = qs('[data-recipe-scraping-jobs-section]', root);
+        if (!section) {
+            return;
+        }
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        section.classList.add('highlight-focus');
+        window.setTimeout(function () {
+            section.classList.remove('highlight-focus');
+        }, 1500);
     }
 
     document.addEventListener('DOMContentLoaded', function () {

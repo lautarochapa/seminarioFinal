@@ -10,16 +10,19 @@ use App\Product;
 use App\ProductCategory;
 use App\FamilyGroupMember;
 use App\Repositories\Products\ProductRepository;
+use App\Services\HouseholdStock\StockEntrySuggestionService;
 use App\UnitMeasure;
 use Illuminate\Support\Facades\DB;
 
 class ProductService
 {
     private $products;
+    private $stockEntrySuggestions;
 
-    public function __construct(ProductRepository $products)
+    public function __construct(ProductRepository $products, StockEntrySuggestionService $stockEntrySuggestions)
     {
         $this->products = $products;
+        $this->stockEntrySuggestions = $stockEntrySuggestions;
     }
 
     public function list(array $filters)
@@ -30,8 +33,16 @@ class ProductService
     public function publicList(array $filters, $actor = null)
     {
         $filters = $this->scopeFamilyGroupFilter($filters, $actor);
+        $paginator = $this->products->paginate($filters, true);
+        $familyGroupId = ! empty($filters['family_group_id']) ? (int) $filters['family_group_id'] : null;
 
-        return $this->products->paginate($filters, true);
+        if ($familyGroupId) {
+            $paginator->getCollection()->each(function ($product) use ($familyGroupId) {
+                $this->attachStockEntrySuggestion($product, $familyGroupId);
+            });
+        }
+
+        return $paginator;
     }
 
     public function show($id)
@@ -45,7 +56,9 @@ class ProductService
             $familyGroupId = null;
         }
 
-        return $this->products->findPublicOrFail($id, $familyGroupId);
+        $product = $this->products->findPublicOrFail($id, $familyGroupId);
+
+        return $familyGroupId ? $this->attachStockEntrySuggestion($product, $familyGroupId) : $product;
     }
 
     public function create($actorId, array $data, $ip, $userAgent)
@@ -176,7 +189,16 @@ class ProductService
             $familyGroupId = null;
         }
 
-        return $this->products->findPublicByBarcodeOrFail($barcode, $familyGroupId);
+        $product = $this->products->findPublicByBarcodeOrFail($barcode, $familyGroupId);
+
+        return $familyGroupId ? $this->attachStockEntrySuggestion($product, $familyGroupId) : $product;
+    }
+
+    private function attachStockEntrySuggestion(Product $product, int $familyGroupId): Product
+    {
+        $product->setAttribute('stock_entry_suggestion', $this->stockEntrySuggestions->forProduct($product, $familyGroupId));
+
+        return $product;
     }
 
     public function alternatives($id)

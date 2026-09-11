@@ -359,6 +359,7 @@
                             <option value="">Cargando unidades...</option>
                         </select>
                         <span class="invalid-feedback" data-stock-field-error="unit_id" role="alert"></span>
+                        <div class="alert alert-warning" data-stock-unit-warning style="display:none;margin-top:8px"></div>
                         <label>Vencimiento</label>
                         <input class="form-control" name="expiration_date" type="date">
                         <span class="invalid-feedback" data-stock-field-error="expiration_date" role="alert"></span>
@@ -1323,9 +1324,14 @@
                         <select class="form-control" data-barcode-location-select>
                             <option value="">Selecciona ubicacion</option>
                         </select>
-                        <input class="form-control" data-barcode-quantity type="number" min="0.0001" step="0.01" value="1" aria-label="Cantidad">
+                        <input class="form-control" data-barcode-quantity type="number" min="0.0001" step="0.01" aria-label="Cantidad" placeholder="Cantidad">
+                        <select class="form-control" data-barcode-unit-select aria-label="Unidad">
+                            <option value="">Selecciona unidad</option>
+                        </select>
                         <button type="button" class="btn-main" data-barcode-stock-submit>Agregar stock</button>
                     </div>
+                    <div class="muted" data-barcode-unit-note style="font-size:12px;margin-top:8px"></div>
+                    <div class="alert alert-warning" data-barcode-unit-warning style="display:none;margin-top:8px"></div>
                     <div data-barcode-stock-result style="margin-top:12px">
                         <p class="muted">Busca o escanea un producto, elegi ubicacion y confirma la carga.</p>
                     </div>

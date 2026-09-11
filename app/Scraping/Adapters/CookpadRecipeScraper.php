@@ -23,6 +23,7 @@ class CookpadRecipeScraper
     private $rateLimiter;
     private $urlValidator;
     private $blocked = false;
+    private $deadline = null;
 
     public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator)
     {
@@ -54,10 +55,17 @@ class CookpadRecipeScraper
         $searchTerm = $this->resolveSearchTerm($params);
         $seenUrls = [];
         $this->blocked = false;
+        $budgetSeconds = (int) config('scraping.recipe_time_budget_seconds', 180);
+        $this->deadline = $budgetSeconds > 0 ? (microtime(true) + $budgetSeconds) : null;
 
         for ($page = 1; $page <= $maxPages; $page++) {
             if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
                 $result->finalReason = 'cancelled';
+                break;
+            }
+
+            if ($this->deadlineExceeded()) {
+                $result->finalReason = 'time_budget_exceeded';
                 break;
             }
 
@@ -83,6 +91,11 @@ class CookpadRecipeScraper
             foreach ($recipeLinks as $recipeUrl) {
                 if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
                     $result->finalReason = 'cancelled';
+                    break 2;
+                }
+
+                if ($this->deadlineExceeded()) {
+                    $result->finalReason = 'time_budget_exceeded';
                     break 2;
                 }
 
@@ -202,6 +215,20 @@ class CookpadRecipeScraper
         }
 
         return array_values(array_unique($links));
+    }
+
+    /**
+     * El proceso corre en linea (QUEUE_CONNECTION=sync) dentro del request
+     * HTTP/CLI que lo dispara: no hay un worker de cola que lo mate por
+     * timeout ni que reintente si el servidor lo corta primero. Este limite
+     * de tiempo evita que la corrida siga acumulando requests mas alla de lo
+     * que el proceso puede terminar de forma segura, para que el job siempre
+     * cierre con un estado final propio en vez de quedar "running" hasta que
+     * algo externo mate el proceso a mitad de camino.
+     */
+    private function deadlineExceeded(): bool
+    {
+        return $this->deadline !== null && microtime(true) >= $this->deadline;
     }
 
     private function schemeHost(string $url): string
