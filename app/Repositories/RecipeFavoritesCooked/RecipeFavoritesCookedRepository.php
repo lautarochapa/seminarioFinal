@@ -86,19 +86,27 @@ class RecipeFavoritesCookedRepository
     }
 
     /**
-     * Returns stock items ordered oldest-first for FIFO deduction.
-     * Returns rows with: id, quantity, unit_id, product_id, ingredient_id (from product join)
+     * Returns valid stock lots in FEFO order, with undated lots last.
      */
-    public function stockItemsForIngredient(int $groupId, int $ingredientId): array
+    public function stockItemsForIngredient(int $groupId, int $ingredientId, ?int $specificProductId = null): array
     {
-        return DB::table('stock_items as si')
+        $query = DB::table('stock_items as si')
             ->join('products as p', 'p.id', '=', 'si.product_id')
             ->where('si.family_group_id', $groupId)
             ->where('p.ingredient_id', $ingredientId)
             ->where('si.status', 'active')
             ->whereNull('si.deleted_at')
             ->where('si.quantity', '>', 0)
-            ->where(function ($q) { $q->whereNull('si.expiration_date')->orWhereDate('si.expiration_date', '>=', now()->toDateString()); })
+            ->where(function ($q) {
+                $q->whereNull('si.expiration_date')
+                    ->orWhereDate('si.expiration_date', '>=', now()->toDateString());
+            });
+
+        if ($specificProductId !== null) {
+            $query->where('si.product_id', $specificProductId);
+        }
+
+        return $query
             ->orderByRaw('si.expiration_date is null')
             ->orderBy('si.expiration_date')
             ->orderBy('si.id')

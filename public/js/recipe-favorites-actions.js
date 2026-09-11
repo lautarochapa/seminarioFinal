@@ -10,6 +10,13 @@
 
     function endpoint(path) { return '/api/v1' + path; }
 
+    function createCookIdempotencyKey() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return 'web-cook-' + window.crypto.randomUUID();
+        }
+        return 'web-cook-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    }
+
     function extractMsg(err) {
         var fields = err && err.payload && err.payload.error && err.payload.error.field_errors;
         if (fields) {
@@ -47,7 +54,7 @@
                 '</div>' +
                 '<div data-cook-deduct-row style="margin-bottom:10px;display:' + (s.selectedGroupId ? 'block' : 'none') + '">' +
                 '<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">' +
-                '<input type="checkbox" data-cook-deduct> Descontar ingredientes de Mi cocina' +
+                '<input type="checkbox" data-cook-deduct' + (s.deductStock ? ' checked' : '') + '> Descontar ingredientes de Mi cocina' +
                 '</label>' +
                 '</div>' +
                 '<div style="display:flex;gap:8px">' +
@@ -95,6 +102,7 @@
         var cookSubmit  = s.el.querySelector('[data-cook-submit]');
         var cookCancel  = s.el.querySelector('[data-cook-cancel]');
         var cookGroup   = s.el.querySelector('[data-cook-group]');
+        var cookDeduct  = s.el.querySelector('[data-cook-deduct]');
         var deductRow   = s.el.querySelector('[data-cook-deduct-row]');
 
         if (favBtn) {
@@ -136,6 +144,7 @@
         if (cookToggle) {
             cookToggle.addEventListener('click', function () {
                 s.cookOpen = !s.cookOpen;
+                if (!s.cookOpen) { s.cookAttempt = null; }
                 if (s.cookOpen && !s.groupsLoaded) { loadGroups(s); }
                 render(s);
             });
@@ -144,13 +153,21 @@
         if (cookGroup && deductRow) {
             cookGroup.addEventListener('change', function () {
                 s.selectedGroupId = cookGroup.value ? parseInt(cookGroup.value, 10) : null;
+                if (!s.selectedGroupId) { s.deductStock = false; }
                 deductRow.style.display = cookGroup.value ? '' : 'none';
+            });
+        }
+
+        if (cookDeduct) {
+            cookDeduct.addEventListener('change', function () {
+                s.deductStock = cookDeduct.checked;
             });
         }
 
         if (cookCancel) {
             cookCancel.addEventListener('click', function () {
                 s.cookOpen = false;
+                s.cookAttempt = null;
                 render(s);
             });
         }
@@ -174,6 +191,15 @@
                     if (deductCk && deductCk.checked) { body.deduct_stock = true; }
                 }
 
+                var signature = JSON.stringify(body);
+                if (!s.cookAttempt || s.cookAttempt.signature !== signature) {
+                    s.cookAttempt = { signature: signature, key: createCookIdempotencyKey() };
+                }
+                body.idempotency_key = s.cookAttempt.key;
+
+                s.servings = srv;
+                s.selectedGroupId = body.family_group_id || null;
+                s.deductStock = body.deduct_stock === true;
                 s.cookLoading = true;
                 render(s);
 
@@ -184,6 +210,7 @@
                     .then(function () {
                         s.cookLoading = false;
                         s.cookOpen    = false;
+                        s.cookAttempt = null;
                         render(s);
                         // Show a brief success in the (now re-rendered) container
                         var ok = document.createElement('div');
@@ -196,6 +223,7 @@
                     })
                     .catch(function (err) {
                         s.cookLoading = false;
+                        if (err && err.status) { s.cookAttempt = null; }
                         render(s);
                         showCookMsg(s, 'err', extractMsg(err));
                     });
@@ -231,6 +259,8 @@
                 favLoading:   false,
                 cookOpen:     false,
                 cookLoading:  false,
+                cookAttempt:  null,
+                deductStock:  false,
                 groups:       [],
                 groupsLoaded: false,
                 selectedGroupId: null,
