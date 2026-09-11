@@ -55,6 +55,20 @@ class RecipeImportCandidatesRepository
         $candidate->save();
     }
 
+    /**
+     * Persiste las sugerencias automaticas de ingrediente (calculadas por
+     * IngredientMatchService) en parsed_recipe_json.ingredient_suggestions.
+     * Es una clave separada de ingredient_mappings: una sugerencia nunca es
+     * por si sola un mapeo confirmado, solo alimenta la UI/aplicar-sugerencias.
+     */
+    public function saveSuggestions(ImportedRecipeCandidate $candidate, array $suggestions): void
+    {
+        $parsed = $candidate->parsed_recipe_json ?? [];
+        $parsed['ingredient_suggestions'] = $suggestions;
+        $candidate->parsed_recipe_json = $parsed;
+        $candidate->save();
+    }
+
     public function setMapping(ImportedRecipeCandidate $candidate, int $ingredientIndex, array $mapping): void
     {
         $parsed   = $candidate->parsed_recipe_json ?? [];
@@ -222,4 +236,36 @@ class RecipeImportCandidatesRepository
         }
         return $unmapped;
     }
+
+    /**
+     * Igual que unmappedIngredientIndices() pero excluye los indices
+     * marcados opcionales (is_optional=true en ingredient_suggestions,
+     * detectado por IngredientMatchService a partir del texto original, ej.
+     * "Opcional laurel y azafran"): un ingrediente opcional sin mapear no
+     * debe bloquear la aprobacion de la receta. Si las sugerencias no estan
+     * calculadas o quedaron desactualizadas (cantidad distinta a
+     * raw_ingredients_json), se asume no-opcional por seguridad.
+     */
+    public function requiredUnmappedIngredientIndices(ImportedRecipeCandidate $candidate): array
+    {
+        $unmapped = $this->unmappedIngredientIndices($candidate);
+        if (empty($unmapped)) {
+            return [];
+        }
+
+        $rawIngredients = $candidate->raw_ingredients_json ?? [];
+        $suggestions    = ($candidate->parsed_recipe_json ?? [])['ingredient_suggestions'] ?? [];
+
+        $optionalByIndex = [];
+        if (is_array($suggestions) && count($suggestions) === count($rawIngredients)) {
+            foreach ($suggestions as $s) {
+                $optionalByIndex[(int) ($s['index'] ?? -1)] = (bool) ($s['is_optional'] ?? false);
+            }
+        }
+
+        return array_values(array_filter($unmapped, function ($idx) use ($optionalByIndex) {
+            return empty($optionalByIndex[$idx]);
+        }));
+    }
+
 }

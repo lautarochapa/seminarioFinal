@@ -207,8 +207,9 @@ export const productsApi = {
     const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
     return apiClient.get<PaginatedResponse<ProductSummary>>(`/api/v1/products${qs}`);
   },
-  get(id: number): Promise<ApiResponse<ProductDetail>> {
-    return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/${id}`);
+  get(id: number, familyGroupId?: number | null): Promise<ApiResponse<ProductDetail>> {
+    const qs = toQueryString({ family_group_id: familyGroupId || undefined });
+    return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/${id}${qs}`);
   },
   findByBarcode(barcode: string, familyGroupId?: number | null): Promise<ApiResponse<ProductDetail>> {
     const qs = toQueryString({ family_group_id: familyGroupId || undefined });

@@ -2370,6 +2370,7 @@
                         <label class="muted" for="recipe-scraping-search-term">Buscar recetas (opcional)</label>
                         <input id="recipe-scraping-search-term" class="form-control" name="search_term" type="text" maxlength="100" placeholder="Ej: arroz, pollo, milanesa">
                         <button type="submit" class="btn-main" data-recipe-scraping-submit>Ejecutar Cookpad</button>
+                        <p class="muted" data-recipe-scraping-active-hint style="display:none;color:var(--danger)">Ya hay un scraping de recetas en ejecucion. Espera a que termine antes de lanzar otro.</p>
                     </form>
                     <div class="line"><span>Fuente</span><strong>Cookpad Argentina</strong></div>
                     <div class="line"><span>Estado inicial</span><strong>pending</strong></div>
@@ -3087,12 +3088,16 @@
                         </select>
                         <input class="form-control" type="search" data-import-candidates-source placeholder="Fuente">
                         <button type="button" class="btn-ghost" data-import-candidates-refresh>Actualizar</button>
+                        <button type="button" class="btn-ghost" data-import-candidates-recalculate-visible>Recalcular pendientes visibles</button>
+                        <button type="button" class="btn-ghost" data-import-candidates-apply-bulk>Aplicar sugerencias seleccionadas</button>
+                        <button type="button" class="btn-main" data-import-candidates-approve-bulk>Aprobar seleccionadas listas</button>
                         <span class="chip" data-import-candidates-count>0 candidatas</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
+                                    <th><input type="checkbox" data-import-candidates-select-all title="Seleccionar todos los visibles"></th>
                                     <th>Receta</th>
                                     <th>Fuente</th>
                                     <th>Estado</th>
@@ -3102,7 +3107,7 @@
                                 </tr>
                             </thead>
                             <tbody data-import-candidates-body>
-                                <tr><td colspan="6" class="muted">Cargando candidatas...</td></tr>
+                                <tr><td colspan="7" class="muted">Cargando candidatas...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -3135,6 +3140,10 @@
 
                 <article class="panel">
                     <h2>Mapear ingrediente</h2>
+                    <div class="admin-tools" style="justify-content:flex-start;margin-bottom:10px">
+                        <button type="button" class="btn-main" data-import-candidates-apply-suggestions>Aplicar mapeos sugeridos</button>
+                        <button type="button" class="btn-ghost" data-import-candidates-recalculate>Recalcular sugerencias</button>
+                    </div>
                     <form class="rbac-form" data-import-candidates-map-form>
                         <input type="hidden" name="id">
                         <select class="form-control" name="ingredient_index" data-import-candidates-ingredient-index required>

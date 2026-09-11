@@ -238,15 +238,48 @@
         return params.toString();
     }
 
+    function hasActiveJob(jobs) {
+        return (jobs || []).some(function (job) {
+            return job.status === 'pending' || job.status === 'running';
+        });
+    }
+
+    function updateSubmitAvailability(root, jobs, statusFilterValue) {
+        var submit = qs('[data-recipe-scraping-submit]', root);
+        var hint = qs('[data-recipe-scraping-active-hint]', root);
+        if (!submit) {
+            return;
+        }
+        if (statusFilterValue) {
+            // Con un filtro de estado aplicado esta lista no representa
+            // todos los jobs: no se puede confiar en ella para bloquear el
+            // boton, asi que se deja habilitado (el backend igual rechaza
+            // con 409 si hay un job activo).
+            submit.disabled = false;
+            if (hint) {
+                hint.style.display = 'none';
+            }
+            return;
+        }
+        var active = hasActiveJob(jobs);
+        submit.disabled = active;
+        if (hint) {
+            hint.style.display = active ? 'block' : 'none';
+        }
+    }
+
     function loadJobs(root) {
         var body = qs('[data-recipe-scraping-jobs-body]', root);
         if (body) {
             body.innerHTML = '<tr><td colspan="7" class="muted">Cargando jobs...</td></tr>';
         }
+        var statusFilter = qs('[data-recipe-scraping-status]', root);
         return request('/admin/recipes/scraping/jobs?' + buildQuery(root))
             .then(function (payload) {
-                renderRows(root, getCollection(payload));
+                var jobs = getCollection(payload);
+                renderRows(root, jobs);
                 renderMeta(root, payload);
+                updateSubmitAvailability(root, jobs, statusFilter ? statusFilter.value : '');
                 return payload;
             })
             .catch(function (error) {

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\V1\RecipeImportCandidates;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\RecipeImportCandidates\ApplySuggestionsBulkRequest;
+use App\Http\Requests\Api\V1\RecipeImportCandidates\ApproveBulkRequest;
 use App\Http\Requests\Api\V1\RecipeImportCandidates\CreateRecipeFromCandidateRequest;
 use App\Http\Requests\Api\V1\RecipeImportCandidates\MapIngredientRequest;
+use App\Http\Requests\Api\V1\RecipeImportCandidates\RecalculateSuggestionsBulkRequest;
 use App\Http\Requests\Api\V1\RecipeImportCandidates\RejectCandidateRequest;
 use App\Http\Requests\Api\V1\RecipeImportCandidates\UpdateCandidateRequest;
 use App\Http\Resources\Api\V1\RecipeImportCandidates\RecipeImportCandidateDetailResource;
@@ -50,6 +53,93 @@ class RecipeImportCandidatesController extends Controller
             'data'     => $data,
             'trace_id' => $traceId,
         ])->header('X-Trace-Id', $traceId);
+    }
+
+    public function recalculateSuggestions(Request $request, $id)
+    {
+        $traceId   = $request->attributes->get('trace_id');
+        $candidate = $this->service->recalculateSuggestions(
+            $request->user(),
+            (int) $id,
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        $data = (new RecipeImportCandidateDetailResource($candidate))->toArray($request);
+        $data['ingredient_suggestions'] = $this->service->ingredientSuggestions($request->user(), (int) $id);
+
+        return response()->json([
+            'data'     => $data,
+            'trace_id' => $traceId,
+        ])->header('X-Trace-Id', $traceId);
+    }
+
+    public function recalculateSuggestionsBulk(RecalculateSuggestionsBulkRequest $request)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $result  = $this->service->recalculateSuggestionsBulk(
+            $request->user(),
+            $request->validated()['candidate_ids'],
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        return response()->json(array_merge($result, [
+            'trace_id' => $traceId,
+        ]))->header('X-Trace-Id', $traceId);
+    }
+
+    public function applySuggestions(Request $request, $id)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $result  = $this->service->applySuggestedMappings(
+            $request->user(),
+            (int) $id,
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        $data = (new RecipeImportCandidateDetailResource($result['candidate']))->toArray($request);
+        $data['ingredient_suggestions'] = $this->service->ingredientSuggestions($request->user(), (int) $id);
+
+        return response()->json([
+            'data'                    => $data,
+            'applied'                 => $result['applied'],
+            'skipped_unresolved'      => $result['skipped_unresolved'],
+            'skipped_no_unit'         => $result['skipped_no_unit'],
+            'skipped_already_mapped'  => $result['skipped_already_mapped'],
+            'trace_id'                => $traceId,
+        ])->header('X-Trace-Id', $traceId);
+    }
+
+    public function applySuggestionsBulk(ApplySuggestionsBulkRequest $request)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $result  = $this->service->applySuggestedMappingsBulk(
+            $request->user(),
+            $request->validated()['candidate_ids'],
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        return response()->json(array_merge($result, [
+            'trace_id' => $traceId,
+        ]))->header('X-Trace-Id', $traceId);
+    }
+
+    public function approveBulk(ApproveBulkRequest $request)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $result  = $this->service->approveBulk(
+            $request->user(),
+            $request->validated()['candidate_ids'],
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        return response()->json(array_merge($result, [
+            'trace_id' => $traceId,
+        ]))->header('X-Trace-Id', $traceId);
     }
 
     public function update(UpdateCandidateRequest $request, $id)

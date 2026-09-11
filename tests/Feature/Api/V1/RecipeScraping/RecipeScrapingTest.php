@@ -1040,4 +1040,184 @@ class RecipeScrapingTest extends TestCase
             ->assertStatus(200)
             ->assertJsonPath('data.id', $recipeJob->id);
     }
+
+    /**
+     * Instrumentacion (ScrapingJobLog) agregada para poder distinguir, ante
+     * un job que no avanza, exactamente en que request/pagina se quedo:
+     * page_request_started/finished (status, duration_ms, bytes),
+     * page_parsed (recipes_found), recipe_detail_started/finished.
+     */
+    public function test_instrumentacion_registra_eventos_de_pagina_y_detalle()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+        $job    = $this->runningRecipeJob($user->id, $source->id, ['max_pages' => 1]);
+
+        Http::fake([
+            '*buscar*' => Http::response($this->cookpadListingHtml(), 200),
+            '*recetas/123456*' => Http::response($this->recipeHtml('Milanesa napolitana'), 200),
+            '*' => Http::response('<html><body></body></html>', 200),
+        ]);
+
+        $this->handleJob($job);
+
+        $messages = \App\ScrapingJobLog::where('scraping_job_id', $job->id)->orderBy('id')->pluck('message')->all();
+
+        $this->assertContains('page_request_started', $messages);
+        $this->assertContains('page_request_finished', $messages);
+        $this->assertContains('page_parsed', $messages);
+        $this->assertContains('recipe_detail_started', $messages);
+        $this->assertContains('recipe_detail_finished', $messages);
+
+        $pageParsed = \App\ScrapingJobLog::where('scraping_job_id', $job->id)
+            ->where('message', 'page_parsed')->first();
+        $this->assertEquals(1, $pageParsed->context_json['recipes_found']);
+
+        $pageFinished = \App\ScrapingJobLog::where('scraping_job_id', $job->id)
+            ->where('message', 'page_request_finished')->where('level', 'info')->first();
+        $this->assertEquals(200, $pageFinished->context_json['status']);
+        $this->assertArrayHasKey('duration_ms', $pageFinished->context_json);
+        $this->assertArrayHasKey('bytes', $pageFinished->context_json);
+
+        $detailFinished = \App\ScrapingJobLog::where('scraping_job_id', $job->id)
+            ->where('message', 'recipe_detail_finished')->first();
+        $this->assertTrue($detailFinished->context_json['parsed']);
+    }
+
+    public function test_instrumentacion_registra_status_de_error_en_page_request_finished_cuando_falla()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+        $job    = $this->runningRecipeJob($user->id, $source->id);
+
+        Http::fake(['*' => Http::response('Forbidden', 403)]);
+
+        $this->handleJob($job);
+
+        $log = \App\ScrapingJobLog::where('scraping_job_id', $job->id)
+            ->where('message', 'page_request_finished')->first();
+        $this->assertNotNull($log);
+        $this->assertEquals('warning', $log->level);
+        $this->assertEquals(403, $log->context_json['status']);
+    }
+
+    public function test_listado_sin_recetas_encontradas_finaliza_controladamente()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+        $job    = $this->runningRecipeJob($user->id, $source->id);
+
+        Http::fake(['*' => Http::response('<html><body>Sin resultados para esta busqueda.</body></html>', 200)]);
+
+        $this->handleJob($job);
+
+        $job->refresh();
+        $this->assertNotEquals('running', $job->status);
+        $this->assertNotNull($job->finished_at);
+        $this->assertEquals(0, $job->total_found);
+
+        $pageParsed = \App\ScrapingJobLog::where('scraping_job_id', $job->id)
+            ->where('message', 'page_parsed')->first();
+        $this->assertEquals(0, $pageParsed->context_json['recipes_found']);
+    }
+
+    public function test_lock_de_fuente_ocupado_deja_el_job_failed_con_final_reason_source_locked()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+        $job    = $this->runningRecipeJob($user->id, $source->id);
+
+        $guard = \Mockery::mock(\App\Services\Scraping\ScrapingExecutionGuard::class);
+        $guard->shouldReceive('acquire')->andReturn(false);
+        $guard->shouldNotReceive('release');
+
+        (new RunRecipeScrapingJob($job->id))->handle(
+            app(\App\Repositories\Scraping\ScrapingRepository::class),
+            app(CookpadRecipeScraper::class),
+            $guard,
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class),
+            app(\App\Services\Scraping\UrlSecurityValidator::class)
+        );
+
+        $job->refresh();
+        // Bajo QUEUE_CONNECTION=sync no queda nada que "retome" un job
+        // pending: se cierra en un estado terminal explicito en vez de
+        // quedar ambiguamente pending para siempre.
+        $this->assertNotEquals('running', $job->status);
+        $this->assertNotEquals('pending', $job->status);
+        $this->assertEquals('failed', $job->status);
+        $this->assertNotNull($job->finished_at);
+        $this->assertNotNull($job->error_message);
+
+        $log = \App\ScrapingJobLog::where('scraping_job_id', $job->id)->first();
+        $this->assertNotNull($log);
+        $this->assertEquals('source_locked', $log->context_json['final_reason']);
+    }
+
+    public function test_acquire_de_lock_recibe_ttl_especifico_de_recetas()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+        $job    = $this->runningRecipeJob($user->id, $source->id);
+
+        $guard = \Mockery::mock(\App\Services\Scraping\ScrapingExecutionGuard::class);
+        $guard->shouldReceive('acquire')
+            ->once()
+            ->with($source->code, (int) config('scraping.recipe_lock_ttl_seconds', 300))
+            ->andReturn(true);
+        $guard->shouldReceive('release')->once();
+
+        Http::fake([
+            '*buscar*' => Http::response($this->cookpadListingHtml(), 200),
+            '*recetas/123456*' => Http::response($this->recipeHtml(), 200),
+            '*' => Http::response('<html><body></body></html>', 200),
+        ]);
+
+        (new RunRecipeScrapingJob($job->id))->handle(
+            app(\App\Repositories\Scraping\ScrapingRepository::class),
+            app(CookpadRecipeScraper::class),
+            $guard,
+            app(\App\Services\Scraping\ScrapingCircuitBreaker::class),
+            app(\App\Services\Scraping\UrlSecurityValidator::class)
+        );
+
+        $job->refresh();
+        $this->assertEquals('completed', $job->status);
+    }
+
+    public function test_recipe_lock_ttl_default_es_mayor_al_time_budget_default()
+    {
+        // Invariante pedida: el lock no puede vencer mientras un job legitimo
+        // sigue corriendo, asi que su TTL debe superar el time budget.
+        $ttl = (int) config('scraping.recipe_lock_ttl_seconds', 300);
+        $budget = (int) config('scraping.recipe_time_budget_seconds', 180);
+
+        $this->assertGreaterThan($budget, $ttl);
+    }
+
+    public function test_job_real_no_pierde_el_lock_mientras_sigue_corriendo()
+    {
+        $user   = $this->adminUser();
+        $source = $this->cookpadSource();
+        $job    = $this->runningRecipeJob($user->id, $source->id);
+        $lockKey = 'scraping:source:cookpad:owner';
+
+        Http::fake([
+            '*buscar*' => function () use ($lockKey) {
+                // Mientras el job todavia esta haciendo requests, el lock
+                // real (no mockeado) debe seguir ocupado.
+                $this->assertNotNull(\Illuminate\Support\Facades\Cache::get($lockKey), 'El lock debe seguir tomado durante la corrida.');
+                return Http::response($this->cookpadListingHtml(), 200);
+            },
+            '*recetas/123456*' => Http::response($this->recipeHtml(), 200),
+            '*' => Http::response('<html><body></body></html>', 200),
+        ]);
+
+        $this->handleJob($job);
+
+        $job->refresh();
+        $this->assertEquals('completed', $job->status);
+        // Una vez terminado, el guard ya libero el lock (finally -> release()).
+        $this->assertNull(\Illuminate\Support\Facades\Cache::get($lockKey));
+    }
 }

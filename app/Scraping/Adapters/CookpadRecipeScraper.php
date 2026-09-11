@@ -2,6 +2,7 @@
 
 namespace App\Scraping\Adapters;
 
+use App\Repositories\Scraping\ScrapingRepository;
 use App\ScrapingJob;
 use App\ScrapingSource;
 use App\Scraping\DTOs\RecipeScrapingResult;
@@ -22,14 +23,16 @@ class CookpadRecipeScraper
     private $http;
     private $rateLimiter;
     private $urlValidator;
+    private $repo;
     private $blocked = false;
     private $deadline = null;
 
-    public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator)
+    public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator, ScrapingRepository $repo)
     {
         $this->http = $http;
         $this->rateLimiter = $rateLimiter;
         $this->urlValidator = $urlValidator;
+        $this->repo = $repo;
     }
 
     public function isAvailable(): bool
@@ -70,7 +73,7 @@ class CookpadRecipeScraper
             }
 
             $listingUrl = $baseUrl . '/buscar/' . rawurlencode($searchTerm) . '?page=' . $page;
-            $html       = $this->fetchHtml($source->code, $listingUrl, $metrics, true);
+            $html       = $this->fetchHtml($job, $source->code, $listingUrl, $metrics, true, 'listing');
 
             if ($this->blocked) {
                 $result->errorMessage = 'Fuente bloqueada o con verificacion anti-bot. Corrida detenida.';
@@ -87,6 +90,10 @@ class CookpadRecipeScraper
             $recipeLinks = $this->extractRecipeLinks($html, $baseUrl);
             $result->pagesScraped++;
             $metrics->increment('pages_processed');
+            $this->repo->addLog($job, 'info', 'page_parsed', [
+                'page'          => $page,
+                'recipes_found' => count($recipeLinks),
+            ]);
 
             foreach ($recipeLinks as $recipeUrl) {
                 if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
@@ -112,7 +119,8 @@ class CookpadRecipeScraper
                 }
                 $seenUrls[$recipeUrl] = true;
 
-                $recipeHtml = $this->fetchHtml($source->code, $recipeUrl, $metrics, true);
+                $this->repo->addLog($job, 'info', 'recipe_detail_started', ['url' => mb_substr($recipeUrl, 0, 300)]);
+                $recipeHtml = $this->fetchHtml($job, $source->code, $recipeUrl, $metrics, true, 'detail');
 
                 if ($this->blocked) {
                     $result->errorMessage = 'Fuente bloqueada o con verificacion anti-bot. Corrida detenida.';
@@ -121,6 +129,7 @@ class CookpadRecipeScraper
                 }
 
                 if ($recipeHtml === null) {
+                    $this->repo->addLog($job, 'warning', 'recipe_detail_finished', ['url' => mb_substr($recipeUrl, 0, 300), 'parsed' => false]);
                     continue;
                 }
 
@@ -129,8 +138,10 @@ class CookpadRecipeScraper
                     $result->recipes[]  = $dto;
                     $result->totalFound++;
                     $metrics->increment('items_found');
+                    $this->repo->addLog($job, 'info', 'recipe_detail_finished', ['url' => mb_substr($recipeUrl, 0, 300), 'parsed' => true]);
                 } else {
                     $metrics->increment('parse_errors');
+                    $this->repo->addLog($job, 'warning', 'recipe_detail_finished', ['url' => mb_substr($recipeUrl, 0, 300), 'parsed' => false]);
                 }
 
                 if ($result->totalFound >= $maxRecipes) {
@@ -311,8 +322,21 @@ class CookpadRecipeScraper
         return null;
     }
 
-    private function fetchHtml(string $sourceCode, string $url, ScrapingMetrics $metrics, bool $validateUrl): ?string
+    /**
+     * Instrumenta cada request HTTP con eventos en ScrapingJobLog
+     * (page_request_started/finished) para poder distinguir, ante un job
+     * que no avanza, si esta esperando una respuesta de Cookpad, si la
+     * respuesta llego bloqueada/con error, o si el problema esta despues
+     * (parseo). No loguea el HTML completo, solo status/duracion/bytes.
+     */
+    private function fetchHtml(ScrapingJob $job, string $sourceCode, string $url, ScrapingMetrics $metrics, bool $validateUrl, string $kind): ?string
     {
+        $this->repo->addLog($job, 'info', 'page_request_started', [
+            'kind' => $kind,
+            'url'  => mb_substr($url, 0, 300),
+        ]);
+        $startedAt = microtime(true);
+
         try {
             $response = $this->http->getHtml($sourceCode, $url, $metrics, [
                 'validate_url' => $validateUrl,
@@ -320,6 +344,14 @@ class CookpadRecipeScraper
             ]);
 
             $body = $response->body();
+            $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
+
+            $this->repo->addLog($job, 'info', 'page_request_finished', [
+                'kind'        => $kind,
+                'status'      => $response->status(),
+                'duration_ms' => $durationMs,
+                'bytes'       => strlen($body),
+            ]);
 
             if ($this->looksBlocked($body)) {
                 $this->blocked = true;
@@ -329,9 +361,16 @@ class CookpadRecipeScraper
 
             return $body;
         } catch (ScrapingHttpException $e) {
+            $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
             if (in_array($e->statusCode(), [401, 403, 429], true)) {
                 $this->blocked = true;
             }
+            $this->repo->addLog($job, 'warning', 'page_request_finished', [
+                'kind'        => $kind,
+                'status'      => $e->statusCode(),
+                'duration_ms' => $durationMs,
+                'error'       => mb_substr($e->getMessage(), 0, 200),
+            ]);
             Log::warning('cookpad_scraper_fetch_error', [
                 'url' => mb_substr($url, 0, 300),
                 'status_code' => $e->statusCode(),
@@ -340,6 +379,13 @@ class CookpadRecipeScraper
             ]);
             return null;
         } catch (\Throwable $e) {
+            $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
+            $this->repo->addLog($job, 'warning', 'page_request_finished', [
+                'kind'        => $kind,
+                'status'      => null,
+                'duration_ms' => $durationMs,
+                'error'       => mb_substr($e->getMessage(), 0, 200),
+            ]);
             Log::warning('cookpad_scraper_fetch_error', ['url' => $url, 'error' => mb_substr($e->getMessage(), 0, 200)]);
             return null;
         }

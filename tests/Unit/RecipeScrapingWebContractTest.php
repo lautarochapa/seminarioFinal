@@ -48,4 +48,16 @@ class RecipeScrapingWebContractTest extends TestCase
         $this->assertStringContainsString('Buscar: ', $script);
         $this->assertStringContainsString('<span>Buscar</span>', $script);
     }
+
+    public function test_boton_ejecutar_se_deshabilita_cuando_hay_un_job_activo()
+    {
+        $view = file_get_contents(__DIR__.'/../../resources/views/web/admin-screen.blade.php');
+        $script = file_get_contents(__DIR__.'/../../public/js/admin-recipe-scraping.js');
+
+        $this->assertStringContainsString('data-recipe-scraping-active-hint', $view);
+        $this->assertStringContainsString('Ya hay un scraping de recetas en ejecucion', $view);
+        $this->assertStringContainsString('function hasActiveJob(jobs)', $script);
+        $this->assertStringContainsString('function updateSubmitAvailability(', $script);
+        $this->assertStringContainsString("job.status === 'pending' || job.status === 'running'", $script);
+    }
 }

@@ -3,8 +3,10 @@
 namespace App\Jobs;
 
 use App\ImportedRecipeCandidate;
+use App\Repositories\RecipeImportCandidates\RecipeImportCandidatesRepository;
 use App\Repositories\Scraping\ScrapingRepository;
 use App\Scraping\Adapters\CookpadRecipeScraper;
+use App\Services\RecipeImportCandidates\IngredientMatchService;
 use App\Services\Scraping\ScrapingCircuitBreaker;
 use App\Services\Scraping\ScrapingExecutionGuard;
 use App\Services\Scraping\UrlSecurityValidator;
@@ -43,14 +45,24 @@ class RunRecipeScrapingJob implements ShouldQueue
             return;
         }
 
-        if (!$guard->acquire($job->source->code)) {
-            $delay = (int) config('scraping.default_retry_after_seconds', 60);
-            $repo->addLog($job, 'warning', 'Ejecucion omitida: lock de fuente ocupado', [
-                'source_code' => $job->source->code,
-                'retry_after_seconds' => $delay,
-                'final_reason' => 'source_lock_busy',
+        $lockTtl = (int) config('scraping.recipe_lock_ttl_seconds', config('scraping.lock_ttl_seconds', 3600));
+
+        if (!$guard->acquire($job->source->code, $lockTtl)) {
+            // Bajo QUEUE_CONNECTION=sync no hay una cola real que reintente
+            // este job mas tarde: dejarlo en "pending" es enganoso (parece
+            // que sigue esperando turno cuando en realidad nadie va a
+            // retomarlo). Se cierra en un estado terminal explicito para que
+            // el admin vea claramente que no corrio y por que.
+            $message = 'Ya hay un scraping de recetas en ejecucion para esta fuente. Intenta nuevamente en unos minutos.';
+            $repo->updateJob($job, [
+                'status' => 'failed',
+                'finished_at' => now(),
+                'error_message' => $message,
             ]);
-            $this->release($delay);
+            $repo->addLog($job, 'warning', $message, [
+                'source_code' => $job->source->code,
+                'final_reason' => 'source_locked',
+            ]);
             return;
         }
 
@@ -103,7 +115,7 @@ class RunRecipeScrapingJob implements ShouldQueue
                     continue;
                 }
 
-                ImportedRecipeCandidate::create([
+                $candidate = ImportedRecipeCandidate::create([
                     'source_url'           => $sourceUrl,
                     'source_site'          => $job->source->code,
                     'raw_title'            => $dto->title,
@@ -122,6 +134,17 @@ class RunRecipeScrapingJob implements ShouldQueue
                     ],
                     'status' => 'parsed',
                 ]);
+
+                // Precarga sugerencias de ingrediente para que la mayoria de
+                // los selects ya vengan completos al entrar a revisar la
+                // receta (no solo calculado bajo demanda en la UI).
+                if (!empty($dto->ingredients)) {
+                    $matcher = app(IngredientMatchService::class);
+                    app(RecipeImportCandidatesRepository::class)->saveSuggestions(
+                        $candidate,
+                        $matcher->suggestForCandidate($candidate)
+                    );
+                }
 
                 $totalCreated++;
             }

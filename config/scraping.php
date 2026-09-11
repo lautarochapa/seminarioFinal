@@ -27,5 +27,13 @@ return [
     // Ventana tras la cual un job de recetas en pending/running sin actualizar
     // se considera huerfano (proceso caido/matado) y se reconcilia a failed.
     'recipe_stale_job_seconds' => (int) env('RECIPE_SCRAPING_STALE_JOB_SECONDS', 600),
+    // TTL del lock de ejecucion (ScrapingExecutionGuard) especifico para la
+    // fuente de recetas (Cookpad). lock_ttl_seconds (3600s, compartido con
+    // product scraping) es demasiado largo frente a una corrida real de
+    // recetas (~14s, tope 180s de time budget): una corrida interrumpida
+    // dejaba bloqueado todo intento posterior hasta una hora. Debe ser mayor
+    // a recipe_time_budget_seconds para que un job legitimo no pierda su
+    // propio lock mientras sigue corriendo.
+    'recipe_lock_ttl_seconds' => (int) env('RECIPE_SCRAPING_LOCK_TTL_SECONDS', 300),
     'user_agent' => env('SCRAPING_USER_AGENT', 'ComidaControlBot/1.0'),
 ];
