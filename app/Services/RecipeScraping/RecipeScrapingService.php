@@ -61,7 +61,11 @@ class RecipeScrapingService
             'user_agent' => $userAgent,
         ]);
 
-        return $job->load('source');
+        // Con QUEUE_CONNECTION=sync, RunRecipeScrapingJob::dispatch() ya corrio
+        // y termino el job de forma sincrona antes de esta linea; fresh() relee
+        // el estado real desde la DB en vez de devolver el $job en memoria
+        // desactualizado (status="pending" pese a que ya termino).
+        return $job->fresh(['source']);
     }
 
     public function list(User $user, array $filters): LengthAwarePaginator
@@ -110,7 +114,7 @@ class RecipeScrapingService
             'user_agent' => $userAgent,
         ]);
 
-        return $newJob->load('source');
+        return $newJob->fresh(['source']);
     }
 
     private function assertPermission(User $user): void

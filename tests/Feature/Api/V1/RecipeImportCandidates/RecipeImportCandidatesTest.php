@@ -1252,4 +1252,48 @@ class RecipeImportCandidatesTest extends TestCase
         $this->assertEquals('https://cookpad.com/ar/recetas/84001', $recipe->source_url);
         $this->assertCount(1, $recipe->ingredients()->get());
     }
+
+    // ------------------------------------------------------------------
+    // B3: candidatas de "Importar receta por texto" (raw_ingredients_json
+    // como objetos con name_raw, no strings ni {name,text}) deben poder
+    // mapearse igual que las de scraping.
+    // ------------------------------------------------------------------
+
+    public function test_candidata_de_importar_por_texto_resuelve_sugerencias_con_name_raw()
+    {
+        $user = $this->adminUser();
+        $cebolla = $this->makeIngredient('Cebolla');
+        $champi = $this->makeIngredient('Champiñones');
+        $unit = $this->unitByCode('unit', 'Unidad', 'u');
+        $gramo = $this->unitByCode('g', 'Gramo', 'g');
+
+        // Misma forma que produce el parser de "Importar receta por texto"
+        // real (name_raw, no name/text): sin el fix de B3, raw_text queda
+        // vacio y no hay ninguna sugerencia.
+        $candidate = $this->parsedCandidate([
+            'raw_ingredients_json' => [
+                ['name_raw' => 'cebolla', 'quantity' => 1, 'raw_line' => '- 1 cebolla', 'unit_raw' => null, 'unit_code' => null, 'unit_ambiguous' => false],
+                ['name_raw' => 'champiñones', 'quantity' => 250, 'raw_line' => '- 250 g champiñones', 'unit_raw' => 'g', 'unit_code' => 'g', 'unit_ambiguous' => false],
+            ],
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/recalculate-suggestions');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.ingredient_suggestions.0.raw_text', '1 cebolla')
+            ->assertJsonPath('data.ingredient_suggestions.0.suggested_ingredient_id', $cebolla->id)
+            ->assertJsonPath('data.ingredient_suggestions.1.raw_text', '250 g champiñones')
+            ->assertJsonPath('data.ingredient_suggestions.1.suggested_ingredient_id', $champi->id);
+
+        $apply = $this->actingAs($user)->postJson('/api/v1/admin/recipes/import-candidates/' . $candidate->id . '/apply-suggestions');
+
+        $apply->assertStatus(200)->assertJsonPath('applied', 2);
+
+        $candidate->refresh();
+        $mappings = $candidate->parsed_recipe_json['ingredient_mappings'];
+        $this->assertEquals($cebolla->id, $mappings[0]['ingredient_id']);
+        $this->assertEquals($unit->id, $mappings[0]['unit_id']);
+        $this->assertEquals($champi->id, $mappings[1]['ingredient_id']);
+        $this->assertEquals($gramo->id, $mappings[1]['unit_id']);
+    }
 }

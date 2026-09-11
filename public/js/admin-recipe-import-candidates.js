@@ -138,7 +138,14 @@
             return item;
         }
         if (item && typeof item === 'object') {
-            return [item.quantity, item.unit, item.name || item.text || item.description].filter(Boolean).join(' ');
+            // "Importar receta por texto" genera objetos con name_raw/unit_raw
+            // (no name/unit como el scraper); si ninguno de los dos trae
+            // nombre, se cae al texto original de la linea (raw_line).
+            var name = item.name || item.name_raw || item.raw_line || item.text || item.description || '';
+            if (item.name || item.name_raw) {
+                return [item.quantity, item.unit || item.unit_raw, name].filter(Boolean).join(' ');
+            }
+            return name;
         }
         return String(item || '');
     }

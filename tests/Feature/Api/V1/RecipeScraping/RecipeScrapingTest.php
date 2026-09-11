@@ -100,6 +100,32 @@ class RecipeScrapingTest extends TestCase
         Queue::assertPushed(RunRecipeScrapingJob::class);
     }
 
+    public function test_crear_job_sync_refleja_el_estado_final_no_stale()
+    {
+        // Sin Queue::fake(): con QUEUE_CONNECTION=sync (phpunit.xml) el
+        // dispatch corre en linea dentro del mismo request, y la respuesta
+        // del POST debe reflejar el estado YA terminado (no "pending" del
+        // job recien creado en memoria antes de correr).
+        Http::fake([
+            '*buscar*' => Http::response($this->cookpadListingHtml(), 200),
+            '*recetas/123456*' => Http::response($this->recipeHtml(), 200),
+            '*' => Http::response('<html><body></body></html>', 200),
+        ]);
+
+        $user = $this->adminUser();
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/v1/admin/recipes/scraping/jobs', ['max_pages' => 1]);
+
+        $response->assertStatus(202)
+            ->assertJsonPath('data.status', 'completed');
+        $this->assertNotNull($response->json('data.started_at'));
+        $this->assertNotNull($response->json('data.finished_at'));
+
+        $jobId = $response->json('data.id');
+        $this->assertDatabaseHas('scraping_jobs', ['id' => $jobId, 'status' => 'completed']);
+    }
+
     public function test_listar_jobs_retorna_solo_recipe_scraping()
     {
         Queue::fake();

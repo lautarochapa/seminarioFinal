@@ -60,11 +60,47 @@ class IngredientMatchService
         $suggestions = [];
 
         foreach (array_values((array) $raw) as $index => $item) {
-            $text = is_string($item) ? $item : (string) ($item['name'] ?? $item['text'] ?? '');
+            $text = is_string($item) ? $item : $this->extractRawTextFromItem($item);
             $suggestions[] = array_merge(['index' => $index, 'raw_text' => $text], $this->matchText($text));
         }
 
         return $suggestions;
+    }
+
+    /**
+     * Deriva el texto de una linea de ingrediente cuando raw_ingredients_json
+     * trae objetos en vez de strings. El scraper de recetas entrega un
+     * string plano por linea, pero "Importar receta por texto" entrega
+     * objetos con name/quantity/unit_raw separados (name_raw), no
+     * name/text: sin este fallback raw_text quedaba vacio y el matching
+     * nunca funcionaba para esas candidatas.
+     *
+     * Si el objeto trae name_raw, se reconstruye "cantidad unidad nombre"
+     * (ej. "250 g champiñones") con sus campos hermanos quantity/unit_raw
+     * para que el mismo parser de matchText() (que ya sabe extraer
+     * cantidad + unidad + nombre de un texto) los interprete igual que una
+     * linea scrapeada -- no se duplica logica de parseo, solo se le da el
+     * mismo tipo de texto de entrada que ya sabe procesar.
+     */
+    private function extractRawTextFromItem(array $item): string
+    {
+        if (isset($item['name']) && $item['name'] !== '') {
+            return (string) $item['name'];
+        }
+
+        if (array_key_exists('name_raw', $item) && $item['name_raw'] !== null && $item['name_raw'] !== '') {
+            $parts = array_filter([
+                $item['quantity'] ?? null,
+                $item['unit_raw'] ?? null,
+                $item['name_raw'],
+            ], function ($part) {
+                return $part !== null && $part !== '';
+            });
+
+            return trim(implode(' ', $parts));
+        }
+
+        return (string) ($item['raw_line'] ?? $item['text'] ?? $item['description'] ?? '');
     }
 
     /**

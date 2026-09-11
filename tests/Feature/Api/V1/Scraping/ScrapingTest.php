@@ -206,9 +206,11 @@ class ScrapingTest extends TestCase
     {
         $admin  = $this->admin();
         $source = $this->source(['is_active' => false, 'status' => 'inactive']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(422)
@@ -220,9 +222,11 @@ class ScrapingTest extends TestCase
         Queue::fake();
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202)
@@ -236,11 +240,51 @@ class ScrapingTest extends TestCase
         ]);
     }
 
+    public function test_creacion_job_sin_supermarket_chain_id_retorna_422_y_no_crea_job()
+    {
+        Queue::fake();
+        $admin  = $this->admin();
+        $source = $this->source();
+        $countBefore = ScrapingJob::count();
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id' => $source->id,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+            ->assertJsonStructure(['error' => ['field_errors' => ['supermarket_chain_id']]]);
+
+        $this->assertEquals($countBefore, ScrapingJob::count());
+        Queue::assertNotPushed(RunScrapingJob::class);
+    }
+
+    public function test_creacion_job_con_supermarket_chain_id_inactiva_retorna_422()
+    {
+        $admin  = $this->admin();
+        $source = $this->source();
+        $chain  = $this->chain();
+        $chain->update(['status' => 'inactive']);
+        $countBefore = ScrapingJob::count();
+
+        $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+            ->assertJsonStructure(['error' => ['field_errors' => ['supermarket_chain_id']]]);
+
+        $this->assertEquals($countBefore, ScrapingJob::count());
+    }
+
     public function test_bloqueo_job_simultaneo_retorna_409()
     {
         Queue::fake();
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour_blq']);
+        $chain  = $this->chain();
 
         ScrapingJob::create([
             'source_id'   => $source->id,
@@ -250,7 +294,8 @@ class ScrapingTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(409)
@@ -565,9 +610,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour', 'base_url' => 'https://www.carrefour.com.ar']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -630,9 +677,11 @@ class ScrapingTest extends TestCase
     {
         $admin  = $this->admin();
         $source = $this->source(['code' => 'changomas']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -654,9 +703,11 @@ class ScrapingTest extends TestCase
     {
         $admin  = $this->admin();
         $source = $this->source(['code' => 'fuente_sin_adaptador']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -675,9 +726,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -700,9 +753,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -850,10 +905,12 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
-            'max_pages' => 3,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_pages'            => 3,
         ]);
 
         $response->assertStatus(202);
@@ -874,9 +931,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -894,9 +953,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ])->assertStatus(202);
 
         Http::assertSentCount(3);
@@ -913,14 +974,17 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ])->assertStatus(202);
 
         Queue::fake();
         $second = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $second->assertStatus(202);
@@ -956,10 +1020,12 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
-            'max_pages' => 10,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_pages'            => 10,
         ]);
 
         $response->assertStatus(202);
@@ -972,10 +1038,12 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
-            'max_pages' => 1,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_pages'            => 1,
         ]);
 
         $response->assertStatus(202);
@@ -995,11 +1063,13 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id'  => $source->id,
-            'max_pages'  => 1,
-            'search_term' => '  arroz  ',
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_pages'            => 1,
+            'search_term'          => '  arroz  ',
         ]);
 
         $response->assertStatus(202)
@@ -1018,12 +1088,14 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id'    => $source->id,
-            'max_pages'    => 1,
-            'max_products' => 1,
-            'search_term'  => '7790123450021',
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_pages'            => 1,
+            'max_products'         => 1,
+            'search_term'          => '7790123450021',
         ]);
 
         $response->assertStatus(202);
@@ -1040,9 +1112,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
 
         $response->assertStatus(202);
@@ -1078,9 +1152,11 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
         ]);
         $response->assertStatus(202);
 
@@ -1109,14 +1185,16 @@ class ScrapingTest extends TestCase
         Queue::fake();
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id'    => $source->id,
-            'max_pages'    => 1,
-            'max_products' => 10,
-            'delay_ms'     => 5000,
-            'dry_run'      => true,
-            'search_term'  => 'tomate',
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_pages'            => 1,
+            'max_products'         => 10,
+            'delay_ms'             => 5000,
+            'dry_run'              => true,
+            'search_term'          => 'tomate',
         ]);
 
         $response->assertStatus(202);
@@ -1135,10 +1213,12 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id'    => $source->id,
-            'max_products' => 1,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'max_products'         => 1,
         ]);
         $response->assertStatus(202);
 
@@ -1203,10 +1283,12 @@ class ScrapingTest extends TestCase
 
         $admin  = $this->admin();
         $source = $this->source(['code' => 'carrefour']);
+        $chain  = $this->chain();
 
         $response = $this->actingAs($admin)->postJson('/api/v1/admin/scraping/jobs', [
-            'source_id' => $source->id,
-            'dry_run'   => true,
+            'source_id'            => $source->id,
+            'supermarket_chain_id' => $chain->id,
+            'dry_run'              => true,
         ]);
         $response->assertStatus(202);
         Http::assertSentCount(1);
