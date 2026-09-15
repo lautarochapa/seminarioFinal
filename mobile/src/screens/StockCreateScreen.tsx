@@ -536,7 +536,7 @@ function hasDifferentExistingUnit(product: ProductSummary | null, unitId: number
   return Boolean(unitId && existingUnits.length > 0 && !existingUnits.some((unit) => unit.id === unitId));
 }
 
-function unitNames(units: Array<{ name: string; symbol?: string; code?: string }>): string {
+function unitNames(units: { name: string; symbol?: string; code?: string }[]): string {
   return units.map((unit) => unit.name || unit.symbol || unit.code || '').filter(Boolean).join(', ');
 }
 

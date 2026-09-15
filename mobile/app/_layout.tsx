@@ -13,7 +13,7 @@ function NavigationGuard() {
   const { state } = useAuth();
   const { clearGroup } = useFamilyGroupContext();
   const router = useRouter();
-  const segments = useSegments();
+  const segments = useSegments() as string[];
   const onboardingChecked = useRef(false);
 
   useEffect(() => {

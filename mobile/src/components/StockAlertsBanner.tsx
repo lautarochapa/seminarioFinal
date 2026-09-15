@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { stockApi } from '@/api/endpoints';
@@ -12,27 +12,36 @@ import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
  * Usa endpoints existentes; no hay push ni jobs nuevos.
  */
 export function StockAlertsBanner({ groupId }: { groupId: number | null }) {
-  const [messages, setMessages] = useState<StockAlertMessage[]>([]);
-
-  const load = useCallback(async () => {
-    if (!groupId) {
-      setMessages([]);
-      return;
-    }
-    try {
-      const [low, expiring] = await Promise.all([
-        stockApi.lowStock(groupId),
-        stockApi.expiring(groupId),
-      ]);
-      setMessages(buildStockAlertMessages(low.data ?? [], expiring.data ?? []));
-    } catch {
-      setMessages([]);
-    }
-  }, [groupId]);
+  const [alertState, setAlertState] = useState<{
+    groupId: number;
+    messages: StockAlertMessage[];
+  } | null>(null);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (!groupId) return;
+
+    let active = true;
+    Promise.all([
+        stockApi.lowStock(groupId),
+        stockApi.expiring(groupId),
+    ])
+      .then(([low, expiring]) => {
+        if (!active) return;
+        setAlertState({
+          groupId,
+          messages: buildStockAlertMessages(low.data ?? [], expiring.data ?? []),
+        });
+      })
+      .catch(() => {
+        if (active) setAlertState({ groupId, messages: [] });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [groupId]);
+
+  const messages = alertState?.groupId === groupId ? alertState.messages : [];
 
   if (messages.length === 0) {
     return null;

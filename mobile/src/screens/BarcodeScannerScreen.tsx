@@ -409,7 +409,7 @@ function stockStatus(product: ProductDetail): string {
   return summary.items_count === 1 ? 'Ya tenes 1 item en stock.' : `Ya tenes ${summary.items_count} items en stock.`;
 }
 
-function unitNames(units: Array<{ name: string; symbol?: string; code?: string }>): string {
+function unitNames(units: { name: string; symbol?: string; code?: string }[]): string {
   return units.map((unit) => unit.name || unit.symbol || unit.code || '').filter(Boolean).join(', ');
 }
 

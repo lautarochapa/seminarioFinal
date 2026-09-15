@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { AppHeader } from '@/components/AppHeader';
@@ -42,20 +42,16 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   const [availability, setAvailability] = useState<RecipeAvailability | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
-  const effectiveServings = servings ?? data?.servings ?? 1;
-
-  useEffect(() => {
-    if (!data) return;
-    setServings((prev) => (prev ?? (data.servings && data.servings > 0 ? data.servings : 1)));
-  }, [data]);
+  const defaultServings = data?.servings && data.servings > 0 ? data.servings : 1;
+  const effectiveServings = servings ?? defaultServings;
 
   const refreshAvailability = useCallback(async () => {
-    if (!groupId || !recipeId || servings == null || servings < 1) { setAvailability(null); return; }
+    if (!groupId || !recipeId || !data || effectiveServings < 1) return;
     setAvailabilityLoading(true); setAvailabilityError(null);
-    try { setAvailability((await recipesApi.availability(recipeId, groupId, servings)).data); }
+    try { setAvailability((await recipesApi.availability(recipeId, groupId, effectiveServings)).data); }
     catch (err) { setAvailabilityError(err instanceof ApiError ? err.normalized.message : 'No pudimos verificar el stock.'); }
     finally { setAvailabilityLoading(false); }
-  }, [groupId, recipeId, servings]);
+  }, [groupId, recipeId, data, effectiveServings]);
 
   useFocusEffect(useCallback(() => { void refreshAvailability(); }, [refreshAvailability]));
 
