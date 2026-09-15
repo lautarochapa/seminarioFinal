@@ -43,3 +43,27 @@ export interface MealPlanFilters {
   start_date?: string;
   end_date?: string;
 }
+
+export interface MealType {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface MealPlanItemCreate {
+  date: string;
+  meal_type_id: number;
+  recipe_id?: number | null;
+  free_meal_description?: string | null;
+  is_eating_out?: boolean;
+  servings_total?: number | null;
+  notes?: string | null;
+}
+
+export type MealPlanItemUpdate = Partial<MealPlanItemCreate>;
+
+export interface MealPlanCreate {
+  period_type: string;
+  start_date: string;
+  end_date: string;
+}

@@ -13,14 +13,22 @@ class ScrapingRateLimiter
         usleep($milliseconds * 1000);
     }
 
-    public function pauseForSupermarket(): void
+    public function pauseForSupermarket(?int $overrideMs = null): void
     {
-        $this->pause((int) config('scraping.request_delay_ms', 1500));
+        $delay = $overrideMs !== null && $overrideMs >= 0
+            ? $overrideMs
+            : (int) config('scraping.request_delay_ms', 1500);
+
+        $this->pause($delay);
     }
 
-    public function pauseForRecipe(): void
+    public function pauseForRecipe(?int $overrideMs = null): void
     {
-        $this->pause((int) config('scraping.recipe_request_delay_ms', 2500));
+        $delay = $overrideMs !== null && $overrideMs >= 0
+            ? $overrideMs
+            : (int) config('scraping.recipe_request_delay_ms', 2500);
+
+        $this->pause($delay);
     }
 
     public function pauseSeconds(int $seconds): void

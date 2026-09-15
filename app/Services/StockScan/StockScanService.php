@@ -8,6 +8,7 @@ use App\Product;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\HouseholdStock\HouseholdStockRepository;
 use App\Repositories\StockScan\StockScanRepository;
+use App\Services\HouseholdStock\StockEntrySuggestionService;
 use App\StockItem;
 use Illuminate\Support\Facades\DB;
 
@@ -16,15 +17,18 @@ class StockScanService
     private $groups;
     private $stock;
     private $scan;
+    private $stockEntrySuggestions;
 
     public function __construct(
         FamilyGroupRepository $groups,
         HouseholdStockRepository $stock,
-        StockScanRepository $scan
+        StockScanRepository $scan,
+        StockEntrySuggestionService $stockEntrySuggestions
     ) {
         $this->groups = $groups;
         $this->stock = $stock;
         $this->scan = $scan;
+        $this->stockEntrySuggestions = $stockEntrySuggestions;
     }
 
     public function scan(int $groupId, int $userId, array $data, string $ip, string $ua): array
@@ -38,13 +42,20 @@ class StockScanService
             throw new FamilyGroupException('STOCK_LOCATION_NOT_FOUND', 'Ubicacion de stock no encontrada.', 404);
         }
 
-        $unitId = ! empty($data['unit_id']) ? (int) $data['unit_id'] : $this->resolveUnitId($product);
-        if (! $unitId || ! $this->stock->activeUnitExists($unitId)) {
+        $unitId = ! empty($data['unit_id'])
+            ? (int) $data['unit_id']
+            : $this->stockEntrySuggestions->forProduct($product, $groupId)['unit_id'];
+        if (! $unitId) {
+            throw new FamilyGroupException('STOCK_UNIT_REQUIRED', 'Selecciona una unidad para cargar este producto.', 422);
+        }
+        if (! $this->stock->activeUnitExists($unitId)) {
             throw new FamilyGroupException('STOCK_UNIT_INVALID', 'La unidad indicada no existe o no esta activa.', 422);
         }
 
-        return DB::transaction(function () use ($groupId, $userId, $data, $locationId, $product, $unitId, $ip, $ua) {
-            $duplicate = $this->stock->findDuplicate($groupId, $product->id, $locationId);
+        $expiration = ! empty($data['expiration_date']) ? $data['expiration_date'] : null;
+
+        return DB::transaction(function () use ($groupId, $userId, $data, $locationId, $product, $unitId, $expiration, $ip, $ua) {
+            $duplicate = StockItem::resolveActiveLot($groupId, (int) $product->id, $locationId, $unitId, $expiration);
 
             if ($duplicate) {
                 $old = $this->payload($duplicate);
@@ -57,32 +68,24 @@ class StockScanService
                 return [$updated, 200];
             }
 
-            $item = $this->stock->create([
+            $create = [
                 'family_group_id' => $groupId,
                 'product_id' => $product->id,
                 'stock_location_id' => $locationId,
                 'quantity' => $data['quantity'],
                 'unit_id' => $unitId,
                 'status' => 'active',
-            ])->fresh(['product.ingredient', 'location', 'unit']);
+            ];
+            if ($expiration !== null) {
+                $create['expiration_date'] = $expiration;
+            }
+
+            $item = $this->stock->create($create)->fresh(['product.ingredient', 'location', 'unit']);
 
             $this->audit($userId, 'stock-item.created', $item->id, null, $this->payload($item), $ip, $ua);
 
             return [$item, 201];
         });
-    }
-
-    private function resolveUnitId(Product $product): ?int
-    {
-        if ($product->default_unit_id) {
-            return (int) $product->default_unit_id;
-        }
-
-        if ($product->ingredient && $product->ingredient->base_unit_id) {
-            return (int) $product->ingredient->base_unit_id;
-        }
-
-        return null;
     }
 
     private function payload(StockItem $item): array
@@ -93,6 +96,7 @@ class StockScanService
             'stock_location_id' => $item->stock_location_id,
             'quantity' => $item->quantity,
             'unit_id' => $item->unit_id,
+            'expiration_date' => $item->expiration_date ? $item->expiration_date->toDateString() : null,
             'status' => $item->status,
         ];
     }

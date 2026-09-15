@@ -120,6 +120,42 @@ class ManualProductStockTest extends TestCase
         $this->assertDatabaseHas('product_requests', ['product_id' => $productId, 'status' => ProductRequest::STATUS_PENDING]);
     }
 
+    public function test_manual_product_con_nombre_acentuado_utf8()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $location = $this->location($group);
+
+        // normalize() usaba strtolower() byte a byte: corrompia el UTF-8 de
+        // acentos/ñ y PostgreSQL rechazaba el insert/consulta de normalized_name.
+        $response = $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/stock/manual-product', [
+            'product' => [
+                'name'    => 'Puré de papá con jamón añejo — Ñandú',
+                'barcode' => '7790000000123',
+                'unit_id' => $unit->id,
+            ],
+            'stock' => [
+                'quantity' => 1,
+                'unit_id' => $unit->id,
+                'stock_location_id' => $location->id,
+            ],
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.review_status', 'pending_review');
+
+        $productId = $response->json('data.product.id');
+        $product = \App\Product::find($productId);
+
+        // Guardado y recuperable como UTF-8 valido.
+        $this->assertStringStartsWith('puré de papá con jamón añejo', $product->normalized_name);
+        $this->assertTrue(mb_check_encoding($product->normalized_name, 'UTF-8'));
+        $this->assertDatabaseHas('product_requests', [
+            'product_id' => $productId,
+            'status'     => ProductRequest::STATUS_PENDING,
+        ]);
+    }
+
     public function test_existing_active_barcode_uses_existing_product()
     {
         [$user, $group] = $this->groupWithMember();

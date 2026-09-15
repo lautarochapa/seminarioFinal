@@ -2,6 +2,7 @@
 
 namespace App\Repositories\ScrapingCandidates;
 
+use App\ProductBarcode;
 use App\ScrapedProductCandidate;
 use App\SupermarketProduct;
 use App\SupermarketProductPrice;
@@ -35,6 +36,19 @@ class ScrapingCandidateRepository
         return $query->orderByDesc('created_at')->paginate($perPage);
     }
 
+    /**
+     * Carga varios candidatos por id en una sola consulta (para aprobacion
+     * masiva). Los ids no encontrados simplemente no aparecen en la coleccion.
+     *
+     * @param int[] $ids
+     */
+    public function findManyByIds(array $ids)
+    {
+        return ScrapedProductCandidate::with([
+            'source', 'job', 'suggestedProduct', 'suggestedIngredient', 'reviewer',
+        ])->whereIn('id', $ids)->get();
+    }
+
     public function findOrFail(int $id): ScrapedProductCandidate
     {
         $candidate = ScrapedProductCandidate::with([
@@ -59,8 +73,21 @@ class ScrapingCandidateRepository
         return $candidate;
     }
 
-    public function findSupermarketProductMapping(int $chainId, int $branchId, int $productId): ?SupermarketProduct
+    /**
+     * Busca un producto ya existente por EAN/barcode activo. Se usa para sugerir
+     * "asociar producto existente" en vez de crear un duplicado.
+     */
+    public function findProductIdByBarcode(string $barcode): ?int
     {
+        $existing = ProductBarcode::where('barcode', $barcode)->where('status', 'active')->first();
+
+        return $existing ? (int) $existing->product_id : null;
+    }
+
+    public function findSupermarketProductMapping(int $chainId, ?int $branchId, int $productId): ?SupermarketProduct
+    {
+        // $branchId puede ser null cuando el job trae solo supermarket_chain_id.
+        // Eloquent traduce where('col', null) a "col IS NULL".
         return SupermarketProduct::where('supermarket_chain_id', $chainId)
             ->where('supermarket_branch_id', $branchId)
             ->where('product_id', $productId)
@@ -87,5 +114,38 @@ class ScrapingCandidateRepository
             ['supermarket_product_id' => $supermarketProductId],
             $data
         ));
+    }
+
+    /**
+     * Vincula un EAN al producto global de forma idempotente.
+     * - Si el barcode ya existe (para este u otro producto) no se duplica.
+     * - Si ya existe para este producto, se reactiva.
+     *
+     * @return string 'created' | 'reactivated' | 'exists_same' | 'exists_other'
+     */
+    public function linkBarcode(int $productId, string $barcode): string
+    {
+        $existing = ProductBarcode::where('barcode', $barcode)->orderBy('id')->first();
+
+        if ($existing) {
+            if ((int) $existing->product_id === $productId) {
+                if ($existing->status !== 'active') {
+                    $existing->status = 'active';
+                    $existing->save();
+                    return 'reactivated';
+                }
+                return 'exists_same';
+            }
+            return 'exists_other';
+        }
+
+        ProductBarcode::create([
+            'product_id' => $productId,
+            'barcode'    => $barcode,
+            'type'       => 'EAN',
+            'status'     => 'active',
+        ]);
+
+        return 'created';
     }
 }

@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { EmptyState } from '@/components/EmptyState';
@@ -17,24 +18,33 @@ import type { RecipeSuggestion } from '@/types/recipe';
 
 export function RecipeSuggestionsScreen() {
   const router = useRouter(); const { selectedGroup } = useFamilyGroupContext();
-  const [available, setAvailable] = useState<RecipeSuggestion[]>([]); const [almost, setAlmost] = useState<RecipeSuggestion[]>([]);
+  const [available, setAvailable] = useState<RecipeSuggestion[]>([]); const [almost, setAlmost] = useState<RecipeSuggestion[]>([]); const [soon, setSoon] = useState<RecipeSuggestion[]>([]);
   const [loading, setLoading] = useState(false); const [error, setError] = useState<ApiError | null>(null);
   const refresh = useCallback(async () => {
-    if (!selectedGroup) { setAvailable([]); setAlmost([]); return; }
+    if (!selectedGroup) { setAvailable([]); setAlmost([]); setSoon([]); return; }
     setLoading(true); setError(null);
-    try { const [now, close] = await Promise.all([recipeSuggestionsApi.available(selectedGroup.id), recipeSuggestionsApi.almostAvailable(selectedGroup.id)]); setAvailable(now.data); setAlmost(close.data); }
+    try {
+      const [now, close, expiring] = await Promise.all([
+        recipeSuggestionsApi.available(selectedGroup.id),
+        recipeSuggestionsApi.almostAvailable(selectedGroup.id),
+        recipeSuggestionsApi.byExpiringStock(selectedGroup.id).catch(() => ({ data: [] as RecipeSuggestion[] })),
+      ]);
+      setAvailable(now.data); setAlmost(close.data); setSoon(expiring.data);
+    }
     catch (err) { if (err instanceof ApiError) setError(err); }
     finally { setLoading(false); }
   }, [selectedGroup]);
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
   const open = (item: RecipeSuggestion) => router.push({ pathname: '/(app)/recipes/[id]' as never, params: { id: String(item.recipe.id) } });
-  return <View style={styles.fill}><AppHeader title="Qué puedo cocinar hoy" showBack onBack={goBackOrHome} /><FamilyGroupSelector />
+  return <View style={styles.fill}><AppHeader title="Qué puedo cocinar hoy" showBack onBack={goBackOrHome} rightAction={<Pressable accessibilityRole="button" accessibilityLabel="Recetas cocinadas" hitSlop={8} onPress={() => router.push('/(app)/recipes/cooked' as never)}><MaterialCommunityIcons name="history" size={22} color={COLORS.textInverse} /></Pressable>} /><FamilyGroupSelector />
     {loading ? <LoadingScreen message="Revisando tu stock..." /> : error ? <ErrorState message={error.normalized.message} traceId={error.normalized.traceId} onRetry={refresh} type="server" /> : !selectedGroup ? <EmptyState icon="account-group-outline" message="Seleccioná un grupo familiar." /> :
       <ScrollView contentContainerStyle={styles.list}>
         <Text style={styles.heading}>Para cocinar ahora</Text>
         {available.length ? available.map((item) => <View key={`a-${item.recipe.id}`}><RecipeCard recipe={item.recipe} badge="Tenés todos los ingredientes" onPress={() => open(item)} /><AppButton title="Cocinar" onPress={() => open(item)} /></View>) : <EmptyState icon="chef-hat" message="Todavía no encontramos recetas que puedas preparar con tu stock." actionTitle="Agregar productos" onAction={() => router.push('/(app)/stock/create' as never)} />}
         <Text style={styles.heading}>Te falta poco</Text>
         {almost.length ? almost.map((item) => <RecipeCard key={`m-${item.recipe.id}`} recipe={item.recipe} badge={`Te faltan ${item.missing_ingredients_count ?? 1} ingredientes`} onPress={() => open(item)} />) : <Text style={styles.muted}>No hay recetas con pocos faltantes.</Text>}
+        <Text style={styles.heading}>Conviene cocinar pronto</Text>
+        {soon.length ? soon.map((item) => <RecipeCard key={`s-${item.recipe.id}`} recipe={item.recipe} badge="Usá ingredientes por vencer" onPress={() => open(item)} />) : <Text style={styles.muted}>No tenés ingredientes próximos a vencer.</Text>}
       </ScrollView>}
   </View>;
 }

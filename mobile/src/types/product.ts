@@ -48,6 +48,7 @@ export interface ProductSummary {
   ingredient_id: number | null;
   default_unit_id: number | null;
   net_quantity: number | null;
+  package_unit_id?: number | null;
   barcode: string | null;
   description: string | null;
   status: string;
@@ -58,12 +59,20 @@ export interface ProductSummary {
   category: ProductCategory | null;
   ingredient: ProductIngredient | null;
   unit: ProductUnit | null;
+  package_unit?: ProductUnit | null;
   images?: ProductImage[];
   stock_items?: ProductStockItem[];
   stock_summary?: {
     in_stock: boolean;
     items_count: number;
   };
+  stock_entry_suggestion?: {
+    quantity: number | null;
+    unit_id: number | null;
+    source: 'existing_stock' | 'package' | 'default_unit' | null;
+    requires_unit_selection: boolean;
+    existing_units: ProductUnit[];
+  } | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

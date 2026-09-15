@@ -6,7 +6,6 @@ use App\Budget;
 use App\FamilyGroup;
 use App\Recipe;
 use App\RecipeCostSnapshot;
-use App\UnitConversion;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -26,13 +25,15 @@ class RecipeSuggestionsRepository
             ->exists();
     }
 
-    /** Returns all active visible recipes with their non-optional ingredients. */
+    /** Returns all active visible recipes with their ingredients loaded for availability. */
     public function candidateRecipes(int $userId, bool $canManage): Collection
     {
         return Recipe::with([
             'ingredients' => function ($q) {
-                $q->where('is_optional', false)->select(['id', 'recipe_id', 'ingredient_id', 'unit_id', 'quantity']);
+                $q->select(['id', 'recipe_id', 'ingredient_id', 'unit_id', 'quantity', 'is_optional', 'specific_product_id', 'sort_order']);
             },
+            'ingredients.ingredient:id,name',
+            'ingredients.unit:id,name,symbol',
         ])
             ->where('status', 'active')
             ->whereNull('deleted_at')
@@ -43,33 +44,6 @@ class RecipeSuggestionsRepository
             })
             ->select(['id', 'name', 'difficulty', 'prep_time_minutes', 'cook_time_minutes', 'servings', 'category_id', 'source_type', 'is_official', 'is_public', 'owner_user_id', 'status', 'created_at'])
             ->get();
-    }
-
-    /** Returns stock summary: ingredient_id => [unit_id => total_qty] */
-    public function stockSummary(int $groupId): array
-    {
-        $rows = DB::table('stock_items as si')
-            ->join('products as p', 'p.id', '=', 'si.product_id')
-            ->where('si.family_group_id', $groupId)
-            ->where('si.status', 'active')
-            ->whereNull('si.deleted_at')
-            ->whereNotNull('p.ingredient_id')
-            ->select('p.ingredient_id', 'si.unit_id', DB::raw('SUM(si.quantity) as total_qty'))
-            ->groupBy('p.ingredient_id', 'si.unit_id')
-            ->get();
-
-        $map = [];
-        foreach ($rows as $row) {
-            $map[(int) $row->ingredient_id][(int) $row->unit_id] = (float) $row->total_qty;
-        }
-
-        return $map;
-    }
-
-    /** Returns all active unit conversions indexed by from_unit_id. */
-    public function allConversions(): Collection
-    {
-        return UnitConversion::where('status', 'active')->get()->groupBy('from_unit_id');
     }
 
     /** ingredient_ids of stock expiring within $days. */

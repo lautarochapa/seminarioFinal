@@ -444,10 +444,16 @@ export function ShoppingListDetailScreen({ listId }: Props) {
         )}
         {isActive && (
           <>
+            {total === 0 && (
+              <Text style={[styles.itemMeta, { textAlign: 'center' }]}>
+                Agregá al menos un artículo antes de comenzar la compra.
+              </Text>
+            )}
             <AppButton
               title={startingPurchase ? 'Comenzando...' : 'Comenzar compra'}
               onPress={handleStartPurchase}
               loading={startingPurchase}
+              disabled={total === 0}
               fullWidth
               style={styles.actionBtn}
               accessibilityLabel="Comenzar compra"
@@ -456,6 +462,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
               title={startingSession ? 'Iniciando...' : 'Comenzar compra con escaner'}
               onPress={handleStartSession}
               loading={startingSession}
+              disabled={total === 0}
               fullWidth
               variant="secondary"
               style={styles.actionBtn}

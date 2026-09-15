@@ -149,6 +149,8 @@ class ManualProductStockRepository
 
     private function normalize($value)
     {
-        return strtolower(preg_replace('/\s+/', ' ', trim((string) $value)));
+        // mb_strtolower: strtolower() corrompe el byte inicial de caracteres UTF-8
+        // acentuados (0xC3 -> 0xE3) y PostgreSQL rechaza el ILIKE resultante.
+        return mb_strtolower(preg_replace('/\s+/', ' ', trim((string) $value)), 'UTF-8');
     }
 }

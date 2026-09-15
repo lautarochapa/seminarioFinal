@@ -19,6 +19,7 @@ class ScrapedProductCandidateResource extends JsonResource
             'raw_image_url'           => $this->raw_image_url,
             'raw_product_url'         => $this->raw_product_url,
             'external_product_id'     => $this->external_product_id,
+            'ean'                     => $this->ean,
             'suggested_product_id'    => $this->suggested_product_id,
             'suggested_ingredient_id' => $this->suggested_ingredient_id,
             'match_confidence'        => $this->match_confidence,
@@ -53,6 +54,7 @@ class ScrapedProductCandidateResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // raw_payload_json excluido intencionalmente (puede contener datos sensibles)
+            'enrichment' => $this->enrichment ?: null,
         ];
     }
 }

@@ -16,11 +16,12 @@ class MealPlanItemRepository
             ->exists();
     }
 
-    public function listForPlan(int $planId): Collection
+    public function listForPlan(int $planId, ?string $date = null): Collection
     {
         return MealPlanItem::with(['mealType', 'recipe'])
             ->where('meal_plan_id', $planId)
             ->whereNull('deleted_at')
+            ->when($date !== null && $date !== '', fn ($q) => $q->whereDate('date', $date))
             ->orderBy('date')
             ->orderBy('meal_type_id')
             ->get();

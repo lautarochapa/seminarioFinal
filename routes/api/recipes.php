@@ -69,6 +69,16 @@ Route::post('admin/recipes/import-candidates/{id}/map-ingredient', [\App\Http\Co
     ->middleware('permission:recipes.manage');
 Route::post('admin/recipes/import-candidates/{id}/create-recipe', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'createRecipe'])
     ->middleware('permission:recipes.manage');
+Route::post('admin/recipes/import-candidates/{id}/recalculate-suggestions', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'recalculateSuggestions'])
+    ->middleware('permission:recipes.manage');
+Route::post('admin/recipes/import-candidates/recalculate-suggestions-bulk', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'recalculateSuggestionsBulk'])
+    ->middleware('permission:recipes.manage');
+Route::post('admin/recipes/import-candidates/{id}/apply-suggestions', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'applySuggestions'])
+    ->middleware('permission:recipes.manage');
+Route::post('admin/recipes/import-candidates/apply-suggestions-bulk', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'applySuggestionsBulk'])
+    ->middleware('permission:recipes.manage');
+Route::post('admin/recipes/import-candidates/approve-bulk', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'approveBulk'])
+    ->middleware('permission:recipes.manage');
 Route::get('admin/recipes/import-candidates/{id}', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'show'])
     ->middleware('permission:recipes.manage');
 

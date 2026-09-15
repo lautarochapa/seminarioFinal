@@ -62,4 +62,19 @@ class ScrapedProductCandidate extends Model
     {
         return $this->hasMany(ProductMatchCandidate::class);
     }
+
+    /**
+     * EAN/codigo de barras detectado por el scraper. Se transporta dentro de
+     * raw_payload_json para no requerir una columna nueva.
+     */
+    public function getEanAttribute(): ?string
+    {
+        $payload = $this->raw_payload_json;
+
+        if (is_array($payload) && !empty($payload['ean'])) {
+            return (string) $payload['ean'];
+        }
+
+        return null;
+    }
 }

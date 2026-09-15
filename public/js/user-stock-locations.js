@@ -340,16 +340,59 @@
         }
         fieldError(root, 'product_id', '');
         renderSelectedStockProduct(root);
+        applyStockEntrySuggestion(root, product);
+    }
+
+    function productExistingUnits(product) {
+        return product && product.stock_entry_suggestion && product.stock_entry_suggestion.existing_units
+            ? product.stock_entry_suggestion.existing_units
+            : [];
+    }
+
+    function productUnitNames(units) {
+        return units.map(function (unit) {
+            return unit.name || unit.symbol || unit.code;
+        }).join(', ');
+    }
+
+    function updateStockUnitWarning(root) {
+        var form = qs('[data-stock-item-form]', root);
+        var warning = qs('[data-stock-unit-warning]', root);
+        var units = productExistingUnits(state.selectedStockProduct);
+        var selected = form && form.elements.unit_id ? form.elements.unit_id.value : '';
+        var differs = selected && units.length && !units.some(function (unit) {
+            return String(unit.id) === String(selected);
+        });
+        if (warning) {
+            warning.textContent = differs
+                ? 'Ya tenés este producto cargado en ' + productUnitNames(units) + '. Si elegís otra unidad se creará un lote separado.'
+                : '';
+            warning.style.display = differs ? 'block' : 'none';
+        }
+        return !!differs;
+    }
+
+    function applyStockEntrySuggestion(root, product) {
+        var form = qs('[data-stock-item-form]', root);
+        if (!form || form.elements.id.value) {
+            return;
+        }
+        var suggestion = product && product.stock_entry_suggestion ? product.stock_entry_suggestion : {};
+        form.elements.unit_id.value = suggestion.unit_id || '';
+        form.elements.quantity.value = suggestion.quantity !== null && suggestion.quantity !== undefined ? suggestion.quantity : '';
+        updateStockUnitWarning(root);
     }
 
     function clearSelectedStockProduct(root) {
         state.selectedStockProduct = null;
+        applyStockEntrySuggestion(root, null);
         var search = qs('[data-stock-product-search]', root);
         if (search) {
             search.value = '';
             search.focus();
         }
         renderSelectedStockProduct(root);
+        updateStockUnitWarning(root);
     }
 
     function productFromKnownLists(id) {
@@ -838,6 +881,7 @@
         form.elements.expiration_date.value = item.expiration_date || '';
         form.elements.purchase_price.value = item.purchase_price === null || item.purchase_price === undefined ? '' : item.purchase_price;
         form.elements.status.value = item.status || 'active';
+        updateStockUnitWarning(root);
         if (title) {
             title.textContent = 'Editar stock';
         }
@@ -1225,6 +1269,7 @@
         var trimmed = (search || '').trim();
         state.lastProductSearch = trimmed;
         state.selectedStockProduct = null;
+        applyStockEntrySuggestion(root, null);
         renderSelectedStockProduct(root);
         if (trimmed.length < 2) {
             state.stockProductResults = [];
@@ -1546,6 +1591,9 @@
             showMessage(root, 'danger', 'Revisa los campos marcados antes de guardar.');
             return;
         }
+        if (!id && updateStockUnitWarning(root) && !window.confirm('Ya tenés este producto cargado en otra unidad. Si continuás se creará un lote separado. ¿Querés continuar?')) {
+            return;
+        }
 
         var body = {
             product_id: productId,
@@ -1745,6 +1793,7 @@
         var locationPrev = qs('[data-stock-locations-prev]', root);
         var locationNext = qs('[data-stock-locations-next]', root);
         var stockForm = qs('[data-stock-item-form]', root);
+        var stockUnit = qs('[data-stock-unit-select]', root);
         var stockCancel = qs('[data-stock-item-cancel]', root);
         var stockRefresh = qs('[data-stock-refresh]', root);
         var stockPrev = qs('[data-stock-prev]', root);
@@ -1837,6 +1886,11 @@
         if (stockForm) {
             stockForm.addEventListener('submit', function (event) {
                 saveStock(root, event);
+            });
+        }
+        if (stockUnit) {
+            stockUnit.addEventListener('change', function () {
+                updateStockUnitWarning(root);
             });
         }
         if (stockCancel) {

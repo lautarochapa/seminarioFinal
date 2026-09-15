@@ -213,10 +213,8 @@ class AuthService
 
     private function assignDefaultRole(User $user)
     {
-        $role = Role::where('code', 'user')->where('status', 'active')->first();
-        if ($role) {
-            $user->roles()->attach($role->id, ['created_at' => now()]);
-        }
+        // Fuente de verdad unica: App\User::assignDefaultRole().
+        $user->assignDefaultRole();
     }
 
     private function writeLoginLog($userId, $email, $success, $failureReason, Request $request)

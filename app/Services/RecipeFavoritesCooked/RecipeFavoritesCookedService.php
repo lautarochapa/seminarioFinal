@@ -96,21 +96,6 @@ class RecipeFavoritesCookedService
             }
         }
 
-        if ($deductStock) {
-            if ($familyGroupId === null) {
-                throw new RecipeFavoritesCookedException('FAMILY_GROUP_REQUIRED', 'Seleccioná el grupo familiar del que querés descontar los ingredientes.', 422);
-            }
-            $availability = $this->availability->availability($user, $recipeId, $familyGroupId, $servings);
-            if (empty($availability['can_cook'])) {
-                foreach ($availability['ingredients'] as $ingredient) {
-                    if ($ingredient['status'] === 'missing') {
-                        throw RecipeFavoritesCookedException::ingredientMissing($ingredient);
-                    }
-                }
-                throw RecipeFavoritesCookedException::insufficientStock();
-            }
-        }
-
         if ($idempotencyKey) {
             $cacheKey = 'recipe_cook:' . $user->id . ':' . $recipeId . ':' . sha1($idempotencyKey);
             $cached = Cache::get($cacheKey);
@@ -123,6 +108,21 @@ class RecipeFavoritesCookedService
         }
 
         try {
+            if ($deductStock) {
+                if ($familyGroupId === null) {
+                    throw new RecipeFavoritesCookedException('FAMILY_GROUP_REQUIRED', 'Seleccioná el grupo familiar del que querés descontar los ingredientes.', 422);
+                }
+                $availability = $this->availability->availability($user, $recipeId, $familyGroupId, $servings);
+                if (empty($availability['can_cook'])) {
+                    foreach ($availability['ingredients'] as $ingredient) {
+                        if ($ingredient['status'] === 'missing') {
+                            throw RecipeFavoritesCookedException::ingredientMissing($ingredient);
+                        }
+                    }
+                    throw RecipeFavoritesCookedException::insufficientStock();
+                }
+            }
+
             $transactionResult = DB::transaction(function () use ($user, $recipe, $recipeId, $servings, $familyGroupId, $deductStock, $ip, $userAgent) {
             $log = $this->repo->createCookLog([
                 'user_id'          => $user->id,
@@ -193,9 +193,10 @@ class RecipeFavoritesCookedService
 
             $ingredientId  = (int) $ri->ingredient_id;
             $recipeUnitId  = (int) $ri->unit_id;
+            $specificProductId = $ri->specific_product_id ? (int) $ri->specific_product_id : null;
             $totalRequired = ((float) $ri->quantity / $baseServings) * $servings;
 
-            $stockItems    = $this->repo->stockItemsForIngredient($familyGroupId, $ingredientId);
+            $stockItems    = $this->repo->stockItemsForIngredient($familyGroupId, $ingredientId, $specificProductId);
             if (empty($stockItems)) {
                 $name = $ri->ingredient ? $ri->ingredient->name : null;
                 throw RecipeFavoritesCookedException::ingredientMissing([
