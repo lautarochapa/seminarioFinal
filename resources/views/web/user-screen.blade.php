@@ -2088,10 +2088,6 @@
                             <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Moneda</label>
                             <input class="form-control" type="text" name="currency" maxlength="10" placeholder="ARS">
                         </div>
-                        <div style="margin-bottom:14px">
-                            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px">Notas</label>
-                            <textarea class="form-control" name="notes" rows="2" placeholder="Observaciones opcionales..." style="resize:vertical"></textarea>
-                        </div>
                         <div style="display:flex;gap:8px">
                             <button type="submit" class="btn-main" data-budget-save>Guardar</button>
                             <button type="button" class="btn-secondary-web" data-budget-reset>Cancelar</button>

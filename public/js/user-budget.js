@@ -119,18 +119,17 @@
             return;
         }
         var b = state.currentBudget;
-        var remaining = (parseFloat(b.amount) || 0) - (parseFloat(b.spent) || 0);
+        var remaining = b.available_amount;
         var remainColor = remaining >= 0 ? '#04ac85' : '#b33a3a';
         el.innerHTML = '<div style="background:#e7f7f2;border:1px solid #04ac85;border-radius:8px;padding:14px">' +
             '<div style="font-size:11px;font-weight:700;color:#04ac85;text-transform:uppercase;margin-bottom:6px">Mes actual — ' + escapeHtml(monthLabel(b)) + '</div>' +
-            '<div style="font-size:28px;font-weight:900;color:#24252a">' + escapeHtml(fmt(b.amount)) + '</div>' +
+            '<div style="font-size:28px;font-weight:900;color:#24252a">' + escapeHtml(fmt(b.total_amount)) + '</div>' +
             (b.currency ? '<div style="font-size:11px;color:#66746b;margin-bottom:6px">' + escapeHtml(b.currency) + '</div>' : '') +
-            progressBar(b.spent, b.amount) +
+            progressBar(b.used_amount, b.total_amount) +
             '<div style="margin-top:10px;display:flex;justify-content:space-between;font-size:13px">' +
             '<span style="color:#66746b">Disponible</span>' +
             '<strong style="color:' + remainColor + '">' + escapeHtml(fmt(remaining)) + '</strong>' +
             '</div>' +
-            (b.notes ? '<div style="margin-top:8px;font-size:12px;color:#66746b;border-top:1px solid #c0e8d8;padding-top:6px">' + escapeHtml(b.notes) + '</div>' : '') +
             '<div style="margin-top:10px;display:flex;gap:6px">' +
             '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '">Resumen</button>' +
             '<button type="button" class="btn-secondary-web btn-sm" data-budget-edit="' + escapeHtml(String(b.id)) + '">Editar</button>' +
@@ -166,14 +165,14 @@
 
         tbody.innerHTML = state.budgets.map(function (b) {
             var isCurrent = b.month === nowMonth && b.year === nowYear;
-            var remaining = (parseFloat(b.amount) || 0) - (parseFloat(b.spent) || 0);
+            var remaining = b.available_amount;
             var remainColor = remaining >= 0 ? '#2a7a2a' : '#b33a3a';
             return '<tr' + (isCurrent ? ' style="background:#f0fbf7"' : '') + '>' +
                 '<td><strong>' + escapeHtml(monthLabel(b)) + '</strong>' +
                 (isCurrent ? ' <span style="background:#04ac85;color:#fff;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:700">Actual</span>' : '') +
                 '</td>' +
-                '<td>' + escapeHtml(fmt(b.amount)) + '</td>' +
-                '<td>' + (b.spent !== undefined ? escapeHtml(fmt(b.spent)) : '-') + '</td>' +
+                '<td>' + escapeHtml(fmt(b.total_amount)) + '</td>' +
+                '<td>' + escapeHtml(fmt(b.used_amount)) + '</td>' +
                 '<td style="color:' + remainColor + ';font-weight:700">' + escapeHtml(fmt(remaining)) + '</td>' +
                 '<td>' +
                 '<button type="button" class="btn-main btn-sm" data-budget-summary="' + escapeHtml(String(b.id)) + '" style="margin-right:4px">Resumen</button>' +
@@ -220,9 +219,8 @@
         if (form.elements.id) { form.elements.id.value = budget.id; }
         if (form.elements.month) { form.elements.month.value = budget.month; }
         if (form.elements.year) { form.elements.year.value = budget.year; }
-        if (form.elements.amount) { form.elements.amount.value = budget.amount; }
+        if (form.elements.amount) { form.elements.amount.value = budget.total_amount; }
         if (form.elements.currency) { form.elements.currency.value = budget.currency || ''; }
-        if (form.elements.notes) { form.elements.notes.value = budget.notes || ''; }
         if (title) { title.textContent = 'Editar — ' + monthLabel(budget); }
         state.selectedBudget = budget;
         clearFormMsg(root);
@@ -237,13 +235,10 @@
             data.year = Number(form.elements.year.value);
         }
         if (form.elements.amount && form.elements.amount.value !== '') {
-            data.amount = parseFloat(form.elements.amount.value);
+            data.total_amount = parseFloat(form.elements.amount.value);
         }
         if (form.elements.currency && form.elements.currency.value.trim()) {
             data.currency = form.elements.currency.value.trim();
-        }
-        if (form.elements.notes && form.elements.notes.value.trim()) {
-            data.notes = form.elements.notes.value.trim();
         }
         return data;
     }
@@ -305,7 +300,7 @@
             return;
         }
         var payload = buildPayload(form);
-        if (!payload.amount) {
+        if (!payload.total_amount) {
             showFormMsg(root, 'warning', 'Ingresá el monto del presupuesto.');
             return;
         }
@@ -382,11 +377,11 @@
 
         if (titleEl) { titleEl.textContent = 'Resumen — ' + (s.period || monthLabel({ month: s.month, year: s.year }) || '#' + state.summaryBudgetId); }
 
-        var total = parseFloat(s.total_budget) || parseFloat(s.amount) || 0;
-        var spent = parseFloat(s.spent_real) || parseFloat(s.spent) || 0;
-        var reserved = parseFloat(s.planned_reserved) || 0;
-        var availReal = s.available_real !== undefined ? parseFloat(s.available_real) : (total - spent);
-        var availProj = s.available_projected !== undefined ? parseFloat(s.available_projected) : (total - spent - reserved);
+        var total = parseFloat(s.total_amount) || 0;
+        var spent = parseFloat(s.spent_amount) || 0;
+        var reserved = state.projection ? (parseFloat(state.projection.planned_amount) || 0) : null;
+        var availReal = s.available_amount;
+        var availProj = state.projection ? state.projection.available_projected : null;
 
         if (metricsEl) {
             metricsEl.innerHTML =
@@ -453,21 +448,21 @@
             return;
         }
 
-        var willExceed = p.at_current_rate_will_exceed || false;
-        var exceedDate = p.exceed_date || null;
-        var projSpend = p.projected_total_spend !== undefined ? parseFloat(p.projected_total_spend) : null;
-        var projRemaining = p.projected_remaining !== undefined ? parseFloat(p.projected_remaining) : null;
-        var dailyAvg = p.daily_average !== undefined ? parseFloat(p.daily_average) : null;
-        var daysElapsed = p.days_elapsed !== undefined ? p.days_elapsed : null;
-        var daysRemaining = p.days_remaining !== undefined ? p.days_remaining : null;
+        var projSpend = (parseFloat(p.spent_amount) || 0) + (parseFloat(p.planned_amount) || 0);
+        var willExceed = projSpend > parseFloat(p.total_amount);
+        var exceedDate = null;
+        var projRemaining = p.available_projected;
+        var dailyAvg = null;
+        var daysElapsed = null;
+        var daysRemaining = null;
 
         el.innerHTML = (willExceed
             ? '<div style="background:#f7e7e7;border:1px solid #b33a3a;border-radius:6px;padding:10px 12px;margin-bottom:10px">' +
-              '<div style="font-size:12px;font-weight:700;color:#b33a3a">⚠ Al ritmo actual se superará el presupuesto' +
+              '<div style="font-size:12px;font-weight:700;color:#b33a3a">El gasto y las compras planificadas superan el presupuesto' +
               (exceedDate ? ' el ' + escapeHtml(exceedDate) : '') + '</div>' +
               '</div>'
             : '<div style="background:#e7f7f2;border:1px solid #04ac85;border-radius:6px;padding:10px 12px;margin-bottom:10px">' +
-              '<div style="font-size:12px;font-weight:700;color:#04ac85">✓ El gasto actual está dentro del presupuesto</div>' +
+              '<div style="font-size:12px;font-weight:700;color:#04ac85">El gasto y las compras planificadas están dentro del presupuesto</div>' +
               '</div>') +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
             (dailyAvg !== null ? '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;color:#66746b;text-transform:uppercase;font-weight:700;margin-bottom:2px">Promedio diario</div><div style="font-size:16px;font-weight:900">' + escapeHtml(fmt(dailyAvg)) + '</div></div>' : '') +
@@ -505,6 +500,7 @@
             .then(function (response) {
                 state.projection = response.data || null;
                 state.projectionLoading = false;
+                renderSummaryPanel(root);
                 renderProjection(root);
             })
             .catch(function () {
@@ -526,6 +522,7 @@
             .then(function (response) {
                 state.projection = response.data || null;
                 state.projectionLoading = false;
+                renderSummaryPanel(root);
                 renderProjection(root);
             })
             .catch(function () {
@@ -614,7 +611,7 @@
             return;
         }
 
-        var totalBudget = budget ? (parseFloat(budget.amount) || 0) : 0;
+        var totalBudget = budget ? (parseFloat(budget.total_amount) || 0) : 0;
         var totalAlloc = state.categories.reduce(function (acc, c) { return acc + (parseFloat(c.allocated_amount) || 0); }, 0);
         var unalloc = totalBudget - totalAlloc;
 
