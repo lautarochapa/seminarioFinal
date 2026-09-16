@@ -68,6 +68,30 @@ try {
             'family_group_id' => $group->id, 'user_id' => $user->id,
             'role_in_group' => 'owner', 'status' => 'active',
         ]);
+        $onboarding = app(App\Services\Onboarding\OnboardingStatusService::class);
+        $newStatus = $onboarding->forUser($user->id);
+        checkCloudSetup($newStatus['steps']['basic_profile']['missing'] === ['height_cm'], 'El peso no puede ser obligatorio.');
+        App\UserProfile::create(['user_id' => $user->id, 'height_cm' => 170, 'meals_per_day' => 3]);
+        App\UserObjective::create([
+            'user_id' => $user->id,
+            'objective_id' => App\Objective::where('status', 'active')->firstOrFail()->id,
+            'is_active' => true,
+        ]);
+        checkCloudSetup($onboarding->isComplete($user->id), 'El perfil sin peso debe permitir completar la configuracion inicial.');
+        $user->assignDefaultRole();
+        auth()->login($user);
+        request()->setUserResolver(function () use ($user) { return $user; });
+        $controller = app(App\Http\Controllers\UserWebScreenController::class);
+        foreach (['dashboard', 'onboarding', 'stock', 'planning', 'shopping-list', 'recipe-search', 'recipe-favorites', 'recipe-suggestions', 'shopping-session', 'purchases', 'budget'] as $screen) {
+            $view = $controller->index($screen);
+            checkCloudSetup($view instanceof Illuminate\View\View, 'La pantalla no debe redirigir: '.$screen);
+            view()->share('errors', new Illuminate\Support\ViewErrorBag());
+            $html = $view->render();
+            checkCloudSetup(strpos($html, 'href="#" class="btn-main" data-screen-primary-action') === false, 'Accion sin destino: '.$screen);
+            checkCloudSetup(strpos($html, '/web/budget') !== false, 'Presupuesto ausente del menu: '.$screen);
+        }
+        auth()->logout();
+        request()->setUserResolver(function () { return null; });
         $summary = app(App\Services\UserHome\UserHomeSummaryService::class)->summary($user, $group->id);
         checkCloudSetup($summary['recipes']['available'] === 0, 'El dashboard de un hogar nuevo debe cargar.');
         $recipe = app(App\Services\Recipes\RecipeService::class)->create($user, [
@@ -143,7 +167,7 @@ try {
     $app['env'] = 'production';
     (new SeedDemoRoleUsers())->up();
     checkCloudSetup(Illuminate\Support\Facades\DB::table('users')->orderBy('id')->pluck('password')->all() === $passwords, 'No resetear cuentas existentes en produccion.');
-    echo 'OK: inicializacion, catalogos, permisos, dashboard, recetas, stock, compra sin duplicados, presupuesto y aislamiento demo.'.PHP_EOL;
+    echo 'OK: inicializacion, catalogos, permisos, perfil sin peso, navegacion, dashboard, recetas, stock, compra sin duplicados, presupuesto y aislamiento demo.'.PHP_EOL;
 } catch (Throwable $exception) {
     fwrite(STDERR, $exception->getMessage().PHP_EOL);
     $exitCode = 1;

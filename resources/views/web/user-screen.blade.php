@@ -10,8 +10,16 @@
             <p class="lead">{{ $screen['description'] }}</p>
         </div>
         <div class="actions">
-            <a href="#" class="btn-main" data-screen-primary-action>{{ $screen['primary'] }}</a>
-            <a href="#" class="btn-secondary-web" data-screen-secondary-action>{{ $screen['secondary'] }}</a>
+            @if(isset($screen['primary_href']))
+                <a href="{{ $screen['primary_href'] }}" class="btn-main" data-screen-primary-action>{{ $screen['primary'] }}</a>
+            @else
+                <button type="button" class="btn-main" data-screen-primary-action>{{ $screen['primary'] }}</button>
+            @endif
+            @if(isset($screen['secondary_href']))
+                <a href="{{ $screen['secondary_href'] }}" class="btn-secondary-web" data-screen-secondary-action>{{ $screen['secondary'] }}</a>
+            @else
+                <button type="button" class="btn-secondary-web" data-screen-secondary-action>{{ $screen['secondary'] }}</button>
+            @endif
         </div>
     </section>
 
@@ -20,7 +28,7 @@
         @foreach($screen['metrics'] as $metric)
             <article class="metric">
                 <strong>{{ $stats[$metric] ?? 0 }}</strong>
-                <span>{{ str_replace('_', ' ', $metric) }}</span>
+                <span>{{ $metricLabels[$metric] ?? 'Total' }}</span>
             </article>
         @endforeach
     </section>
@@ -48,7 +56,7 @@
                 </article>
                 <aside class="aside-panel">
                     <h2>Para resolver</h2>
-                    <div data-home-actions class="muted">Cargando pendientes...</div>
+                    <div id="home-actions" data-home-actions class="muted">Cargando pendientes...</div>
                 </aside>
             </div>
         </section>
@@ -562,7 +570,7 @@
                                 <span class="invalid-feedback" data-profile-error="height_cm" role="alert"></span>
                             </div>
                             <div class="col-md-4">
-                                <label for="profile-current-weight">Peso actual (kg)</label>
+                                <label for="profile-current-weight">Peso actual (kg, opcional)</label>
                                 <input id="profile-current-weight" class="form-control" name="current_weight_kg" type="number" min="0" step="0.1">
                                 <span class="invalid-feedback" data-profile-error="current_weight_kg" role="alert"></span>
                             </div>
@@ -2407,7 +2415,7 @@
         </section>
 
     @elseif($screenKey === 'recipe-search')
-        <section class="workspace" data-recipe-search>
+        <section id="recipe-search" class="workspace" data-recipe-search>
             {{-- Main: results --}}
             <div style="display:flex;flex-direction:column;gap:14px">
                 <article class="panel">
@@ -2485,13 +2493,13 @@
                     </div>
 
                     <div style="margin-bottom:9px">
-                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Tags</label>
+                        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">Etiquetas</label>
                         <div data-rs-tag-chips style="display:flex;flex-wrap:wrap;gap:5px;max-height:120px;overflow-y:auto"></div>
                     </div>
 
                     <div style="display:flex;gap:8px;margin-top:4px">
                         <button type="button" class="btn-main btn-sm" style="flex:1" data-rs-apply>Aplicar</button>
-                        <button type="button" class="btn-secondary-web btn-sm" data-rs-reset>Reset</button>
+                        <button type="button" class="btn-secondary-web btn-sm" data-rs-reset>Restablecer</button>
                     </div>
                 </div>
 
@@ -2524,7 +2532,7 @@
         </section>
 
     @elseif($screenKey === 'recipe-suggestions')
-        <section class="workspace" data-recipe-sugg>
+        <section id="recipe-suggestions" class="workspace" data-recipe-sugg>
             <div style="display:flex;flex-direction:column;gap:14px">
                 <article class="panel" style="min-height:400px">
                     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
@@ -2550,7 +2558,7 @@
         </section>
 
     @elseif($screenKey === 'shopping-session')
-        <section data-user-shopping-session>
+        <section id="shopping-session" data-user-shopping-session>
             {{-- Setup --}}
             <div data-session-setup>
                 <article class="panel" style="max-width:520px">
@@ -2635,7 +2643,7 @@
         </section>
 
     @elseif($screenKey === 'purchases')
-        <section class="workspace" data-user-purchases>
+        <section id="purchases" class="workspace" data-user-purchases>
             <div>
                 <article class="panel">
                     <h2>Ítems de compra</h2>

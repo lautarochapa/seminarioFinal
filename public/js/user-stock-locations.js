@@ -485,7 +485,7 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(location.name) + '</strong></td>' +
                 '<td>' + escapeHtml(location.type) + '</td>' +
-                '<td><span class="chip">' + escapeHtml(location.status) + '</span></td>' +
+                '<td><span class="chip">' + escapeHtml(location.status === 'active' ? 'Activa' : 'Inactiva') + '</span></td>' +
                 '<td>' + escapeHtml(location.updated_at || location.created_at) + '</td>' +
                 '<td>' +
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-location-edit="' + location.id + '">Editar</button> ' +
@@ -628,7 +628,7 @@
                 ? '<span class="chip">Leida</span>'
                 : '<button type="button" class="btn-secondary-web btn-sm" data-stock-alert-read="' + alert.id + '">Marcar leida</button>';
             return '<div class="panel" style="padding:12px">' +
-                '<div class="table-line"><span class="muted">' + escapeHtml(alert.alert_type) + ' / ' + escapeHtml(alert.severity) + '</span><strong>' + escapeHtml(alert.message) + '</strong></div>' +
+                '<div class="table-line"><span class="muted">' + escapeHtml(({ low_stock: 'Bajo stock', out_of_stock: 'Sin stock', expiring: 'Proximo a vencer', expiring_soon: 'Proximo a vencer', expiration: 'Vencimiento', expired: 'Vencido' })[alert.alert_type] || 'Alerta de stock') + ' / ' + escapeHtml(({ low: 'Baja', medium: 'Media', high: 'Alta', critical: 'Critica', info: 'Informativa', warning: 'Advertencia' })[alert.severity] || 'Aviso') + '</span><strong>' + escapeHtml(alert.message) + '</strong></div>' +
                 '<div class="table-line"><span class="muted">Producto</span><strong>' + escapeHtml(productLabel(alert.product)) + '</strong></div>' +
                 '<div class="table-line"><span class="muted">Ubicacion</span><strong>' + escapeHtml(locationLabel(alert.location)) + '</strong></div>' +
                 '<div style="margin-top:8px">' + action + '</div>' +
@@ -663,7 +663,7 @@
                 '<td>' + escapeHtml(target) + '</td>' +
                 '<td>' + escapeHtml(rule.minimum_quantity) + '</td>' +
                 '<td>' + escapeHtml(unitLabel(rule.unit)) + '</td>' +
-                '<td><span class="chip">' + escapeHtml(rule.status) + '</span></td>' +
+                '<td><span class="chip">' + escapeHtml(rule.status === 'active' ? 'Activa' : 'Inactiva') + '</span></td>' +
                 '<td>' +
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-rule-edit="' + rule.id + '">Editar</button> ' +
                     '<button type="button" class="btn-secondary-web btn-sm" data-stock-rule-delete="' + rule.id + '">Eliminar</button>' +

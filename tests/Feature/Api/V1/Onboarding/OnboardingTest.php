@@ -88,7 +88,7 @@ class OnboardingTest extends TestCase
         $this->assertTrue($data['steps']['food_preferences']['complete']);
         $this->assertTrue($data['steps']['food_preferences']['optional']);
         $this->assertContains('height_cm', $data['steps']['basic_profile']['missing']);
-        $this->assertContains('current_weight_kg', $data['steps']['basic_profile']['missing']);
+        $this->assertNotContains('current_weight_kg', $data['steps']['basic_profile']['missing']);
     }
 
     public function test_guardado_de_perfil_completa_datos_basicos_y_comidas()
@@ -116,7 +116,6 @@ class OnboardingTest extends TestCase
         UserProfile::create([
             'user_id'           => $user->id,
             'height_cm'         => 165,
-            'current_weight_kg' => 60,
         ]);
 
         $data = $this->status($user);
@@ -180,7 +179,6 @@ class OnboardingTest extends TestCase
         $user = $this->user();
         $this->actingAs($user)->patchJson('/api/v1/users/me/profile', [
             'height_cm'         => 172,
-            'current_weight_kg' => 75,
             'meals_per_day'     => 3,
         ])->assertStatus(200);
         $this->attachObjective($user, $this->objective());
@@ -238,7 +236,7 @@ class OnboardingTest extends TestCase
         $user->assignDefaultRole();
 
         UserProfile::create([
-            'user_id' => $user->id, 'height_cm' => 170, 'current_weight_kg' => 70, 'meals_per_day' => 3,
+            'user_id' => $user->id, 'height_cm' => 170, 'meals_per_day' => 3,
         ]);
         $this->attachObjective($user, $this->objective());
         $this->group($user);

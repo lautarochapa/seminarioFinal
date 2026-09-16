@@ -89,7 +89,7 @@
         ],
     ];
     $currentUser = Auth::user();
-    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/family-group', '/web/profile-objectives'];
+    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/budget', '/web/family-group', '/web/profile-objectives'];
     $adminMainRoutes = [
         '/admin-web',
         '/admin-web/users',

@@ -4,13 +4,13 @@
     var STEP_META = {
         basic_profile: {
             title: '1. Datos basicos',
-            hint: 'Altura, peso y peso objetivo (opcional).',
+            hint: 'Altura. El peso actual y el peso objetivo son opcionales.',
             link: '/web/profile-objectives',
             cta: 'Completar datos',
         },
         objective: {
             title: '2. Objetivo',
-            hint: 'Elegi al menos un objetivo nutricional.',
+            hint: 'Elegi al menos un objetivo personal.',
             link: '/web/profile-objectives',
             cta: 'Elegir objetivo',
         },
@@ -58,7 +58,8 @@
 
     function stepDetail(key, step) {
         if (key === 'basic_profile' && step.missing && step.missing.length) {
-            return 'Falta: ' + step.missing.join(', ');
+            var labels = { height_cm: 'altura', current_weight_kg: 'peso actual', target_weight_kg: 'peso objetivo' };
+            return 'Falta: ' + step.missing.map(function (field) { return labels[field] || 'dato del perfil'; }).join(', ');
         }
         if (key === 'objective') {
             return step.objectives_count + ' objetivo(s) elegido(s)';
@@ -86,8 +87,14 @@
         var total = (data.required_steps || []).length;
         if (progress) {
             progress.textContent = data.complete
-                ? 'Onboarding completo. Ya podes usar stock y recetas.'
+                ? 'Configuracion inicial completa. Ya podes usar stock y recetas.'
                 : ('Paso ' + (data.completed_count + 1) + ' de ' + total + '. Falta: ' + (STEP_META[data.next_step] ? STEP_META[data.next_step].title : data.next_step));
+        }
+
+        var continueLink = qs('[data-screen-primary-action]');
+        if (continueLink) {
+            continueLink.href = data.complete ? '/web' : (STEP_META[data.next_step] || STEP_META.basic_profile).link;
+            continueLink.textContent = data.complete ? 'Ir al inicio' : 'Continuar';
         }
 
         list.innerHTML = STEP_ORDER.map(function (key) {
@@ -123,7 +130,7 @@
                 render(root, (response && response.data) ? response.data : response);
             })
             .catch(function (error) {
-                var message = 'No se pudo cargar tu progreso de onboarding.';
+                var message = 'No se pudo cargar tu progreso de configuracion inicial.';
                 if (error && error.status === 401) {
                     message = 'Sesion vencida. Inicia sesion nuevamente.';
                 }

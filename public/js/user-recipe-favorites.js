@@ -275,6 +275,11 @@
     function bindEvents() {
         if (!root) { return; }
 
+        var primary = qs('[data-screen-primary-action]');
+        var secondary = qs('[data-screen-secondary-action]');
+        if (primary) { primary.addEventListener('click', function () { switchTab('favoritos'); }); }
+        if (secondary) { secondary.addEventListener('click', function () { switchTab('cocinadas'); }); }
+
         root.addEventListener('click', function (e) {
             var t = e.target;
 

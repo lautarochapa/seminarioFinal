@@ -20,7 +20,6 @@ class OnboardingStatusService
         $objectivesCount = $this->profileRepo->getObjectivesForUser($userId)->count();
 
         $hasHeight    = $profile && $profile->height_cm !== null;
-        $hasWeight    = $profile && $profile->current_weight_kg !== null;
         $hasMeals     = $profile && $profile->meals_per_day !== null && (int) $profile->meals_per_day >= 1;
         $hasObjective = $objectivesCount > 0;
 
@@ -34,13 +33,10 @@ class OnboardingStatusService
         if (!$hasHeight) {
             $missingBasic[] = 'height_cm';
         }
-        if (!$hasWeight) {
-            $missingBasic[] = 'current_weight_kg';
-        }
 
         $steps = [
             'basic_profile' => [
-                'complete' => $hasHeight && $hasWeight,
+                'complete' => $hasHeight,
                 'missing'  => $missingBasic,
                 'has_target_weight' => $profile && $profile->target_weight_kg !== null,
             ],

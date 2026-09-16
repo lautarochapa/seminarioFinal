@@ -119,6 +119,21 @@
         return labels[value] || value;
     }
 
+    function statusLabel(value) {
+        var labels = {
+            draft: 'Borrador', pending: 'Pendiente', approved: 'Aprobado', active: 'Activo',
+            archived: 'Archivado', planned: 'Planificado', cooked: 'Cocinado', skipped: 'Omitido',
+            eating_out: 'Comida afuera', cancelled: 'Cancelado', completed: 'Completado',
+            in_progress: 'En curso', open: 'Pendiente', resolved: 'Resuelto', dismissed: 'Descartado',
+        };
+        return labels[value] || 'Sin especificar';
+    }
+
+    function modeLabel(value) {
+        var labels = { manual: 'Manual', auto: 'Automatico', balanced: 'Equilibrado', health: 'Salud', budget: 'Economia', time: 'Tiempo', stock: 'Usar stock' };
+        return labels[value] || value || 'Manual';
+    }
+
     function itemTitle(item) {
         if (item.recipe) {
             return item.recipe.name || item.recipe.nombre || ('Receta #' + item.recipe_id);
@@ -175,7 +190,7 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(periodLabel(plan.period_type)) + '</strong><br><span class="muted">#' + escapeHtml(plan.id) + '</span></td>' +
                 '<td>' + escapeHtml(plan.start_date) + '<br>' + escapeHtml(plan.end_date) + '</td>' +
-                '<td>' + escapeHtml(plan.status) + '</td>' +
+                '<td>' + escapeHtml(statusLabel(plan.status)) + '</td>' +
                 '<td>' + escapeHtml(items.length) + ' comidas</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-meal-plan-show="' + escapeHtml(plan.id) + '">Ver</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-edit="' + escapeHtml(plan.id) + '">Editar</button> ' +
@@ -206,7 +221,7 @@
                 '<td>' + escapeHtml(item.meal_type ? item.meal_type.name : item.meal_type_id) + '</td>' +
                 '<td>' + escapeHtml(itemTitle(item)) + '</td>' +
                 '<td>' + escapeHtml(item.servings_total) + '</td>' +
-                '<td>' + escapeHtml(item.status) + '</td>' +
+                '<td>' + escapeHtml(statusLabel(item.status)) + '</td>' +
                 '<td>' + statusActions +
                 '<button type="button" class="btn-main btn-sm" data-meal-plan-item-portions="' + escapeHtml(item.id) + '">Porciones</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-edit="' + escapeHtml(item.id) + '">Editar</button> ' +
@@ -217,7 +232,7 @@
         target.className = '';
         target.innerHTML = '<div class="table-line"><span>Periodo</span><strong>' + escapeHtml(periodLabel(plan.period_type)) + '</strong></div>' +
             '<div class="table-line"><span>Rango</span><strong>' + escapeHtml(plan.start_date) + ' / ' + escapeHtml(plan.end_date) + '</strong></div>' +
-            '<div class="table-line"><span>Modo</span><strong>' + escapeHtml(plan.mode) + '</strong></div>' +
+            '<div class="table-line"><span>Modo</span><strong>' + escapeHtml(modeLabel(plan.mode)) + '</strong></div>' +
             '<div style="overflow:auto;margin-top:12px"><table class="web-table"><thead><tr><th>Fecha</th><th>Comida</th><th>Detalle</th><th>Porciones</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     }
 
@@ -289,7 +304,7 @@
                 '<td>' + escapeHtml(severityLabel(item.severity)) + '</td>' +
                 '<td>' + escapeHtml(item.message) + '</td>' +
                 '<td>' + escapeHtml(itemLabel) + '</td>' +
-                '<td>' + escapeHtml(item.status) + '</td>' +
+                '<td>' + escapeHtml(statusLabel(item.status)) + '</td>' +
                 '</tr>';
         }).join('');
         panel.className = '';
@@ -324,7 +339,7 @@
         }
         if (state.generatedShoppingList) {
             panel.className = '';
-            panel.innerHTML = '<div class="table-line"><span>Lista generada</span><strong>#' + escapeHtml(state.generatedShoppingList.id) + ' - ' + escapeHtml(state.generatedShoppingList.status) + '</strong></div>' +
+            panel.innerHTML = '<div class="table-line"><span>Lista generada</span><strong>#' + escapeHtml(state.generatedShoppingList.id) + ' - ' + escapeHtml(statusLabel(state.generatedShoppingList.status)) + '</strong></div>' +
                 '<p class="muted" style="margin-top:8px">La lista fue generada desde el plan seleccionado.</p>' + renderShoppingPreviewTable();
             return;
         }
