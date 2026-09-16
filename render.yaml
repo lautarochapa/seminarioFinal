@@ -7,7 +7,7 @@ services:
     dockerContext: .
     dockerfilePath: ./Dockerfile
     healthCheckPath: /healthz
-    preDeployCommand: php artisan migrate --force
+    # Free has no pre-deploy command. See docs/DEPLOY_NEON.md for migrations.
     autoDeployTrigger: commit
     envVars:
       - key: APP_NAME
