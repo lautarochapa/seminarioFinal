@@ -78,7 +78,11 @@ En Render, crear un **Web Service** con:
 - `Docker Build Context Directory`: `.`
 - `Dockerfile Path`: `./Dockerfile`
 - `Health Check Path`: `/healthz`
-- `Pre-Deploy Command`: `php artisan migrate --force`
+- `Pre-Deploy Command`: vacio en el plan Free; inicializar desde una PC con
+  `php artisan app:initialize-database --env=neon --seed-catalogs --force`.
+
+Ver [PostgreSQL en Neon y web en Render](docs/DEPLOY_NEON.md) para configurar
+la conexion online sin cambiar la base local y aplicar el esquema correcto.
 
 ### Variables obligatorias
 

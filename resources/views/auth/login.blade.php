@@ -103,6 +103,7 @@
                 </div>
             </form>
 
+            @if(app()->environment(['local', 'testing']))
             <div class="row" style="margin-top:28px;">
                 <div class="col-md-12">
                     <div style="background:#fff;border:1px solid #dde6df;border-radius:8px;padding:16px;">
@@ -158,6 +159,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>

@@ -1,0 +1,85 @@
+<?php
+
+// Runs against a newly created disposable local database, never the app database.
+require __DIR__.'/../../vendor/autoload.php';
+$app = require __DIR__.'/../../bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+
+function checkCloudSetup($condition, $message)
+{
+    if (! $condition) {
+        throw new RuntimeException($message);
+    }
+}
+
+$db = config('database.connections.pgsql');
+checkCloudSetup(in_array($db['host'], ['localhost', '127.0.0.1'], true) && empty($db['url']), 'Solo se permite PostgreSQL local sin DATABASE_URL.');
+$admin = new PDO(
+    'pgsql:host='.$db['host'].';port='.$db['port'].';dbname=postgres',
+    $db['username'],
+    $db['password'],
+    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+);
+$database = 'cccontrol_cloud_smoke_'.bin2hex(random_bytes(6));
+$admin->exec('CREATE DATABASE "'.$database.'"');
+$exitCode = 0;
+
+try {
+    config([
+        'database.default' => 'pgsql',
+        'database.connections.pgsql.database' => $database,
+        'database.connections.pgsql.url' => null,
+        'session.driver' => 'array',
+        'cache.default' => 'array',
+    ]);
+    Illuminate\Support\Facades\DB::purge('pgsql');
+    $app['env'] = 'production';
+
+    checkCloudSetup($kernel->call('app:initialize-database', ['--plan' => true]) === 0, 'Fallo plan.');
+    checkCloudSetup(! Illuminate\Support\Facades\Schema::hasTable('migrations'), 'Plan no debe crear tablas.');
+    checkCloudSetup($kernel->call('app:initialize-database') === 1, 'Produccion exige --force.');
+    checkCloudSetup(! Illuminate\Support\Facades\Schema::hasTable('migrations'), 'Rechazo no debe crear tablas.');
+
+    $options = ['--force' => true, '--seed-catalogs' => true];
+    checkCloudSetup($kernel->call('app:initialize-database', $options) === 0, 'Fallo inicializacion.');
+    checkCloudSetup(Illuminate\Support\Facades\DB::table('users')->count() === 0, 'No crear usuarios demo online.');
+    checkCloudSetup(Illuminate\Support\Facades\DB::table('roles')->count() === 8, 'Faltan roles.');
+    checkCloudSetup(Illuminate\Support\Facades\DB::table('permissions')->where('code', 'web.user.onboarding')->exists(), 'Falta permiso de onboarding.');
+    foreach (['objectives', 'unit_measures', 'ingredient_categories', 'scraping_sources'] as $table) {
+        checkCloudSetup(Illuminate\Support\Facades\DB::table($table)->count() > 0, 'Catalogo vacio: '.$table);
+    }
+
+    $before = [];
+    foreach (['migrations', 'roles', 'permissions', 'role_permissions', 'ingredient_categories'] as $table) {
+        $before[$table] = Illuminate\Support\Facades\DB::table($table)->count();
+    }
+    checkCloudSetup($kernel->call('app:initialize-database', $options) === 0, 'Fallo segunda ejecucion.');
+    foreach ($before as $table => $count) {
+        checkCloudSetup(Illuminate\Support\Facades\DB::table($table)->count() === $count, 'Duplicados en '.$table);
+    }
+
+    view()->share('errors', new Illuminate\Support\ViewErrorBag());
+    $login = view('auth.login')->render();
+    checkCloudSetup(strpos($login, 'data-demo-password') === false, 'Login publico expone credenciales demo.');
+    checkCloudSetup(strpos($login, 'superadmin@cccontrol.test') === false, 'Login publico expone usuario admin demo.');
+
+    $app['env'] = 'local';
+    require_once database_path('migrations/2026_06_15_000018_seed_demo_role_users.php');
+    (new SeedDemoRoleUsers())->up();
+    checkCloudSetup(Illuminate\Support\Facades\DB::table('users')->count() === 8, 'Se perdieron usuarios demo locales.');
+    checkCloudSetup(strpos(view('auth.login')->render(), 'data-demo-password') !== false, 'Login local perdio atajos demo.');
+
+    $passwords = Illuminate\Support\Facades\DB::table('users')->orderBy('id')->pluck('password')->all();
+    $app['env'] = 'production';
+    (new SeedDemoRoleUsers())->up();
+    checkCloudSetup(Illuminate\Support\Facades\DB::table('users')->orderBy('id')->pluck('password')->all() === $passwords, 'No resetear cuentas existentes en produccion.');
+    echo 'OK: plan, confirmacion, esquema, catalogos, roles/permisos, repeticion y aislamiento demo.'.PHP_EOL;
+} catch (Throwable $exception) {
+    fwrite(STDERR, $exception->getMessage().PHP_EOL);
+    $exitCode = 1;
+} finally {
+    Illuminate\Support\Facades\DB::purge('pgsql');
+    $admin->exec('DROP DATABASE "'.$database.'"');
+}
+exit($exitCode);

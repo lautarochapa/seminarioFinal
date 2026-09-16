@@ -21,6 +21,11 @@ class SeedDemoRoleUsers extends Migration
 
     public function up()
     {
+        // Public demo credentials are only suitable for local development/tests.
+        if (! app()->environment(['local', 'testing'])) {
+            return;
+        }
+
         $now = now();
 
         foreach ($this->users as $demoUser) {
