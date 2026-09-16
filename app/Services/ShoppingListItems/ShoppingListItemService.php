@@ -44,7 +44,7 @@ class ShoppingListItemService
         $payload['shopping_list_id'] = $list->id;
         $payload['status'] = $payload['status'] ?? 'pending';
 
-        $this->validateReferences($payload);
+        $this->validateReferences($payload, $groupId);
         $this->assertNoDuplicate($list->id, $payload['ingredient_id'] ?? null, $payload['product_id'] ?? null, $payload['unit_id'] ?? null, $payload['free_text_name'] ?? null);
 
         $item = $this->items->create($payload);
@@ -63,7 +63,7 @@ class ShoppingListItemService
         $fields = $this->payloadFromInput($data);
         $merged = array_merge($old, $fields);
 
-        $this->validateReferences($merged);
+        $this->validateReferences($merged, $groupId);
         $this->assertNoDuplicate($list->id, $merged['ingredient_id'] ?? null, $merged['product_id'] ?? null, $merged['unit_id'] ?? null, $merged['free_text_name'] ?? null, $item->id);
 
         $fields = $this->applyManualPriceInvalidation($item, $fields);
@@ -158,7 +158,7 @@ class ShoppingListItemService
         return $payload;
     }
 
-    private function validateReferences(array $data): void
+    private function validateReferences(array $data, int $groupId): void
     {
         if (empty($data['ingredient_id']) && empty($data['product_id']) && empty($data['free_text_name'])) {
             throw new FamilyGroupException('SHOPPING_LIST_ITEM_TARGET_REQUIRED', 'Escribi que necesitas comprar o selecciona un producto o ingrediente.', 422);
@@ -172,7 +172,7 @@ class ShoppingListItemService
             throw new FamilyGroupException('INGREDIENT_NOT_FOUND', 'El ingrediente no existe o no esta activo.', 422);
         }
 
-        if (!empty($data['product_id']) && !$this->items->activeProductExists((int) $data['product_id'])) {
+        if (!empty($data['product_id']) && !$this->items->activeProductExists((int) $data['product_id'], $groupId)) {
             throw new FamilyGroupException('PRODUCT_NOT_FOUND', 'El producto no existe o no esta activo.', 422);
         }
     }

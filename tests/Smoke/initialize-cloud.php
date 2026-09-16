@@ -112,6 +112,38 @@ try {
         checkCloudSetup($manual['product']->brand_id === null, 'Una marca desconocida debe ser nula, no un ID inexistente.');
         checkCloudSetup((float) $manual['stock_item']->quantity === 500.0, 'Cantidad de stock incorrecta.');
 
+        $pendingList = App\ShoppingList::create([
+            'family_group_id' => $group->id, 'created_by' => $user->id,
+            'source_type' => 'manual', 'status' => 'active',
+        ]);
+        $itemService = app(App\Services\ShoppingListItems\ShoppingListItemService::class);
+        $pendingItem = $itemService->create($user, $group->id, $pendingList->id, [
+            'product_id' => $manual['product']->id, 'quantity' => 10, 'unit_id' => $unitId,
+        ], '127.0.0.1', 'Cloud smoke');
+        $pendingItem = $itemService->update($user, $group->id, $pendingList->id, $pendingItem->id, [
+            'actual_price' => 3, 'status' => 'purchased',
+        ], '127.0.0.1', 'Cloud smoke');
+        checkCloudSetup((float) $pendingItem->actual_price === 3.0, 'Una lista debe admitir el producto manual del hogar.');
+        $otherGroup = App\FamilyGroup::create(['name' => 'Otro hogar', 'owner_user_id' => $user->id, 'status' => 'active']);
+        $foreignProduct = $manual['product']->replicate();
+        $foreignProduct->family_group_id = $otherGroup->id;
+        $foreignProduct->normalized_name .= '-other';
+        $foreignProduct->codigo .= '-other';
+        $foreignProduct->save();
+        try {
+            $itemService->update($user, $group->id, $pendingList->id, $pendingItem->id, [
+                'product_id' => $foreignProduct->id,
+            ], '127.0.0.1', 'Cloud smoke');
+            throw new RuntimeException('Se acepto un producto privado de otro hogar.');
+        } catch (App\Exceptions\FamilyGroup\FamilyGroupException $expected) {
+            checkCloudSetup($pendingItem->fresh()->product_id === $manual['product']->id, 'Se modifico el item con un producto ajeno.');
+        }
+        $productRepo = app(App\Repositories\ShoppingListItems\ShoppingListItemRepository::class);
+        $foreignProduct->update(['status' => 'active']);
+        checkCloudSetup(!$productRepo->activeProductExists($foreignProduct->id, $group->id), 'Un producto ajeno sigue siendo privado aunque este activo.');
+        $foreignProduct->update(['family_group_id' => $group->id, 'is_active' => false]);
+        checkCloudSetup(!$productRepo->activeProductExists($foreignProduct->id, $group->id), 'No aceptar productos desactivados.');
+
         $list = App\ShoppingList::create([
             'family_group_id' => $group->id, 'created_by' => $user->id,
             'source_type' => 'manual', 'status' => 'in_progress',
