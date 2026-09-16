@@ -19,14 +19,18 @@ class RecipeService
         $this->repo = $repo;
     }
 
-    public function list(array $filters)
+    public function list(User $actor, array $filters)
     {
-        return $this->repo->paginate($filters);
+        return $this->repo->paginate($filters, $actor->hasPermission('recipes.manage') ? null : $actor->id);
     }
 
-    public function show($id)
+    public function show(User $actor, $id)
     {
         $recipe = $this->repo->findOrFail($id);
+
+        if (!$recipe->is_public && (int) $recipe->owner_user_id !== (int) $actor->id && !$actor->hasPermission('recipes.manage')) {
+            throw new RecipeException('RECIPE_NOT_VISIBLE', 'No tenes acceso a esta receta privada.', 403);
+        }
 
         if ($recipe->status !== 'active' && !$recipe->trashed()) {
             throw new RecipeException('RECIPE_NOT_FOUND', 'La receta no existe.', 404);

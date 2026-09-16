@@ -56,22 +56,24 @@ class UserWebScreenController extends Controller
 
     private function stats()
     {
+        $userId = auth()->id();
+        $groupIds = \Illuminate\Support\Facades\DB::table('family_group_members')
+            ->select('family_group_id')->where('user_id', $userId)->where('status', 'active');
         return [
-            'family_groups' => FamilyGroup::count(),
-            'stock_items' => StockItem::whereIn('family_group_id', function ($q) {
-                $q->select('family_group_id')->from('family_group_members')
-                    ->where('user_id', auth()->id())->where('status', 'active');
-            })->where('status', 'active')->count(),
-            'stock_alerts' => StockAlert::where('status', '!=', 'resolved')->count(),
-            'recipes' => Recipe::count(),
-            'meal_plans' => MealPlan::count(),
-            'shopping_lists' => ShoppingList::count(),
-            'purchases' => Purchase::count(),
-            'budgets' => Budget::count(),
-            'report_exports' => ReportExport::count(),
-            'objectives' => UserObjective::count(),
-            'professional_links' => ProfessionalUserLink::count(),
-            'payment_methods' => \App\UserPaymentMethod::where('status', 'active')->count(),
+            'family_groups' => FamilyGroup::whereIn('id', $groupIds)->count(),
+            'stock_items' => StockItem::whereIn('family_group_id', $groupIds)->where('status', 'active')->count(),
+            'stock_alerts' => StockAlert::whereIn('family_group_id', $groupIds)->where('status', '!=', 'resolved')->count(),
+            'recipes' => Recipe::where('status', 'active')->where(function ($visible) use ($userId) {
+                $visible->where('is_public', true)->orWhere('owner_user_id', $userId);
+            })->count(),
+            'meal_plans' => MealPlan::whereIn('family_group_id', $groupIds)->count(),
+            'shopping_lists' => ShoppingList::whereIn('family_group_id', $groupIds)->count(),
+            'purchases' => Purchase::whereIn('family_group_id', $groupIds)->count(),
+            'budgets' => Budget::whereIn('family_group_id', $groupIds)->count(),
+            'report_exports' => ReportExport::where('user_id', $userId)->count(),
+            'objectives' => UserObjective::where('user_id', $userId)->count(),
+            'professional_links' => ProfessionalUserLink::where('user_id', $userId)->count(),
+            'payment_methods' => \App\UserPaymentMethod::where('user_id', $userId)->where('status', 'active')->count(),
         ];
     }
 

@@ -6,11 +6,17 @@ use App\Recipe;
 
 class RecipeRepository
 {
-    public function paginate(array $filters)
+    public function paginate(array $filters, ?int $userId)
     {
         $query = Recipe::with(['category', 'owner'])
             ->withCount(['tags', 'ingredients'])
             ->where('status', 'active');
+
+        if ($userId !== null) {
+            $query->where(function ($visible) use ($userId) {
+                $visible->where('is_public', true)->orWhere('owner_user_id', $userId);
+            });
+        }
 
         if (!empty($filters['search'])) {
             $search = '%' . $filters['search'] . '%';

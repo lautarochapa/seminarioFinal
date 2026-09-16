@@ -180,6 +180,29 @@ try {
         $budgetSummary = app(App\Services\Budgets\BudgetSummaryService::class)->summary($group->id, $budget->id, $user->id);
         checkCloudSetup($budgetSummary['spent_amount'] === 3200.0, 'La compra no impacta en el presupuesto.');
         checkCloudSetup($budgetSummary['available_amount'] === 6800.0, 'Saldo de presupuesto incorrecto.');
+
+        $otherUser = factory(App\User::class)->create();
+        $recipesService = app(App\Services\Recipes\RecipeService::class);
+        $privateRecipe = $recipesService->create($otherUser, ['name' => 'Receta privada ajena', 'servings' => 1], '127.0.0.1', 'Cloud smoke');
+        $visibleRecipes = $recipesService->list($user, [])->pluck('id')->all();
+        checkCloudSetup(in_array($recipe->id, $visibleRecipes, true), 'Se oculto la receta propia.');
+        checkCloudSetup(!in_array($privateRecipe->id, $visibleRecipes, true), 'El listado expone recetas privadas de otro usuario.');
+        checkCloudSetup($recipesService->list($user, ['owner_user_id' => $otherUser->id])->total() === 0, 'No permitir evadir visibilidad mediante filtros.');
+        try {
+            $recipesService->show($user, $privateRecipe->id);
+            throw new RuntimeException('El detalle expone una receta privada ajena.');
+        } catch (App\Exceptions\Recipes\RecipeException $expected) {
+            checkCloudSetup($recipesService->show($user, $recipe->id)->id === $recipe->id, 'Se bloqueo el detalle propio.');
+        }
+        $privateRecipe->update(['is_public' => true]);
+        checkCloudSetup($recipesService->show($user, $privateRecipe->id)->id === $privateRecipe->id, 'Se bloquearon recetas compartidas.');
+        App\Budget::create(['family_group_id' => $otherGroup->id, 'year' => 2026, 'month' => 9, 'total_amount' => 12345, 'currency' => 'ARS', 'status' => 'active']);
+        auth()->login($user);
+        request()->setUserResolver(function () use ($user) { return $user; });
+        $stats = $controller->index('budget')->getData()['stats'];
+        checkCloudSetup($stats['budgets'] === 1 && $stats['family_groups'] === 1, 'Los contadores incluyen hogares ajenos.');
+        auth()->logout();
+        request()->setUserResolver(function () { return null; });
     } finally {
         Illuminate\Support\Facades\DB::rollBack();
     }

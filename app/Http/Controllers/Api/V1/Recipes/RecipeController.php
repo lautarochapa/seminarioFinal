@@ -20,7 +20,7 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
         $traceId   = $request->attributes->get('trace_id');
-        $paginator = $this->service->list($request->query());
+        $paginator = $this->service->list($request->user(), $request->query());
 
         return response()->json([
             'data'     => RecipeResource::collection($paginator),
@@ -45,7 +45,7 @@ class RecipeController extends Controller
         $traceId = $request->attributes->get('trace_id');
 
         return response()->json([
-            'data'     => new RecipeResource($this->service->show((int) $id)),
+            'data'     => new RecipeResource($this->service->show($request->user(), (int) $id)),
             'trace_id' => $traceId,
         ])->header('X-Trace-Id', $traceId);
     }
