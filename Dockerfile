@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+COPY docker/debian-bullseye.list /etc/apt/sources.list
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -34,6 +35,7 @@ ENV PORT=10000
 
 WORKDIR ${APP_DIR}
 
+COPY docker/debian-bullseye.list /etc/apt/sources.list
 RUN apt-get update && apt-get install -y \
     git \
     unzip \

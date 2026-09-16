@@ -63,6 +63,13 @@ El repo ya queda preparado para desplegar en Render usando Docker:
 - `render.yaml`
 - health check web en `/healthz`
 
+La imagen legacy PHP 7.4 usa los snapshots oficiales de Debian del 01/09/2026
+definidos en `docker/debian-bullseye.list`: algunos paquetes de Bullseye ya no
+estan en los mirrors habituales. Se conserva la verificacion de firmas; la
+excepcion de caducidad de metadatos aplica solo a esos snapshots historicos.
+Esto permite reproducir el build, pero no extiende el soporte de seguridad de
+PHP 7.4 ni de Debian 11. La actualizacion de PHP/Laravel sigue pendiente.
+
 ### Opcion recomendada
 
 En Render, crear un **Web Service** con:
