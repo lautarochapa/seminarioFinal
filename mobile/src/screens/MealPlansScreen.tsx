@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppHeader } from '@/components/AppHeader';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
@@ -25,20 +25,29 @@ function MealPlanCard({ plan, onPress }: { plan: MealPlan; onPress: () => void }
 
 export function MealPlansScreen() {
   const router = useRouter();
+  const { addRecipeId, addRecipeName } = useLocalSearchParams<{ addRecipeId?: string; addRecipeName?: string }>();
   const { selectedGroup } = useFamilyGroupContext();
   const { data, loading, error, refresh } = useMealPlans(selectedGroup?.id ?? null);
+
+  const openPlan = (id: number) => {
+    const params: Record<string, string> = { id: String(id) };
+    if (addRecipeId) params.addRecipeId = String(addRecipeId);
+    if (addRecipeName) params.addRecipeName = String(addRecipeName);
+    router.push({ pathname: '/(app)/meal-plans/[id]' as never, params });
+  };
 
   return (
     <View style={styles.fill}>
       <AppHeader title="Meal plans" showBack onBack={goBackOrHome} />
       <FamilyGroupSelector />
+      {addRecipeName ? <Text style={styles.banner}>Elegí un plan para agregar: {addRecipeName}</Text> : null}
       {!selectedGroup ? <EmptyState icon="account-group-outline" message="Seleccioná un grupo familiar." /> : loading ? <LoadingScreen message="Cargando meal plans..." /> : error ? (
         <ErrorState message={friendlyMessage(error)} traceId={error.traceId} onRetry={refresh} type="server" />
       ) : (
         <FlatList
           data={data}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <MealPlanCard plan={item} onPress={() => router.push({ pathname: '/(app)/meal-plans/[id]' as never, params: { id: String(item.id) } })} />}
+          renderItem={({ item }) => <MealPlanCard plan={item} onPress={() => openPlan(item.id)} />}
           contentContainerStyle={styles.list}
           onRefresh={refresh}
           refreshing={loading}
@@ -55,4 +64,5 @@ const styles = StyleSheet.create({
   card: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, gap: 4, ...SHADOW.sm },
   title: { fontSize: FONT.subtitleSize, fontWeight: '700', color: COLORS.textPrimary },
   meta: { fontSize: FONT.captionSize, color: COLORS.textSecondary },
+  banner: { paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, color: COLORS.textSecondary, fontSize: FONT.captionSize },
 });

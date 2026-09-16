@@ -61,7 +61,7 @@ export function HomeScreen() {
       <View style={[styles.header, { paddingTop: insets.top + SPACING.sm }]}>
         <View style={styles.headerTop}>
           <AppLogo variant="small" inverted />
-          <Pressable style={({ pressed }) => [styles.avatar, pressed && styles.avatarPressed]} onPress={() => setAccountMenuOpen(true)} accessibilityRole="button" accessibilityLabel="Abrir menú de usuario" accessibilityHint="Muestra perfil, grupo, planes, listas y configuración">
+          <Pressable style={({ pressed }) => [styles.avatar, pressed && styles.avatarPressed]} onPress={() => setAccountMenuOpen(true)} accessibilityRole="button" accessibilityLabel="Abrir menú de usuario" accessibilityHint="Muestra el perfil y el grupo familiar">
             <Text style={styles.avatarText}>{initials}</Text>
           </Pressable>
         </View>

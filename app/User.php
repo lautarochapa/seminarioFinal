@@ -354,6 +354,21 @@ class User extends Authenticatable
         return $this->roles()->where('code', $code)->exists();
     }
 
+    /**
+     * Asigna el rol por defecto ('user') que habilita las pantallas de usuario final.
+     * Es la unica fuente de verdad para "que rol recibe un usuario comun al crearse";
+     * la usan el registro por API, el registro web legacy y el seeder de demo.
+     * Idempotente: no duplica la asignacion.
+     */
+    public function assignDefaultRole()
+    {
+        $role = Role::where('code', 'user')->where('status', 'active')->first();
+
+        if ($role && ! $this->roles()->where('roles.id', $role->id)->exists()) {
+            $this->roles()->attach($role->id, ['created_at' => now()]);
+        }
+    }
+
     public function hasPermission($code)
     {
         return $this->permissions()->where('permissions.code', $code)->exists();

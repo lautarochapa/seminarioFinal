@@ -25,6 +25,8 @@ class RecipeScrapingService
     {
         $this->assertPermission($user);
 
+        $this->repo->reconcileStaleJobs();
+
         $source = $this->repo->findOrCreateCookpadSource();
 
         if ($this->repo->hasActiveJob($source->id)) {
@@ -36,9 +38,14 @@ class RecipeScrapingService
             'job_type'        => RecipeScrapingRepository::JOB_TYPE,
             'requested_by'    => $user->id,
             'status'          => 'pending',
-            'parameters_json' => [
-                'max_pages' => min((int) ($input['max_pages'] ?? 1), 50),
-            ],
+            'parameters_json' => array_filter([
+                'max_pages'   => min((int) ($input['max_pages'] ?? 1), 50),
+                'max_recipes' => isset($input['max_recipes']) ? min((int) $input['max_recipes'], 200) : null,
+                'delay_ms'    => isset($input['delay_ms']) ? (int) $input['delay_ms'] : null,
+                'search_term' => isset($input['search_term']) && trim((string) $input['search_term']) !== ''
+                    ? trim((string) $input['search_term'])
+                    : null,
+            ], function ($v) { return $v !== null; }),
         ]);
 
         RunRecipeScrapingJob::dispatch($job->id);
@@ -54,12 +61,17 @@ class RecipeScrapingService
             'user_agent' => $userAgent,
         ]);
 
-        return $job->load('source');
+        // Con QUEUE_CONNECTION=sync, RunRecipeScrapingJob::dispatch() ya corrio
+        // y termino el job de forma sincrona antes de esta linea; fresh() relee
+        // el estado real desde la DB en vez de devolver el $job en memoria
+        // desactualizado (status="pending" pese a que ya termino).
+        return $job->fresh(['source']);
     }
 
     public function list(User $user, array $filters): LengthAwarePaginator
     {
         $this->assertPermission($user);
+        $this->repo->reconcileStaleJobs();
         return $this->repo->paginateJobs($filters);
     }
 
@@ -102,7 +114,7 @@ class RecipeScrapingService
             'user_agent' => $userAgent,
         ]);
 
-        return $newJob->load('source');
+        return $newJob->fresh(['source']);
     }
 
     private function assertPermission(User $user): void

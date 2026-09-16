@@ -170,6 +170,46 @@ class ProductsTest extends TestCase
             ->assertJsonPath('data.barcode', '7790001000011');
     }
 
+    public function test_alta_y_update_con_nombre_acentuado_utf8()
+    {
+        $admin = $this->admin();
+        $brand = $this->brand(['name' => 'Arcor', 'normalized_name' => 'arcor']);
+
+        // Alta: nombre con á/é/í/ó/ú/ñ. strtolower() byte a byte corrompia el
+        // normalized_name y PostgreSQL rechazaba el SELECT de unicidad.
+        $create = $this->actingAs($admin)->postJson('/api/v1/admin/products', [
+            'name'     => 'Puré de tomate Arcor 520 g. — Añejo Jamón',
+            'brand_id' => $brand->id,
+            'barcode'  => '7790002000021',
+        ]);
+
+        $create->assertStatus(201)
+            ->assertJsonPath('data.name', 'Puré de tomate Arcor 520 g. — Añejo Jamón')
+            ->assertJsonPath('data.normalized_name', 'puré de tomate arcor 520 g. — añejo jamón');
+
+        $id = $create->json('data.id');
+        $this->assertDatabaseHas('products', [
+            'id'              => $id,
+            'normalized_name' => 'puré de tomate arcor 520 g. — añejo jamón',
+        ]);
+        // El valor guardado debe ser UTF-8 valido y recuperable.
+        $this->assertSame(
+            'puré de tomate arcor 520 g. — añejo jamón',
+            \App\Product::find($id)->normalized_name
+        );
+
+        // Update: mismo camino de normalizacion.
+        $this->actingAs($admin)->patchJson('/api/v1/admin/products/'.$id, [
+            'name' => 'Manteca La Serenísima Extra Untar 200 g.',
+        ])->assertStatus(200)
+            ->assertJsonPath('data.normalized_name', 'manteca la serenísima extra untar 200 g.');
+
+        $this->assertDatabaseHas('products', [
+            'id'              => $id,
+            'normalized_name' => 'manteca la serenísima extra untar 200 g.',
+        ]);
+    }
+
     public function test_relacion_invalida_rechazada()
     {
         $inactiveBrand = $this->brand(['status' => 'inactive']);

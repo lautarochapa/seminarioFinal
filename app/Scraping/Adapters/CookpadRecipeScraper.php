@@ -2,6 +2,7 @@
 
 namespace App\Scraping\Adapters;
 
+use App\Repositories\Scraping\ScrapingRepository;
 use App\ScrapingJob;
 use App\ScrapingSource;
 use App\Scraping\DTOs\RecipeScrapingResult;
@@ -22,12 +23,16 @@ class CookpadRecipeScraper
     private $http;
     private $rateLimiter;
     private $urlValidator;
+    private $repo;
+    private $blocked = false;
+    private $deadline = null;
 
-    public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator)
+    public function __construct(ScrapingHttpClient $http, ScrapingRateLimiter $rateLimiter, UrlSecurityValidator $urlValidator, ScrapingRepository $repo)
     {
         $this->http = $http;
         $this->rateLimiter = $rateLimiter;
         $this->urlValidator = $urlValidator;
+        $this->repo = $repo;
     }
 
     public function isAvailable(): bool
@@ -39,11 +44,22 @@ class CookpadRecipeScraper
     {
         $result   = new RecipeScrapingResult();
         $metrics  = new ScrapingMetrics();
-        $requestedMaxPages = (int) (($job->parameters_json['max_pages'] ?? 1));
+        $params   = $job->parameters_json ?? [];
+        $requestedMaxPages = (int) ($params['max_pages'] ?? 1);
         $maxPages = min($requestedMaxPages, (int) config('scraping.limits.recipe_max_pages', 10));
         $maxRecipes = (int) config('scraping.limits.recipe_max_items', 200);
+        if (isset($params['max_recipes']) && (int) $params['max_recipes'] > 0) {
+            $maxRecipes = min($maxRecipes, (int) $params['max_recipes']);
+        }
+        $delayOverrideMs = isset($params['delay_ms']) && (int) $params['delay_ms'] >= 0
+            ? (int) $params['delay_ms']
+            : null;
         $baseUrl  = rtrim($source->base_url ?? 'https://cookpad.com/ar', '/');
+        $searchTerm = $this->resolveSearchTerm($params);
         $seenUrls = [];
+        $this->blocked = false;
+        $budgetSeconds = (int) config('scraping.recipe_time_budget_seconds', 180);
+        $this->deadline = $budgetSeconds > 0 ? (microtime(true) + $budgetSeconds) : null;
 
         for ($page = 1; $page <= $maxPages; $page++) {
             if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
@@ -51,8 +67,19 @@ class CookpadRecipeScraper
                 break;
             }
 
-            $listingUrl = $baseUrl . '/busca/recetas?page=' . $page;
-            $html       = $this->fetchHtml($source->code, $listingUrl, $metrics, true);
+            if ($this->deadlineExceeded()) {
+                $result->finalReason = 'time_budget_exceeded';
+                break;
+            }
+
+            $listingUrl = $baseUrl . '/buscar/' . rawurlencode($searchTerm) . '?page=' . $page;
+            $html       = $this->fetchHtml($job, $source->code, $listingUrl, $metrics, true, 'listing');
+
+            if ($this->blocked) {
+                $result->errorMessage = 'Fuente bloqueada o con verificacion anti-bot. Corrida detenida.';
+                $result->finalReason = 'blocked';
+                break;
+            }
 
             if ($html === null) {
                 $result->errorMessage = 'Failed to fetch listing page ' . $page;
@@ -63,10 +90,19 @@ class CookpadRecipeScraper
             $recipeLinks = $this->extractRecipeLinks($html, $baseUrl);
             $result->pagesScraped++;
             $metrics->increment('pages_processed');
+            $this->repo->addLog($job, 'info', 'page_parsed', [
+                'page'          => $page,
+                'recipes_found' => count($recipeLinks),
+            ]);
 
             foreach ($recipeLinks as $recipeUrl) {
                 if (in_array($job->fresh()->status, ['cancelled', 'cancel_requested'], true)) {
                     $result->finalReason = 'cancelled';
+                    break 2;
+                }
+
+                if ($this->deadlineExceeded()) {
+                    $result->finalReason = 'time_budget_exceeded';
                     break 2;
                 }
 
@@ -83,8 +119,17 @@ class CookpadRecipeScraper
                 }
                 $seenUrls[$recipeUrl] = true;
 
-                $recipeHtml = $this->fetchHtml($source->code, $recipeUrl, $metrics, true);
+                $this->repo->addLog($job, 'info', 'recipe_detail_started', ['url' => mb_substr($recipeUrl, 0, 300)]);
+                $recipeHtml = $this->fetchHtml($job, $source->code, $recipeUrl, $metrics, true, 'detail');
+
+                if ($this->blocked) {
+                    $result->errorMessage = 'Fuente bloqueada o con verificacion anti-bot. Corrida detenida.';
+                    $result->finalReason = 'blocked';
+                    break 2;
+                }
+
                 if ($recipeHtml === null) {
+                    $this->repo->addLog($job, 'warning', 'recipe_detail_finished', ['url' => mb_substr($recipeUrl, 0, 300), 'parsed' => false]);
                     continue;
                 }
 
@@ -93,8 +138,10 @@ class CookpadRecipeScraper
                     $result->recipes[]  = $dto;
                     $result->totalFound++;
                     $metrics->increment('items_found');
+                    $this->repo->addLog($job, 'info', 'recipe_detail_finished', ['url' => mb_substr($recipeUrl, 0, 300), 'parsed' => true]);
                 } else {
                     $metrics->increment('parse_errors');
+                    $this->repo->addLog($job, 'warning', 'recipe_detail_finished', ['url' => mb_substr($recipeUrl, 0, 300), 'parsed' => false]);
                 }
 
                 if ($result->totalFound >= $maxRecipes) {
@@ -102,7 +149,7 @@ class CookpadRecipeScraper
                     break 2;
                 }
 
-                $this->rateLimiter->pauseForRecipe();
+                $this->rateLimiter->pauseForRecipe($delayOverrideMs);
             }
 
             if (count($recipeLinks) < self::RECIPES_PER_PAGE) {
@@ -110,7 +157,7 @@ class CookpadRecipeScraper
             }
 
             if ($page < $maxPages) {
-                $this->rateLimiter->pauseForRecipe();
+                $this->rateLimiter->pauseForRecipe($delayOverrideMs);
             }
         }
 
@@ -165,20 +212,54 @@ class CookpadRecipeScraper
     public function extractRecipeLinks(string $html, string $baseUrl): array
     {
         $links = [];
-        preg_match_all('/href=["\'](' . preg_quote($baseUrl, '/') . '\/recetas\/\d+[^"\']*)["\']/', $html, $matches);
-        if (isset($matches[1])) {
-            $links = array_unique($matches[1]);
-        }
 
-        // Also match relative links
-        preg_match_all('/href=["\'](\/recetas\/\d+[^"\']*)["\']/', $html, $relMatches);
-        if (isset($relMatches[1])) {
-            foreach ($relMatches[1] as $rel) {
-                $links[] = $baseUrl . $rel;
+        if (preg_match_all('#href=["\']([^"\']*/recetas/\d+[^"\']*)["\']#', $html, $matches)) {
+            $host = $this->schemeHost($baseUrl);
+            foreach ($matches[1] as $href) {
+                $href = html_entity_decode($href, ENT_QUOTES);
+                if (strpos($href, 'http') === 0) {
+                    $links[] = $href;
+                } elseif (strpos($href, '/') === 0 && $host !== '') {
+                    $links[] = $host . $href;
+                }
             }
         }
 
-        return array_unique(array_values($links));
+        return array_values(array_unique($links));
+    }
+
+    /**
+     * El proceso corre en linea (QUEUE_CONNECTION=sync) dentro del request
+     * HTTP/CLI que lo dispara: no hay un worker de cola que lo mate por
+     * timeout ni que reintente si el servidor lo corta primero. Este limite
+     * de tiempo evita que la corrida siga acumulando requests mas alla de lo
+     * que el proceso puede terminar de forma segura, para que el job siempre
+     * cierre con un estado final propio en vez de quedar "running" hasta que
+     * algo externo mate el proceso a mitad de camino.
+     */
+    private function deadlineExceeded(): bool
+    {
+        return $this->deadline !== null && microtime(true) >= $this->deadline;
+    }
+
+    private function schemeHost(string $url): string
+    {
+        $parts = parse_url($url);
+        if (empty($parts['scheme']) || empty($parts['host'])) {
+            return '';
+        }
+
+        return $parts['scheme'] . '://' . $parts['host'];
+    }
+
+    private function resolveSearchTerm(array $params): string
+    {
+        $term = isset($params['search_term']) ? trim((string) $params['search_term']) : '';
+        if ($term === '') {
+            $term = trim((string) config('scraping.recipe_search_term', 'comida'));
+        }
+
+        return $term !== '' ? $term : 'comida';
     }
 
     private function fromJsonLd(array $data, string $sourceUrl): ScrapedRecipeDTO
@@ -241,16 +322,55 @@ class CookpadRecipeScraper
         return null;
     }
 
-    private function fetchHtml(string $sourceCode, string $url, ScrapingMetrics $metrics, bool $validateUrl): ?string
+    /**
+     * Instrumenta cada request HTTP con eventos en ScrapingJobLog
+     * (page_request_started/finished) para poder distinguir, ante un job
+     * que no avanza, si esta esperando una respuesta de Cookpad, si la
+     * respuesta llego bloqueada/con error, o si el problema esta despues
+     * (parseo). No loguea el HTML completo, solo status/duracion/bytes.
+     */
+    private function fetchHtml(ScrapingJob $job, string $sourceCode, string $url, ScrapingMetrics $metrics, bool $validateUrl, string $kind): ?string
     {
+        $this->repo->addLog($job, 'info', 'page_request_started', [
+            'kind' => $kind,
+            'url'  => mb_substr($url, 0, 300),
+        ]);
+        $startedAt = microtime(true);
+
         try {
             $response = $this->http->getHtml($sourceCode, $url, $metrics, [
                 'validate_url' => $validateUrl,
                 'require_supported_source' => true,
             ]);
 
-            return $response->body();
+            $body = $response->body();
+            $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
+
+            $this->repo->addLog($job, 'info', 'page_request_finished', [
+                'kind'        => $kind,
+                'status'      => $response->status(),
+                'duration_ms' => $durationMs,
+                'bytes'       => strlen($body),
+            ]);
+
+            if ($this->looksBlocked($body)) {
+                $this->blocked = true;
+                Log::warning('cookpad_scraper_blocked', ['url' => mb_substr($url, 0, 300)]);
+                return null;
+            }
+
+            return $body;
         } catch (ScrapingHttpException $e) {
+            $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
+            if (in_array($e->statusCode(), [401, 403, 429], true)) {
+                $this->blocked = true;
+            }
+            $this->repo->addLog($job, 'warning', 'page_request_finished', [
+                'kind'        => $kind,
+                'status'      => $e->statusCode(),
+                'duration_ms' => $durationMs,
+                'error'       => mb_substr($e->getMessage(), 0, 200),
+            ]);
             Log::warning('cookpad_scraper_fetch_error', [
                 'url' => mb_substr($url, 0, 300),
                 'status_code' => $e->statusCode(),
@@ -259,8 +379,29 @@ class CookpadRecipeScraper
             ]);
             return null;
         } catch (\Throwable $e) {
+            $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
+            $this->repo->addLog($job, 'warning', 'page_request_finished', [
+                'kind'        => $kind,
+                'status'      => null,
+                'duration_ms' => $durationMs,
+                'error'       => mb_substr($e->getMessage(), 0, 200),
+            ]);
             Log::warning('cookpad_scraper_fetch_error', ['url' => $url, 'error' => mb_substr($e->getMessage(), 0, 200)]);
             return null;
         }
+    }
+
+    private function looksBlocked(string $body): bool
+    {
+        $head = mb_strtolower(mb_substr($body, 0, 4096), 'UTF-8');
+
+        foreach (['captcha', 'unusual traffic', 'access denied', 'verify you are human',
+                  'cf-browser-verification', 'attention required', 'are you a robot'] as $marker) {
+            if (mb_strpos($head, $marker) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

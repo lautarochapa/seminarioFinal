@@ -13,8 +13,14 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 const mockBack = jest.fn();
+const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ back: mockBack, push: jest.fn(), replace: jest.fn() }),
+  useRouter: () => ({ back: mockBack, push: jest.fn(), replace: mockReplace }),
+}));
+
+let mockGroupId: number | null = null;
+jest.mock('../src/auth/FamilyGroupContext', () => ({
+  useOptionalFamilyGroupContext: () => mockGroupId ? { selectedGroup: { id: mockGroupId, name: 'Hogar QA' } } : null,
 }));
 
 let mockPermission: { granted: boolean; canAskAgain: boolean } | null = { granted: true, canAskAgain: true };
@@ -31,14 +37,27 @@ jest.mock('expo-camera', () => ({
 }));
 
 const mockFindByBarcode = jest.fn();
+const mockStockScan = jest.fn();
+const mockUnitsList = jest.fn();
+const mockLocationsList = jest.fn();
 jest.mock('../src/api/endpoints', () => ({
   productsApi: { findByBarcode: (...args: unknown[]) => mockFindByBarcode(...args) },
+  stockApi: {
+    scan: (...args: unknown[]) => mockStockScan(...args),
+    createManualProduct: jest.fn(),
+  },
+  unitsApi: { list: (...args: unknown[]) => mockUnitsList(...args) },
+  stockLocationsApi: { list: (...args: unknown[]) => mockLocationsList(...args) },
 }));
 
 beforeEach(() => {
   jest.clearAllMocks();
   mockPermission = { granted: true, canAskAgain: true };
+  mockGroupId = null;
   capturedOnScanned = null;
+  mockUnitsList.mockResolvedValue({ data: [] });
+  mockLocationsList.mockResolvedValue({ data: [] });
+  mockStockScan.mockResolvedValue({ data: {} });
   consumePendingScanResult(); // drain any leftover
 });
 
@@ -112,5 +131,102 @@ describe('BarcodeScannerScreen — lookup flow', () => {
 
     expect(mockFindByBarcode).toHaveBeenCalledWith('123456789');
     expect(await findByText('Fideos')).toBeTruthy();
+  });
+
+  it('preselects the existing stock unit for a known product', async () => {
+    mockGroupId = 5;
+    mockUnitsList.mockResolvedValue({
+      data: [
+        { id: 1, name: 'Gramo', code: 'g', symbol: 'g' },
+        { id: 6, name: 'Taza', code: 'cup', symbol: 'taza' },
+      ],
+    });
+    mockLocationsList.mockResolvedValue({ data: [{ id: 8, name: 'Alacena', type: 'pantry' }] });
+    mockFindByBarcode.mockResolvedValue({
+      data: {
+        id: 47,
+        name: 'Puré de tomate',
+        brand: null,
+        stock_entry_suggestion: {
+          quantity: null,
+          unit_id: 1,
+          source: 'existing_stock',
+          requires_unit_selection: false,
+          existing_units: [{ id: 1, name: 'Gramo', code: 'g', symbol: 'g' }],
+        },
+      },
+    });
+    const { getByText, findByText, findByLabelText } = await render(<BarcodeScannerScreen />);
+
+    await act(async () => {
+      capturedOnScanned?.({ data: '7790580146115', type: 'ean13' });
+    });
+    await fireEvent.press(await findByText('Agregar al stock'));
+    await fireEvent.changeText(await findByLabelText('Cantidad'), '20');
+    await fireEvent.press(getByText('Agregar'));
+
+    await waitFor(() => expect(mockStockScan).toHaveBeenCalledWith(5, expect.objectContaining({
+      barcode: '7790580146115',
+      quantity: 20,
+      unit_id: 1,
+    })));
+  });
+
+  it('prefills 520 grams from normalized package data', async () => {
+    mockGroupId = 5;
+    mockUnitsList.mockResolvedValue({ data: [{ id: 1, name: 'Gramo', code: 'g', symbol: 'g' }] });
+    mockLocationsList.mockResolvedValue({ data: [{ id: 8, name: 'Alacena', type: 'pantry' }] });
+    mockFindByBarcode.mockResolvedValue({
+      data: {
+        id: 47,
+        name: 'Puré de tomate 520 g',
+        brand: null,
+        stock_entry_suggestion: {
+          quantity: 520,
+          unit_id: 1,
+          source: 'package',
+          requires_unit_selection: false,
+          existing_units: [],
+        },
+      },
+    });
+    const { findByText, findByLabelText } = await render(<BarcodeScannerScreen />);
+
+    await act(async () => {
+      capturedOnScanned?.({ data: '7790580146115', type: 'ean13' });
+    });
+    await fireEvent.press(await findByText('Agregar al stock'));
+
+    expect((await findByLabelText('Cantidad')).props.value).toBe('520');
+    expect(await findByText('Cantidad y unidad tomadas de la presentación del producto.')).toBeTruthy();
+  });
+
+  it('does not silently default a product without unit to the first unit', async () => {
+    mockGroupId = 5;
+    mockUnitsList.mockResolvedValue({ data: [{ id: 6, name: 'Taza', code: 'cup', symbol: 'taza' }] });
+    mockLocationsList.mockResolvedValue({ data: [{ id: 8, name: 'Alacena', type: 'pantry' }] });
+    mockFindByBarcode.mockResolvedValue({
+      data: {
+        id: 47,
+        name: 'Producto sin normalizar',
+        brand: null,
+        stock_entry_suggestion: {
+          quantity: null,
+          unit_id: null,
+          source: null,
+          requires_unit_selection: true,
+          existing_units: [],
+        },
+      },
+    });
+    const { findByText } = await render(<BarcodeScannerScreen />);
+
+    await act(async () => {
+      capturedOnScanned?.({ data: '7790580146115', type: 'ean13' });
+    });
+    await fireEvent.press(await findByText('Agregar al stock'));
+
+    expect(await findByText('Este producto no tiene una unidad conocida. Elegí una antes de guardar.')).toBeTruthy();
+    expect(mockStockScan).not.toHaveBeenCalled();
   });
 });

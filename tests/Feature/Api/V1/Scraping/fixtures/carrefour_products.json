@@ -4,6 +4,8 @@
     "productName": "Leche Entera La Serenisima 1L",
     "brand": "La Serenisima",
     "link": "https://www.carrefour.com.ar/leche-entera-1l",
+    "categories": ["/Almacen/Lacteos/", "/Almacen/"],
+    "categoryId": "205",
     "items": [
       {
         "itemId": "sku001",

@@ -7,7 +7,15 @@
         selected: null,
         ingredients: [],
         units: [],
+        candidates: [],
+        checkedIds: {},
     };
+
+    var NON_FINAL_STATUSES = ['pending', 'parsed', 'approved'];
+    // Solo pending/parsed son seleccionables para el procesamiento batch
+    // (aplicar sugerencias / aprobar): approved ya paso por revision manual
+    // y rejected/recipe_created son estados finales.
+    var SELECTABLE_STATUSES = ['pending', 'parsed'];
 
     function qs(selector, root) {
         return (root || document).querySelector(selector);
@@ -130,7 +138,14 @@
             return item;
         }
         if (item && typeof item === 'object') {
-            return [item.quantity, item.unit, item.name || item.text || item.description].filter(Boolean).join(' ');
+            // "Importar receta por texto" genera objetos con name_raw/unit_raw
+            // (no name/unit como el scraper); si ninguno de los dos trae
+            // nombre, se cae al texto original de la linea (raw_line).
+            var name = item.name || item.name_raw || item.raw_line || item.text || item.description || '';
+            if (item.name || item.name_raw) {
+                return [item.quantity, item.unit || item.unit_raw, name].filter(Boolean).join(' ');
+            }
+            return name;
         }
         return String(item || '');
     }
@@ -153,6 +168,54 @@
             }
         }
         return null;
+    }
+
+    function suggestionFor(candidate, index) {
+        var list = candidate && Array.isArray(candidate.ingredient_suggestions) ? candidate.ingredient_suggestions : [];
+        for (var i = 0; i < list.length; i += 1) {
+            if (Number(list[i].index) === Number(index)) {
+                return list[i];
+            }
+        }
+        return null;
+    }
+
+    function suggestionLabel(suggestion) {
+        if (!suggestion || !suggestion.suggested_ingredient_id) {
+            return 'sin sugerencia';
+        }
+        return 'sugerido: ' + suggestion.suggested_ingredient_name + ' (#' + suggestion.suggested_ingredient_id + ', ' + suggestion.confidence + ')';
+    }
+
+    function lineBadge(kind) {
+        var labels = { auto: 'Detectado automaticamente', suggested: 'Sugerido', unresolved: 'Sin determinar', optional: 'Opcional' };
+        var colors = {
+            auto: 'background:#e3f6e5;color:#1e8e3e',
+            suggested: 'background:#fff4e0;color:#b06a00',
+            unresolved: 'background:#f5f5f5;color:#888',
+            optional: 'background:#eef2ff;color:#2f5fc4',
+        };
+        return '<span class="chip" style="' + colors[kind] + ';font-size:11px;margin-left:6px">' + labels[kind] + '</span>';
+    }
+
+    function mappingSummary(candidate) {
+        return candidate && candidate.mapping_summary ? candidate.mapping_summary : {
+            total_count: 0, mapped_count: 0, unmapped_count: 0, required_unmapped_count: 0, optional_unmapped_count: 0, mapping_ready: false,
+        };
+    }
+
+    function summaryText(summary) {
+        var text = summary.mapped_count + '/' + summary.total_count + ' ingredientes mapeados';
+        if (summary.optional_unmapped_count) {
+            text += ', ' + summary.optional_unmapped_count + ' opcional(es) sin mapear';
+        }
+        return text;
+    }
+
+    function readinessBadge(summary) {
+        return summary.mapping_ready
+            ? '<span class="chip" style="background:#e3f6e5;color:#1e8e3e;font-size:11px">Lista para aprobar</span>'
+            : '<span class="chip" style="background:#fff0f0;color:#c0392b;font-size:11px">Requiere revision</span>';
     }
 
     function option(label, value) {
@@ -190,27 +253,52 @@
         return params.toString();
     }
 
+    function isSelectable(candidate) {
+        return candidate && SELECTABLE_STATUSES.indexOf(candidate.status) !== -1;
+    }
+
     function renderRows(root, candidates) {
         var body = qs('[data-import-candidates-body]', root);
         if (!body) {
             return;
         }
+        // Al recargar el listado se pierde la vista previa de checkboxes:
+        // se limpia la seleccion para que nunca queden ids seleccionados
+        // que ya no son visibles/seleccionables.
+        state.checkedIds = {};
+        updateSelectAllState(root);
         if (!candidates.length) {
-            body.innerHTML = '<tr><td colspan="6" class="muted">No hay candidatas para los filtros seleccionados.</td></tr>';
+            body.innerHTML = '<tr><td colspan="7" class="muted">No hay candidatas para los filtros seleccionados.</td></tr>';
             return;
         }
         body.innerHTML = candidates.map(function (candidate) {
             var ingredients = rawIngredients(candidate).length;
             var steps = rawSteps(candidate).length;
+            var summary = mappingSummary(candidate);
+            var checkbox = isSelectable(candidate)
+                ? '<input type="checkbox" data-import-candidates-select value="' + escapeHtml(candidate.id) + '">'
+                : '';
             return '<tr>' +
+                '<td>' + checkbox + '</td>' +
                 '<td><strong>' + escapeHtml(candidate.raw_title || 'Sin titulo') + '</strong><br><span class="muted">#' + escapeHtml(candidate.id) + '</span></td>' +
                 '<td>' + escapeHtml(candidate.source_site) + '<br><span class="muted">' + escapeHtml(candidate.source_url) + '</span></td>' +
                 '<td>' + statusChip(candidate.status) + '</td>' +
-                '<td>' + ingredients + ' ingredientes<br>' + steps + ' pasos</td>' +
+                '<td>' + ingredients + ' ingredientes (' + summaryText(summary) + ')<br>' + steps + ' pasos<br>' + readinessBadge(summary) + '</td>' +
                 '<td>' + escapeHtml(dateLabel(candidate.created_at)) + '</td>' +
                 '<td><button type="button" class="btn-ghost btn-sm" data-import-candidates-show="' + escapeHtml(candidate.id) + '">Revisar</button></td>' +
                 '</tr>';
         }).join('');
+    }
+
+    function selectedIds() {
+        return Object.keys(state.checkedIds).filter(function (id) { return state.checkedIds[id]; }).map(Number);
+    }
+
+    function updateSelectAllState(root) {
+        var selectAll = qs('[data-import-candidates-select-all]', root);
+        if (selectAll) {
+            selectAll.checked = false;
+        }
     }
 
     function renderMeta(root, payload) {
@@ -247,10 +335,26 @@
         }
         var ingredients = rawIngredients(candidate);
         var steps = rawSteps(candidate);
+        var summary = mappingSummary(candidate);
         var ingredientList = ingredients.length ? ingredients.map(function (item, index) {
             var mapping = mappingFor(candidate, index);
-            var mapped = mapping ? ' -> ingrediente #' + mapping.ingredient_id + ', unidad #' + mapping.unit_id : ' -> sin mapear';
-            return '<li>' + escapeHtml(ingredientText(item)) + '<span class="muted">' + escapeHtml(mapped) + '</span></li>';
+            var suggestion = suggestionFor(candidate, index);
+            var badge;
+            var mappedText;
+            if (mapping) {
+                badge = lineBadge('auto');
+                mappedText = ' -> ingrediente #' + mapping.ingredient_id + ', unidad #' + mapping.unit_id;
+            } else if (suggestion && suggestion.suggested_ingredient_id) {
+                badge = lineBadge('suggested');
+                mappedText = ' -> sin mapear (' + suggestionLabel(suggestion) + ')';
+            } else {
+                badge = lineBadge('unresolved');
+                mappedText = ' -> sin mapear';
+            }
+            if (!mapping && suggestion && suggestion.is_optional) {
+                badge += lineBadge('optional');
+            }
+            return '<li>' + escapeHtml(ingredientText(item)) + badge + '<br><span class="muted" style="font-size:12px">' + escapeHtml(mappedText) + '</span></li>';
         }).join('') : '<li class="muted">Sin ingredientes parseados.</li>';
         var stepList = steps.length ? steps.map(function (item) {
             return '<li>' + escapeHtml(stepText(item)) + '</li>';
@@ -264,6 +368,7 @@
             '<div class="line"><span>Estado</span><strong>' + statusChip(candidate.status) + '</strong></div>' +
             '<div class="line"><span>Fuente</span><strong>' + escapeHtml(candidate.source_site) + '</strong></div>' +
             '<div class="line"><span>URL</span><span style="word-break:break-all">' + link + '</span></div>' +
+            '<div class="line"><span>Mapeo</span><strong>' + summaryText(summary) + ' ' + readinessBadge(summary) + '</strong></div>' +
             '<h3 style="font-size:15px;margin:12px 0 6px">' + escapeHtml(candidate.raw_title || 'Sin titulo') + '</h3>' +
             '<p class="muted">' + escapeHtml(candidate.raw_description) + '</p>' +
             '<h3 style="font-size:15px;margin:12px 0 6px">Ingredientes</h3><ul style="padding-left:18px">' + ingredientList + '</ul>' +
@@ -288,6 +393,8 @@
             map.quantity.value = '';
             map.notes.value = '';
             map.is_optional.checked = false;
+            var hint = qs('[data-import-candidates-suggestion]', root);
+            if (hint) { hint.textContent = ''; }
         }
         if (reject) {
             reject.id.value = candidate ? candidate.id : '';
@@ -298,6 +405,31 @@
                 return option((index + 1) + '. ' + ingredientText(item), index);
             }).join('') : '';
             indexSelect.innerHTML = '<option value="">Ingrediente parseado</option>' + options;
+        }
+    }
+
+    function applySuggestionToMapForm(root) {
+        var form = qs('[data-import-candidates-map-form]', root);
+        var hint = qs('[data-import-candidates-suggestion]', root);
+        if (!form || !state.selected) {
+            return;
+        }
+        var index = form.ingredient_index.value;
+        if (index === '') {
+            if (hint) { hint.textContent = ''; }
+            return;
+        }
+        var suggestion = suggestionFor(state.selected, Number(index));
+        if (hint) {
+            hint.textContent = suggestion
+                ? suggestionLabel(suggestion) + (suggestion.parsed_quantity != null ? ' - cantidad detectada: ' + suggestion.parsed_quantity : '')
+                : '';
+        }
+        if (suggestion && suggestion.suggested_ingredient_id && !form.ingredient_id.value) {
+            form.ingredient_id.value = String(suggestion.suggested_ingredient_id);
+        }
+        if (suggestion && suggestion.parsed_quantity != null && form.quantity.value === '') {
+            form.quantity.value = String(suggestion.parsed_quantity);
         }
     }
 
@@ -319,7 +451,8 @@
         }
         return request('/admin/recipes/import-candidates?' + buildQuery(root))
             .then(function (payload) {
-                renderRows(root, collection(payload));
+                state.candidates = collection(payload);
+                renderRows(root, state.candidates);
                 renderMeta(root, payload);
             })
             .catch(function (error) {
@@ -406,6 +539,104 @@
         });
     }
 
+    function applySuggestions(root) {
+        if (!state.selected || !state.selected.id) {
+            showMessage(root, 'danger', 'Selecciona una candidata.');
+            return;
+        }
+        clearMessage(root);
+        request('/admin/recipes/import-candidates/' + encodeURIComponent(state.selected.id) + '/apply-suggestions', {
+            method: 'POST',
+            body: {},
+        }).then(function (payload) {
+            showMessage(root, 'success', 'Aplicados: ' + payload.applied + '. Sin resolver: ' + payload.skipped_unresolved +
+                '. Sin unidad: ' + payload.skipped_no_unit + '. Ya mapeados: ' + payload.skipped_already_mapped + '.');
+            if (payload.data) {
+                state.selected = payload.data;
+                renderDetail(root, state.selected);
+                fillForms(root, state.selected);
+            }
+            loadCandidates(root);
+        }).catch(function (error) {
+            showMessage(root, 'danger', messageFrom(error));
+        });
+    }
+
+    function recalculateVisible(root) {
+        var ids = state.candidates
+            .filter(function (c) { return NON_FINAL_STATUSES.indexOf(c.status) !== -1; })
+            .map(function (c) { return c.id; });
+        if (!ids.length) {
+            showMessage(root, 'danger', 'No hay candidatas pendientes visibles para recalcular.');
+            return;
+        }
+        clearMessage(root);
+        request('/admin/recipes/import-candidates/recalculate-suggestions-bulk', {
+            method: 'POST',
+            body: { candidate_ids: ids },
+        }).then(function (payload) {
+            showMessage(root, 'success', 'Recalculadas: ' + payload.recalculated + '. Omitidas: ' + payload.skipped + ' (de ' + payload.requested + ').');
+            loadCandidates(root);
+            if (state.selected) {
+                loadCandidate(root, state.selected.id);
+            }
+        }).catch(function (error) {
+            showMessage(root, 'danger', messageFrom(error));
+        });
+    }
+
+    function applySuggestionsBulk(root) {
+        var ids = selectedIds();
+        if (!ids.length) {
+            showMessage(root, 'danger', 'Seleccioná al menos una receta pendiente.');
+            return;
+        }
+        clearMessage(root);
+        request('/admin/recipes/import-candidates/apply-suggestions-bulk', {
+            method: 'POST',
+            body: { candidate_ids: ids },
+        }).then(function (payload) {
+            showMessage(root, 'success', 'Procesadas: ' + payload.processed + '. Fallidas: ' + payload.failed + ' (de ' + payload.requested + ').');
+            loadCandidates(root);
+            if (state.selected) {
+                loadCandidate(root, state.selected.id);
+            }
+        }).catch(function (error) {
+            showMessage(root, 'danger', messageFrom(error));
+        });
+    }
+
+    function approveBulkAction(root) {
+        var ids = selectedIds();
+        if (!ids.length) {
+            showMessage(root, 'danger', 'Seleccioná al menos una receta pendiente.');
+            return;
+        }
+        var readyCount = state.candidates.filter(function (c) {
+            return ids.indexOf(c.id) !== -1 && mappingSummary(c).mapping_ready;
+        }).length;
+        var confirmed = window.confirm(
+            'Se aprobarán ' + readyCount + ' recetas listas.\n' +
+            'Las recetas que todavía requieren revisión serán omitidas.'
+        );
+        if (!confirmed) {
+            return;
+        }
+        clearMessage(root);
+        request('/admin/recipes/import-candidates/approve-bulk', {
+            method: 'POST',
+            body: { candidate_ids: ids },
+        }).then(function (payload) {
+            showMessage(root, 'success', 'Aprobadas: ' + payload.approved + '. Omitidas: ' + payload.skipped + '. Fallidas: ' + payload.failed + '.');
+            loadCandidates(root);
+            if (state.selected) {
+                loadCandidate(root, state.selected.id);
+            }
+        }).catch(function (error) {
+            showMessage(root, 'danger', messageFrom(error));
+        });
+    }
+
     function postAction(root, action, body) {
         if (!state.selected || !state.selected.id) {
             showMessage(root, 'danger', 'Selecciona una candidata.');
@@ -484,6 +715,12 @@
                 event.preventDefault();
                 saveMapping(root, mapForm);
             });
+            var indexSelect = qs('[data-import-candidates-ingredient-index]', root);
+            if (indexSelect) {
+                indexSelect.addEventListener('change', function () {
+                    applySuggestionToMapForm(root);
+                });
+            }
         }
         if (rejectForm) {
             rejectForm.addEventListener('submit', function (event) {
@@ -501,6 +738,53 @@
                 postAction(root, 'create-recipe', { is_public: false });
             });
         }
+        var applyBtn = qs('[data-import-candidates-apply-suggestions]', root);
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function () {
+                applySuggestions(root);
+            });
+        }
+        var recalcBtn = qs('[data-import-candidates-recalculate]', root);
+        if (recalcBtn) {
+            recalcBtn.addEventListener('click', function () {
+                postAction(root, 'recalculate-suggestions');
+            });
+        }
+        var recalcVisibleBtn = qs('[data-import-candidates-recalculate-visible]', root);
+        if (recalcVisibleBtn) {
+            recalcVisibleBtn.addEventListener('click', function () {
+                recalculateVisible(root);
+            });
+        }
+        var applyBulkBtn = qs('[data-import-candidates-apply-bulk]', root);
+        if (applyBulkBtn) {
+            applyBulkBtn.addEventListener('click', function () {
+                applySuggestionsBulk(root);
+            });
+        }
+        var approveBulkBtn = qs('[data-import-candidates-approve-bulk]', root);
+        if (approveBulkBtn) {
+            approveBulkBtn.addEventListener('click', function () {
+                approveBulkAction(root);
+            });
+        }
+        var selectAll = qs('[data-import-candidates-select-all]', root);
+        if (selectAll) {
+            selectAll.addEventListener('change', function () {
+                var checked = selectAll.checked;
+                var boxes = root.querySelectorAll('[data-import-candidates-select]');
+                for (var i = 0; i < boxes.length; i += 1) {
+                    boxes[i].checked = checked;
+                    state.checkedIds[boxes[i].value] = checked;
+                }
+            });
+        }
+        root.addEventListener('change', function (event) {
+            var box = event.target.closest('[data-import-candidates-select]');
+            if (box) {
+                state.checkedIds[box.value] = box.checked;
+            }
+        });
         root.addEventListener('click', function (event) {
             var button = event.target.closest('[data-import-candidates-show]');
             if (button) {

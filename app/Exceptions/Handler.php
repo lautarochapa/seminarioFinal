@@ -44,6 +44,9 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -464,6 +467,24 @@ class Handler extends ExceptionHandler
 
         if ($exception instanceof ThrottleRequestsException) {
             return $this->errorJson('AUTH_TOO_MANY_ATTEMPTS', 'Demasiados intentos. Intente más tarde.', 429, $traceId);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            return $this->errorJson('ROUTE_NOT_FOUND', 'El recurso solicitado no existe.', 404, $traceId);
+        }
+
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $this->errorJson('METHOD_NOT_ALLOWED', 'El metodo HTTP no esta permitido para este recurso.', 405, $traceId);
+        }
+
+        // Cualquier otra excepcion HTTP nativa (Symfony) que no tenga un tipo de
+        // dominio propio: se respeta su status code real en vez de forzar 500,
+        // para no disfrazar de "error interno" algo que es un error de request
+        // (ej. 400/403/413) con un codigo HTTP legitimo ya definido.
+        if ($exception instanceof HttpExceptionInterface) {
+            $status = $exception->getStatusCode();
+            $message = $exception->getMessage() !== '' ? $exception->getMessage() : 'Error en la solicitud.';
+            return $this->errorJson('HTTP_ERROR', $message, $status, $traceId);
         }
 
         $message = app()->environment('production')

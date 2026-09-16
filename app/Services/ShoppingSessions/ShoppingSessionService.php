@@ -41,6 +41,11 @@ class ShoppingSessionService
             throw new FamilyGroupException('SHOPPING_SESSION_ALREADY_ACTIVE', 'Ya existe una sesion activa para esta lista.', 409);
         }
 
+        if ($list->items()->count() === 0) {
+            // Mismo codigo/estado que ShoppingListService::start para consistencia.
+            throw new FamilyGroupException('SHOPPING_LIST_EMPTY', 'La lista no tiene articulos para comprar.', 422);
+        }
+
         if ($list->status !== ShoppingList::STATUS_IN_PROGRESS) {
             if (!$list->canTransitionTo(ShoppingList::STATUS_IN_PROGRESS)) {
                 throw new FamilyGroupException(

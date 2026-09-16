@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ProcessExpiredStock::class,
         \App\Console\Commands\SeedDemoE2ERecipeStockBarcode::class,
+        \App\Console\Commands\PrepareDemoData::class,
         \App\Console\Commands\RepairUnprocessedShoppingStock::class,
     ];
 

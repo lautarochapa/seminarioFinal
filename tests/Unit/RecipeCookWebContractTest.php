@@ -14,5 +14,10 @@ class RecipeCookWebContractTest extends TestCase
         $this->assertStringNotContainsString('body:   JSON.stringify(body)', $script);
         $this->assertStringContainsString('body.deduct_stock = true', $script);
         $this->assertStringContainsString('body.family_group_id', $script);
+        $this->assertStringContainsString('body.idempotency_key = s.cookAttempt.key', $script);
+        $this->assertStringContainsString('s.cookAttempt.signature !== signature', $script);
+        $this->assertStringContainsString("if (err && err.status) { s.cookAttempt = null; }", $script);
+        $this->assertStringContainsString('s.cookAttempt = null;', $script);
+        $this->assertStringContainsString('window.crypto.randomUUID()', $script);
     }
 }

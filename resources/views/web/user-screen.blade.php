@@ -52,6 +52,22 @@
                 </aside>
             </div>
         </section>
+    @elseif($screenKey === 'onboarding')
+        <section data-user-onboarding>
+            <div class="alert" data-onboarding-message style="display:none"></div>
+            <article class="panel">
+                <h2>Tu progreso</h2>
+                <p class="muted" data-onboarding-progress>Cargando tu progreso...</p>
+                <ol class="onboarding-steps" data-onboarding-steps style="list-style:none;padding:0;display:grid;gap:10px">
+                    <li class="muted">Cargando pasos...</li>
+                </ol>
+                <div class="web-tools" data-onboarding-done style="display:none;margin-top:14px">
+                    <a class="btn-main" href="{{ url('/web') }}">Ir al inicio</a>
+                    <a class="btn-secondary-web" href="{{ url('/web/stock') }}">Cargar mi cocina</a>
+                </div>
+            </article>
+        </section>
+
     @elseif($screenKey === 'stock')
         <section data-user-stock-locations data-can-manage-catalog="{{ auth()->user() && auth()->user()->hasPermission('catalog.manage') ? '1' : '0' }}">
             <div class="alert" data-stock-locations-message style="display:none"></div>
@@ -343,6 +359,7 @@
                             <option value="">Cargando unidades...</option>
                         </select>
                         <span class="invalid-feedback" data-stock-field-error="unit_id" role="alert"></span>
+                        <div class="alert alert-warning" data-stock-unit-warning style="display:none;margin-top:8px"></div>
                         <label>Vencimiento</label>
                         <input class="form-control" name="expiration_date" type="date">
                         <span class="invalid-feedback" data-stock-field-error="expiration_date" role="alert"></span>
@@ -1307,9 +1324,14 @@
                         <select class="form-control" data-barcode-location-select>
                             <option value="">Selecciona ubicacion</option>
                         </select>
-                        <input class="form-control" data-barcode-quantity type="number" min="0.0001" step="0.01" value="1" aria-label="Cantidad">
+                        <input class="form-control" data-barcode-quantity type="number" min="0.0001" step="0.01" aria-label="Cantidad" placeholder="Cantidad">
+                        <select class="form-control" data-barcode-unit-select aria-label="Unidad">
+                            <option value="">Selecciona unidad</option>
+                        </select>
                         <button type="button" class="btn-main" data-barcode-stock-submit>Agregar stock</button>
                     </div>
+                    <div class="muted" data-barcode-unit-note style="font-size:12px;margin-top:8px"></div>
+                    <div class="alert alert-warning" data-barcode-unit-warning style="display:none;margin-top:8px"></div>
                     <div data-barcode-stock-result style="margin-top:12px">
                         <p class="muted">Busca o escanea un producto, elegi ubicacion y confirma la carga.</p>
                     </div>
@@ -2303,6 +2325,9 @@
                         </select>
                         <input class="form-control" name="start_date" type="date" required>
                         <input class="form-control" name="end_date" type="date" required>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:12px">
+                            <input type="checkbox" data-meal-plan-respect-budget> Respetar el presupuesto al generar
+                        </label>
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
                             <button type="submit" class="btn-main" data-meal-plan-generate-submit>Generar menu</button>
                             <button type="button" class="btn-secondary-web" data-meal-plan-approve>Aprobar seleccionado</button>

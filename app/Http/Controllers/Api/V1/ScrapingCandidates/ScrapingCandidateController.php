@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\ScrapingCandidates;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ScrapingCandidates\AssignIngredientRequest;
+use App\Http\Requests\Api\V1\ScrapingCandidates\BulkCreateAndApproveRequest;
 use App\Http\Requests\Api\V1\ScrapingCandidates\CreateProductRequest;
 use App\Http\Requests\Api\V1\ScrapingCandidates\MatchProductRequest;
 use App\Http\Requests\Api\V1\ScrapingCandidates\RejectCandidateRequest;
@@ -86,6 +87,40 @@ class ScrapingCandidateController extends Controller
             'data'     => new ScrapedProductCandidateResource($candidate),
             'trace_id' => $traceId,
         ], 201)->header('X-Trace-Id', $traceId);
+    }
+
+    public function createAndApprove(CreateProductRequest $request, $id)
+    {
+        $traceId   = $request->attributes->get('trace_id');
+        $candidate = $this->service->createAndApprove(
+            $request->user()->id,
+            (int) $id,
+            $request->validated(),
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        return response()->json([
+            'data'     => new ScrapedProductCandidateResource($candidate),
+            'trace_id' => $traceId,
+        ])->header('X-Trace-Id', $traceId);
+    }
+
+    public function bulkCreateAndApprove(BulkCreateAndApproveRequest $request)
+    {
+        $traceId = $request->attributes->get('trace_id');
+        $ids     = array_map('intval', $request->validated()['candidate_ids']);
+
+        $result = $this->service->bulkCreateAndApprove(
+            $request->user()->id,
+            $ids,
+            $request->ip(),
+            $request->userAgent() ?? ''
+        );
+
+        return response()->json(array_merge($result, [
+            'trace_id' => $traceId,
+        ]))->header('X-Trace-Id', $traceId);
     }
 
     public function assignIngredient(AssignIngredientRequest $request, $id)

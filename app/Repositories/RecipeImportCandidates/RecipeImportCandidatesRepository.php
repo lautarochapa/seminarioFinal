@@ -55,6 +55,20 @@ class RecipeImportCandidatesRepository
         $candidate->save();
     }
 
+    /**
+     * Persiste las sugerencias automaticas de ingrediente (calculadas por
+     * IngredientMatchService) en parsed_recipe_json.ingredient_suggestions.
+     * Es una clave separada de ingredient_mappings: una sugerencia nunca es
+     * por si sola un mapeo confirmado, solo alimenta la UI/aplicar-sugerencias.
+     */
+    public function saveSuggestions(ImportedRecipeCandidate $candidate, array $suggestions): void
+    {
+        $parsed = $candidate->parsed_recipe_json ?? [];
+        $parsed['ingredient_suggestions'] = $suggestions;
+        $candidate->parsed_recipe_json = $parsed;
+        $candidate->save();
+    }
+
     public function setMapping(ImportedRecipeCandidate $candidate, int $ingredientIndex, array $mapping): void
     {
         $parsed   = $candidate->parsed_recipe_json ?? [];
@@ -107,6 +121,10 @@ class RecipeImportCandidatesRepository
         return DB::transaction(function () use ($candidate, $input, $userId) {
             $parsed = $candidate->parsed_recipe_json ?? [];
 
+            $servings   = $parsed['servings'] ?? null;
+            $prepMinutes = $parsed['prep_minutes'] ?? $parsed['prep_time_minutes'] ?? null;
+            $cookMinutes = $parsed['cook_minutes'] ?? $parsed['cook_time_minutes'] ?? null;
+
             $recipe = Recipe::create([
                 'name'               => $candidate->raw_title,
                 'nombre'             => $candidate->raw_title,
@@ -115,7 +133,7 @@ class RecipeImportCandidatesRepository
                 'tiempo'             => '',
                 'img'                => $candidate->raw_image_url ?? '',
                 'video'              => '',
-                'porcion'            => isset($parsed['servings']) ? (string) $parsed['servings'] : '',
+                'porcion'            => $servings !== null ? (string) $servings : '',
                 'calorias'           => 0,
                 'source_url'         => $candidate->source_url,
                 'source_site'        => $candidate->source_site,
@@ -125,9 +143,9 @@ class RecipeImportCandidatesRepository
                 'is_official'        => false,
                 'is_verified'        => false,
                 'status'             => 'active',
-                'servings'           => $parsed['servings'] ?? null,
-                'prep_time_minutes'  => $parsed['prep_minutes'] ?? null,
-                'cook_time_minutes'  => $parsed['cook_minutes'] ?? null,
+                'servings'           => $servings,
+                'prep_time_minutes'  => $prepMinutes,
+                'cook_time_minutes'  => $cookMinutes,
             ]);
 
             $mappings = $parsed['ingredient_mappings'] ?? [];
@@ -218,4 +236,36 @@ class RecipeImportCandidatesRepository
         }
         return $unmapped;
     }
+
+    /**
+     * Igual que unmappedIngredientIndices() pero excluye los indices
+     * marcados opcionales (is_optional=true en ingredient_suggestions,
+     * detectado por IngredientMatchService a partir del texto original, ej.
+     * "Opcional laurel y azafran"): un ingrediente opcional sin mapear no
+     * debe bloquear la aprobacion de la receta. Si las sugerencias no estan
+     * calculadas o quedaron desactualizadas (cantidad distinta a
+     * raw_ingredients_json), se asume no-opcional por seguridad.
+     */
+    public function requiredUnmappedIngredientIndices(ImportedRecipeCandidate $candidate): array
+    {
+        $unmapped = $this->unmappedIngredientIndices($candidate);
+        if (empty($unmapped)) {
+            return [];
+        }
+
+        $rawIngredients = $candidate->raw_ingredients_json ?? [];
+        $suggestions    = ($candidate->parsed_recipe_json ?? [])['ingredient_suggestions'] ?? [];
+
+        $optionalByIndex = [];
+        if (is_array($suggestions) && count($suggestions) === count($rawIngredients)) {
+            foreach ($suggestions as $s) {
+                $optionalByIndex[(int) ($s['index'] ?? -1)] = (bool) ($s['is_optional'] ?? false);
+            }
+        }
+
+        return array_values(array_filter($unmapped, function ($idx) use ($optionalByIndex) {
+            return empty($optionalByIndex[$idx]);
+        }));
+    }
+
 }

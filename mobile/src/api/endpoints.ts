@@ -12,6 +12,7 @@ import type {
 } from '@/types/auth';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
 import type { Profile, ProfileUpdateRequest, HealthPreferenceCatalogItem, HealthPreferenceType, UserHealthPreference } from '@/types/profile';
+import type { OnboardingStatus } from '@/types/onboarding';
 import type {
   FamilyGroup,
   FamilyGroupMember,
@@ -63,6 +64,7 @@ import type {
   RecipeCategory,
   RecipeCost,
   RecipeDetail,
+  CookedRecipeLog,
   RecipeFavorite,
   RecipeFilters,
   CookRecipeRequest,
@@ -75,7 +77,7 @@ import type {
   RecipeShoppingListRequest,
   RecipeShoppingListResult,
 } from '@/types/recipe';
-import type { MealPlan, MealPlanEntry, MealPlanFilters } from '@/types/mealPlan';
+import type { MealPlan, MealPlanEntry, MealPlanFilters, MealType, MealPlanItemCreate, MealPlanItemUpdate, MealPlanCreate } from '@/types/mealPlan';
 import { normalizeRecipeSuggestions } from '@/utils/recipeSuggestions';
 import type {
   BranchFilters,
@@ -122,6 +124,12 @@ export const profileApi = {
   },
   update(payload: ProfileUpdateRequest): Promise<ApiResponse<Profile>> {
     return apiClient.patch<ApiResponse<Profile>>('/api/v1/users/me/profile', payload);
+  },
+};
+
+export const onboardingApi = {
+  status(): Promise<ApiResponse<OnboardingStatus>> {
+    return apiClient.get<ApiResponse<OnboardingStatus>>('/api/v1/users/me/onboarding');
   },
 };
 
@@ -199,8 +207,9 @@ export const productsApi = {
     const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
     return apiClient.get<PaginatedResponse<ProductSummary>>(`/api/v1/products${qs}`);
   },
-  get(id: number): Promise<ApiResponse<ProductDetail>> {
-    return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/${id}`);
+  get(id: number, familyGroupId?: number | null): Promise<ApiResponse<ProductDetail>> {
+    const qs = toQueryString({ family_group_id: familyGroupId || undefined });
+    return apiClient.get<ApiResponse<ProductDetail>>(`/api/v1/products/${id}${qs}`);
   },
   findByBarcode(barcode: string, familyGroupId?: number | null): Promise<ApiResponse<ProductDetail>> {
     const qs = toQueryString({ family_group_id: familyGroupId || undefined });
@@ -416,6 +425,10 @@ export const recipesApi = {
   categories(): Promise<PaginatedResponse<RecipeCategory>> {
     return apiClient.get<PaginatedResponse<RecipeCategory>>('/api/v1/recipe-categories?per_page=100');
   },
+  cookedHistory(filters?: { page?: number; per_page?: number }): Promise<PaginatedResponse<CookedRecipeLog>> {
+    const qs = toQueryString({ per_page: 30, ...filters } as Record<string, unknown>);
+    return apiClient.get<PaginatedResponse<CookedRecipeLog>>(`/api/v1/users/me/cooked-recipes${qs}`);
+  },
 };
 
 export const recipeFavoritesApi = {
@@ -449,6 +462,10 @@ export const recipeSuggestionsApi = {
     return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/almost-available?per_page=20`)
       .then((payload) => normalizeRecipeSuggestions(payload).response);
   },
+  byExpiringStock(groupId: number): Promise<PaginatedResponse<RecipeSuggestion>> {
+    return apiClient.get<unknown>(`/api/v1/family-groups/${groupId}/recipes/by-expiring-stock?per_page=20`)
+      .then((payload) => normalizeRecipeSuggestions(payload).response);
+  },
 };
 
 export const mealPlansApi = {
@@ -464,6 +481,24 @@ export const mealPlansApi = {
   },
   generateShoppingList(groupId: number, planId: number): Promise<ApiResponse<GenerateShoppingListResult>> {
     return apiClient.post<ApiResponse<GenerateShoppingListResult>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/generate-shopping-list`);
+  },
+  createPlan(groupId: number, payload: MealPlanCreate): Promise<ApiResponse<MealPlan>> {
+    return apiClient.post<ApiResponse<MealPlan>>(`/api/v1/family-groups/${groupId}/meal-plans`, payload);
+  },
+  createItem(groupId: number, planId: number, payload: MealPlanItemCreate): Promise<ApiResponse<MealPlanEntry>> {
+    return apiClient.post<ApiResponse<MealPlanEntry>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items`, payload);
+  },
+  updateItem(groupId: number, planId: number, itemId: number, payload: MealPlanItemUpdate): Promise<ApiResponse<MealPlanEntry>> {
+    return apiClient.patch<ApiResponse<MealPlanEntry>>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items/${itemId}`, payload);
+  },
+  deleteItem(groupId: number, planId: number, itemId: number): Promise<{ message: string }> {
+    return apiClient.delete<{ message: string }>(`/api/v1/family-groups/${groupId}/meal-plans/${planId}/items/${itemId}`);
+  },
+};
+
+export const mealTypesApi = {
+  list(): Promise<ApiResponse<MealType[]>> {
+    return apiClient.get<ApiResponse<MealType[]>>('/api/v1/meal-types');
   },
 };
 

@@ -119,7 +119,13 @@ class ManualProductStockService
 
     private function createOrUpdateStock(int $groupId, int $userId, Product $product, array $data): array
     {
-        $duplicate = $this->repo->findStockDuplicate($groupId, $product->id, $data['stock_location_id'] ?? null);
+        $duplicate = \App\StockItem::resolveActiveLot(
+            $groupId,
+            (int) $product->id,
+            isset($data['stock_location_id']) ? (int) $data['stock_location_id'] : null,
+            (int) $data['unit_id'],
+            $data['expiration_date'] ?? null
+        );
 
         if ($duplicate) {
             $old = $this->stockPayload($duplicate);
@@ -291,7 +297,9 @@ class ManualProductStockService
 
     private function normalize($value)
     {
-        return strtolower(preg_replace('/\s+/', ' ', trim((string) $value)));
+        // mb_strtolower: strtolower() corrompe el byte inicial de caracteres UTF-8
+        // acentuados (0xC3 -> 0xE3) y PostgreSQL rechaza el texto resultante.
+        return mb_strtolower(preg_replace('/\s+/', ' ', trim((string) $value)), 'UTF-8');
     }
 
     private function emptyToNull($value)
