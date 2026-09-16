@@ -118,6 +118,12 @@ try {
             checkCloudSetup((float) $purchasedStock->fresh()->quantity === 2.0, 'La compra duplico stock.');
             checkCloudSetup(App\Purchase::where('shopping_list_id', $list->id)->count() === 1, 'La compra se duplico.');
         }
+        $budget = app(App\Services\Budgets\BudgetService::class)->create($group->id, $user->id, [
+            'year' => (int) date('Y'), 'month' => (int) date('n'), 'total_amount' => 10000, 'currency' => 'ARS',
+        ], '127.0.0.1', 'Cloud smoke');
+        $budgetSummary = app(App\Services\Budgets\BudgetSummaryService::class)->summary($group->id, $budget->id, $user->id);
+        checkCloudSetup($budgetSummary['spent_amount'] === 3200.0, 'La compra no impacta en el presupuesto.');
+        checkCloudSetup($budgetSummary['available_amount'] === 6800.0, 'Saldo de presupuesto incorrecto.');
     } finally {
         Illuminate\Support\Facades\DB::rollBack();
     }
@@ -137,7 +143,7 @@ try {
     $app['env'] = 'production';
     (new SeedDemoRoleUsers())->up();
     checkCloudSetup(Illuminate\Support\Facades\DB::table('users')->orderBy('id')->pluck('password')->all() === $passwords, 'No resetear cuentas existentes en produccion.');
-    echo 'OK: plan, confirmacion, esquema, catalogos, roles/permisos, repeticion, dashboard, recetas y aislamiento demo.'.PHP_EOL;
+    echo 'OK: inicializacion, catalogos, permisos, dashboard, recetas, stock, compra sin duplicados, presupuesto y aislamiento demo.'.PHP_EOL;
 } catch (Throwable $exception) {
     fwrite(STDERR, $exception->getMessage().PHP_EOL);
     $exitCode = 1;
