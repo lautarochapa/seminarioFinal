@@ -1,0 +1,5 @@
+# Temporary compatibility for the legacy PHP 7.4 images after Bullseye LTS.
+# Snapshot metadata is historical; package signatures remain mandatory.
+deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20260901T000000Z/ bullseye main
+deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20260901T000000Z/ bullseye-updates main
+deb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20260901T000000Z/ bullseye-security main
