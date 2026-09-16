@@ -155,7 +155,7 @@ class ProductRequestService
 
         return [
             'name' => $name,
-            'brand_id' => $data['brand_id'] ?? 0,
+            'brand_id' => $data['brand_id'] ?? null,
             'category_id' => $data['category_id'] ?? null,
             'ingredient_id' => $data['ingredient_id'] ?? null,
             'default_unit_id' => $unitId,
