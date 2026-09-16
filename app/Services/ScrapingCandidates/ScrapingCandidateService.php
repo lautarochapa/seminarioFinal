@@ -311,7 +311,7 @@ class ScrapingCandidateService
     {
         $productData = [
             'name'          => $overrides['name'] ?? $candidate->raw_name,
-            'brand_id'      => $overrides['brand_id'] ?? ($this->matchBrandId($candidate->raw_brand) ?: 0),
+            'brand_id'      => $overrides['brand_id'] ?? $this->matchBrandId($candidate->raw_brand),
             'category_id'   => $overrides['category_id'] ?? $this->defaultCategoryId($candidate),
             'ingredient_id' => $overrides['ingredient_id'] ?? $this->defaultIngredientId($candidate),
             'barcode'       => $candidate->ean ?: null,
@@ -328,7 +328,7 @@ class ScrapingCandidateService
             }
         }
 
-        // Remove null-only optional fields (but keep brand_id=0)
+        // Omit optional relations when no reliable match exists.
         return array_filter($productData, function ($v) { return $v !== null; });
     }
 

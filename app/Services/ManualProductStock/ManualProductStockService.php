@@ -225,7 +225,7 @@ class ManualProductStockService
         return [
             'name' => $data['name'],
             'normalized_name' => $this->normalize($data['name']).' manual '.$unique,
-            'brand_id' => 0,
+            'brand_id' => null,
             'category_id' => $data['category_id'] ?? null,
             'ingredient_id' => $data['ingredient_id'] ?? null,
             'default_unit_id' => $data['unit_id'],

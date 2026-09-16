@@ -59,6 +59,38 @@ try {
         checkCloudSetup(Illuminate\Support\Facades\DB::table($table)->count() === $count, 'Duplicados en '.$table);
     }
 
+    // Exercise the modern schema without relying on legacy recipe migrations.
+    Illuminate\Support\Facades\DB::beginTransaction();
+    try {
+        $user = factory(App\User::class)->create();
+        $group = App\FamilyGroup::create(['name' => 'Hogar prueba', 'owner_user_id' => $user->id, 'status' => 'active']);
+        App\FamilyGroupMember::create([
+            'family_group_id' => $group->id, 'user_id' => $user->id,
+            'role_in_group' => 'owner', 'status' => 'active',
+        ]);
+        $summary = app(App\Services\UserHome\UserHomeSummaryService::class)->summary($user, $group->id);
+        checkCloudSetup($summary['recipes']['available'] === 0, 'El dashboard de un hogar nuevo debe cargar.');
+        $recipe = app(App\Services\Recipes\RecipeService::class)->create($user, [
+            'name' => 'Receta de prueba', 'servings' => 2,
+        ], '127.0.0.1', 'Cloud smoke');
+        checkCloudSetup($recipe->fresh()->created_at !== null, 'Falta fecha de creacion de recetas.');
+        $recipe->update(['name' => 'Receta actualizada']);
+        checkCloudSetup($recipe->fresh()->updated_at !== null, 'Falta fecha de actualizacion de recetas.');
+        $timestamps = $recipe->fresh()->only(['created_at', 'updated_at']);
+        (new EnsureRecipeTimestamps())->up();
+        checkCloudSetup($recipe->fresh()->only(['created_at', 'updated_at']) == $timestamps, 'La correccion no debe alterar fechas existentes.');
+        $unitId = Illuminate\Support\Facades\DB::table('unit_measures')->where('code', 'g')->value('id');
+        $manual = app(App\Services\ManualProductStock\ManualProductStockService::class)->create($group->id, $user, [
+            'product' => ['name' => 'Arroz prueba', 'unit_id' => $unitId],
+            'stock' => ['quantity' => 500, 'unit_id' => $unitId],
+        ], '127.0.0.1', 'Cloud smoke');
+        checkCloudSetup($manual['status'] === 201, 'No se pudo cargar producto manual sin marca.');
+        checkCloudSetup($manual['product']->brand_id === null, 'Una marca desconocida debe ser nula, no un ID inexistente.');
+        checkCloudSetup((float) $manual['stock_item']->quantity === 500.0, 'Cantidad de stock incorrecta.');
+    } finally {
+        Illuminate\Support\Facades\DB::rollBack();
+    }
+
     view()->share('errors', new Illuminate\Support\ViewErrorBag());
     $login = view('auth.login')->render();
     checkCloudSetup(strpos($login, 'data-demo-password') === false, 'Login publico expone credenciales demo.');
@@ -74,7 +106,7 @@ try {
     $app['env'] = 'production';
     (new SeedDemoRoleUsers())->up();
     checkCloudSetup(Illuminate\Support\Facades\DB::table('users')->orderBy('id')->pluck('password')->all() === $passwords, 'No resetear cuentas existentes en produccion.');
-    echo 'OK: plan, confirmacion, esquema, catalogos, roles/permisos, repeticion y aislamiento demo.'.PHP_EOL;
+    echo 'OK: plan, confirmacion, esquema, catalogos, roles/permisos, repeticion, dashboard, recetas y aislamiento demo.'.PHP_EOL;
 } catch (Throwable $exception) {
     fwrite(STDERR, $exception->getMessage().PHP_EOL);
     $exitCode = 1;
