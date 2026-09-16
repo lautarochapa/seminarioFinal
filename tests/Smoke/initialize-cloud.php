@@ -87,6 +87,37 @@ try {
         checkCloudSetup($manual['status'] === 201, 'No se pudo cargar producto manual sin marca.');
         checkCloudSetup($manual['product']->brand_id === null, 'Una marca desconocida debe ser nula, no un ID inexistente.');
         checkCloudSetup((float) $manual['stock_item']->quantity === 500.0, 'Cantidad de stock incorrecta.');
+
+        $list = App\ShoppingList::create([
+            'family_group_id' => $group->id, 'created_by' => $user->id,
+            'source_type' => 'manual', 'status' => 'in_progress',
+        ]);
+        $item = App\ShoppingListItem::create([
+            'shopping_list_id' => $list->id, 'free_text_name' => 'Tomate prueba',
+            'unit_id' => $unitId, 'quantity' => 2, 'estimated_price' => 1800,
+            'actual_price' => 1600, 'status' => 'purchased',
+        ]);
+        $completion = app(App\Services\ShoppingListCompletion\ShoppingListCompletionService::class);
+        $payload = ['items' => [[
+            'shopping_list_item_id' => $item->id, 'add_to_stock' => true,
+            'create_pending_product' => true,
+        ]]];
+        $result = $completion->complete($user, $group->id, $list->id, $payload, '127.0.0.1', 'Cloud smoke');
+        checkCloudSetup($result['summary']['items_added_to_stock_count'] === 1, 'La compra debe agregar stock.');
+        checkCloudSetup((float) $result['purchase']->actual_total === 3200.0, 'Total de compra incorrecto.');
+        $purchasedStock = App\StockItem::findOrFail($result['purchase']->items->first()->created_stock_item_id);
+        checkCloudSetup((float) $purchasedStock->estimated_purchase_price === 1600.0, 'Se perdio el precio al crear stock.');
+        $resource = new App\Http\Resources\Api\V1\ShoppingLists\ShoppingListResource($result['list']);
+        $data = json_decode($resource->toJson(), true);
+        checkCloudSetup((float) $data['items'][0]['actual_price'] === 1600.0, 'El detalle de lista perdio el precio.');
+        checkCloudSetup($data['items'][0]['stock_processing_state'] === 'processed', 'El detalle muestra pendientes ya procesados.');
+        try {
+            $completion->complete($user, $group->id, $list->id, $payload, '127.0.0.1', 'Cloud smoke');
+            throw new RuntimeException('Se permitio confirmar dos veces la misma compra.');
+        } catch (App\Exceptions\Purchases\PurchaseException $expected) {
+            checkCloudSetup((float) $purchasedStock->fresh()->quantity === 2.0, 'La compra duplico stock.');
+            checkCloudSetup(App\Purchase::where('shopping_list_id', $list->id)->count() === 1, 'La compra se duplico.');
+        }
     } finally {
         Illuminate\Support\Facades\DB::rollBack();
     }

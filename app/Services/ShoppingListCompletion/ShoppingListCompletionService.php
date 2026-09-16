@@ -355,7 +355,7 @@ class ShoppingListCompletionService
                     'unit_id' => $request['unit_id'] ?? $item->unit_id,
                     'stock_location_id' => $request['stock_location_id'] ?? null,
                     'expiration_date' => $request['expiration_date'] ?? null,
-                    'purchase_price' => $request['actual_price'] ?? null,
+                    'purchase_price' => $request['actual_price'] ?? $item->actual_price,
                 ], function ($v) {
                     return $v !== null;
                 }),
