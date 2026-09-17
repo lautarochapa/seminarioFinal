@@ -199,12 +199,62 @@
   }
   
   @media only screen and (max-width: 800px) {
-    .nav__links,
-    .cta {
-      display: none;
+    header {
+      padding: 12px 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
     }
-    .menu {
-      display: initial;
+
+    header .logo {
+      flex-basis: 100%;
+      margin-right: 0;
+    }
+
+    header .logo img {
+      width: 300px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    header nav {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    header .nav__links {
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+    }
+
+    header .nav__links li {
+      padding: 0;
+    }
+
+    header .nav__links > li > a {
+      display: inline-block;
+      padding: 8px;
+    }
+
+    header > .dropdown {
+      max-width: 100%;
+    }
+
+    header .cta:not(.menu) {
+      display: inline-flex;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    header .dropdown-menu {
+      max-width: calc(100vw - 32px);
+    }
+
+    header > .dropdown > .dropdown-menu {
+      right: 0;
+      left: auto;
     }
   }
   
