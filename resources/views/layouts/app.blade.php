@@ -24,7 +24,7 @@
     <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
    <!-- <link href="{{ asset('css/treeview.css') }}" rel="stylesheet"> -->
-    <link href="{{ asset('css/navbar.css') }}" rel="stylesheet"> 
+    <link href="{{ asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css')) }}" rel="stylesheet"> 
     
     <link href="{{ asset('css/loader.css') }}" rel="stylesheet"> 
 

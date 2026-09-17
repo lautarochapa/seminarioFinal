@@ -44,7 +44,7 @@
     <script src="{{ asset('js/shopping-compare.js') }}?v={{ file_exists(public_path('js/shopping-compare.js')) ? filemtime(public_path('js/shopping-compare.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-shopping-lists.js') }}?v={{ file_exists(public_path('js/user-shopping-lists.js')) ? filemtime(public_path('js/user-shopping-lists.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css')) }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
     <style>
         :root { --bg:#cccccc70; --surface:#fff; --ink:#24252a; --muted:#66746b; --line:#dde6df; --green:#04ac85; --green-soft:#e7f7f2; --blue:#2f80ed; }

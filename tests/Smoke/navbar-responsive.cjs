@@ -12,4 +12,10 @@ assert.match(smallScreen, /header\s+\.cta:not\(\.menu\)\s*\{[^}]*display\s*:\s*i
 assert.match(smallScreen, /max-width\s*:\s*calc\(100vw - 32px\)/);
 assert.doesNotMatch(smallScreen, /\.menu\s*\{[^}]*display\s*:\s*(?:initial|block|flex)/s);
 
-console.log('OK: navbar adaptable sin ocultar login ni menus del usuario.');
+for (const layout of ['app', 'web-user', 'admin-web', 'teacher-web']) {
+  const blade = fs.readFileSync(path.join(__dirname, `../../resources/views/layouts/${layout}.blade.php`), 'utf8');
+  assert.ok(blade.includes("asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css'))"),
+    `El layout ${layout} debe invalidar la cache del navbar cuando cambia el CSS.`);
+}
+
+console.log('OK: navbar adaptable, accesos visibles y CSS versionado.');

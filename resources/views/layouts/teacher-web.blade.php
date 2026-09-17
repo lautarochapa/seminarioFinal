@@ -10,7 +10,7 @@
     <script src="{{ asset('js/teacher-docs.js') }}?v={{ file_exists(public_path('js/teacher-docs.js')) ? filemtime(public_path('js/teacher-docs.js')) : time() }}" defer></script>
     <script src="{{ asset('js/teacher-demo-scenarios.js') }}?v={{ file_exists(public_path('js/teacher-demo-scenarios.js')) ? filemtime(public_path('js/teacher-demo-scenarios.js')) : time() }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css')) }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
     <style>
         :root { --bg:#cccccc70; --surface:#fff; --ink:#24252a; --muted:#716d64; --line:#e3ded2; --accent:#04ac85; --soft:#e7f7f2; }
