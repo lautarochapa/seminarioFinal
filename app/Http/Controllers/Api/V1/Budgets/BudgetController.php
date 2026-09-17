@@ -22,9 +22,15 @@ class BudgetController extends Controller
     {
         $traceId = $request->attributes->get('trace_id');
         $page    = $this->service->list((int) $id, $request->user()->id, $request->all());
+        $budgets = $page->getCollection()->map(function ($budget) {
+            $usage = $this->service->withUsage($budget);
+
+            return (new BudgetResource($budget))
+                ->withUsage($usage['used'], $usage['available'], $usage['percent']);
+        });
 
         return response()->json([
-            'data'     => BudgetResource::collection($page),
+            'data'     => $budgets,
             'meta'     => [
                 'current_page' => $page->currentPage(),
                 'per_page'     => $page->perPage(),

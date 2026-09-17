@@ -201,6 +201,15 @@ try {
         request()->setUserResolver(function () use ($user) { return $user; });
         $stats = $controller->index('budget')->getData()['stats'];
         checkCloudSetup($stats['budgets'] === 1 && $stats['family_groups'] === 1, 'Los contadores incluyen hogares ajenos.');
+        $budgetResponse = app(App\Http\Controllers\Api\V1\Budgets\BudgetController::class)
+            ->index(request(), $group->id)->getData(true);
+        checkCloudSetup(count($budgetResponse['data']) === 1, 'El listado incluye presupuestos ajenos.');
+        checkCloudSetup((float) $budgetResponse['data'][0]['used_amount'] === 3200.0, 'El listado omite el gasto real.');
+        checkCloudSetup((float) $budgetResponse['data'][0]['available_amount'] === 6800.0, 'El listado omite el saldo disponible.');
+        $movement = App\StockMovement::with('unit')->where('stock_item_id', $purchasedStock->id)->firstOrFail();
+        $movementData = json_decode((new App\Http\Resources\Api\V1\StockMovements\StockMovementResource($movement))->toJson(), true);
+        checkCloudSetup($movementData['unit']['id'] === $movement->unit_id, 'El movimiento omite su unidad.');
+        checkCloudSetup($movementData['unit']['symbol'] === $movement->unit->symbol, 'Simbolo de unidad incorrecto.');
         auth()->logout();
         request()->setUserResolver(function () { return null; });
     } finally {

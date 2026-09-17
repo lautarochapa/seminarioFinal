@@ -18,6 +18,14 @@ class StockMovementResource extends JsonResource
             'unit_id' => $this->unit_id,
             'reason' => $this->reason,
             'created_by' => $this->created_by,
+            'unit' => $this->whenLoaded('unit', function () {
+                return $this->unit ? [
+                    'id' => $this->unit->id,
+                    'code' => $this->unit->code,
+                    'name' => $this->unit->name,
+                    'symbol' => $this->unit->symbol,
+                ] : null;
+            }),
             'product' => $this->whenLoaded('product', function () {
                 return $this->product ? [
                     'id' => $this->product->id,

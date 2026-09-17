@@ -180,8 +180,26 @@
             entry: 'Entrada',
             expiration: 'Vencimiento',
             recipe_consumption: 'Receta',
+            manual_product_created: 'Carga manual',
         };
         return labels[type] || type || '-';
+    }
+
+    function movementReasonLabel(reason) {
+        var labels = {
+            recipe_cook: 'Preparación de receta',
+            shopping_list_completion: 'Compra confirmada',
+        };
+        return labels[reason] || reason || '-';
+    }
+
+    function movementDateLabel(value) {
+        if (!value) { return '-'; }
+        var date = new Date(value);
+        return isNaN(date.getTime()) ? value : date.toLocaleString('es-AR', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: false,
+        });
     }
 
     function stockItemLabel(item) {
@@ -577,12 +595,12 @@
         body.innerHTML = state.movements.map(function (movement) {
             var unit = movement.unit || {};
             return '<tr>' +
-                '<td>' + escapeHtml(movement.created_at) + '</td>' +
+                '<td>' + escapeHtml(movementDateLabel(movement.created_at)) + '</td>' +
                 '<td><span class="chip">' + escapeHtml(movementTypeLabel(movement.movement_type)) + '</span></td>' +
                 '<td>' + escapeHtml(productLabel(movement.product)) + '</td>' +
                 '<td>' + escapeHtml(locationLabel(movement.location)) + '</td>' +
                 '<td>' + escapeHtml(movement.quantity) + ' ' + escapeHtml(unit.symbol || unit.code || unit.name) + '</td>' +
-                '<td>' + escapeHtml(movement.reason) + '</td>' +
+                '<td>' + escapeHtml(movementReasonLabel(movement.reason)) + '</td>' +
                 '<td>' + escapeHtml(movement.user && (movement.user.name || movement.user.email)) + '</td>' +
             '</tr>';
         }).join('');

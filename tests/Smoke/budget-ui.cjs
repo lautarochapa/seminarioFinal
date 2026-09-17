@@ -11,7 +11,7 @@ const context = {
     document: { addEventListener() {} },
 };
 vm.runInNewContext(source.replace(ending,
-    'window.testBudget = {state, buildPayload, fillForm, renderCurrentBudget, renderSummaryPanel, renderProjection};' + ending), context);
+    'window.testBudget = {state, buildPayload, fillForm, renderList, renderCurrentBudget, renderSummaryPanel, renderProjection};' + ending), context);
 const ui = context.window.testBudget;
 const form = { elements: {
     id: {value: ''}, month: {value: '9'}, year: {value: '2026'},
@@ -29,6 +29,12 @@ ui.renderCurrentBudget(root);
 assert.match(nodes['[data-budget-current]'].innerHTML, /10\.000,00/);
 assert.match(nodes['[data-budget-current]'].innerHTML, /1\.600,00/);
 assert.match(nodes['[data-budget-current]'].innerHTML, /8\.400,00/);
+ui.state.currentGroupId = 1;
+ui.state.budgets = [ui.state.currentBudget, {id: 2, year: 2025, month: 1, total_amount: 200, used_amount: 0, available_amount: 200}];
+ui.renderList(root);
+assert.match(nodes['[data-budget-body]'].innerHTML, /1\.600,00/);
+assert.match(nodes['[data-budget-body]'].innerHTML, /8\.400,00/);
+assert.match(nodes['[data-budget-body]'].innerHTML, /\$0,00/);
 ui.fillForm(root, ui.state.currentBudget);
 assert.equal(form.elements.amount.value, 10000);
 ui.state.summaryBudgetId = 1;
