@@ -17,6 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/descargas/android', 'AndroidDownloadController')->name('downloads.android');
+
 Route::get('/healthz', function () {
     return response()->json([
         'status' => 'ok',

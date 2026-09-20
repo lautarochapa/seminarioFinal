@@ -114,7 +114,7 @@
     </style>
 </head>
 <body>
-<header>
+<header class="site-navbar">
     <a class="logo" href="{{ url('/') }}"><img src="{{ asset('images/logo/2.svg') }}" alt="logo" height="40em"></a>
     <nav>
         <ul class="nav__links">

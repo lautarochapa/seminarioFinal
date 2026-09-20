@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,7 +24,7 @@
     <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
    <!-- <link href="{{ asset('css/treeview.css') }}" rel="stylesheet"> -->
-    <link href="{{ asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css')) }}" rel="stylesheet"> 
+    <link href="{{ asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css')) }}" rel="stylesheet">
     
     <link href="{{ asset('css/loader.css') }}" rel="stylesheet"> 
 
@@ -46,6 +46,8 @@ body {
    .legacy-table th, .legacy-table td { border-bottom:1px solid #edf2ee; padding:10px 8px; vertical-align:top; }
    .legacy-table th { color:#66746b; font-size:12px; text-transform:uppercase; }
    .legacy-actions { display:flex; gap:8px; flex-wrap:wrap; }
+   .site-footer { background:#24252a; color:#edf0f1; padding:40px 24px; font-size:14px; }
+   .site-footer .row { max-width:1180px; margin:0 auto; row-gap:24px; }
    @media (max-width:960px) { .legacy-grid { grid-template-columns:1fr; } }
 </style>
 
@@ -71,8 +73,8 @@ body {
     min-height: 100vh;">
 
 
-        <header>
-                    <a class="logo" href="{{ url('/') }}"><img :src="'images/logo/2.svg'" alt="logo" height="40em"></a>
+        <header class="site-navbar">
+                    <a class="logo" href="{{ url('/') }}"><img src="{{ asset('images/logo/2.svg') }}" alt="CocinaComidaControl" height="40"></a>
                     
                     @guest
                         <nav>
@@ -136,8 +138,8 @@ body {
 
 
  
-        <footer style="background-color: #24252a; color: #edf0f1; padding: 5px 15%;width: 100%; bottom: 0;">
-            <div class="row" style="margin: 5% auto 5% auto">
+        <footer class="site-footer">
+            <div class="row">
                 <div class="col-md-4 align-self-center" style="text-align:center;">
                     Imagenes de https://www.pexels.com/
                     <br>
@@ -145,13 +147,13 @@ body {
                     ver atribuciones
                 </div>
                 <div class="col-md-4 align-self-center" style="text-align:center;">
-                    <img :src="'images/logo/1.svg'" alt="logo" height="120em">
+                    <img src="{{ asset('images/logo/1.svg') }}" alt="CocinaComidaControl" height="120">
                 </div>
                 <div class="col-md-4 align-self-center" style="text-align:center;">
                 Desarrollado por:
                     Lautaro Chiappero
                     Contacto:
-                    mail: comidacocinacontrol@gmail.com
+                    <a href="mailto:cocinacomidacontrol.app@gmail.com" style="color:inherit;overflow-wrap:anywhere;">cocinacomidacontrol.app@gmail.com</a>
                 </div>
             </div>
         </footer>
