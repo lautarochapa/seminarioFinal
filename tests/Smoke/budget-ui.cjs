@@ -12,7 +12,7 @@ const context = {
     document: { addEventListener() {} },
 };
 vm.runInNewContext(source.replace(ending,
-    'window.testBudget = {state, buildPayload, fillForm, renderList, renderCurrentBudget, renderSummaryPanel, renderProjection, saveAdjustment};' + ending), context);
+    'window.testBudget = {state, buildPayload, fillForm, renderList, renderCurrentBudget, renderSummaryPanel, renderProjection, renderMovementsPanel, saveAdjustment};' + ending), context);
 const ui = context.window.testBudget;
 const form = { elements: {
     id: {value: ''}, month: {value: '9'}, year: {value: '2026'},
@@ -54,6 +54,10 @@ ui.state.currentBudget = {id: 1, total_amount: 10000, used_amount: -125.5, avail
 ui.renderCurrentBudget(root);
 assert.doesNotMatch(nodes['[data-budget-current]'].innerHTML, /width:-/);
 assert.match(nodes['[data-budget-current]'].innerHTML, /10\.125,50/);
+ui.state.movsBudgetId = 1;
+ui.state.movements = [{movement_type: 'adjustment', amount: -100, description: 'Gasto QA'}];
+ui.renderMovementsPanel(root);
+assert.match(nodes['[data-budget-movs-list]'].innerHTML, />Ajuste<\/span>/);
 console.log('OK: presupuesto envia y representa el contrato real de la API.');
 
 async function testAdjustmentRefresh() {

@@ -826,7 +826,7 @@
             return '<div style="border-bottom:1px solid #f0f0f0;padding:9px 0;display:flex;gap:10px;align-items:flex-start">' +
                 '<div style="flex:1;min-width:0">' +
                 '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">' +
-                movTypeBadge(m.type) +
+                movTypeBadge(m.movement_type || m.type) +
                 (catName ? '<span style="font-size:11px;color:#66746b">' + escapeHtml(catName) + '</span>' : '') +
                 '</div>' +
                 '<div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(m.description || '-') + '</div>' +
