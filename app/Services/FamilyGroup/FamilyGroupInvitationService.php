@@ -47,7 +47,7 @@ class FamilyGroupInvitationService
             throw new FamilyGroupException('FAMILY_INVITATION_ALREADY_EXISTS', 'Ya existe una invitación pendiente para ese email.', 409);
         }
 
-        return DB::transaction(function () use ($groupId, $actorId, $email, $role, $existingUser, $ip, $ua) {
+        $invitation = DB::transaction(function () use ($groupId, $actorId, $email, $role, $existingUser, $ip, $ua) {
             $invitation = $this->invitationRepo->create([
                 'family_group_id' => $groupId,
                 'invited_email'   => $email,
@@ -71,6 +71,37 @@ class FamilyGroupInvitationService
 
             return $invitation;
         });
+
+        $this->deliverInvitation($invitation);
+        return $invitation;
+    }
+
+    public function resend(int $groupId, int $actorId, int $invitationId): FamilyGroupInvitation
+    {
+        $this->groupRepo->findOrFailForUser($groupId, $actorId);
+        $this->requireAdminOrOwner($groupId, $actorId);
+        $invitation = $this->invitationRepo->findById($invitationId);
+        if (! $invitation || (int) $invitation->family_group_id !== $groupId) {
+            throw new FamilyGroupException('FAMILY_INVITATION_NOT_FOUND', 'Invitacion no encontrada.', 404);
+        }
+        if ($invitation->status !== 'pending' || ! $invitation->expires_at || $invitation->expires_at->isPast()) {
+            throw new FamilyGroupException('FAMILY_INVITATION_EXPIRED', 'La invitacion ya no esta disponible.', 409);
+        }
+        $this->deliverInvitation($invitation);
+        return $invitation;
+    }
+
+    private function deliverInvitation(FamilyGroupInvitation $invitation): void
+    {
+        $key = 'family-invitation-mail:'.$invitation->id;
+        if (! \Illuminate\Support\Facades\Cache::add($key, true, 60)) {
+            $invitation->emailDeliveryStatus = 'throttled';
+            return;
+        }
+        $invitation->emailDeliveryStatus = app(\App\Services\TransactionalMailService::class)->invitation($invitation);
+        if (in_array($invitation->emailDeliveryStatus, ['disabled', 'restricted'], true)) {
+            \Illuminate\Support\Facades\Cache::forget($key);
+        }
     }
 
     public function accept(int $invitationId, int $userId, string $ip, string $ua): FamilyGroupInvitation

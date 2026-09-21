@@ -36,3 +36,9 @@ export interface CreateFamilyGroupRequest {
 export interface InviteMemberRequest {
   email: string;
 }
+
+export interface FamilyInvitation {
+  id: number;
+  family_group_id: number;
+  email_delivery?: { status: 'accepted' | 'disabled' | 'restricted' | 'failed' | 'throttled' };
+}

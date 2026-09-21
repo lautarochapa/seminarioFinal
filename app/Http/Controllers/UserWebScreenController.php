@@ -33,6 +33,10 @@ class UserWebScreenController extends Controller
             return $redirect;
         }
 
+        if ($screen === 'family-group' && request()->has('invitation')) {
+            session()->forget('url.intended');
+        }
+
         return view('web.user-screen', [
             'screenKey' => $screen,
             'screen' => $screens[$screen],

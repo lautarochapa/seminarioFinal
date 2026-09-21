@@ -15,6 +15,12 @@ class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['mail.transactional_enabled' => true]);
+    }
+
     // --- Forgot Password ---
 
     public function test_forgot_password_email_existente_envia_notificacion()
@@ -79,7 +85,7 @@ class PasswordResetTest extends TestCase
         $this->assertNotNull($response->json('trace_id'));
     }
 
-    public function test_forgot_password_deep_link_apunta_al_scheme_mobile()
+    public function test_forgot_password_link_abre_en_web_y_celular()
     {
         Notification::fake();
         $user = factory(User::class)->create(['email' => 'user@example.com']);
@@ -88,10 +94,9 @@ class PasswordResetTest extends TestCase
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
             $mail = $notification->toMail($user);
-            $actionUrl = $mail->actionUrl;
+            $actionUrl = $mail->viewData['actionUrl'];
 
-            return strpos($actionUrl, 'cccontrol://reset-password') === 0
-                && strpos($actionUrl, 'token=') !== false
+            return strpos($actionUrl, rtrim(config('app.url'), '/').'/password/reset/') === 0
                 && strpos($actionUrl, 'email=user%40example.com') !== false;
         });
     }

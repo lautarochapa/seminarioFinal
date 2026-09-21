@@ -31,6 +31,9 @@ class SocialGoogleAccountService
                 }
                 $account->user()->associate($user);
                 $account->save();
+                if ($user->wasRecentlyCreated) {
+                    app(\App\Services\TransactionalMailService::class)->welcome($user);
+                }
                 return $user;
             }
     }

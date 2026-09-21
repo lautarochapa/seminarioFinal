@@ -115,6 +115,15 @@
     function dashboardRedirect(fallback, payload) {
         var permissions = payloadPermissions(payload);
 
+        try {
+            var destination = new URL(fallback, window.location.origin);
+            if (destination.origin === window.location.origin && destination.pathname === '/web/family-group'
+                && /^[1-9][0-9]*$/.test(destination.searchParams.get('invitation') || '')
+                && permissions.indexOf('web.user.family-group') !== -1) {
+                return destination.pathname + destination.search;
+            }
+        } catch (error) { /* Continue with the role's default dashboard. */ }
+
         if (permissions.indexOf('web.admin.dashboard') !== -1) {
             return '/admin-web';
         }
@@ -127,7 +136,7 @@
             return '/web';
         }
 
-        return fallback || '/web';
+        return '/web';
     }
 
     function redirectAfterAuth(fallback) {
@@ -258,7 +267,8 @@
                 body: { token: idToken },
             }).then(function (payload) {
                 window.CCApi.setSession(payload);
-                return redirectAfterAuth('/web');
+                var authForm = document.querySelector('[data-auth-session="true"]');
+                return redirectAfterAuth(authForm ? authForm.dataset.redirect : '/web');
             });
         },
     };

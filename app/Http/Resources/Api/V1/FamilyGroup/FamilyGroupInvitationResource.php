@@ -16,6 +16,9 @@ class FamilyGroupInvitationResource extends JsonResource
             'expires_at'      => $this->expires_at,
             'accepted_at'     => $this->accepted_at,
             'created_at'      => $this->created_at,
+            'email_delivery'  => $this->when($this->emailDeliveryStatus !== null, function () {
+                return ['status' => $this->emailDeliveryStatus];
+            }),
         ];
     }
 }

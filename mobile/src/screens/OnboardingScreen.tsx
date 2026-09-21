@@ -14,8 +14,8 @@ import type { OnboardingStatus, OnboardingStepKey } from '@/types/onboarding';
 type StepConfig = { key: OnboardingStepKey; title: string; hint: string; route: string; cta: string };
 
 const STEPS: StepConfig[] = [
-  { key: 'basic_profile', title: '1. Datos básicos', hint: 'Altura, peso y peso objetivo (opcional).', route: '/(app)/goals', cta: 'Completar datos' },
-  { key: 'objective', title: '2. Objetivo', hint: 'Elegí al menos un objetivo nutricional.', route: '/(app)/goals', cta: 'Elegir objetivo' },
+  { key: 'basic_profile', title: '1. Datos básicos', hint: 'Altura. Peso actual y peso objetivo opcionales.', route: '/(app)/goals', cta: 'Completar datos' },
+  { key: 'objective', title: '2. Objetivo', hint: 'Elegí al menos un objetivo.', route: '/(app)/goals', cta: 'Elegir objetivo' },
   { key: 'meals_per_day', title: '3. Comidas por día', hint: 'Cuántas comidas hacés por día.', route: '/(app)/goals', cta: 'Definir comidas' },
   { key: 'food_preferences', title: 'Preferencias alimentarias (opcional)', hint: 'Restricciones, alergias y condiciones.', route: '/(app)/dietary-preferences', cta: 'Revisar preferencias' },
   { key: 'family_group', title: '4. Grupo familiar', hint: 'Creá un grupo o unite a uno existente.', route: '/(app)/groups', cta: 'Ir a grupo familiar' },
@@ -23,7 +23,14 @@ const STEPS: StepConfig[] = [
 
 function stepDetail(key: OnboardingStepKey, status: OnboardingStatus): string {
   const step = status.steps[key];
-  if (key === 'basic_profile' && step.missing && step.missing.length) return `Falta: ${step.missing.join(', ')}`;
+  if (key === 'basic_profile' && step.missing && step.missing.length) {
+    const labels: Record<string, string> = {
+      height_cm: 'altura',
+      current_weight_kg: 'peso actual',
+      target_weight_kg: 'peso objetivo',
+    };
+    return `Falta completar: ${step.missing.map((field) => labels[field] ?? 'datos del perfil').join(', ')}`;
+  }
   if (key === 'objective') return `${step.objectives_count ?? 0} objetivo(s) elegido(s)`;
   if (key === 'meals_per_day') return step.value ? `${step.value} comidas por día` : 'Sin definir';
   if (key === 'food_preferences') return `${step.restrictions_count ?? 0} restricciones · ${step.allergies_count ?? 0} alergias · ${step.health_conditions_count ?? 0} condiciones`;
@@ -99,7 +106,9 @@ export function OnboardingScreen() {
               <AppButton
                 title={step.cta}
                 variant="outline"
-                onPress={() => router.push(step.route as never)}
+                onPress={() => router.push((step.route === '/(app)/goals'
+                  ? { pathname: step.route, params: { from: 'onboarding' } }
+                  : step.route) as never)}
               />
             </View>
           );

@@ -34,6 +34,15 @@ class FamilyGroupInvitationController extends Controller
         ], 201)->header('X-Trace-Id', $traceId);
     }
 
+    public function resend(Request $request, $id, $invitationId)
+    {
+        $invitation = $this->service->resend((int) $id, $request->user()->id, (int) $invitationId);
+        return response()->json([
+            'data' => new FamilyGroupInvitationResource($invitation),
+            'trace_id' => $request->attributes->get('trace_id'),
+        ]);
+    }
+
     public function accept(Request $request, $invitationId)
     {
         $traceId    = $request->attributes->get('trace_id');

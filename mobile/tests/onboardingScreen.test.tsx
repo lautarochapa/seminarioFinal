@@ -9,7 +9,7 @@ const mockStatus = jest.fn();
 jest.mock('@expo/vector-icons', () => ({ MaterialCommunityIcons: 'MaterialCommunityIcons' }));
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace }),
-  useFocusEffect: (cb: () => void | (() => void)) => { cb(); },
+  useFocusEffect: (cb: () => void | (() => void)) => { jest.requireActual<typeof import('react')>('react').useEffect(cb, [cb]); },
 }));
 jest.mock('../src/components/AppHeader', () => ({ AppHeader: 'AppHeader' }));
 jest.mock('../src/components/LoadingScreen', () => ({ LoadingScreen: 'LoadingScreen' }));
@@ -46,11 +46,28 @@ describe('OnboardingScreen', () => {
 
     await waitFor(() => expect(screen.getByText('1. Datos básicos')).toBeTruthy());
     expect(screen.getByText('Paso 1 de 4')).toBeTruthy();
-    expect(screen.getByText('Falta: height_cm, current_weight_kg')).toBeTruthy();
+    expect(screen.getByText('Falta completar: altura, peso actual')).toBeTruthy();
+    expect(screen.queryByText(/height_cm|current_weight_kg/)).toBeNull();
     expect(screen.getByText('Opcional')).toBeTruthy();
 
     fireEvent.press(screen.getByText('Ir a grupo familiar'));
     expect(mockPush).toHaveBeenCalledWith('/(app)/groups');
+  });
+
+  it.each(['Completar datos', 'Elegir objetivo', 'Definir comidas'])('preserves onboarding as the return destination for %s', async (label) => {
+    const screen = await render(<OnboardingScreen />);
+    await waitFor(() => expect(screen.getByText(label)).toBeTruthy());
+    await fireEvent.press(screen.getByText(label));
+    expect(mockPush).toHaveBeenCalledWith({ pathname: '/(app)/goals', params: { from: 'onboarding' } });
+  });
+
+  it('does not expose an unknown backend field in the missing data message', async () => {
+    const response = status();
+    response.data.steps.basic_profile.missing = ['future_internal_field'];
+    mockStatus.mockResolvedValue(response);
+    const screen = await render(<OnboardingScreen />);
+    await waitFor(() => expect(screen.getByText('Falta completar: datos del perfil')).toBeTruthy());
+    expect(screen.queryByText(/future_internal_field/)).toBeNull();
   });
 
   it('offers going home when onboarding is complete', async () => {

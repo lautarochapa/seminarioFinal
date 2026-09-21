@@ -8,6 +8,8 @@ class FamilyGroupInvitation extends Model
 {
     const UPDATED_AT = null;
 
+    public $emailDeliveryStatus;
+
     protected $fillable = [
         'family_group_id',
         'invited_email',

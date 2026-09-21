@@ -1,0 +1,26 @@
+# EAS builds only the standalone mobile application in this repository.
+/*
+!/mobile
+!/mobile/**
+/mobile/node_modules/
+/mobile/.expo/
+/mobile/.pnpm-store/
+/mobile/.claude/
+/mobile/coverage/
+/mobile/dist/
+/mobile/web-build/
+/mobile/android/
+/mobile/ios/
+**/.env
+**/.env.*
+**/*.jks
+**/*.keystore
+**/*.p8
+**/*.p12
+**/*.key
+**/*.pem
+**/*.mobileprovision
+**/credentials.json
+**/*.log
+**/*.tsbuildinfo
+**/.DS_Store

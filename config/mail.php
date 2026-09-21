@@ -15,6 +15,8 @@ return [
 
     'default' => env('MAIL_MAILER', 'smtp'),
 
+    'transactional_enabled' => env('MAIL_TRANSACTIONAL_ENABLED', false),
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
@@ -34,6 +36,12 @@ return [
     */
 
     'mailers' => [
+        'resend' => [
+            'transport' => 'resend',
+            'key' => env('RESEND_API_KEY'),
+            'test_recipient' => env('RESEND_TEST_RECIPIENT'),
+        ],
+
         'smtp' => [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),

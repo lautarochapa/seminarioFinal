@@ -1057,6 +1057,7 @@
                         </select>
                         <button type="submit" class="btn-main">Enviar invitacion</button>
                     </form>
+                    <button type="button" class="btn-secondary-web" data-invitation-resend hidden>Reenviar ultima invitacion</button>
 
                     <h2 style="margin-top:20px">Aceptar invitacion</h2>
                     <form class="family-form" data-invitation-accept-form>

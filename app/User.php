@@ -11,6 +11,13 @@ class User extends Authenticatable
 {
     use Notifiable, SoftDeletes;
 
+    public function sendPasswordResetNotification($token)
+    {
+        app(\App\Services\TransactionalMailService::class)->send(
+            $this, new \Illuminate\Auth\Notifications\ResetPassword($token), 'password_reset'
+        );
+    }
+
     /**
      * The attributes that are mass assignable.
      *

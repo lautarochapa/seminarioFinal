@@ -107,7 +107,8 @@ Route::prefix('family-groups')->middleware(['trace_id', 'api_token', 'auth'])->g
     Route::patch('{id}/members/{memberId}', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupMemberController::class, 'update']);
     Route::delete('{id}/members/{memberId}', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupMemberController::class, 'destroy']);
 
-    Route::post('{id}/invitations', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupInvitationController::class, 'store']);
+    Route::post('{id}/invitations', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupInvitationController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('{id}/invitations/{invitationId}/resend', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupInvitationController::class, 'resend'])->middleware('throttle:5,1');
 
     Route::get('{id}/preferences', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'show']);
     Route::patch('{id}/preferences', [\App\Http\Controllers\Api\V1\FamilyGroup\FamilyGroupPreferenceController::class, 'update']);

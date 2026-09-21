@@ -1,5 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -7,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFamilyGroups } from '@/hooks/useFamilyGroups';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { familyGroupsApi } from '@/api/endpoints';
@@ -27,6 +31,8 @@ import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 export function FamilyGroupsScreen() {
   const { selectGroup, selectedGroup, restoreGroup } = useFamilyGroupContext();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const createInFlight = useRef(false);
 
   const handleGroupsLoaded = useCallback((groups: FamilyGroup[]) => {
     restoreGroup(groups);
@@ -55,14 +61,17 @@ export function FamilyGroupsScreen() {
   }
 
   async function handleCreate() {
+    if (createInFlight.current) return;
     if (!newName.trim()) {
       setCreateError('El nombre del grupo es obligatorio.');
       return;
     }
+    createInFlight.current = true;
     setCreateLoading(true);
     setCreateError(null);
     try {
       await familyGroupsApi.create({ name: newName.trim() });
+      Keyboard.dismiss();
       setCreating(false);
       setNewName('');
       refresh();
@@ -76,6 +85,8 @@ export function FamilyGroupsScreen() {
       } else {
         setCreateError('Error al crear el grupo.');
       }
+    } finally {
+      createInFlight.current = false;
       setCreateLoading(false);
     }
   }
@@ -89,17 +100,22 @@ export function FamilyGroupsScreen() {
   }
 
   return (
-    <View style={styles.fill}>
+    <KeyboardAvoidingView
+      style={styles.fill}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <AppHeader title="Grupos familiares" showBack onBack={goBackOrHome} />
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={styles.content}
-      refreshControl={
+      contentContainerStyle={[styles.content, { paddingBottom: SPACING.xxl + insets.bottom }]}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+      refreshControl={!creating ? (
         <RefreshControl refreshing={loading} onRefresh={refresh} tintColor={COLORS.primary} />
-      }
+      ) : undefined}
       showsVerticalScrollIndicator={false}
     >
-      {data.length === 0 ? (
+      {!creating && (data.length === 0 ? (
         <EmptyState
           icon="account-group-outline"
           message="Todavía no pertenecés a un grupo familiar."
@@ -123,7 +139,7 @@ export function FamilyGroupsScreen() {
             );
           })}
         </View>
-      )}
+      ))}
 
       {creating ? (
         <View style={styles.createCard}>
@@ -134,6 +150,7 @@ export function FamilyGroupsScreen() {
             value={newName}
             onChangeText={(t) => { setNewName(t); setCreateError(null); }}
             placeholder="Ej: Familia García"
+            autoFocus
             editable={!createLoading}
             returnKeyType="done"
             onSubmitEditing={handleCreate}
@@ -142,7 +159,7 @@ export function FamilyGroupsScreen() {
             <AppButton
               title="Cancelar"
               variant="ghost"
-              onPress={() => { setCreating(false); setNewName(''); setCreateError(null); }}
+              onPress={() => { Keyboard.dismiss(); setCreating(false); setNewName(''); setCreateError(null); }}
               disabled={createLoading}
               style={styles.createBtn}
             />
@@ -165,7 +182,7 @@ export function FamilyGroupsScreen() {
         />
       ) : null}
     </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

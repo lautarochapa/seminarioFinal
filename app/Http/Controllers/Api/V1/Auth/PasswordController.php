@@ -14,7 +14,7 @@ class PasswordController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request)
     {
         // Intentionally same response regardless of whether email exists (no enumeration)
-        Password::sendResetLink(['email' => $request->input('email')]);
+        Password::sendResetLink(['email' => strtolower(trim($request->input('email')))]);
 
         $traceId = $request->attributes->get('trace_id');
 

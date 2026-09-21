@@ -78,6 +78,8 @@ class RegisterController extends Controller
         // pantallas de usuario final (/web/*). Misma logica que el registro por API.
         $user->assignDefaultRole();
 
+        app(\App\Services\TransactionalMailService::class)->welcome($user);
+
         return $user;
     }
 }

@@ -19,6 +19,7 @@ import type {
   FamilyGroupsResponse,
   CreateFamilyGroupRequest,
   InviteMemberRequest,
+  FamilyInvitation,
 } from '@/types/familyGroup';
 import type { ProductSummary, ProductDetail, ProductFilters, ProductRequestCreate, ManualProductStockCreate } from '@/types/product';
 import type {
@@ -187,8 +188,11 @@ export const familyGroupsApi = {
   members(id: number): Promise<ApiResponse<FamilyGroupMember[]>> {
     return apiClient.get<ApiResponse<FamilyGroupMember[]>>(`/api/v1/family-groups/${id}/members`);
   },
-  invite(id: number, payload: InviteMemberRequest): Promise<ApiResponse<unknown>> {
-    return apiClient.post<ApiResponse<unknown>>(`/api/v1/family-groups/${id}/invitations`, payload);
+  invite(id: number, payload: InviteMemberRequest): Promise<ApiResponse<FamilyInvitation>> {
+    return apiClient.post<ApiResponse<FamilyInvitation>>(`/api/v1/family-groups/${id}/invitations`, payload);
+  },
+  resendInvitation(id: number, invitationId: number): Promise<ApiResponse<FamilyInvitation>> {
+    return apiClient.post<ApiResponse<FamilyInvitation>>(`/api/v1/family-groups/${id}/invitations/${invitationId}/resend`);
   },
 };
 

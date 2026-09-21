@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   RefreshControl,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,6 +23,7 @@ import { FormError } from '@/components/FormError';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
+import type { FamilyInvitation } from '@/types/familyGroup';
 
 interface GroupDetailScreenProps {
   groupId: number;
@@ -50,9 +53,19 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
-  const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [inviteResult, setInviteResult] = useState<FamilyInvitation | null>(null);
+  const sending = useRef(false);
 
-  const isOwner = user && group && group.owner_user_id === user.id;
+  const canInvite = user && group && (group.owner_user_id === user.id
+    || members.some((member) => member.user_id === user.id && member.role === 'admin' && member.status === 'active'));
+  const deliveryStatus = inviteResult?.email_delivery?.status;
+  const deliveryMessages: Record<string, string> = {
+    accepted: 'El servicio de correo aceptó el envío de la invitación.',
+    disabled: 'El envío de correo todavía no está habilitado.',
+    restricted: 'El correo está en modo de prueba y no puede enviarse a este destinatario.',
+    failed: 'No se pudo confirmar el envío del correo. Podés reintentar en un minuto.',
+    throttled: 'Esperá un minuto antes de reenviar la invitación.',
+  };
 
   if (loading && !group) return <LoadingScreen message="Cargando grupo..." />;
   if (error && !group) {
@@ -71,18 +84,19 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
   if (!group) return null;
 
   async function handleInvite() {
+    if (sending.current) return;
     if (!inviteEmail.trim()) {
       setInviteError('Ingresá un email.');
       return;
     }
+    sending.current = true;
     setInviting(true);
     setInviteError(null);
-    setInviteSuccess(false);
+    setInviteResult(null);
     try {
-      await familyGroupsApi.invite(groupId, { email: inviteEmail.trim() });
+      const response = await familyGroupsApi.invite(groupId, { email: inviteEmail.trim() });
       setInviteEmail('');
-      setInviteSuccess(true);
-      setTimeout(() => setInviteSuccess(false), 4000);
+      setInviteResult(response.data);
     } catch (err) {
       if (err instanceof ApiError) {
         switch (err.normalized.status) {
@@ -96,11 +110,29 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
       }
     }
     setInviting(false);
+    sending.current = false;
+  }
+
+  async function handleResend() {
+    if (sending.current || !inviteResult) return;
+    sending.current = true;
+    setInviting(true);
+    setInviteError(null);
+    try {
+      const response = await familyGroupsApi.resendInvitation(groupId, inviteResult.id);
+      setInviteResult(response.data);
+    } catch (err) {
+      setInviteError(err instanceof ApiError ? friendlyMessage(err.normalized) : 'No se pudo reenviar el correo.');
+    } finally {
+      sending.current = false;
+      setInviting(false);
+    }
   }
 
   return (
     <View style={styles.fill}>
       <AppHeader title={group.name} subtitle="Detalle del grupo" showBack onBack={goBackOrHome} />
+    <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.content}
@@ -108,6 +140,7 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
         <RefreshControl refreshing={loading} onRefresh={refresh} tintColor={COLORS.primary} />
       }
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
     >
       {/* Group header */}
       <View style={styles.groupHeader}>
@@ -153,14 +186,15 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
         ))}
       </View>
 
-      {isOwner ? (
+      {canInvite ? (
         <>
           <SectionHeader title="Invitar miembro" />
           <View style={styles.inviteCard}>
-            {inviteSuccess ? (
+            {inviteResult ? (
               <View style={styles.successRow}>
-                <MaterialCommunityIcons name="check-circle-outline" size={18} color={COLORS.success} />
-                <Text style={styles.successText}>Invitación enviada.</Text>
+                <Text style={[styles.successText, { flex: 1, color: deliveryStatus === 'accepted' ? COLORS.success : COLORS.textPrimary }]}>
+                  Invitación registrada. Número: {inviteResult.id}. {deliveryMessages[deliveryStatus ?? ''] ?? 'No se confirmó el envío del correo.'}
+                </Text>
               </View>
             ) : null}
             <FormError message={inviteError} />
@@ -182,13 +216,12 @@ export function GroupDetailScreen({ groupId }: GroupDetailScreenProps) {
               loading={inviting}
               fullWidth
             />
-            <Text style={styles.inviteNote}>
-              En desarrollo el email puede estar en el log del servidor.
-            </Text>
+            {inviteResult ? <AppButton title="Reenviar correo" variant="outline" onPress={handleResend} disabled={inviting} fullWidth /> : null}
           </View>
         </>
       ) : null}
     </ScrollView>
+    </KeyboardAvoidingView>
     </View>
   );
 }

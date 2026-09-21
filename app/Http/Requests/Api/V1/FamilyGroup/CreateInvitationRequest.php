@@ -15,7 +15,7 @@ class CreateInvitationRequest extends FormRequest
     {
         return [
             'email' => 'required|email|max:255',
-            'role'  => 'required|string|in:admin,member',
+            'role'  => 'sometimes|string|in:admin,member',
         ];
     }
 }

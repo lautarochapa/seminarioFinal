@@ -324,9 +324,18 @@
             window.CCApi.request(API + '/family-groups/' + state.currentGroupId + '/invitations', { method: 'POST', body: formData(form) })
                 .then(function (response) {
                     form.reset();
-                    showMessage(root, 'success', 'Invitacion creada. ID: ' + response.data.id);
+                    showInvitationDelivery(root, response.data);
                 })
                 .catch(function (error) { handleError(root, error); });
+        });
+
+        qs('[data-invitation-resend]', root).addEventListener('click', function (event) {
+            var button = event.currentTarget;
+            button.disabled = true;
+            window.CCApi.request(API + '/family-groups/' + button.dataset.groupId + '/invitations/' + button.dataset.invitationId + '/resend', { method: 'POST' })
+                .then(function (response) { showInvitationDelivery(root, response.data); })
+                .catch(function (error) { handleError(root, error); })
+                .finally(function () { button.disabled = false; });
         });
 
         qs('[data-invitation-accept-form]', root).addEventListener('submit', function (event) {
@@ -390,6 +399,23 @@
         });
     }
 
+    function showInvitationDelivery(root, invitation) {
+        var status = invitation.email_delivery && invitation.email_delivery.status;
+        var messages = {
+            accepted: 'El servicio de correo acepto el envio de la invitacion.',
+            disabled: 'El envio de correo todavia no esta habilitado.',
+            restricted: 'El correo esta en modo de prueba y no puede enviarse a este destinatario.',
+            failed: 'No se pudo confirmar el envio del correo. Podes reintentar en un minuto.',
+            throttled: 'Espera un minuto antes de reenviar la invitacion.',
+        };
+        showMessage(root, status === 'accepted' ? 'success' : 'warning',
+            'Invitacion registrada. Numero: ' + invitation.id + '. ' + (messages[status] || 'No se confirmo el envio del correo.'));
+        var button = qs('[data-invitation-resend]', root);
+        button.hidden = false;
+        button.dataset.groupId = invitation.family_group_id;
+        button.dataset.invitationId = invitation.id;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         var root = qs('[data-family-groups]');
         if (!root || !window.CCApi) {
@@ -397,6 +423,10 @@
         }
 
         bind(root);
+        var invitation = new URLSearchParams(window.location.search).get('invitation');
+        if (invitation && /^[1-9][0-9]*$/.test(invitation)) {
+            qs('[data-invitation-accept-form] input[name="invitation_id"]', root).value = invitation;
+        }
         loadCities(root).then(function () { loadGroups(root); });
 
         var primaryBtn = document.querySelector('[data-screen-primary-action]');

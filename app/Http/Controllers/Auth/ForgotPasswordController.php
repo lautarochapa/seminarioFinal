@@ -19,4 +19,16 @@ class ForgotPasswordController extends Controller
     */
 
     use SendsPasswordResetEmails;
+
+    public function __construct()
+    {
+        $this->middleware('throttle:5,1')->only('sendResetLinkEmail');
+    }
+
+    public function sendResetLinkEmail(\Illuminate\Http\Request $request)
+    {
+        $this->validateEmail($request);
+        $this->broker()->sendResetLink(['email' => strtolower(trim($request->input('email')))]);
+        return back()->with('status', 'Si el email esta registrado, recibiras un enlace de recuperacion.');
+    }
 }

@@ -55,6 +55,8 @@ class AuthService
         $user->update(['last_login_at' => now()]);
         $this->writeLoginLog($user->id, $user->email, true, null, $request);
 
+        app(\App\Services\TransactionalMailService::class)->welcome($user);
+
         return $user->load('roles');
     }
 
@@ -184,6 +186,10 @@ class AuthService
 
         if ($user->status !== 'active') {
             throw new AuthException('AUTH_USER_INACTIVE', 'La cuenta no está activa.', 403);
+        }
+
+        if ($user->wasRecentlyCreated) {
+            app(\App\Services\TransactionalMailService::class)->welcome($user);
         }
 
         Auth::login($user);

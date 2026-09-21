@@ -28,6 +28,10 @@ class SocialAuthGoogleController extends Controller
     {
         $user = $service->createOrGetUser(Socialite::driver('google')->user());
         auth()->login($user);
+        $destination = \App\Services\Auth\AuthRedirect::afterLogin();
+        if (parse_url($destination, PHP_URL_PATH) === '/web/family-group') {
+            return redirect()->to($destination);
+        }
         return redirect()->to('/home');
     }
 }

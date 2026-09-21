@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Mail\Transport\ResendTransport;
+use GuzzleHttp\Client;
 use App\Services\Ai\AiSuggestionProviderInterface;
 use App\Services\Ai\FakeAiSuggestionProvider;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Mail;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,16 +33,30 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        Mail::extend('resend', function (array $config) {
+            return new ResendTransport(new Client, (string) ($config['key'] ?? ''), $config['test_recipient'] ?? null);
+        });
+
         if (app()->environment('production')) {
             $url->forceScheme('https');
         }
 
-        // La app mobile consume el reset por deep link (scheme "cccontrol"),
-        // no por la vista web legacy de Laravel UI.
-        ResetPassword::createUrlUsing(function ($notifiable, string $token) {
-            $scheme = config('app.mobile_reset_password_scheme', 'cccontrol://reset-password');
-
-            return $scheme.'?token='.$token.'&email='.urlencode($notifiable->getEmailForPasswordReset());
+        ResetPassword::toMailUsing(function ($notifiable, string $token) {
+            $resetUrl = \App\Services\TransactionalMailService::url('/password/reset/'.rawurlencode($token), [
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ]);
+            return (new \Illuminate\Notifications\Messages\MailMessage)
+                ->subject('Restablecer contraseña - CocinaComidaControl')
+                ->view(['mail.transactional', 'mail.transactional-text'], [
+                    'title' => 'Restablecer tu contraseña',
+                    'paragraphs' => [
+                        'Recibimos una solicitud para restablecer la contraseña de tu cuenta.',
+                        'Este enlace vence en '.config('auth.passwords.users.expire').' minutos y se puede usar una sola vez.',
+                        'Si no lo solicitaste, ignorá este correo. Tu contraseña no cambiará.',
+                    ],
+                    'actionLabel' => 'Restablecer contraseña',
+                    'actionUrl' => $resetUrl,
+                ]);
         });
     }
 }

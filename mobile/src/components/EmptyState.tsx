@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     lineHeight: FONT.bodyLineHeight,
   },
   button: {
+    alignSelf: 'center',
     marginTop: SPACING.sm,
     paddingHorizontal: SPACING.xl,
   },
