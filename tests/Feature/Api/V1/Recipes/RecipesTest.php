@@ -65,8 +65,8 @@ class RecipesTest extends TestCase
 
     public function test_listado_paginado_retorna_solo_activas()
     {
-        $active   = $this->recipe(['name' => 'Activa', 'status' => 'active']);
-        $inactive = $this->recipe(['name' => 'Inactiva', 'status' => 'inactive']);
+        $active   = $this->recipe(['name' => 'Activa', 'status' => 'active', 'is_public' => true]);
+        $inactive = $this->recipe(['name' => 'Inactiva', 'status' => 'inactive', 'is_public' => true]);
 
         $response = $this->actingAs(factory(User::class)->create())
             ->getJson('/api/v1/recipes');
@@ -82,8 +82,8 @@ class RecipesTest extends TestCase
     public function test_filtro_por_categoria()
     {
         $cat  = $this->activeCategory();
-        $with = $this->recipe(['name' => 'Con Cat', 'category_id' => $cat->id]);
-        $without = $this->recipe(['name' => 'Sin Cat']);
+        $with = $this->recipe(['name' => 'Con Cat', 'category_id' => $cat->id, 'is_public' => true]);
+        $without = $this->recipe(['name' => 'Sin Cat', 'is_public' => true]);
 
         $response = $this->actingAs(factory(User::class)->create())
             ->getJson('/api/v1/recipes?category_id=' . $cat->id);
@@ -102,6 +102,7 @@ class RecipesTest extends TestCase
             'name'         => 'Con Relaciones',
             'category_id'  => $cat->id,
             'owner_user_id' => $owner->id,
+            'is_public'    => true,
         ]);
 
         $response = $this->actingAs(factory(User::class)->create())
@@ -110,6 +111,21 @@ class RecipesTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('data.id', $recipe->id)
             ->assertJsonStructure(['data' => ['id', 'name', 'category', 'owner', 'tags', 'ingredients', 'steps']]);
+    }
+
+    public function test_receta_privada_ajena_no_se_lista_ni_se_puede_consultar()
+    {
+        $owner = factory(User::class)->create();
+        $recipe = $this->recipe(['owner_user_id' => $owner->id]);
+        $visitor = factory(User::class)->create();
+
+        $list = $this->actingAs($visitor)->getJson('/api/v1/recipes')->assertStatus(200);
+        $this->assertNotContains($recipe->id, collect($list->json('data'))->pluck('id')->all());
+        $this->getJson('/api/v1/recipes/'.$recipe->id)->assertStatus(403)
+            ->assertJsonPath('error.code', 'RECIPE_NOT_VISIBLE');
+
+        $this->actingAs($owner)->getJson('/api/v1/recipes/'.$recipe->id)->assertStatus(200)
+            ->assertJsonPath('data.id', $recipe->id);
     }
 
     public function test_alta_crea_receta_con_owner_autenticado()

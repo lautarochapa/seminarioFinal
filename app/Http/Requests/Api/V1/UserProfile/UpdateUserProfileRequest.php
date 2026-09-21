@@ -16,7 +16,7 @@ class UpdateUserProfileRequest extends FormRequest
     {
         return [
             'name'               => 'sometimes|string|max:150',
-            'lastname'           => 'sometimes|string|max:150',
+            'lastname'           => 'sometimes|nullable|string|max:150',
             'phone'              => 'sometimes|nullable|string|max:50',
             'birth_date'         => 'sometimes|nullable|date|before:today',
             'gender'             => 'sometimes|nullable|string|in:male,female,other,prefer_not_to_say',

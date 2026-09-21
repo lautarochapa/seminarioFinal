@@ -87,6 +87,11 @@
         .btn-sm { padding:6px 11px; font-size:12px; }
         .chip.danger { background:#f7e7e7; color:#b33a3a; }
         .profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+        .workspace-profile > *, .workspace-profile .profile-grid > * { min-width:0; }
+        .workspace-profile > div { grid-template-columns:minmax(0,1fr); }
+        .workspace-profile .panel, .workspace-profile .aside-panel { min-width:0; overflow-wrap:anywhere; }
+        .workspace-profile .form-control { min-width:0; max-width:100%; }
+        .workspace-profile .btn-main, .workspace-profile .btn-secondary-web { max-width:100%; white-space:normal; }
         .profile-form .form-control, .profile-form textarea, .profile-form select { margin-bottom:9px; }
         .checkbox-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:10px; }
         .checkbox-card { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fafdfb; display:flex; gap:8px; align-items:flex-start; }
@@ -110,6 +115,7 @@
             .hero, .topbar { display:block; }
             .actions { justify-content:flex-start; margin-top:14px; }
             .metric-row, .workspace, .panel-grid, .family-layout, .profile-grid, .checkbox-grid, .objective-list { grid-template-columns:1fr; }
+            .workspace-profile, .workspace-profile .profile-grid { grid-template-columns:minmax(0,1fr); }
         }
     </style>
 </head>

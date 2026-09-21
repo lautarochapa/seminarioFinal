@@ -25,15 +25,9 @@ class BudgetSummaryService
         $this->groupRepo->findOrFailForUser($groupId, $userId);
         $budget = $this->budgetRepo->findForGroup($groupId, $budgetId);
 
-        $row = Purchase::where('family_group_id', $groupId)
-            ->whereYear('purchase_date', $budget->year)
-            ->whereMonth('purchase_date', $budget->month)
-            ->whereIn('status', ['confirmed', 'stock_added'])
-            ->whereNull('deleted_at')
-            ->selectRaw('COALESCE(SUM(actual_total), 0) as spent, COUNT(*) as count')
-            ->first();
+        $usage = $this->budgetRepo->usage($budget);
 
-        $spent     = round((float) $row->spent, 2);
+        $spent     = $usage['spent'];
         $total     = (float) $budget->total_amount;
         $available = max(0, $total - $spent);
         $percent   = $total > 0 ? round(($spent / $total) * 100, 2) : 0.0;
@@ -47,7 +41,7 @@ class BudgetSummaryService
             'spent_amount'      => $spent,
             'available_amount'  => $available,
             'consumed_percent'  => $percent,
-            'purchase_count'    => (int) $row->count,
+            'purchase_count'    => $usage['purchase_count'],
         ];
     }
 
@@ -56,12 +50,7 @@ class BudgetSummaryService
         $this->groupRepo->findOrFailForUser($groupId, $userId);
         $budget = $this->budgetRepo->findForGroup($groupId, $budgetId);
 
-        $spent = round((float) Purchase::where('family_group_id', $groupId)
-            ->whereYear('purchase_date', $budget->year)
-            ->whereMonth('purchase_date', $budget->month)
-            ->whereIn('status', ['confirmed', 'stock_added'])
-            ->whereNull('deleted_at')
-            ->sum('actual_total'), 2);
+        $spent = $this->budgetRepo->usage($budget)['spent'];
 
         $plannedSources = $this->plannedSources($groupId, $budget);
         $planned        = $plannedSources['total'];

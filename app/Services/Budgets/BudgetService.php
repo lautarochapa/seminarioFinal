@@ -128,7 +128,7 @@ class BudgetService
 
     public function withUsage(Budget $budget): array
     {
-        $used      = $this->repo->usedAmount($budget->family_group_id, $budget->year, $budget->month);
+        $used      = $this->repo->usage($budget)['spent'];
         $total     = (float) $budget->total_amount;
         $available = max(0, $total - $used);
         $percent   = $total > 0 ? round(($used / $total) * 100, 2) : 0;

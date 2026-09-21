@@ -3,6 +3,8 @@
 namespace App\Repositories\Budgets;
 
 use App\Budget;
+use App\BudgetMovement;
+use App\Purchase;
 use App\Exceptions\Budgets\BudgetException;
 
 class BudgetRepository
@@ -68,13 +70,24 @@ class BudgetRepository
         return Budget::withTrashed()->find($budget->id);
     }
 
-    public function usedAmount(int $groupId, int $year, int $month): float
+    public function usage(Budget $budget): array
     {
-        return (float) \App\Purchase::where('family_group_id', $groupId)
-            ->whereYear('purchase_date', $year)
-            ->whereMonth('purchase_date', $month)
-            ->whereNotIn('status', ['cancelled'])
+        $purchases = Purchase::where('family_group_id', $budget->family_group_id)
+            ->whereYear('purchase_date', $budget->year)
+            ->whereMonth('purchase_date', $budget->month)
+            ->whereIn('status', ['confirmed', 'stock_added'])
             ->whereNull('deleted_at')
-            ->sum('actual_total');
+            ->selectRaw('COALESCE(SUM(actual_total), 0) as spent, COUNT(*) as count')
+            ->first();
+
+        // Purchase movements mirror purchases; only signed manual adjustments affect this total.
+        $adjustments = BudgetMovement::where('budget_id', $budget->id)
+            ->where('movement_type', 'adjustment')
+            ->sum('amount');
+
+        return [
+            'spent' => round((float) $purchases->spent - (float) $adjustments, 2),
+            'purchase_count' => (int) $purchases->count,
+        ];
     }
 }

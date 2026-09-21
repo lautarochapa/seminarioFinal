@@ -93,6 +93,45 @@ class UserProfileTest extends TestCase
 
     // ---- PATCH PERFIL ----
 
+    public function test_guardar_perfil_sin_apellido_ni_peso()
+    {
+        $user = factory(User::class)->create(['lastname' => null]);
+
+        $this->actingAs($user)->patchJson('/api/v1/users/me/profile', [
+            'name' => $user->name,
+            'lastname' => null,
+            'height_cm' => 170,
+            'current_weight_kg' => null,
+            'target_weight_kg' => null,
+            'notes' => 'Perfil sin datos opcionales',
+        ])->assertStatus(200);
+
+        $this->getJson('/api/v1/users/me/profile')->assertStatus(200)
+            ->assertJsonPath('data.lastname', null)
+            ->assertJsonPath('data.current_weight_kg', null)
+            ->assertJsonPath('data.notes', 'Perfil sin datos opcionales');
+    }
+
+    public function test_apellido_vacio_limpia_el_dato_opcional()
+    {
+        $user = factory(User::class)->create(['lastname' => 'Anterior']);
+
+        $this->actingAs($user)->patchJson('/api/v1/users/me/profile', [
+            'lastname' => '',
+        ])->assertStatus(200)->assertJsonPath('data.lastname', null);
+
+        $this->assertNull($user->fresh()->lastname);
+    }
+
+    public function test_apellido_no_textual_sigue_rechazado()
+    {
+        $user = factory(User::class)->create();
+
+        $this->actingAs($user)->patchJson('/api/v1/users/me/profile', [
+            'lastname' => ['invalido'],
+        ])->assertStatus(422)->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
     public function test_actualizacion_parcial()
     {
         $user = factory(User::class)->create(['name' => 'Original', 'phone' => '123456']);

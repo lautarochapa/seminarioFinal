@@ -511,7 +511,7 @@
             </div>
         </section>
     @elseif($screenKey === 'profile-objectives')
-        <section class="workspace">
+        <section class="workspace workspace-profile">
             <div style="display:grid;gap:14px">
             <div class="profile-grid">
                 <article class="panel">

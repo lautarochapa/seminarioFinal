@@ -103,7 +103,7 @@
         var pct = Math.min(100, Math.round((s / a) * 100));
         var color = pct >= 90 ? '#b33a3a' : pct >= 70 ? '#b35c00' : '#04ac85';
         return '<div style="background:#eee;border-radius:999px;height:8px;margin-top:6px;overflow:hidden">' +
-            '<div style="background:' + color + ';width:' + pct + '%;height:100%;border-radius:999px;transition:width .3s"></div>' +
+            '<div style="background:' + color + ';width:' + Math.max(0, pct) + '%;height:100%;border-radius:999px;transition:width .3s"></div>' +
             '</div>' +
             '<div style="display:flex;justify-content:space-between;font-size:11px;color:#66746b;margin-top:3px">' +
             '<span>Gastado ' + pct + '%</span>' +
@@ -393,7 +393,7 @@
         }
 
         if (barsEl) {
-            var spentPct = total ? Math.min(100, Math.round((spent / total) * 100)) : 0;
+            var spentPct = total ? Math.max(0, Math.min(100, Math.round((spent / total) * 100))) : 0;
             var reservedPct = total ? Math.min(100 - spentPct, Math.round((reserved / total) * 100)) : 0;
             barsEl.innerHTML = '<div style="margin-bottom:8px">' +
                 '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">' +
@@ -473,7 +473,7 @@
             '</div>';
     }
 
-    function loadSummary(root, budgetId) {
+    function loadSummary(root, budgetId, shouldScroll) {
         state.summaryBudgetId = budgetId;
         state.summary = null;
         state.projection = null;
@@ -510,7 +510,7 @@
             });
 
         var panel = qs('[data-budget-summary-panel]', root);
-        if (panel) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        if (panel && shouldScroll !== false) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     }
 
     function reloadProjection(root) {
@@ -913,6 +913,12 @@
                 form.reset();
                 state.movsPage = 1;
                 fetchMovements(root);
+                loadBudgets(root);
+                loadCurrent(root);
+                if (String(state.summaryBudgetId) === String(state.movsBudgetId)) {
+                    loadSummary(root, state.summaryBudgetId, false);
+                }
+                showAdjMsg(root, 'success', 'Ajuste guardado correctamente.');
             })
             .catch(function (err) {
                 state.movSaving = false;

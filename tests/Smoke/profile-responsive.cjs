@@ -1,0 +1,11 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const layout = fs.readFileSync(path.join(__dirname, '../../resources/views/layouts/web-user.blade.php'), 'utf8');
+const view = fs.readFileSync(path.join(__dirname, '../../resources/views/web/user-screen.blade.php'), 'utf8');
+assert.match(view, /profile-objectives'[\s\S]*?<section class="workspace workspace-profile">/);
+assert.match(layout, /\.workspace-profile > \*, \.workspace-profile \.profile-grid > \* \{ min-width:0;/);
+assert.match(layout, /\.workspace-profile > div \{ grid-template-columns:minmax\(0,1fr\);/);
+assert.match(layout, /\.workspace-profile, \.workspace-profile \.profile-grid \{ grid-template-columns:minmax\(0,1fr\);/);
+assert.doesNotMatch(layout, /\.workspace-profile[^}]*overflow(?:-x)?:\s*hidden/);
+console.log('OK: perfil permite encoger las grillas y conserva el scroll de sus tablas sin ocultar contenido.');
