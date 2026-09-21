@@ -191,6 +191,7 @@
 
     .screen-capture { display: block; }
     .screen-capture img { display: block; width: 100%; height: auto; object-fit: contain; }
+    .screen-copy .screen-note { margin-top: 16px; color: #5c6b67; font-size: 13px; line-height: 1.5; }
 
     .mobile-showcase {
         display: grid;
@@ -344,8 +345,8 @@
         <div class="home-container screens-layout">
             <div class="browser-shot">
                 <div class="browser-bar"><i class="browser-dot"></i><i class="browser-dot"></i><i class="browser-dot"></i><span class="browser-address"></span></div>
-                <a class="screen-capture" href="{{ asset('images/landing/web-dashboard.png') }}" target="_blank" rel="noopener" aria-label="Ampliar captura del resumen del hogar en la web">
-                    <img src="{{ asset('images/landing/web-dashboard.png') }}" alt="Resumen del hogar en la web: stock, presupuesto, recetas y compras." width="1440" height="900" loading="lazy" decoding="async">
+                <a class="screen-capture" href="{{ asset('images/landing/web-dashboard-martin.jpg') }}" target="_blank" rel="noopener" aria-label="Ampliar captura del resumen del hogar en la web">
+                    <img src="{{ asset('images/landing/web-dashboard-martin.jpg') }}" alt="Resumen del hogar en la web con Martín López y datos de ejemplo." width="1396" height="612" loading="lazy" decoding="async">
                 </a>
             </div>
 
@@ -353,6 +354,7 @@
                 <div class="home-eyebrow">Versión web</div>
                 <h2>La vista completa de tu hogar.</h2>
                 <p>Un escritorio cómodo para administrar productos, recetas, miembros, compras y reportes con toda la información visible.</p>
+                <p class="screen-note">Captura web con datos de ejemplo.</p>
                 <div class="screen-points">
                     <div class="screen-point"><span class="screen-point-mark">1</span><div><strong>Gestión clara</strong><span>Más espacio para revisar y editar.</span></div></div>
                     <div class="screen-point"><span class="screen-point-mark">2</span><div><strong>Información conectada</strong><span>Salud, economía, tiempo y stock.</span></div></div>
@@ -366,8 +368,8 @@
         <div class="home-container mobile-showcase">
             <div class="mobile-stage">
                 <div class="phone-frame">
-                    <a class="screen-capture" href="{{ asset('images/landing/android-home.png') }}" target="_blank" rel="noopener" aria-label="Ampliar captura de la aplicación Android">
-                        <img src="{{ asset('images/landing/android-home.png') }}" alt="Inicio de la app Android con accesos a productos, escaneo, recetas y lista de compras." width="540" height="1158" loading="lazy" decoding="async">
+                    <a class="screen-capture" href="{{ asset('images/landing/mobile-home-preview-martin.jpg') }}" target="_blank" rel="noopener" aria-label="Ampliar vista previa móvil simulada en navegador">
+                        <img src="{{ asset('images/landing/mobile-home-preview-martin.jpg') }}" alt="Vista previa móvil simulada en navegador con Martín López y Hogar López; datos de ejemplo." width="391" height="845" loading="lazy" decoding="async">
                     </a>
                 </div>
             </div>
@@ -376,6 +378,7 @@
                 <div class="home-eyebrow">Aplicación móvil</div>
                 <h2>Tu hogar, también en el celular.</h2>
                 <p>Consultá qué falta, revisá tu lista y registrá productos desde el teléfono mientras comprás o cocinás.</p>
+                <p class="screen-note">Vista previa móvil simulada en navegador, con datos de ejemplo.</p>
                 <div class="screen-points">
                     <div class="screen-point"><span class="screen-point-mark">1</span><div><strong>En el supermercado</strong><span>Lista, escaneo y comparación.</span></div></div>
                     <div class="screen-point"><span class="screen-point-mark">2</span><div><strong>En la cocina</strong><span>Recetas, pasos y porciones.</span></div></div>

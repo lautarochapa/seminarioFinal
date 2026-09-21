@@ -42,7 +42,18 @@ la ruta no acepta URLs provistas por quien la visita.
 
 ## Capturas de la landing
 
-`public/images/landing/web-dashboard.png` y `android-home.png` son capturas
-reales de las pruebas con cuentas ficticias, no maquetas. Se muestran enteras,
-sin deformar, y pueden ampliarse. Para reemplazarlas, usar capturas sin datos
-personales y actualizar las dimensiones HTML si cambia su formato.
+- `public/images/landing/web-dashboard-martin.jpg`: captura de la web local
+  funcionando con una base temporal aislada y el usuario ficticio Martin Lopez.
+- `public/images/landing/mobile-home-preview-martin.jpg`: vista previa simulada
+  en navegador, basada en `mobile/src/screens/HomeScreen.tsx`, el tema y los
+  iconos actuales. Usa el mismo resumen del hogar ficticio, no una captura
+  nativa de Android. La landing lo indica tanto en texto visible como en el alt.
+- Renovacion: 2026-09-21. Hogar Lopez, ocho productos y dos proximos a vencer;
+  no se modificaron cuentas existentes ni datos de produccion.
+- Las imagenes anteriores (`web-dashboard.png` y `android-home.png`) y las
+  evidencias de tesis permanecen intactas. La simulacion no reemplaza pruebas
+  en el Samsung ni acredita el funcionamiento de una nueva APK.
+
+Las capturas se pueden ampliar. Los nombres nuevos evitan reutilizar las
+imagenes anteriores desde cache. Al renovarlas, actualizar archivo, dimensiones
+HTML, alt y procedencia; no incluir datos personales ni credenciales.

@@ -26,9 +26,14 @@ $html = view('welcome')->render();
 checkLanding(strpos($html, 'Descargar APK 1.0.1') !== false, 'Falta version en el boton.');
 checkLanding(strpos($html, '129 MB') !== false, 'Falta tamano de la descarga.');
 checkLanding(strpos($html, 'Espacio reservado') === false, 'Quedan capturas sin incorporar.');
-foreach (['web-dashboard.png', 'android-home.png'] as $image) {
+foreach (['web-dashboard-martin.jpg', 'mobile-home-preview-martin.jpg'] as $image) {
     checkLanding(strpos($html, $image) !== false && is_file(public_path('images/landing/'.$image)), 'Falta captura '.$image);
+    $dimensions = getimagesize(public_path('images/landing/'.$image));
+    checkLanding($dimensions !== false, 'La captura debe ser una imagen valida.');
+    checkLanding((bool) preg_match('/<img[^>]+'.preg_quote($image, '/').'[^>]+width="'.$dimensions[0].'" height="'.$dimensions[1].'"/', $html), 'Dimensiones incorrectas para '.$image);
 }
+checkLanding(strpos($html, 'Vista previa móvil simulada en navegador, con datos de ejemplo.') !== false, 'La simulacion movil debe estar identificada.');
+checkLanding(strpos($html, 'images/landing/android-home.png') === false && strpos($html, 'images/landing/web-dashboard.png') === false, 'No mostrar las capturas anteriores de cuentas de prueba.');
 foreach ([null, '', 'http://example.com/app.apk', 'javascript:alert(1)'] as $invalidUrl) {
     config(['mobile.android.download_url' => $invalidUrl]);
     try {
