@@ -59,8 +59,18 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/apache/mpm_prefork.conf /etc/apache2/mods-available/mpm_prefork.conf
+COPY docker/apache/runtime.conf /etc/apache2/conf-available/runtime.conf
+COPY docker/php/runtime.ini /usr/local/etc/php/conf.d/zz-runtime.ini
 COPY docker/entrypoint.sh /usr/local/bin/render-entrypoint
-RUN chmod +x /usr/local/bin/render-entrypoint
+COPY docker/memory-log.sh /usr/local/bin/render-memory-log
+RUN a2enconf runtime \
+    && chmod +x /usr/local/bin/render-entrypoint /usr/local/bin/render-memory-log
+
+# Exercise Apache and PHP in the build image, without an application database.
+COPY public/.htaccess /var/www/html/public/.htaccess
+COPY docker/tests/apache-smoke.sh /tmp/apache-smoke.sh
+RUN bash /tmp/apache-smoke.sh && rm /tmp/apache-smoke.sh
 
 COPY --from=vendor /app ${APP_DIR}
 

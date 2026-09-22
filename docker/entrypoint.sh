@@ -17,4 +17,10 @@ php artisan config:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
 
+if [[ "${1:-}" == "apache2-foreground" ]]; then
+    apache2ctl -t
+    printf '[runtime-config] mpm=prefork max_workers=2 php_memory_limit=%s\n' "$(php -r 'echo ini_get("memory_limit");')"
+    /usr/local/bin/render-memory-log &
+fi
+
 exec "$@"
