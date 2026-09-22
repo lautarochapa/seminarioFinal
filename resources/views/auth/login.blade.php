@@ -18,7 +18,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6 align-items-center align-self-center">
 
-                        <div class="login-form form-group row">
+                        <div class="login-form form-group row mx-0">
                             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                             <label for="email" class="login-input-label">
                                 <span class="login-input-span" >
@@ -37,7 +37,7 @@
                                 <span class="invalid-feedback" data-field-error="email" role="alert"></span>
                        
 
-                        <div class="login-form form-group row">
+                        <div class="login-form form-group row mx-0">
                             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                             <label for="password" class="login-input-label">
                                 <span class="login-input-span">
@@ -58,7 +58,7 @@
 
 
 
-                        <div class="form-group row">
+                        <div class="form-group row mx-0">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
@@ -76,7 +76,7 @@
                                 @endif
                         </div>
 
-                        <div class="form-group row mb-0">
+                        <div class="form-group row mx-0 mb-0">
                                 <button type="submit" class="cta">
                                     {{ __('Iniciar Sesion') }}
                                 </button>
