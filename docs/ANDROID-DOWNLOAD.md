@@ -6,21 +6,20 @@ en Expo. El binario no se incluye en Git ni en la imagen Docker de Render.
 
 ## Version publicada
 
-Release `android-v1.0.4-5` publicada y descargada anonimamente el 22/09/2026.
-Render verificado el 22/09/2026 a las 10:29 ART: la landing anuncia 1.0.4 y
-https://cocinacomidacontrol.com.ar/descargas/android redirige al archivo correcto
-con 302 y `Cache-Control: no-store`. [Registro de release](ANDROID-1.0.4.md).
+Release `android-v1.0.5-6` publicada y descargada anonimamente el 22/09/2026.
+La configuracion web apunta a este archivo; la comprobacion del despliegue
+en Render esta pendiente. [Registro de release](ANDROID-1.0.5.md).
 
-- Version: 1.0.4, compilacion 5, version de prueba.
-- Archivo: `CocinaComidaControl-1.0.4-5.apk`.
-- Tamano: 129076719 bytes.
-- SHA-256: `d642dc7fc77643ab9a4be0ef7ff171d5b7c5b58f2c664c33d08e1ca4d8838543`.
-- EAS Build: `90f28011-e477-4789-b662-2fc0c90613f7`.
-- Agrega AND-09, AND-11 y AND-12: restauracion del grupo, refresco de stock y
-  busqueda de productos propios en Compras. AND-10 sigue pendiente.
-- Firma valida e igual a 1.0.3, mismo paquete, no debug y bundle standalone.
-- Descarga anonima y SHA-256 comprobados; actualizacion y retest de esta
-  version en Samsung pendientes. La 1.0.3 si mantuvo la sesion al actualizar.
+- Version: 1.0.5, compilacion 6, version de prueba.
+- Archivo: `CocinaComidaControl-1.0.5-6.apk`.
+- Tamano: 129076999 bytes.
+- SHA-256: `16e0199f303d9f5a9dfddd65a1df11481483fa3d0169a818dbc3a4faedaeda94`.
+- EAS Build: `0c5f0377-4dd7-44d5-b21c-bbf0a1315b2f`.
+- Agrega AND-13 y AND-14: margenes seguros en formularios de Compras y refresco
+  del listado al regresar. Conserva los arreglos anteriores; AND-10 pendiente.
+- Firma valida e igual a 1.0.4, mismo paquete, no debug y bundle standalone.
+- Descarga anonima y SHA-256 comprobados; actualizacion y retest de 1.0.5
+  en Samsung pendientes. La 1.0.4 si mantuvo la sesion al actualizar.
 - Las APK anteriores se conservan como respaldo; no desinstalar para actualizar.
 
 ## Antecedente: build 1.0.2 (no contiene los ultimos arreglos)
@@ -47,7 +46,7 @@ la configuracion 1.0.2 con un artefacto nuevo validado. Ver
 2. Descargar el artefacto final de EAS, comprobar tamano y SHA-256. No usar una
    AAB para la descarga directa ni una compilacion que dependa de Metro.
 3. Crear una release de prueba en GitHub con un tag nuevo, por ejemplo
-   `android-v1.0.4-5`, y adjuntar la APK con nombre versionado. No sobrescribir
+   `android-v1.0.5-6`, y adjuntar la APK con nombre versionado. No sobrescribir
    el archivo anterior. Publicar primero el archivo y comprobar su descarga
    anonima e integridad antes de ofrecerlo en la web.
 4. Actualizar juntos `version`, `build`, `size_bytes`, `sha256` y la URL por
