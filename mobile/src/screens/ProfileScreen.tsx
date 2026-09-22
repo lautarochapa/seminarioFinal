@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/auth/AuthContext';
@@ -41,6 +42,7 @@ const GENDER_LABELS: Record<string, string> = {
 
 export function ProfileScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data, loading, error, refresh } = useProfile();
   const { logout, isLoading: logoutLoading, refreshCurrentUser } = useAuth();
   const [editing, setEditing] = useState(false);
@@ -89,9 +91,11 @@ export function ProfileScreen() {
   if (!data) return null;
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingTop: SPACING.md + insets.top, paddingBottom: SPACING.xxl + insets.bottom }]}
+      keyboardShouldPersistTaps="handled"
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} tintColor={COLORS.primary} />}
       showsVerticalScrollIndicator={false}
     >
@@ -165,6 +169,7 @@ export function ProfileScreen() {
         />
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

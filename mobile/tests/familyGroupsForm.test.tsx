@@ -27,6 +27,12 @@ jest.mock('../src/api/endpoints', () => ({
 }));
 
 describe('FamilyGroupsScreen creation form', () => {
+  it('does not offer another group while membership is active', async () => {
+    mockGroups = [{ id: 1, name: 'Hogar', status: 'active', default_address: null }];
+    const screen = await render(<FamilyGroupsScreen />);
+    expect(screen.queryByText('Crear otro grupo')).toBeNull();
+    expect(screen.queryByText('Crear grupo')).toBeNull();
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     mockGroups = [];
@@ -115,8 +121,8 @@ describe('FamilyGroupsScreen creation form', () => {
     await waitFor(() => expect(mockRefresh).toHaveBeenCalledTimes(1));
   });
 
-  it('replaces the existing list while editing and restores it on cancellation', async () => {
-    mockGroups = [{ id: 1, name: 'Casa', status: 'active', default_address: null }];
+  it('replaces the inactive group list while editing and restores it on cancellation', async () => {
+    mockGroups = [{ id: 1, name: 'Casa', status: 'inactive', default_address: null }];
     const screen = await render(<FamilyGroupsScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Crear otro grupo' }));
     expect(screen.queryByText('Casa')).toBeNull();

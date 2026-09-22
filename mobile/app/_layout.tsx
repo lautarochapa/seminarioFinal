@@ -1,12 +1,14 @@
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '@/auth/AuthContext';
 import { FamilyGroupProvider, useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { AppUpdateNotice } from '@/components/AppUpdateNotice';
 import { familyGroupsApi, onboardingApi } from '@/api/endpoints';
 
 function NavigationGuard() {
@@ -14,6 +16,8 @@ function NavigationGuard() {
   const { clearGroup, restoreGroup } = useFamilyGroupContext();
   const router = useRouter();
   const segments = useSegments() as string[];
+  const route = segments.slice(1).join('/');
+  const lightHeader = ['profile', 'catalog', 'stock'].includes(route);
   const onboardingChecked = useRef(false);
 
   useEffect(() => {
@@ -65,6 +69,8 @@ function NavigationGuard() {
 
   return (
     <View style={{ flex: 1 }}>
+      <StatusBar style={lightHeader ? 'dark' : 'light'} />
+      <AppUpdateNotice />
       <OfflineBanner />
       <ErrorBoundary onGoHome={() => router.replace('/(app)' as never)}>
         <Slot />

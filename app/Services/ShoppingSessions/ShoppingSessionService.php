@@ -160,8 +160,19 @@ class ShoppingSessionService
         }
 
         return DB::transaction(function () use ($user, $groupId, $session, $data, $ip, $ua) {
+            $session = ShoppingSession::where('id', $session->id)->lockForUpdate()->firstOrFail();
+            if ($session->status === 'finished') {
+                throw new FamilyGroupException('SHOPPING_SESSION_ALREADY_FINISHED', 'La sesion ya fue finalizada.', 409);
+            }
+            $this->assertActive($session);
+            $list = ShoppingList::where('id', $session->shopping_list_id)->lockForUpdate()->firstOrFail();
+            if ($list->status !== ShoppingList::STATUS_IN_PROGRESS) {
+                throw new FamilyGroupException('SHOPPING_LIST_INVALID_STATUS_TRANSITION', 'La lista no esta en compra.', 409);
+            }
             $old = $this->payload($session);
-            $scans = $session->scans()->where('scan_result', 'matched')->get();
+            // The list is the source of truth for manual checks, scans and later edits.
+            $items = $list->items()->where('status', 'purchased')->lockForUpdate()->get();
+            $scans = $session->scans()->where('scan_result', 'matched')->get()->keyBy('shopping_list_item_id');
 
             $stockLocationId = $data['stock_location_id'] ?? $this->defaultStockLocationId($groupId);
 
@@ -184,28 +195,30 @@ class ShoppingSessionService
 
             $actualTotal = 0.0;
 
-            foreach ($scans as $scan) {
-                $item = $scan->shoppingListItem;
-                $quantity = (float) ($scan->quantity ?: ($item->quantity ?? 0));
+            foreach ($items as $item) {
+                $scan = $scans->get($item->id);
+                $quantity = (float) ($scan->quantity ?? $item->quantity ?? 0);
+                $productId = $item->product_id;
+                $price = $item->actual_price;
 
-                if (!$item || !$scan->product_id || $quantity <= 0) {
+                if (!$productId || $quantity <= 0) {
                     $stockSkipped++;
                     $warnings[] = [
                         'shopping_list_item_id' => $item->id ?? null,
-                        'reason' => !$scan->product_id
+                        'reason' => !$productId
                             ? 'ITEM_WITHOUT_PRODUCT'
                             : ($quantity <= 0 ? 'ZERO_QUANTITY' : 'ITEM_NOT_FOUND'),
                     ];
                     continue;
                 }
 
-                if ($scan->price !== null && $scan->quantity !== null) {
-                    $actualTotal += (float) $scan->price * (float) $scan->quantity;
+                if ($price !== null) {
+                    $actualTotal += (float) $price * $quantity;
                 }
                 $purchasedTotal += (float) ($item->estimated_price ?? 0) * $quantity;
 
                 $existingStock = StockItem::where('family_group_id', $groupId)
-                    ->where('product_id', $scan->product_id)
+                    ->where('product_id', $productId)
                     ->where('unit_id', $item->unit_id)
                     ->where('status', 'active')
                     ->whereNull('deleted_at')
@@ -217,8 +230,8 @@ class ShoppingSessionService
 
                 if ($existingStock) {
                     $existingStock->quantity = (float) $existingStock->quantity + $quantity;
-                    if ($scan->price !== null) {
-                        $existingStock->estimated_purchase_price = $scan->price;
+                    if ($price !== null) {
+                        $existingStock->estimated_purchase_price = $price;
                     }
                     $existingStock->save();
                     $stock = $existingStock;
@@ -226,12 +239,12 @@ class ShoppingSessionService
                 } else {
                     $stock = StockItem::create([
                         'family_group_id' => $groupId,
-                        'product_id' => $scan->product_id,
+                        'product_id' => $productId,
                         'stock_location_id' => $stockLocationId,
                         'quantity' => $quantity,
                         'unit_id' => $item->unit_id,
                         'purchase_date' => now()->toDateString(),
-                        'estimated_purchase_price' => $scan->price,
+                        'estimated_purchase_price' => $price,
                         'status' => 'active',
                     ]);
                     $stockCreated++;
@@ -240,7 +253,7 @@ class ShoppingSessionService
                 StockMovement::create([
                     'family_group_id' => $groupId,
                     'stock_item_id' => $stock->id,
-                    'product_id' => $scan->product_id,
+                    'product_id' => $productId,
                     'movement_type' => 'entry',
                     'quantity' => $quantity,
                     'unit_id' => $item->unit_id,
@@ -251,11 +264,11 @@ class ShoppingSessionService
 
                 PurchaseItem::create([
                     'purchase_id' => $purchase->id,
-                    'product_id' => $scan->product_id,
+                    'product_id' => $productId,
                     'quantity' => $quantity,
                     'unit_id' => $item->unit_id,
-                    'unit_price' => $scan->price,
-                    'total_price' => $scan->price !== null ? (float) $scan->price * $quantity : null,
+                    'unit_price' => $price,
+                    'total_price' => $price !== null ? (float) $price * $quantity : null,
                     'created_stock_item_id' => $stock->id,
                 ]);
             }
@@ -268,7 +281,6 @@ class ShoppingSessionService
             $session->finished_at = now();
             $session->save();
 
-            $list = $session->shoppingList;
             if ($list->canTransitionTo(ShoppingList::STATUS_COMPLETED)) {
                 $list->status = ShoppingList::STATUS_COMPLETED;
                 $list->save();

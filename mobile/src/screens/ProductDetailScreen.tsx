@@ -14,6 +14,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
+import { ProductPhoto } from '@/components/ProductPhoto';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
@@ -64,11 +65,8 @@ export function ProductDetailScreen({ productId }: ProductDetailScreenProps) {
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Icon header */}
         <View style={styles.hero}>
-          <View style={styles.heroIcon}>
-            <MaterialCommunityIcons name="package-variant-closed" size={48} color={COLORS.primary} />
-          </View>
+          <ProductPhoto images={data.images} name={data.name} size={160} />
           <Text style={styles.heroName}>{data.name}</Text>
           {data.brand?.name ? (
             <Text style={styles.heroBrand}>{data.brand.name}</Text>
@@ -145,15 +143,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.lg,
     gap: SPACING.sm,
-  },
-  heroIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: RADIUS.xl,
-    backgroundColor: COLORS.primarySurface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: SPACING.xs,
   },
   heroName: {
     fontSize: FONT.titleSize,

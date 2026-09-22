@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import { apiClient, ApiError } from '../src/api/client';
+import { mobileReleaseApi } from '../src/api/endpoints';
 import { __resetNetworkStateForTests, getNetworkState, reportRequestFailure } from '../src/utils/networkStatus';
 
 // We test api/client indirectly through fetch mocks
@@ -14,6 +15,13 @@ beforeEach(() => {
 });
 
 describe('apiClient Bearer token', () => {
+  it('requests release metadata without reading or sending an account token', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ data: { build: 7 } }) });
+    await mobileReleaseApi.androidVersion();
+    expect(mockFetch.mock.calls[0][0]).toBe('http://localhost:8000/api/v1/mobile/android/version');
+    expect(mockFetch.mock.calls[0][1].headers.Authorization).toBeUndefined();
+    expect(mockGetToken).not.toHaveBeenCalled();
+  });
   it('adds Authorization header when token is stored', async () => {
     mockGetToken.mockResolvedValueOnce('my-bearer-token');
     mockFetch.mockResolvedValueOnce({

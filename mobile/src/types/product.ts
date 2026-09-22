@@ -22,8 +22,9 @@ export interface ProductUnit {
 
 export interface ProductImage {
   id: number;
-  url: string;
+  image_url: string;
   is_primary: boolean;
+  status?: string;
 }
 
 export interface ProductStockItem {

@@ -64,7 +64,7 @@ class HouseholdStockService
                 'status' => $data['status'] ?? 'active',
             ]));
 
-            $item = $item->fresh(['product', 'location', 'unit']);
+            $item = $item->fresh(['product.images', 'location', 'unit']);
             $this->audit($userId, 'stock-item.created', $item->id, null, $this->payload($item), $ip, $ua);
 
             return [$item, 201];

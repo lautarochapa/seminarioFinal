@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppButton } from '@/components/AppButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
 import { COLORS, FONT, RADIUS, SPACING } from '@/utils/theme';
 
@@ -15,6 +16,7 @@ interface Props {
 const SCAN_LOCK_MS = 1500;
 
 export function BarcodeScanner({ onScanned, onManualEntry, active = true }: Props) {
+  const insets = useSafeAreaInsets();
   const [permission, requestPermission] = useCameraPermissions();
   const [torch, setTorch] = useState(false);
   const lockedRef = useRef(false);
@@ -33,7 +35,7 @@ export function BarcodeScanner({ onScanned, onManualEntry, active = true }: Prop
   if (!permission.granted) {
     const blocked = !permission.canAskAgain;
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { paddingBottom: SPACING.lg + insets.bottom }]}>
         <EmptyState
           icon="package-variant-closed"
           message={blocked
@@ -64,7 +66,7 @@ export function BarcodeScanner({ onScanned, onManualEntry, active = true }: Prop
         <View style={styles.overlay}>
           <Text style={styles.hint}>Apuntá la cámara al código de barras</Text>
           <View style={styles.frame} />
-          <View style={styles.controls}>
+          <View style={[styles.controls, { bottom: SPACING.xl + insets.bottom }]}>
             <Pressable
               onPress={() => setTorch((v) => !v)}
               accessibilityRole="button"

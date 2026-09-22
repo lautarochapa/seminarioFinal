@@ -49,7 +49,7 @@ export function HomeScreen() {
     };
   }, [load]));
 
-  const displayName = user ? (user.name || user.lastname ? `${user.name} ${user.lastname}`.trim() : user.email) : '';
+  const displayName = user ? [user.name, user.lastname].filter(Boolean).join(' ').trim() || user.email : '';
   const initials = user ? `${(user.name || '?').charAt(0)}${(user.lastname || '').charAt(0)}`.toUpperCase() : '?';
   const stock = summary?.stock ?? { products: 0, low_stock: 0, expiring: 0, expired: 0 };
   const recipes = summary?.recipes ?? { available: 0 };

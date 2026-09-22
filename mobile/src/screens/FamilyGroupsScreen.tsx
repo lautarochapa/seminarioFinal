@@ -173,7 +173,7 @@ export function FamilyGroupsScreen() {
         </View>
       ) : null}
 
-      {!creating && data.length > 0 ? (
+      {!creating && data.length > 0 && !data.some((group) => group.status === 'active') ? (
         <AppButton
           title="Crear otro grupo"
           variant="outline"

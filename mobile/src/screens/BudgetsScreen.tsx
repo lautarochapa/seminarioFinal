@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
+import { ModalSurface } from '@/components/ModalSurface';
 import { AppButton } from '@/components/AppButton';
 import { BudgetProgressCard } from '@/components/BudgetProgressCard';
 import { FormError } from '@/components/FormError';
@@ -127,7 +128,7 @@ export function BudgetsScreen() {
       )}
 
       <Modal visible={createVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setCreateVisible(false)}>
-        <View style={styles.modal}>
+        <ModalSurface style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Nuevo presupuesto</Text>
             <Pressable onPress={() => setCreateVisible(false)} style={styles.modalClose} accessibilityLabel="Cerrar">
@@ -152,7 +153,7 @@ export function BudgetsScreen() {
               <AppButton title="Crear presupuesto" onPress={handleCreate} loading={creating} fullWidth />
             </ScrollView>
           </KeyboardAvoidingView>
-        </View>
+        </ModalSurface>
       </Modal>
     </View>
   );

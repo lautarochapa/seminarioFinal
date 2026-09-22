@@ -1,4 +1,5 @@
 import type { SupermarketBranch, SupermarketProduct, DataOrigin } from '@/types/retail';
+import { parseDateOnly } from '@/utils/formValues';
 
 export function toNumber(value: number | string | null | undefined): number | null {
   if (value === null || value === undefined || value === '') return null;
@@ -14,7 +15,8 @@ export function formatMoney(value: number | string | null | undefined, currency 
 
 export function formatDate(value: string | null | undefined): string {
   if (!value) return 'Sin fecha';
-  const date = new Date(value);
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? parseDateOnly(value) : new Date(value);
+  if (!date) return value;
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString('es-AR');
 }

@@ -2,10 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACING } from '@/utils/theme';
 
 export function OfflineBanner() {
   const state = useNetworkStatus();
+  const insets = useSafeAreaInsets();
 
   if (state === 'online') return null;
 
@@ -14,7 +16,7 @@ export function OfflineBanner() {
     : 'Sin conexión. Algunos datos pueden estar desactualizados.';
 
   return (
-    <View style={styles.banner} accessibilityRole="alert" accessibilityLiveRegion="polite">
+    <View style={[styles.banner, { paddingTop: insets.top + 6 }]} accessibilityRole="alert" accessibilityLiveRegion="polite">
       <MaterialCommunityIcons name={state === 'reconnecting' ? 'wifi-sync' : 'wifi-off'} size={16} color={COLORS.surface} />
       <Text style={styles.text}>{message}</Text>
     </View>

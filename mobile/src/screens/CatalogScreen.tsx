@@ -11,9 +11,11 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useProducts } from '@/hooks/useProducts';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
+import { ProductPhoto } from '@/components/ProductPhoto';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, RADIUS, SHADOW, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { ProductSummary } from '@/types/product';
@@ -28,9 +30,7 @@ function ProductCard({ item, onPress }: { item: ProductSummary; onPress: () => v
       accessibilityRole="button"
       accessibilityLabel={`Ver detalle de ${item.name}`}
     >
-      <View style={styles.cardIcon}>
-        <MaterialCommunityIcons name="package-variant-closed" size={24} color={COLORS.primary} />
-      </View>
+      <ProductPhoto images={item.images} name={item.name} />
       <View style={styles.cardBody}>
         <Text style={styles.cardName} numberOfLines={2}>{item.name}</Text>
         {item.brand?.name ? (
@@ -52,6 +52,7 @@ function ProductCard({ item, onPress }: { item: ProductSummary; onPress: () => v
 
 export function CatalogScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { data, meta, loading, loadingMore, error, refresh, loadMore, setFilters } = useProducts();
@@ -111,7 +112,7 @@ export function CatalogScreen() {
   }, [loading, error, searchText, refresh]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Search bar */}
       <View style={styles.searchWrap}>
         <MaterialCommunityIcons name="magnify" size={20} color={COLORS.textHint} style={styles.searchIcon} />
@@ -224,14 +225,6 @@ const styles = StyleSheet.create({
   },
   cardPressed: {
     opacity: 0.85,
-  },
-  cardIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.primarySurface,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   cardBody: {
     flex: 1,

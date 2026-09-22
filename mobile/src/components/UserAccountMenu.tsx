@@ -32,7 +32,7 @@ const MVP_ITEM_TARGETS = ['/(app)/profile', '/(app)/groups'] as const;
 
 export function UserAccountMenu({ visible, user, group, onClose, onNavigate, onLogout }: Props) {
   const insets = useSafeAreaInsets();
-  const name = user ? `${user.name} ${user.lastname}`.trim() || user.email : '';
+  const name = user ? [user.name, user.lastname].filter(Boolean).join(' ').trim() || user.email : '';
   const initials = user ? `${user.name?.[0] ?? '?'}${user.lastname?.[0] ?? ''}`.toUpperCase() : '?';
   const role = group && user ? (group.owner_user_id === user.id ? 'Responsable del grupo' : 'Integrante') : null;
 

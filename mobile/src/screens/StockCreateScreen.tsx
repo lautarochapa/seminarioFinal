@@ -16,6 +16,7 @@ import {
 import { useFocusEffect, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
+import { ModalSurface } from '@/components/ModalSurface';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
 import { FormError } from '@/components/FormError';
@@ -411,7 +412,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
         presentationStyle="pageSheet"
         onRequestClose={() => setProductModalVisible(false)}
       >
-        <View style={styles.modal}>
+        <ModalSurface style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Seleccionar producto</Text>
             <Pressable
@@ -480,7 +481,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               keyboardShouldPersistTaps="handled"
             />
           )}
-        </View>
+        </ModalSurface>
       </Modal>
 
       <Modal
@@ -489,7 +490,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
         presentationStyle="pageSheet"
         onRequestClose={() => setManualVisible(false)}
       >
-        <View style={styles.modal}>
+        <ModalSurface style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Crear producto rápido</Text>
             <Pressable onPress={() => setManualVisible(false)} style={styles.modalClose} accessibilityLabel="Cerrar" accessibilityRole="button">
@@ -525,7 +526,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               fullWidth
             />
           </ScrollView>
-        </View>
+        </ModalSurface>
       </Modal>
     </View>
   );

@@ -17,7 +17,8 @@ import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useStockLocations } from '@/hooks/useStockLocations';
-import { useStock } from '@/hooks/useStock';
+import { useStockItem } from '@/hooks/useStockItem';
+import { parseDateOnly, parseDecimal } from '@/utils/formValues';
 import { stockApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
@@ -32,10 +33,8 @@ interface StockItemEditScreenProps {
 export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
-  const { data, loading: loadingList, error: listError, refresh } = useStock(groupId);
+  const { data: item, loading: loadingList, error: listError, refresh } = useStockItem(groupId, stockItemId);
   const { data: locations, loading: loadingLocs } = useStockLocations(groupId);
-
-  const item = data.find((i) => i.id === stockItemId) ?? null;
 
   const [locationId, setLocationId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState('');
@@ -44,19 +43,17 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (item && !initialized) {
+    if (item) {
       /* eslint-disable react-hooks/set-state-in-effect */
       setQuantity(String(item.quantity));
       setLocationId(item.stock_location_id);
       setExpirationDate(item.expiration_date ?? '');
       setPurchasePrice(item.purchase_price != null ? String(item.purchase_price) : '');
-      setInitialized(true);
       /* eslint-enable react-hooks/set-state-in-effect */
     }
-  }, [item, initialized]);
+  }, [item]);
 
   if (loadingList && !item) return <LoadingScreen message="Cargando..." />;
   if (listError && !item) {
@@ -77,10 +74,16 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
   }
 
   async function handleSubmit() {
+    if (submitting) return;
     const errors: Record<string, string> = {};
-    if (!quantity || isNaN(Number(quantity)) || Number(quantity) < 0) {
+    const parsedQuantity = parseDecimal(quantity);
+    const parsedPrice = purchasePrice.trim() ? parseDecimal(purchasePrice) : null;
+    const date = expirationDate.trim();
+    if (parsedQuantity === null || parsedQuantity < 0) {
       errors.quantity = 'Ingresá una cantidad válida.';
     }
+    if (date && !parseDateOnly(date)) errors.expiration_date = 'Ingresá una fecha válida con formato YYYY-MM-DD.';
+    if (purchasePrice.trim() && (parsedPrice === null || parsedPrice < 0)) errors.purchase_price = 'Ingresá un precio válido, mayor o igual a cero.';
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -94,9 +97,9 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
     try {
       await stockApi.update(groupId, item.id, {
         stock_location_id: locationId,
-        quantity: Number(quantity),
-        expiration_date: expirationDate || null,
-        purchase_price: purchasePrice ? Number(purchasePrice) : null,
+        quantity: parsedQuantity!,
+        expiration_date: date || null,
+        purchase_price: parsedPrice,
       });
       goBackOrHome();
     } catch (err) {
@@ -107,6 +110,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
             fe[k] = v[0] ?? '';
           });
           setFieldErrors(fe);
+          setSubmitError('Revisá los datos indicados antes de guardar.');
         } else if (err.normalized.status === 403) {
           setSubmitError('Sin permiso para editar este item.');
         } else if (err.normalized.status === 404) {
@@ -132,7 +136,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
       />
       <KeyboardAvoidingView
         style={styles.fill}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
           style={styles.scroll}
@@ -153,6 +157,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
           {/* Ubicación */}
           <View style={styles.field}>
             <Text style={styles.label}>Ubicación</Text>
+            <FormError message={fieldErrors.stock_location_id} />
             {loadingLocs ? (
               <ActivityIndicator size="small" color={COLORS.primary} />
             ) : (
@@ -192,7 +197,8 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
           <AppInput
             label="Fecha de vencimiento"
             value={expirationDate}
-            onChangeText={setExpirationDate}
+            onChangeText={(text) => { setExpirationDate(text); setFieldErrors((errors) => ({ ...errors, expiration_date: '' })); }}
+            error={fieldErrors.expiration_date}
             placeholder="YYYY-MM-DD"
             keyboardType="numbers-and-punctuation"
           />
@@ -200,7 +206,8 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
           <AppInput
             label="Precio de compra"
             value={purchasePrice}
-            onChangeText={setPurchasePrice}
+            onChangeText={(text) => { setPurchasePrice(text); setFieldErrors((errors) => ({ ...errors, purchase_price: '' })); }}
+            error={fieldErrors.purchase_price}
             keyboardType="decimal-pad"
             placeholder="0.00"
           />

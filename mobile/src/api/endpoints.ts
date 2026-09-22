@@ -98,6 +98,10 @@ import type {
   SupermarketProduct,
 } from '@/types/retail';
 
+export const mobileReleaseApi = {
+  androidVersion: () => apiClient.get<ApiResponse<unknown>>('/api/v1/mobile/android/version', { skipAuth: true }),
+};
+
 export const authApi = {
   login(payload: LoginRequest): Promise<LoginResponse> {
     return apiClient.post<LoginResponse>('/api/v1/auth/login', payload, { skipAuth: true });

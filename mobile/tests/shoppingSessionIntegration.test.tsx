@@ -8,10 +8,11 @@ import type { ShoppingListItem } from '../src/types/shopping';
 const mockFinish = jest.fn();
 const mockBudget = jest.fn();
 const mockReplace = jest.fn();
+const mockUpdate = jest.fn();
 let mockItems: ShoppingListItem[];
 jest.mock('../src/api/endpoints', () => ({
   shoppingSessionsApi: { finish: (...args: unknown[]) => mockFinish(...args) },
-  shoppingListItemsApi: { update: jest.fn() },
+  shoppingListItemsApi: { update: (...args: unknown[]) => mockUpdate(...args) },
   budgetsApi: { current: (...args: unknown[]) => mockBudget(...args) },
 }));
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }) }));
@@ -30,6 +31,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockItems = [{ id: 1, product: { id: 1, name: 'Arroz' }, quantity: 2, unit: { id: 1, symbol: 'kg' }, status: 'purchased', actual_price: 300, estimated_price: 250 } as ShoppingListItem];
   mockBudget.mockResolvedValue({ data: null });
+  mockUpdate.mockResolvedValue({ data: {} });
   mockFinish.mockResolvedValue({
     data: { id: 9, status: 'completed', purchase_id: 77 },
     summary: { purchase_id: 77, stock_created_count: 2, stock_updated_count: 1, stock_skipped_count: 1, stock_warnings: [] },
@@ -37,6 +39,47 @@ beforeEach(() => {
   jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 });
 afterEach(() => jest.restoreAllMocks());
+
+it('shows an error for a negative price without sending it', async () => {
+  const screen = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);
+  await fireEvent.changeText(screen.getByLabelText('Precio real de Arroz'), '-1');
+  await fireEvent.press(screen.getByLabelText('Guardar precio real'));
+  expect(screen.getByText('Ingresá un precio válido, mayor o igual a cero.')).toBeTruthy();
+  expect(mockUpdate).not.toHaveBeenCalled();
+});
+
+it('accepts a decimal comma and retries the price operation, not the checkbox', async () => {
+  mockUpdate.mockRejectedValueOnce(new Error('Offline'));
+  const screen = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);
+  await fireEvent.changeText(screen.getByLabelText('Precio real de Arroz'), '12,50');
+  await fireEvent.press(screen.getByLabelText('Guardar precio real'));
+  await waitFor(() => expect(screen.getByText('No se pudo guardar el precio.')).toBeTruthy());
+  await fireEvent.press(screen.getByLabelText('Reintentar item'));
+  await waitFor(() => expect(mockUpdate).toHaveBeenCalledTimes(2));
+  expect(mockUpdate).toHaveBeenNthCalledWith(1, 7, 55, 1, { actual_price: 12.5 });
+  expect(mockUpdate).toHaveBeenNthCalledWith(2, 7, 55, 1, { actual_price: 12.5 });
+});
+
+it('does not finish while an edited price has not been saved', async () => {
+  const screen = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);
+  await fireEvent.changeText(screen.getByLabelText('Precio real de Arroz'), '900');
+  await fireEvent.press(screen.getByLabelText('Finalizar compra'));
+  expect(Alert.alert).toHaveBeenCalledWith('Precios sin guardar', expect.any(String));
+  expect(mockFinish).not.toHaveBeenCalled();
+});
+
+it('sends only one finish request when the confirmation callback is repeated', async () => {
+  let resolveFinish!: (value: unknown) => void;
+  mockFinish.mockImplementationOnce(() => new Promise((resolve) => { resolveFinish = resolve; }));
+  const screen = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);
+  await fireEvent.press(screen.getByRole('button', { name: /Finalizar compra/ }));
+  const confirm = jest.mocked(Alert.alert).mock.calls.find(([title]) => title === 'Finalizar compra')?.[2]?.find((button) => button.text === 'Finalizar');
+  await act(() => { void confirm?.onPress?.(); void confirm?.onPress?.(); });
+  expect(mockFinish).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    resolveFinish({ data: { id: 9, status: 'completed', purchase_id: 77 }, summary: { purchase_id: 77 } });
+  });
+});
 
 async function confirmFinish() {
   const screen = await render(<ShoppingSessionScreen listId={55} sessionId={9} />);

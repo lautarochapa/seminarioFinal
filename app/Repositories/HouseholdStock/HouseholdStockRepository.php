@@ -12,7 +12,7 @@ class HouseholdStockRepository
 {
     public function paginateForGroup(int $groupId, array $filters)
     {
-        $query = StockItem::with(['product', 'location', 'unit'])
+        $query = StockItem::with(['product.images', 'location', 'unit'])
             ->where('family_group_id', $groupId)
             ->where('status', 'active')
             ->whereNull('deleted_at');
@@ -39,7 +39,7 @@ class HouseholdStockRepository
 
     public function findInGroupOrFail(int $groupId, int $stockItemId): StockItem
     {
-        $item = StockItem::with(['product', 'location', 'unit'])
+        $item = StockItem::with(['product.images', 'location', 'unit'])
             ->where('family_group_id', $groupId)
             ->where('id', $stockItemId)
             ->first();
@@ -71,14 +71,14 @@ class HouseholdStockRepository
         $item->fill($data);
         $item->save();
 
-        return $item->fresh(['product', 'location', 'unit']);
+        return $item->fresh(['product.images', 'location', 'unit']);
     }
 
     public function delete(StockItem $item): StockItem
     {
         $item->delete();
 
-        return StockItem::withTrashed()->with(['product', 'location', 'unit'])->find($item->id);
+        return StockItem::withTrashed()->with(['product.images', 'location', 'unit'])->find($item->id);
     }
 
     public function activeProductExists(int $productId, ?int $groupId = null): bool

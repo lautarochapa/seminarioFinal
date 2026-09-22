@@ -54,7 +54,7 @@ la configuracion 1.0.2 con un artefacto nuevo validado. Ver
    por entorno; si esta variable ya existe en Render, actualizarla tambien o
    quitarla para usar el valor del repositorio.
 5. Ejecutar `php tests/Smoke/landing-download.php` (actualizar sus expectativas
-   de version y tamano al cambiar la release) y
+   de version y tamano al cambiar la release), `php tests/Smoke/mobile-version.php` y
    `node tests/Smoke/navbar-responsive.cjs`. Desplegar en Render.
 6. Comprobar que el boton anuncia la nueva version, que `/descargas/android`
    devuelve 302 con `Cache-Control: no-store`, y que el archivo descargado
@@ -64,6 +64,15 @@ la configuracion 1.0.2 con un artefacto nuevo validado. Ver
 Si no hay URL configurada, la landing no muestra un boton de descarga y la
 ruta responde 503. Solo se admiten destinos HTTPS configurados en el servidor;
 la ruta no acepta URLs provistas por quien la visita.
+
+## Aviso dentro de la app
+
+La nueva integracion local publica la misma metadata en
+`GET /api/v1/mobile/android/version`. La app que incluya esta funcion consulta
+al iniciar y ofrece ir a la landing cuando hay un build superior. No es una
+actualizacion forzada ni automatica. Ver [contrato y publicacion](ANDROID-VERSION.md).
+La APK 1.0.5 ya instalada necesita una actualizacion manual inicial para
+incorporar el chequeo. Backend y APK nuevos siguen pendientes de publicacion.
 
 ## Capturas de la landing
 

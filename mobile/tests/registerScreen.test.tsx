@@ -1,8 +1,20 @@
 import React from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { RegisterScreen } from '../src/screens/RegisterScreen';
 import { LoginScreen } from '../src/screens/LoginScreen';
 import { ApiError } from '../src/api/client';
+
+jest.mock('react-native', () => {
+  const actual = jest.requireActual<typeof import('react-native')>('react-native');
+  const React = jest.requireActual<typeof import('react')>('react');
+  return Object.defineProperties(Object.create(actual), {
+    KeyboardAvoidingView: { value: (props: React.ComponentProps<typeof actual.KeyboardAvoidingView>) =>
+      React.createElement(actual.View, { ...props, testID: 'keyboard-container' }) },
+    ScrollView: { value: (props: React.ComponentProps<typeof actual.ScrollView>) =>
+      React.createElement(actual.ScrollView, { ...props, testID: 'form-scroll' }) },
+  });
+});
 
 jest.mock('@expo/vector-icons', () => ({
   MaterialCommunityIcons: 'MaterialCommunityIcons',
@@ -47,6 +59,21 @@ describe('LoginScreen — register link', () => {
 });
 
 describe('RegisterScreen', () => {
+  it('resizes the Android form above the keyboard and respects system insets', async () => {
+    const platform = jest.replaceProperty(Platform, 'OS', 'android');
+    try {
+      const screen = await render(<RegisterScreen />);
+      const container = screen.getByTestId('keyboard-container');
+      expect(container.props.behavior).toBe('height');
+      expect(StyleSheet.flatten(container.props.style).paddingTop).toBe(24);
+      const scroll = screen.getByTestId('form-scroll');
+      expect(scroll.props.keyboardShouldPersistTaps).toBe('handled');
+      expect(StyleSheet.flatten(scroll.props.contentContainerStyle).paddingBottom).toBeGreaterThanOrEqual(24);
+    } finally {
+      platform.restore();
+    }
+  });
+
   it('validates required fields before submitting', async () => {
     const { getByRole } = await render(<RegisterScreen />);
     await fireEvent.press(getByRole('button', { name: 'Crear cuenta' }));

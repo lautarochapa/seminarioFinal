@@ -4,7 +4,7 @@ import { LoginScreen } from '@/screens/LoginScreen';
 export default function LoginRoute() {
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <LoginScreen />
     </>
   );

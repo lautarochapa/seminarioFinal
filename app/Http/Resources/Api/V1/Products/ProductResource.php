@@ -52,7 +52,7 @@ class ProductResource extends JsonResource
                 ] : null;
             }),
             'images' => $this->whenLoaded('images', function () {
-                return ProductImageResource::collection($this->images);
+                return ProductImageResource::collection($this->images->where('status', 'active')->values());
             }),
             'stock_items' => $this->whenLoaded('stockItems', function () {
                 return $this->stockItems->map(function ($item) {

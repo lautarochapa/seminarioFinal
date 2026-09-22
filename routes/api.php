@@ -17,6 +17,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Public release metadata does not require a session or a database connection.
+Route::get('v1/mobile/android/version', 'Api\V1\Mobile\AndroidVersionController')
+    ->middleware('trace_id')->name('api.mobile.android.version');
+
 // Public auth routes + admin RBAC + family-groups + users/me basics
 Route::prefix('v1')->middleware(['web'])->group(base_path('routes/api_contract.php'));
 

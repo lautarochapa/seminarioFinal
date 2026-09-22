@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { StatusBadge } from '@/components/StatusBadge';
@@ -24,6 +25,7 @@ import { shoppingListItemsApi, budgetsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { formatMoney } from '@/utils/retail';
+import { parseDecimal } from '@/utils/formValues';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { NormalizedError } from '@/types/api';
 import type { ShoppingListItem } from '@/types/shopping';
@@ -35,6 +37,8 @@ interface Props {
 
 export function ShoppingSessionScreen({ listId, sessionId }: Props) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const finishInFlight = useRef(false);
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { list, items, loading, error, refresh } = useShoppingListDetail(groupId, listId);
@@ -44,6 +48,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
     saving?: boolean;
     saved?: boolean;
     error?: NormalizedError;
+    operation?: 'price' | 'toggle';
   }>>({});
   const [priceDrafts, setPriceDrafts] = useState<Record<number, string>>({});
 
@@ -55,7 +60,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
   }, [list]);
 
   async function handleToggle(item: ShoppingListItem) {
-    if (!groupId) return;
+    if (!groupId || finishing) return;
     if (itemSync[item.id]?.saving) return;
 
     const newStatus = item.status === 'purchased' ? 'pending' : 'purchased';
@@ -100,16 +105,23 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
   }
 
   async function handleSavePrice(item: ShoppingListItem) {
-    if (!groupId) return;
+    if (!groupId || itemSync[item.id]?.saving || finishing) return;
     const draft = priceDrafts[item.id];
     if (draft === undefined) return;
-    const parsed = draft.trim() === '' ? null : Number(draft);
-    if (parsed !== null && (isNaN(parsed) || parsed < 0)) return;
+    const parsed = draft.trim() === '' ? null : parseDecimal(draft);
+    if (draft.trim() !== '' && (parsed === null || parsed < 0)) {
+      setItemSync((current) => ({ ...current, [item.id]: { operation: 'price', error: {
+        status: 422, code: 'INVALID_PRICE', message: 'Ingresá un precio válido, mayor o igual a cero.',
+        fieldErrors: {}, traceId: '', isNetworkError: false, isTimeoutError: false,
+      } } }));
+      return;
+    }
 
     setItemSync((current) => ({ ...current, [item.id]: { saving: true, saved: false, error: undefined } }));
     try {
       await shoppingListItemsApi.update(groupId, listId, item.id, { actual_price: parsed });
       await refresh();
+      setPriceDrafts((current) => { const next = { ...current }; delete next[item.id]; return next; });
       setItemSync((current) => ({ ...current, [item.id]: { saving: false, saved: true, error: undefined } }));
       setTimeout(() => {
         setItemSync((current) => {
@@ -125,7 +137,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
       };
       setItemSync((current) => ({
         ...current,
-        [item.id]: { saving: false, saved: false, error: err instanceof ApiError ? err.normalized : fallback },
+        [item.id]: { saving: false, saved: false, operation: 'price', error: err instanceof ApiError ? err.normalized : fallback },
       }));
     }
   }
@@ -151,6 +163,11 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
   }
 
   async function handleFinish() {
+    if (finishInFlight.current || finishing || Object.values(itemSync).some((sync) => sync.saving)) return;
+    if (Object.keys(priceDrafts).length > 0) {
+      Alert.alert('Precios sin guardar', 'Guardá los precios editados antes de finalizar la compra.');
+      return;
+    }
     Alert.alert(
       'Finalizar compra',
       `¿Terminar la sesión? Quedan ${items.filter((i) => i.status === 'pending').length} items pendientes.`,
@@ -159,6 +176,8 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
         {
           text: 'Finalizar',
           onPress: async () => {
+            if (finishInFlight.current) return;
+            finishInFlight.current = true;
             try {
               const response = await finishSession(sessionId);
               if (!response) return;
@@ -182,6 +201,8 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
               );
             } catch (err) {
               Alert.alert('Error', err instanceof ApiError ? err.normalized.message : 'No se pudo finalizar.');
+            } finally {
+              finishInFlight.current = false;
             }
           },
         },
@@ -218,6 +239,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
       </View>
 
       <FlatList
+        keyboardShouldPersistTaps="handled"
         data={[...pendingItems, ...purchasedItems]}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => {
@@ -258,6 +280,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
                     placeholder="Precio real"
                     placeholderTextColor={COLORS.textHint}
                     keyboardType="decimal-pad"
+                    editable={!sync?.saving && !finishing}
                     accessibilityLabel={`Precio real de ${item.product?.name ?? item.ingredient?.name ?? 'item'}`}
                   />
                   <Pressable
@@ -279,7 +302,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
                       <Text style={styles.itemTraceText}>Trace ID: {sync.error.traceId}</Text>
                     ) : null}
                     <Pressable
-                      onPress={() => handleToggle(item)}
+                      onPress={() => sync.operation === 'price' ? handleSavePrice(item) : handleToggle(item)}
                       accessibilityRole="button"
                       accessibilityLabel="Reintentar item"
                       style={styles.retryBtn}
@@ -298,11 +321,12 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
         refreshing={loading}
       />
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: SPACING.md + insets.bottom }]}>
         <AppButton
           title={finishing ? 'Finalizando...' : 'Finalizar compra'}
           onPress={handleFinish}
           loading={finishing}
+          disabled={finishing || Object.values(itemSync).some((sync) => sync.saving)}
           fullWidth
         />
       </View>

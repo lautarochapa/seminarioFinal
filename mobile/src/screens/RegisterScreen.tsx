@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
@@ -29,6 +30,7 @@ function registerErrorMessage(err: ApiError): string {
 
 export function RegisterScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { register } = useAuth();
   const { restoreGroup } = useFamilyGroupContext();
   const [name, setName] = useState('');
@@ -97,8 +99,10 @@ export function RegisterScreen() {
   }
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: COLORS.dark, paddingTop: insets.top }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView
-      contentContainerStyle={styles.scroll}
+      contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + SPACING.md }]}
+      automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
@@ -174,6 +178,7 @@ export function RegisterScreen() {
         onPress={() => router.replace('/(auth)/login' as never)}
       />
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

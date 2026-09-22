@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { stockApi } from '@/api/endpoints';
 import { buildStockAlertMessages, type StockAlertMessage } from '@/utils/stockAlerts';
 import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
+import type { StockItem } from '@/types/stock';
 
 /**
  * Muestra, encima del listado de stock, avisos legibles de:
@@ -11,7 +12,7 @@ import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
  *  - productos proximos a vencer o vencidos (GET /stock/expiring)
  * Usa endpoints existentes; no hay push ni jobs nuevos.
  */
-export function StockAlertsBanner({ groupId }: { groupId: number | null }) {
+export function StockAlertsBanner({ groupId, stockItems }: { groupId: number | null; stockItems?: StockItem[] }) {
   const [alertState, setAlertState] = useState<{
     groupId: number;
     messages: StockAlertMessage[];
@@ -39,7 +40,7 @@ export function StockAlertsBanner({ groupId }: { groupId: number | null }) {
     return () => {
       active = false;
     };
-  }, [groupId]);
+  }, [groupId, stockItems]);
 
   const messages = alertState?.groupId === groupId ? alertState.messages : [];
 

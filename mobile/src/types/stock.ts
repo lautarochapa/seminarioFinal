@@ -1,3 +1,5 @@
+import type { ProductImage } from './product';
+
 export interface StockLocation {
   id: number;
   family_group_id: number;
@@ -12,6 +14,7 @@ export interface StockLocation {
 export interface StockProduct {
   id: number;
   name: string;
+  images?: ProductImage[];
 }
 
 export interface StockUnit {

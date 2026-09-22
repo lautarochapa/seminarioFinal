@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDate } from '@/utils/retail';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { StatusBadge } from '@/components/StatusBadge';
@@ -34,7 +35,7 @@ export function PurchaseDetailScreen({ purchaseId }: Props) {
   if (!purchase) return null;
 
   const date = purchase.purchase_date
-    ? new Date(purchase.purchase_date).toLocaleDateString('es-AR')
+    ? formatDate(purchase.purchase_date)
     : null;
 
   return (

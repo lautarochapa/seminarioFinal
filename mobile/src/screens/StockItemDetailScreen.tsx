@@ -8,17 +8,18 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ErrorState } from '@/components/ErrorState';
+import { ProductPhoto } from '@/components/ProductPhoto';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { stockApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { goBackOrHome } from '@/utils/navigation';
 import { friendlyMessage } from '@/utils/errorParser';
-import { useStock } from '@/hooks/useStock';
+import { useStockItem } from '@/hooks/useStockItem';
+import { formatDate } from '@/utils/retail';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 
 interface StockItemDetailScreenProps {
@@ -39,10 +40,8 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
   const router = useRouter();
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
-  const { data, loading, error, refresh } = useStock(groupId);
+  const { data: item, loading, error, refresh } = useStockItem(groupId, stockItemId);
   const [deleting, setDeleting] = useState(false);
-
-  const item = data.find((i) => i.id === stockItemId) ?? null;
 
   if (loading && !item) return <LoadingScreen message="Cargando..." />;
   if (error && !item) {
@@ -99,7 +98,7 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
   }
 
   const expDate = item.expiration_date
-    ? new Date(item.expiration_date).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    ? formatDate(item.expiration_date)
     : null;
 
   return (
@@ -120,9 +119,7 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
       >
         {/* Hero */}
         <View style={styles.hero}>
-          <View style={styles.heroIcon}>
-            <MaterialCommunityIcons name="package-variant" size={40} color={COLORS.primary} />
-          </View>
+          <ProductPhoto images={item.product?.images} name={item.product?.name ?? `Producto #${item.product_id}`} size={160} />
           <Text style={styles.heroName}>{item.product?.name ?? `Producto #${item.product_id}`}</Text>
           <Text style={styles.heroQty}>
             {item.quantity} {item.unit?.symbol ?? ''}
@@ -173,15 +170,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.lg,
     gap: SPACING.sm,
-  },
-  heroIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: RADIUS.xl,
-    backgroundColor: COLORS.primarySurface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: SPACING.xs,
   },
   heroName: {
     fontSize: FONT.titleSize,

@@ -17,15 +17,19 @@ import { StockAlertsBanner } from '@/components/StockAlertsBanner';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { AppButton } from '@/components/AppButton';
+import { ProductPhoto } from '@/components/ProductPhoto';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 import type { StockItem } from '@/types/stock';
+import { parseDateOnly } from '@/utils/formValues';
 
 function expirationLabel(date: string | null): { label: string; color: string } | null {
   if (!date) return null;
-  const exp = new Date(date);
+  const exp = parseDateOnly(date);
+  if (!exp) return null;
   const today = new Date();
-  const diffDays = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  today.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return { label: 'Vencido', color: COLORS.error };
   if (diffDays <= 3) return { label: `Vence en ${diffDays}d`, color: COLORS.error };
   if (diffDays <= 7) return { label: `Vence en ${diffDays}d`, color: COLORS.warning };
@@ -43,9 +47,7 @@ function StockItemCard({ item, onPress }: { item: StockItem; onPress: () => void
       accessibilityRole="button"
       accessibilityLabel={`Ver detalle de ${item.product?.name ?? 'item'}`}
     >
-      <View style={styles.cardIcon}>
-        <MaterialCommunityIcons name="package-variant" size={22} color={COLORS.primary} />
-      </View>
+      <ProductPhoto images={item.product?.images} name={item.product?.name ?? `Producto #${item.product_id}`} />
       <View style={styles.cardBody}>
         <Text style={styles.cardName} numberOfLines={2}>
           {item.product?.name ?? `Producto #${item.product_id}`}
@@ -124,7 +126,7 @@ export function StockScreen() {
         />
       ) : (
         <>
-          <StockAlertsBanner groupId={groupId} />
+          <StockAlertsBanner groupId={groupId} stockItems={data} />
 
           {/* Header bar */}
           <View style={styles.barRow}>
@@ -220,14 +222,6 @@ const styles = StyleSheet.create({
   },
   cardPressed: {
     opacity: 0.85,
-  },
-  cardIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.primarySurface,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   cardBody: {
     flex: 1,

@@ -24,6 +24,11 @@ jest.mock('../src/api/endpoints', () => ({ homeApi: { summary: (...args: unknown
 const SUMMARY = { data: { stock: { products: 3, low_stock: 1, expiring: 2, expired: 0 }, recipes: { available: 4 }, shopping: { active_lists: 1, pending_items: 2 }, actions: [] } };
 
 describe('HomeScreen account navigation', () => {
+  it('omits a missing lastname from the account menu', async () => {
+    const screen = await render(<UserAccountMenu visible user={{ id: 1, name: 'Martina', lastname: null, email: 'qa@example.invalid' } as never} group={null} onClose={jest.fn()} onNavigate={mockPush} onLogout={jest.fn()} />);
+    expect(screen.getByText('Martina')).toBeTruthy();
+    expect(screen.queryByText(/null|undefined/)).toBeNull();
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     mockFocused = true;

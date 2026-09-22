@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\V1\HouseholdStock;
 
+use App\Http\Resources\Api\V1\Products\ProductImageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StockItemResource extends JsonResource
@@ -25,6 +26,9 @@ class StockItemResource extends JsonResource
                     'status' => $this->product->status,
                     'origin' => $this->product->origin,
                     'review_status' => $this->product->status === 'pending_review' ? 'pending_review' : null,
+                    'images' => $this->product->relationLoaded('images')
+                        ? ProductImageResource::collection($this->product->images->where('status', 'active')->values())
+                        : [],
                 ] : null;
             }),
             'location' => $this->whenLoaded('location', function () {

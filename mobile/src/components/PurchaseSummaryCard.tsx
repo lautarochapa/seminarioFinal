@@ -5,6 +5,7 @@ import { StatusBadge } from './StatusBadge';
 import { MoneyText } from './MoneyText';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 import type { Purchase } from '@/types/purchase';
+import { formatDate } from '@/utils/retail';
 
 interface PurchaseSummaryCardProps {
   purchase: Purchase;
@@ -13,7 +14,7 @@ interface PurchaseSummaryCardProps {
 
 export function PurchaseSummaryCard({ purchase, onPress }: PurchaseSummaryCardProps) {
   const date = purchase.purchase_date
-    ? new Date(purchase.purchase_date).toLocaleDateString('es-AR')
+    ? formatDate(purchase.purchase_date)
     : null;
 
   return (

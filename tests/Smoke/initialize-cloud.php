@@ -210,6 +210,10 @@ try {
         $movementData = json_decode((new App\Http\Resources\Api\V1\StockMovements\StockMovementResource($movement))->toJson(), true);
         checkCloudSetup($movementData['unit']['id'] === $movement->unit_id, 'El movimiento omite su unidad.');
         checkCloudSetup($movementData['unit']['symbol'] === $movement->unit->symbol, 'Simbolo de unidad incorrecto.');
+        require_once __DIR__.'/shopping-session-regressions.php';
+        checkShoppingSessionRegressions($user, $group, $manual['product'], $unitId, $budget);
+        require_once __DIR__.'/product-images.php';
+        checkProductImages($manual['product'], $group, $user->id, $unitId);
         auth()->logout();
         request()->setUserResolver(function () { return null; });
     } finally {

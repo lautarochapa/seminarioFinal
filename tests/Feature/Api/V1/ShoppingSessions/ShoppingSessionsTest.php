@@ -29,7 +29,7 @@ class ShoppingSessionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function context()
+    private function context(bool $inProgress = false)
     {
         $user = factory(User::class)->create();
         $group = factory(FamilyGroup::class)->create(['owner_user_id' => $user->id, 'status' => 'active']);
@@ -53,6 +53,10 @@ class ShoppingSessionsTest extends TestCase
             'unit_id' => $unit->id,
             'status' => 'pending',
         ]);
+        if ($inProgress) {
+            $list->update(['status' => ShoppingList::STATUS_IN_PROGRESS]);
+            $item->update(['status' => 'purchased', 'actual_price' => 100]);
+        }
 
         return [$user, $group, $list, $item, $product, $unit, $barcode];
     }
@@ -199,9 +203,27 @@ class ShoppingSessionsTest extends TestCase
             ->assertJsonPath('data.supermarket_branch_id', $branch->id);
     }
 
+    public function test_finish_keeps_manually_checked_items_without_scans()
+    {
+        [$user, $group, $list, $item, $product] = $this->context(true);
+        $item->update(['quantity' => 0.5, 'actual_price' => 1000]);
+        $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
+
+        $this->actingAs($user)
+            ->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')
+            ->assertStatus(200)
+            ->assertJsonPath('summary.stock_created_count', 1);
+
+        $this->assertSame(0, $session->scans()->count());
+        $purchase = Purchase::where('shopping_list_id', $list->id)->firstOrFail();
+        $this->assertSame(1, $purchase->items()->count());
+        $this->assertEquals(500.0, $purchase->actual_total);
+        $this->assertDatabaseHas('stock_items', ['product_id' => $product->id, 'quantity' => 0.5]);
+    }
+
     public function test_finish_session_and_double_finish()
     {
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
         $item->update(['status' => 'purchased']);
@@ -222,7 +244,7 @@ class ShoppingSessionsTest extends TestCase
 
     public function test_finish_creates_stock_item_for_matched_scan()
     {
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
 
@@ -243,7 +265,7 @@ class ShoppingSessionsTest extends TestCase
 
     public function test_finish_increments_existing_stock_for_same_product_and_unit()
     {
-        [$user, $group, $list, $item, $product, $unit] = $this->context();
+        [$user, $group, $list, $item, $product, $unit] = $this->context(true);
         StockItem::create([
             'family_group_id' => $group->id,
             'product_id' => $product->id,
@@ -269,9 +291,10 @@ class ShoppingSessionsTest extends TestCase
         $this->assertSame(1, StockItem::where('product_id', $product->id)->count());
     }
 
-    public function test_finish_skips_scan_without_product_with_warning()
+    public function test_finish_skips_item_without_product_with_warning()
     {
-        [$user, $group, $list, $item] = $this->context();
+        [$user, $group, $list, $item] = $this->context(true);
+        $item->update(['product_id' => null]);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '000', 'product_id' => null, 'shopping_list_item_id' => $item->id, 'quantity' => 1, 'scan_result' => 'matched']);
 
@@ -287,7 +310,7 @@ class ShoppingSessionsTest extends TestCase
 
     public function test_finish_skips_zero_quantity_scan()
     {
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 0, 'scan_result' => 'matched']);
 
@@ -302,7 +325,7 @@ class ShoppingSessionsTest extends TestCase
 
     public function test_finish_uses_single_group_location_as_default()
     {
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $location = StockLocation::create(['family_group_id' => $group->id, 'name' => 'Alacena', 'type' => 'pantry', 'status' => 'active']);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
@@ -319,7 +342,7 @@ class ShoppingSessionsTest extends TestCase
 
     public function test_finish_rejects_invalid_stock_location()
     {
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
 
@@ -330,7 +353,7 @@ class ShoppingSessionsTest extends TestCase
 
     public function test_finish_computes_estimated_and_actual_purchase_totals()
     {
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $item->update(['estimated_price' => 90]);
         $session = ShoppingSession::create(['shopping_list_id' => $list->id, 'family_group_id' => $group->id, 'user_id' => $user->id, 'started_at' => now(), 'status' => 'active']);
         ShoppingSessionScan::create(['shopping_session_id' => $session->id, 'barcode' => '7790000000011', 'product_id' => $product->id, 'shopping_list_item_id' => $item->id, 'quantity' => 2, 'price' => 100, 'scan_result' => 'matched']);
@@ -349,7 +372,7 @@ class ShoppingSessionsTest extends TestCase
     public function test_finish_impacts_budget_summary_of_the_purchase_period()
     {
         \Carbon\Carbon::setTestNow('2026-06-15');
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $budget = \App\Budget::create([
             'family_group_id' => $group->id, 'year' => 2026, 'month' => 6,
             'total_amount' => 10000, 'currency' => 'ARS', 'status' => 'active',
@@ -373,7 +396,7 @@ class ShoppingSessionsTest extends TestCase
     public function test_double_finish_does_not_duplicate_budget_spend()
     {
         \Carbon\Carbon::setTestNow('2026-06-15');
-        [$user, $group, $list, $item, $product] = $this->context();
+        [$user, $group, $list, $item, $product] = $this->context(true);
         $budget = \App\Budget::create([
             'family_group_id' => $group->id, 'year' => 2026, 'month' => 6,
             'total_amount' => 10000, 'currency' => 'ARS', 'status' => 'active',

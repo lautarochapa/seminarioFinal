@@ -1,4 +1,8 @@
 // Global test setup for jest-expo
+jest.mock('react-native-safe-area-context', () => ({
+  ...jest.requireActual('react-native-safe-area-context'),
+  useSafeAreaInsets: () => ({ top: 24, bottom: 24, left: 0, right: 0 }),
+}));
 // Mock expo-secure-store
 jest.mock('expo-secure-store', () => ({
   setItemAsync: jest.fn().mockResolvedValue(undefined),
