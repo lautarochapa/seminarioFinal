@@ -2,10 +2,10 @@
 
 return [
     'android' => [
-        'version' => '1.0.3',
-        'build' => 4,
-        'size_bytes' => 129076727,
-        'sha256' => '3553c4fcdb31f1d7c192910bff5411b066715245a7066f8fc171730960ab136a',
-        'download_url' => env('ANDROID_APK_URL', 'https://github.com/lautarochapa/seminarioFinal/releases/download/android-v1.0.3-4/CocinaComidaControl-1.0.3-4.apk'),
+        'version' => '1.0.4',
+        'build' => 5,
+        'size_bytes' => 129076719,
+        'sha256' => 'd642dc7fc77643ab9a4be0ef7ff171d5b7c5b58f2c664c33d08e1ca4d8838543',
+        'download_url' => env('ANDROID_APK_URL', 'https://github.com/lautarochapa/seminarioFinal/releases/download/android-v1.0.4-5/CocinaComidaControl-1.0.4-5.apk'),
     ],
 ];

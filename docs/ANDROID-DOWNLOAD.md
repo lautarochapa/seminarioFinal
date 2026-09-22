@@ -6,18 +6,22 @@ en Expo. El binario no se incluye en Git ni en la imagen Docker de Render.
 
 ## Version publicada
 
-Comprobado el 22/09/2026 a las 00:19 ART:
-https://cocinacomidacontrol.com.ar/descargas/android redirige con 302 a la
-release `android-v1.0.3-4`, sin cache. [Registro de release](ANDROID-1.0.3.md).
+Release `android-v1.0.4-5` publicada y descargada anonimamente el 22/09/2026.
+La configuracion de la landing apunta a este archivo; al desplegar, verificar
+el destino de https://cocinacomidacontrol.com.ar/descargas/android (302,
+sin cache). [Registro de release](ANDROID-1.0.4.md).
 
-- Version: 1.0.3, compilacion 4, version de prueba.
-- Archivo: `CocinaComidaControl-1.0.3-4.apk`.
-- Tamano: 129076727 bytes.
-- SHA-256: `3553c4fcdb31f1d7c192910bff5411b066715245a7066f8fc171730960ab136a`.
-- EAS Build: `ddb51881-1120-495b-ae8f-52b0c132d8c4`.
-- Incluye AND-01/08. Firma valida e igual a 1.0.1, mismo paquete, no debug.
-- Descarga anonima comprobada; prueba de actualizacion en Samsung pendiente.
-- La APK 1.0.1 (2) se conserva en su release anterior como respaldo.
+- Version: 1.0.4, compilacion 5, version de prueba.
+- Archivo: `CocinaComidaControl-1.0.4-5.apk`.
+- Tamano: 129076719 bytes.
+- SHA-256: `d642dc7fc77643ab9a4be0ef7ff171d5b7c5b58f2c664c33d08e1ca4d8838543`.
+- EAS Build: `90f28011-e477-4789-b662-2fc0c90613f7`.
+- Agrega AND-09, AND-11 y AND-12: restauracion del grupo, refresco de stock y
+  busqueda de productos propios en Compras. AND-10 sigue pendiente.
+- Firma valida e igual a 1.0.3, mismo paquete, no debug y bundle standalone.
+- Descarga anonima y SHA-256 comprobados; actualizacion y retest de esta
+  version en Samsung pendientes. La 1.0.3 si mantuvo la sesion al actualizar.
+- Las APK anteriores se conservan como respaldo; no desinstalar para actualizar.
 
 ## Antecedente: build 1.0.2 (no contiene los ultimos arreglos)
 
@@ -43,7 +47,7 @@ la configuracion 1.0.2 con un artefacto nuevo validado. Ver
 2. Descargar el artefacto final de EAS, comprobar tamano y SHA-256. No usar una
    AAB para la descarga directa ni una compilacion que dependa de Metro.
 3. Crear una release de prueba en GitHub con un tag nuevo, por ejemplo
-   `android-v1.0.2-3`, y adjuntar la APK con nombre versionado. No sobrescribir
+   `android-v1.0.4-5`, y adjuntar la APK con nombre versionado. No sobrescribir
    el archivo anterior. Publicar primero el archivo y comprobar su descarga
    anonima e integridad antes de ofrecerlo en la web.
 4. Actualizar juntos `version`, `build`, `size_bytes`, `sha256` y la URL por
