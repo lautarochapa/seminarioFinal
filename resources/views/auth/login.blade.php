@@ -2,22 +2,20 @@
 
 @section('content')
 <link href="{{ asset('css/login.css') }}" rel="stylesheet"> 
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="623128501385-5iaciaqn2e29igc5j9vrim31i1mnj3oa.apps.googleusercontent.com">
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <form method="POST" action="{{ route('login') }}" data-api-endpoint="/api/v1/auth/login" data-api-method="POST" data-auth-session="true" data-redirect="{{ \App\Services\Auth\AuthRedirect::afterLogin() }}">
                 @csrf
                 <div class="alert" data-api-message style="display:none"></div>
-                <div cass="row" style="text-align:center;">
+                <div class="text-center">
                     <h1>Iniciar Sesion</h1>
                     <p>¿Nuevo en ComidaCocinaControl? 
                                     <a class="btn btn-link" style="color:rgba(4,172,133, 1);" href="{{ route('register') }}">
                                         {{ __('Registrate') }}
                                     </a></p>
                 </div>
-                <div class="row grid-divider">
+                <div class="row justify-content-center">
                     <div class="col-md-6 align-items-center align-self-center">
 
                         <div class="login-form form-group row">
@@ -85,21 +83,6 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 align-items-center align-self-center">
-
-                    <div class="form-group row" style="margin: 5% auto 5% auto">
-                            <div class="col-md-12" style="text-align:center;">
-                              <div class="g-signin2" data-onsuccess="onApiGoogleSignIn"></div>
-                              <a href="{{url('/redirect')}}" class="btn btn-link" style="color:rgba(4,172,133, 1); margin-top:12px;">Usar Google legacy</a>
-                            </div>
-                        </div>
-
-                        <div class="form-group row" style="margin: 5% auto 5% auto">
-                            <div class="col-md-12" style="text-align:center;">
-                              <a href="{{url('/redirect')}}" class="cta">Continuar con Facebook</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </form>
 

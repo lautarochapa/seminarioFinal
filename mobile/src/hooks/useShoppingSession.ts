@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ApiError } from '@/api/client';
 import { shoppingListsApi, shoppingSessionsApi, shoppingListItemsApi } from '@/api/endpoints';
 import type { NormalizedError } from '@/types/api';
-import type { ShoppingSession, ShoppingListItem, ShoppingListItemUpdateRequest, StockUpdateResult } from '@/types/shopping';
+import type { ShoppingSession, ShoppingListItem, ShoppingListItemUpdateRequest, StockUpdateResult, ShoppingSessionFinishResult } from '@/types/shopping';
 
 const FALLBACK: NormalizedError = { status: 0, code: 'UNKNOWN', message: 'Error desconocido.', fieldErrors: {}, traceId: '', isNetworkError: false, isTimeoutError: false };
 
@@ -29,7 +29,7 @@ export function useShoppingSession(groupId: number | null) {
     }
   }
 
-  async function finishSession(sessionId?: number, stockLocationId?: number | null): Promise<ShoppingSession | null> {
+  async function finishSession(sessionId?: number, stockLocationId?: number | null): Promise<ShoppingSessionFinishResult | null> {
     const id = sessionId ?? session?.id;
     if (!groupId || !id) return null;
     setFinishing(true);
@@ -38,10 +38,11 @@ export function useShoppingSession(groupId: number | null) {
       const res = await shoppingSessionsApi.finish(groupId, id, stockLocationId !== undefined ? { stock_location_id: stockLocationId } : undefined);
       setSession(res.data);
       setFinishSummary(res.summary);
-      return res.data;
+      return res;
     } catch (err: unknown) {
-      setError(err instanceof ApiError ? err.normalized : FALLBACK);
-      return null;
+      const failure = err instanceof ApiError ? err : new ApiError(FALLBACK);
+      setError(failure.normalized);
+      throw failure;
     } finally {
       setFinishing(false);
     }

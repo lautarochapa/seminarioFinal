@@ -99,7 +99,7 @@ export function ProfileScreen() {
       <View style={styles.avatarSection}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {data.name.charAt(0).toUpperCase()}{data.lastname.charAt(0).toUpperCase()}
+            {data.name.charAt(0).toUpperCase()}{data.lastname?.charAt(0).toUpperCase()}
           </Text>
         </View>
         <Text style={styles.name}>{data.name} {data.lastname}</Text>
@@ -127,7 +127,7 @@ export function ProfileScreen() {
         <Row label="Peso objetivo" value={data.target_weight_kg ? `${data.target_weight_kg} kg` : null} />
         <Row label="Actividad" value={data.activity_level ? ACTIVITY_LABELS[data.activity_level] ?? data.activity_level : null} />
         <Row label="Comidas por día" value={data.meals_per_day} />
-        <AppButton title="Editar datos" variant="outline" onPress={() => { setFeedback(null); setForm({ name: data.name, lastname: data.lastname, phone: data.phone ?? '', notes: data.notes ?? '' }); setEditing(true); }} fullWidth />
+        <AppButton title="Editar datos" variant="outline" onPress={() => { setFeedback(null); setForm({ name: data.name, lastname: data.lastname ?? '', phone: data.phone ?? '', notes: data.notes ?? '' }); setEditing(true); }} fullWidth />
         </> : null}
       </View>
 

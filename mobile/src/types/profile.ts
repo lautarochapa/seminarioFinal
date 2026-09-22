@@ -13,7 +13,7 @@ export interface ProfileObjective {
 export interface Profile {
   id: number;
   name: string;
-  lastname: string;
+  lastname: string | null;
   email: string;
   phone: string | null;
   birth_date: string | null;

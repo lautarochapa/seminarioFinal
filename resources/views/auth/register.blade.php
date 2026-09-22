@@ -2,31 +2,6 @@
 
 @section('content')
 
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="623128501385-5iaciaqn2e29igc5j9vrim31i1mnj3oa.apps.googleusercontent.com">
-
-
-
-<script>
-  function signOut() {
-    var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
-  }
-</script>
-
-<script>
-
-function onSignIn(googleUser) {
-  window.onApiGoogleSignIn(googleUser);
-}
-
-
-
-</script>
-
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -131,8 +106,6 @@ function onSignIn(googleUser) {
                         </div>
 
 
-                        <div class="g-signin2" data-onsuccess="onApiGoogleSignIn"></div>
-                        <a href="#" onclick="signOut();">Cerrar sesion de Google</a>
                     </form>
 
 

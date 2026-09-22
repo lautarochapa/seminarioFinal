@@ -109,36 +109,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (payload: LoginRequest) => {
     dispatch({ type: 'LOADING' });
-    const res = await authApi.login(payload);
-    await sessionStorage.save({
-      accessToken: res.token.access_token,
-      user: {
-        id: res.data.id,
-        name: res.data.name,
-        lastname: res.data.lastname,
-        email: res.data.email,
-        roles: res.data.roles,
-        permissions: res.data.permissions,
-      },
-    });
-    dispatch({ type: 'AUTHENTICATED', user: res.data });
+    try {
+      const res = await authApi.login(payload);
+      await sessionStorage.save({
+        accessToken: res.token.access_token,
+        user: {
+          id: res.data.id,
+          name: res.data.name,
+          lastname: res.data.lastname,
+          email: res.data.email,
+          roles: res.data.roles,
+          permissions: res.data.permissions,
+        },
+      });
+      dispatch({ type: 'AUTHENTICATED', user: res.data });
+    } catch (err) {
+      dispatch({ type: 'ERROR', message: err instanceof Error ? err.message : 'No se pudo iniciar sesion.' });
+      throw err;
+    }
   }, []);
 
   const register = useCallback(async (payload: RegisterRequest) => {
     dispatch({ type: 'LOADING' });
-    const res = await authApi.register(payload);
-    await sessionStorage.save({
-      accessToken: res.token.access_token,
-      user: {
-        id: res.data.id,
-        name: res.data.name,
-        lastname: res.data.lastname,
-        email: res.data.email,
-        roles: res.data.roles,
-        permissions: res.data.permissions,
-      },
-    });
-    dispatch({ type: 'AUTHENTICATED', user: res.data });
+    try {
+      const res = await authApi.register(payload);
+      await sessionStorage.save({
+        accessToken: res.token.access_token,
+        user: {
+          id: res.data.id,
+          name: res.data.name,
+          lastname: res.data.lastname,
+          email: res.data.email,
+          roles: res.data.roles,
+          permissions: res.data.permissions,
+        },
+      });
+      dispatch({ type: 'AUTHENTICATED', user: res.data });
+    } catch (err) {
+      dispatch({ type: 'ERROR', message: err instanceof Error ? err.message : 'No se pudo crear la cuenta.' });
+      throw err;
+    }
   }, []);
 
   const logout = useCallback(async () => {

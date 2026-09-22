@@ -289,35 +289,6 @@
         });
     }
 
-    window.CCAuth = {
-        loginWithGoogle: function (idToken) {
-            return window.CCApi.request('/api/v1/auth/google', {
-                method: 'POST',
-                body: { token: idToken },
-            }).then(function (payload) {
-                window.CCApi.setSession(payload);
-                var authForm = document.querySelector('[data-auth-session="true"]');
-                return redirectAfterAuth(authForm ? authForm.dataset.redirect : '/web');
-            });
-        },
-    };
-
-    window.onApiGoogleSignIn = function (googleUser) {
-        var authResponse = googleUser && googleUser.getAuthResponse ? googleUser.getAuthResponse() : {};
-        var token = authResponse.access_token || authResponse.id_token;
-        if (!token) {
-            window.alert('No se pudo obtener el token de Google.');
-            return;
-        }
-
-        window.CCAuth.loginWithGoogle(token).catch(function (error) {
-            var message = error && error.payload && error.payload.error
-                ? error.payload.error.message
-                : 'No se pudo iniciar sesion con Google.';
-            window.alert(message);
-        });
-    };
-
     document.addEventListener('DOMContentLoaded', function () {
         Array.prototype.forEach.call(document.querySelectorAll('form[data-api-endpoint]'), bindApiForm);
         Array.prototype.forEach.call(document.querySelectorAll('[data-api-logout]'), bindLogout);

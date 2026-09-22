@@ -38,7 +38,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { list, items, loading, error, refresh } = useShoppingListDetail(groupId, listId);
-  const { finishing, error: sessionError, finishSession, finishSummary } = useShoppingSession(groupId);
+  const { finishing, finishSession } = useShoppingSession(groupId);
 
   const [itemSync, setItemSync] = useState<Record<number, {
     saving?: boolean;
@@ -159,10 +159,12 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
         {
           text: 'Finalizar',
           onPress: async () => {
-            const result = await finishSession(sessionId);
-            if (result) {
+            try {
+              const response = await finishSession(sessionId);
+              if (!response) return;
+              const result = response.data;
               const budgetLine = await budgetImpactMessage();
-              const parts = [finishSummary ? finishSummaryMessage(finishSummary) : 'Sesión finalizada.'];
+              const parts = [response.summary ? finishSummaryMessage(response.summary) : 'Sesión finalizada.'];
               if (budgetLine) parts.push(budgetLine);
               Alert.alert(
                 'Compra finalizada',
@@ -178,8 +180,8 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
                   },
                 }],
               );
-            } else if (sessionError) {
-              Alert.alert('Error', sessionError.message ?? 'No se pudo finalizar.');
+            } catch (err) {
+              Alert.alert('Error', err instanceof ApiError ? err.normalized.message : 'No se pudo finalizar.');
             }
           },
         },
@@ -200,7 +202,7 @@ export function ShoppingSessionScreen({ listId, sessionId }: Props) {
 
   const pendingItems = items.filter((i) => i.status === 'pending');
   const purchasedItems = items.filter((i) => i.status === 'purchased');
-  const runningTotal = purchasedItems.reduce((acc, i) => acc + (i.actual_price ?? i.estimated_price ?? 0), 0);
+  const runningTotal = purchasedItems.reduce((acc, i) => acc + (i.actual_price ?? i.estimated_price ?? 0) * (i.quantity ?? 0), 0);
 
   return (
     <View style={styles.fill}>

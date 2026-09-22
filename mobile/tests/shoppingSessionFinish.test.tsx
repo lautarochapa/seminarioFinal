@@ -73,7 +73,12 @@ jest.mock('../src/hooks/useShoppingSession', () => ({
   useShoppingSession: () => ({
     finishing: false,
     error: mockSessionError,
-    finishSession: mockFinishSession,
+    finishSession: async (...args: unknown[]) => {
+      const data = await mockFinishSession(...args);
+      const { ApiError } = jest.requireActual<typeof import('../src/api/client')>('../src/api/client');
+      if (!data && mockSessionError) throw new ApiError(mockSessionError as InstanceType<typeof ApiError>['normalized']);
+      return data ? { data, summary: mockFinishSummary } : null;
+    },
     finishSummary: mockFinishSummary,
   }),
 }));
