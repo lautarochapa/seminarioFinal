@@ -77,17 +77,14 @@
     }
 
     function setLoading(form, loading) {
-        var submit = form.querySelector('[type="submit"]');
-        if (!submit) {
-            return;
-        }
-
-        if (!submit.dataset.originalText) {
-            submit.dataset.originalText = submit.textContent;
-        }
-
-        submit.disabled = loading;
-        submit.textContent = loading ? 'Procesando...' : submit.dataset.originalText;
+        form.setAttribute('aria-busy', loading ? 'true' : 'false');
+        Array.prototype.forEach.call(form.querySelectorAll('[type="submit"]'), function (submit) {
+            if (!submit.dataset.originalText) {
+                submit.dataset.originalText = submit.textContent;
+            }
+            submit.disabled = loading;
+            submit.textContent = loading ? 'Procesando...' : submit.dataset.originalText;
+        });
     }
 
     function establishWebSession() {
@@ -146,34 +143,66 @@
     }
 
     function bindApiForm(form) {
+        if (form.dataset.apiBound === 'true') {
+            return;
+        }
+        form.dataset.apiBound = 'true';
+        var pending = false;
+        var authenticated = false;
+        var navigating = false;
+
         form.addEventListener('submit', function (event) {
             event.preventDefault();
+            if (pending || navigating) {
+                return;
+            }
+            pending = true;
             clearFeedback(form);
             setLoading(form, true);
 
-            window.CCApi.request(form.dataset.apiEndpoint, {
-                method: form.dataset.apiMethod || 'POST',
-                body: formToObject(form),
-            }).then(function (payload) {
-                if (form.dataset.authSession === 'true') {
-                    window.CCApi.setSession(payload);
+            Promise.resolve().then(function () {
+                // A session lookup failure must not submit a successful registration again.
+                if (authenticated) {
+                    return;
                 }
-
+                return window.CCApi.request(form.dataset.apiEndpoint, {
+                    method: form.dataset.apiMethod || 'POST',
+                    body: formToObject(form),
+                }).then(function (payload) {
+                    if (form.dataset.authSession === 'true') {
+                        window.CCApi.setSession(payload);
+                        authenticated = true;
+                    }
+                });
+            }).then(function () {
                 if (form.dataset.successMessage) {
                     showMessage(form, 'success', form.dataset.successMessage);
                 }
 
                 if (form.dataset.redirect && form.dataset.authSession === 'true') {
-                    return redirectAfterAuth(form.dataset.redirect);
+                    return redirectAfterAuth(form.dataset.redirect).then(function () {
+                        navigating = true;
+                    });
                 }
 
                 if (form.dataset.redirect) {
                     window.location.href = form.dataset.redirect;
+                    navigating = true;
                 }
             }).catch(function (error) {
-                showErrors(form, error);
+                if (authenticated) {
+                    showMessage(form, 'warning', 'Tu acceso ya fue confirmado. Pulsa Continuar para volver a intentar abrir tu cuenta.');
+                    Array.prototype.forEach.call(form.querySelectorAll('[type="submit"]'), function (submit) {
+                        submit.dataset.originalText = 'Continuar';
+                    });
+                } else {
+                    showErrors(form, error);
+                }
             }).finally(function () {
-                setLoading(form, false);
+                if (!navigating) {
+                    pending = false;
+                    setLoading(form, false);
+                }
             });
         });
     }
