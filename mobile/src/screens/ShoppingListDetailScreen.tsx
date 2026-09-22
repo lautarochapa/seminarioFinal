@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
@@ -46,6 +47,7 @@ export function shoppingItemCanAutoAssociate(item: ShoppingListItem): boolean {
 
 export function ShoppingListDetailScreen({ listId }: Props) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { list, items, loading, error, refresh } = useShoppingListDetail(groupId, listId);
@@ -502,7 +504,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
 
       {/* Add item modal */}
       <Modal visible={addModalVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setAddModalVisible(false)}>
-        <View style={styles.modal}>
+        <View style={[styles.modal, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Agregar artículo</Text>
             <Pressable onPress={() => setAddModalVisible(false)} accessibilityLabel="Cerrar" style={styles.modalClose}>
@@ -604,7 +606,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
 
       {/* Complete purchase / add-to-stock review modal */}
       <Modal visible={completeModalVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setCompleteModalVisible(false)}>
-        <View style={styles.modal}>
+        <View style={[styles.modal, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Finalizar compra</Text>
             <Pressable onPress={() => setCompleteModalVisible(false)} accessibilityLabel="Cerrar" style={styles.modalClose}>

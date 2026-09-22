@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AppHeader } from '@/components/AppHeader';
 import { EmptyState } from '@/components/EmptyState';
@@ -20,6 +20,13 @@ export function ShoppingListsScreen() {
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { data, loading, loadingMore, error, refresh, loadMore } = useShoppingLists(groupId);
+  const hasFocused = useRef(false);
+
+  useFocusEffect(useCallback(() => {
+    // The hook loads on mount; returning from a purchase must reload its status.
+    if (hasFocused.current) refresh();
+    hasFocused.current = true;
+  }, [refresh]));
 
   const handlePress = useCallback((list: ShoppingList) => {
     router.push({ pathname: '/(app)/shopping-lists/[id]' as never, params: { id: String(list.id) } });
