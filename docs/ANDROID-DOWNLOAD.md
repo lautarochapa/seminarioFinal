@@ -7,9 +7,9 @@ en Expo. El binario no se incluye en Git ni en la imagen Docker de Render.
 ## Version publicada
 
 Release `android-v1.0.4-5` publicada y descargada anonimamente el 22/09/2026.
-La configuracion de la landing apunta a este archivo; al desplegar, verificar
-el destino de https://cocinacomidacontrol.com.ar/descargas/android (302,
-sin cache). [Registro de release](ANDROID-1.0.4.md).
+Render verificado el 22/09/2026 a las 10:29 ART: la landing anuncia 1.0.4 y
+https://cocinacomidacontrol.com.ar/descargas/android redirige al archivo correcto
+con 302 y `Cache-Control: no-store`. [Registro de release](ANDROID-1.0.4.md).
 
 - Version: 1.0.4, compilacion 5, version de prueba.
 - Archivo: `CocinaComidaControl-1.0.4-5.apk`.

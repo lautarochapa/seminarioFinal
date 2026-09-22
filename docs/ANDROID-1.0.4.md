@@ -53,6 +53,15 @@ pruebas automatizadas y la firma no sustituyen la aceptacion fisica.
 - Smoke local de landing/descarga y navbar responsive aprobados.
 - La version anterior se conserva como respaldo, sin sobrescribir su APK.
 
+## Publicacion web
+
+Desplegada desde `35155c8a3bcceb5db8bcd5c2d9f101d6e23c8061` y comprobada el
+22/09/2026 a las 10:29 ART. Salud, landing, login, registro y JavaScript de
+autenticacion responden 200. La landing anuncia `Descargar APK 1.0.4`.
+`/descargas/android` devuelve 302 al archivo versionado de GitHub, con
+`Cache-Control: no-store`. Formularios sin accesos sociales ni usuarios demo.
+[Descarga estable](https://cocinacomidacontrol.com.ar/descargas/android).
+
 ## Aceptacion fisica pendiente
 
 Instalar como actualizacion sobre 1.0.3, sin desinstalar ni borrar datos:
