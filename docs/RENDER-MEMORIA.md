@@ -60,13 +60,65 @@ No se contrato ni amplio el plan.
 Resultado local 21/09: prueba de runtime aprobada; regresion enfocada de login,
 registro, inicio, presupuesto y rutas web: 65 tests / 223 assertions, 62 MB
 con limite PHP 128M. Es memoria de la suite CLI local, no medicion de Render.
-Docker/WSL no estan instalados en esta PC: prueba Apache reservada al build Linux.
+Docker/WSL no estan instalados en esta PC: la prueba Apache se ejecuto en Render.
 
-## Seguimiento
+## Despliegue y aceptacion
 
-Pendiente: publicar, confirmar build y health checks, registrar las muestras
-del nuevo runtime y ejecutar el recorrido online. No marcar cerrado hasta esa
-verificacion. La observacion posterior al ensayo sigue siendo necesaria.
+- Autorizado por Lautaro: probar y publicar la mitigacion sin cambiar el plan.
+- Commit `5cdbd108b757baab3e39bf873991a47130814a64`, deploy
+  `dep-daouaan40ujc73bqfu80`. Build iniciado 23:17:14 ART y Live 23:18:24.
+- Log de build 23:17:38: `Apache runtime smoke: 16 HTTP checks passed; PHP limit
+  and Authorization verified.` Configuracion de inicio confirmada en logs:
+  prefork, max_workers=2, php_memory_limit=128M.
+- Dominio propio y onrender.com: 14 comprobaciones publicas aprobadas. Healthz,
+  landing, login y JS devuelven 200; las tres rutas ocultas de prueba dan 404
+  sin cabeceras PHP ni cookies de sesion. Respuestas bloqueadas: 208-306 ms.
+- Ocho solicitudes autenticadas aprobadas (23:22:23-23:22:47): login, perfil,
+  inicio, grupos, stock, resumen de stock, planes y presupuesto. Solo lecturas
+  despues de autenticar; sin cambios en stock/gastos. Presupuesto QA conservado.
+  Latencias individuales 2,0-5,5 s: aceptacion funcional, no objetivo de rendimiento.
+- Apache informa `AH00161` al alcanzar dos workers durante un acceso normal.
+  Esto indica uso de la cola, no OOM: las peticiones verificadas terminaron en
+  200. No subir la concurrencia a ciegas para eliminar ese aviso.
+
+Observacion inicial: 23:18:17 a 23:28:17 ART del 21/09 (10 minutos), misma
+instancia `h6j8g`, sin nuevos eventos de OOM/reinicio en la revision. Healthz
+seguia en 200/ok a las 23:28:01. Maximo entre las muestras: 41.996.288 bytes
+(40,05 MiB, 7,82% de 512 MiB); working set maximo 41.070.592 bytes (39,17 MiB).
+No es el pico absoluto: el muestreo de un minuto puede omitir picos breves.
+No se dispone de un valor numerico anterior comparable, salvo el evento >512 MB.
+
+| Hora ART | Uso cgroup (bytes) | Working set (bytes) |
+| --- | ---: | ---: |
+| 23:18:17, antes de Apache | 2572288 | 2441216 |
+| 23:19:17 | 39821312 | 39538688 |
+| 23:20:17 | 39968768 | 39616512 |
+| 23:21:17 | 40153088 | 39739392 |
+| 23:22:17 | 40259584 | 39784448 |
+| 23:23:17 | 41295872 | 40681472 |
+| 23:24:17 | 41398272 | 40722432 |
+| 23:25:17 | 41242624 | 40505344 |
+| 23:26:17 | 41639936 | 40845312 |
+| 23:27:17 | 41848832 | 40992768 |
+| 23:28:17 | 41996288 | 41070592 |
+
+Estado: mitigacion y verificacion inicial completadas; seguimiento durante el
+ensayo pendiente. No implica estabilidad indefinida ni proteccion completa
+frente a denegacion de servicio. No se ejecuto una prueba de saturacion online.
+
+## Operacion y limites
+
+Antes del ensayo, revisar Events y buscar `runtime-memory` en Logs. Si aparece
+otro OOM, conservar la hora UTC, instancia y solicitudes anteriores; comparar
+con el limite del cgroup y no aumentar `memory_limit` como primer recurso.
+Las muestras son puntuales cada 60 segundos: pueden omitir picos mas breves.
+El primer valor se imprime antes de iniciar Apache y no es el consumo estable.
+No se creo un monitor externo ni una tarea programada de seguimiento.
+
+Si hubiera una regresion atribuible a este cambio, el deploy anterior es
+`dep-daoso4m0tbcc73fhgpg0` (`3fc737ba`). Un rollback tambien retira la proteccion
+contra escaneos; no requiere cambios ni rollback en Neon. No restaurar claves
+ni variables antiguas de correo para revertir esta mitigacion.
 
 Fuentes: [eventos del servicio](https://dashboard.render.com/web/srv-d9a197beo5us7399su5g/events),
 [logs](https://dashboard.render.com/web/srv-d9a197beo5us7399su5g/logs),
