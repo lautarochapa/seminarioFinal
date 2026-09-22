@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -39,7 +39,6 @@ interface Props {
 }
 
 const DEBOUNCE_MS = 400;
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function shoppingItemCanAutoAssociate(item: ShoppingListItem): boolean {
   return !!item.product?.id || !!item.ingredient?.id;
@@ -63,7 +62,8 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   const [startingSession, setStartingSession] = useState(false);
   const [startingPurchase, setStartingPurchase] = useState(false);
   const [confirmingList, setConfirmingList] = useState(false);
-  const { data: products, loading: loadingProducts, setFilters: setProductFilters } = useProducts();
+  const { data: products, loading: loadingProducts, setFilters: setProductFilters } = useProducts({ family_group_id: groupId || undefined });
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [completingPurchase, setCompletingPurchase] = useState(false);
@@ -71,11 +71,15 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   const [stockSelections, setStockSelections] = useState<Record<number, boolean>>({});
 
   const handleProductSearch = useCallback((text: string) => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      setProductFilters({ search: text || undefined });
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setProductFilters({ search: text || undefined, family_group_id: groupId || undefined });
     }, DEBOUNCE_MS);
-  }, [setProductFilters]);
+  }, [groupId, setProductFilters]);
+
+  useEffect(() => () => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+  }, [groupId]);
 
   const handleSelectProduct = useCallback((p: ProductSummary) => {
     setSelectedProduct(p);

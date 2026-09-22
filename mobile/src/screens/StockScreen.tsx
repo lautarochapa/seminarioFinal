@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useStock } from '@/hooks/useStock';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { FamilyGroupSelector } from '@/components/FamilyGroupSelector';
@@ -72,6 +72,13 @@ export function StockScreen() {
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { data, meta, loading, loadingMore, error, refresh, loadMore } = useStock(groupId);
+  const hasFocused = useRef(false);
+
+  useFocusEffect(useCallback(() => {
+    // useStock loads on mount; returning from a form must refresh the saved data.
+    if (hasFocused.current) refresh();
+    hasFocused.current = true;
+  }, [refresh]));
 
   const handleEndReached = useCallback(() => {
     loadMore();

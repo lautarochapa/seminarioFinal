@@ -7,14 +7,25 @@ import { FamilyGroupProvider, useFamilyGroupContext } from '@/auth/FamilyGroupCo
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { OfflineBanner } from '@/components/OfflineBanner';
-import { onboardingApi } from '@/api/endpoints';
+import { familyGroupsApi, onboardingApi } from '@/api/endpoints';
 
 function NavigationGuard() {
-  const { state } = useAuth();
-  const { clearGroup } = useFamilyGroupContext();
+  const { state, user } = useAuth();
+  const { clearGroup, restoreGroup } = useFamilyGroupContext();
   const router = useRouter();
   const segments = useSegments() as string[];
   const onboardingChecked = useRef(false);
+
+  useEffect(() => {
+    if (state !== 'authenticated') return;
+    let current = true;
+    familyGroupsApi.list()
+      .then((response) => {
+        if (current) return restoreGroup(response.data, () => current);
+      })
+      .catch(() => undefined);
+    return () => { current = false; };
+  }, [state, user?.id, restoreGroup]);
 
   useEffect(() => {
     if (state === 'initializing') return;

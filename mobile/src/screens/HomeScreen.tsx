@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@/auth/AuthContext';
@@ -25,24 +25,29 @@ export function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const summaryRequest = useRef(0);
 
   const load = useCallback(async () => {
+    const request = ++summaryRequest.current;
     setLoading(true);
     setError(null);
     try {
       const response = await homeApi.summary(selectedGroupId);
-      setSummary(response.data);
+      if (request === summaryRequest.current) setSummary(response.data);
     } catch (err) {
-      setError(err instanceof ApiError ? err : null);
+      if (request === summaryRequest.current) setError(err instanceof ApiError ? err : null);
     } finally {
-      setLoading(false);
+      if (request === summaryRequest.current) setLoading(false);
     }
   }, [selectedGroupId]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     const timer = setTimeout(() => { void load(); }, 0);
-    return () => clearTimeout(timer);
-  }, [load]);
+    return () => {
+      clearTimeout(timer);
+      summaryRequest.current += 1;
+    };
+  }, [load]));
 
   const displayName = user ? (user.name || user.lastname ? `${user.name} ${user.lastname}`.trim() : user.email) : '';
   const initials = user ? `${(user.name || '?').charAt(0)}${(user.lastname || '').charAt(0)}`.toUpperCase() : '?';
