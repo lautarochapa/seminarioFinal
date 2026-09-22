@@ -6,12 +6,34 @@ en Expo. El binario no se incluye en Git ni en la imagen Docker de Render.
 
 ## Version publicada
 
-- Version: 1.0.1, compilacion 2, version de prueba.
-- Archivo: `CocinaComidaControl-1.0.1-2.apk`.
-- Tamano: 129071115 bytes.
-- SHA-256: `eaf90f9e5cdfa16568af49af8a7bc394104509a464f81fa45a433f1719aab5ef`.
-- EAS Build: `ebef7f28-428f-4417-8346-d126a02911da` (2026-09-16).
-- No incluye los ajustes moviles hechos durante las pruebas posteriores.
+Comprobado el 22/09/2026 a las 00:19 ART:
+https://cocinacomidacontrol.com.ar/descargas/android redirige con 302 a la
+release `android-v1.0.3-4`, sin cache. [Registro de release](ANDROID-1.0.3.md).
+
+- Version: 1.0.3, compilacion 4, version de prueba.
+- Archivo: `CocinaComidaControl-1.0.3-4.apk`.
+- Tamano: 129076727 bytes.
+- SHA-256: `3553c4fcdb31f1d7c192910bff5411b066715245a7066f8fc171730960ab136a`.
+- EAS Build: `ddb51881-1120-495b-ae8f-52b0c132d8c4`.
+- Incluye AND-01/08. Firma valida e igual a 1.0.1, mismo paquete, no debug.
+- Descarga anonima comprobada; prueba de actualizacion en Samsung pendiente.
+- La APK 1.0.1 (2) se conserva en su release anterior como respaldo.
+
+## Antecedente: build 1.0.2 (no contiene los ultimos arreglos)
+
+El repaso del 21/09 corrigio AND-05 a AND-08 localmente. El build siguiente es
+anterior y no los incluye. Recompilar desde el codigo corregido; no confundir
+la configuracion 1.0.2 con un artefacto nuevo validado. Ver
+[informe de app](entrega-final/evidencias-android/2026-09-21/README.md).
+
+- Version 1.0.2, compilacion 3, fuente `bd08f21b`.
+- EAS Build `144cf45c-0c5a-4b86-9e4f-73164a6178c3`.
+- Incluye correcciones de onboarding, rotulos, formulario de grupo y estados
+  de envio/reenvio de invitaciones. Export Android y TypeScript aprobados.
+- Este build no se eligio para la entrega; fue reemplazado por 1.0.3 (4).
+  Su historial no acredita aceptacion fisica ni publicacion de la version 1.0.2.
+- API HTTPS en onrender.com, usuarios demo ocultos y mismo applicationId.
+  El dominio propio no modifica automaticamente el backend de una APK.
 
 ## Publicar una nueva version
 
