@@ -30,6 +30,20 @@ Verificar Render Live sobre el commit de metadatos, salud HTTP 200,
 `/descargas/android` con 302 a la APK publicada. La URL estable es
 `https://cocinacomidacontrol.com.ar/descargas/android`.
 
+### Resultado online del 22/09/2026, 21:15 Argentina
+
+- Render Live: `dep-daphimnf3r2c73em6flg`, commit
+  `034f12d460dccc17a1acd5a29bb0f0c77dd257bc`.
+- Tras un intento automatico sin avance visible en clonado, se cancelo ese
+  intento y se completo un despliegue con Clear build cache & deploy. No se
+  cambiaron el plan, los secretos ni la base de datos.
+- Salud, landing, login y registro respondieron HTTP 200; la landing muestra
+  Descargar APK 1.0.6 y la descarga estable responde 302 al archivo correcto.
+- API publica comprobada en dominio propio y onrender.com: version 1.0.6,
+  build 7, pagina de descarga HTTPS, no-store y sin cookies de sesion.
+- Firma, integridad y descarga anonima aprobadas. La aceptacion fisica sobre
+  esta version sigue pendiente; no se instalo en el celular durante esta release.
+
 ## Verificacion previa
 
 - Fuente: `13ff394f76338ca45999d5a141dbdfefb4361005`.
