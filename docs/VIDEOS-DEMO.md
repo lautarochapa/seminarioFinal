@@ -40,5 +40,8 @@ la configuracion; no sobrescribir la misma URL con otro contenido.
   desborde horizontal. Hubo un cierre de la pestana del navegador integrado
   durante la prueba del control nativo; la revision responsive continuo en
   otra pestana. No se atribuye ese cierre al servidor sin diagnostico.
-- Antes de cerrar publicacion: verificar HTTP 200 en landing y poster,
-  `video/mp4` y respuesta 206 a una peticion Range del MP4 en produccion.
+- Publicacion verificada el 2026-09-23: Render Live en commit `494baf9c`.
+  Landing y poster HTTP 200; MP4 `video/mp4`, 2.343.672 bytes, SHA-256
+  identico al archivo revisado. Range `bytes=0-31` devuelve HTTP 206 y
+  `Content-Range: bytes 0-31/2343672`. Reproduccion probada en Chrome.
+  URL publica: https://cocinacomidacontrol.com.ar/#demos
