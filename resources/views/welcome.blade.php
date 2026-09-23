@@ -330,7 +330,11 @@
                 <p>Organizá el stock, planificá las comidas y cuidá el presupuesto familiar desde una sola plataforma.</p>
                 <div class="home-actions">
                     <a class="home-button home-button-primary" href="{{ route('login') }}">Ingresar</a>
-                    <a class="home-button home-button-light" href="#producto">Descubrir cómo funciona</a>
+                    @if($demoVideos)
+                        <a class="home-button home-button-light" href="#demos">Ver demo</a>
+                    @else
+                        <a class="home-button home-button-light" href="#producto">Descubrir cómo funciona</a>
+                    @endif
                     <a class="home-button home-button-light" href="#descarga-app">App para Android</a>
                 </div>
             </div>
@@ -370,7 +374,7 @@
         <section id="demos" class="home-section home-demos" aria-labelledby="demos-title">
             <div class="home-container">
                 <header class="home-heading">
-                    <div class="home-eyebrow">CocinaComidaControl en acción</div>
+                    <div class="home-eyebrow">Demo</div>
                     <h2 id="demos-title">Mirá cómo funciona.</h2>
                     <p>De organizar tu hogar a registrar lo que comprás y cocinás: un recorrido con datos de ejemplo.</p>
                 </header>

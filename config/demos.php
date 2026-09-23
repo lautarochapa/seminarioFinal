@@ -4,10 +4,10 @@ return [
     'videos' => [
         'web' => [
             'title' => 'Demo web',
-            'file' => 'videos/demo-web-20260923.mp4',
-            'poster' => 'images/landing/demo-web-20260923.jpg',
-            'duration' => '2:39',
-            'description' => 'Capturas reales editadas por etapas, con datos de ejemplo y sin audio.',
+            'file' => 'videos/demo-web-guiada-20260923.mp4',
+            'poster' => 'images/landing/demo-web-guiada-20260923.jpg',
+            'duration' => '2:09',
+            'description' => 'Del registro a la compra y el consumo de alimentos: un recorrido narrado con capturas reales y datos de ejemplo.',
             'steps' => [
                 'Registro de una cuenta y creación del hogar.',
                 'Carga de alimentos, receta propia y planificación del almuerzo.',
