@@ -38,6 +38,17 @@ La landing y la API usan `config/mobile.php` como fuente comun. La ruta estable
 ni se cambia la firma. La API `/api/v1/mobile/android/version` anuncia build 9
 sin requerir sesion, consultar la base de datos ni cachear la respuesta.
 
+## Publicacion verificada
+
+- Commit de descarga: `fe0721e84af10b1e72a2728cde42b98a90333882`.
+- Render: `dep-daq4tkbl550s73b7nb6g`, Deploy succeeded / Live.
+- Dominio propio y onrender.com: salud, landing, login y registro responden HTTP 200.
+- Landing: Descargar APK 1.0.8; API: version 1.0.8, build 9.
+- Descarga estable: HTTP 302 al archivo 1.0.8, sin cache permanente.
+- Descarga anonima completa verificada: 128749779 bytes y SHA-256 coincidente.
+- La seccion Demo narrada se conserva. No se cambiaron planes, secretos ni datos.
+- Evidencia operativa local: `.runtime/release-1.0.8-online.json`.
+
 ## Instalacion y comprobacion fisica
 
 Instalar como actualizacion sobre la app existente, sin desinstalar. La validacion
