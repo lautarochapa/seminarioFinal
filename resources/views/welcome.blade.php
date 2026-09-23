@@ -390,6 +390,9 @@
                             <video controls playsinline preload="none" aria-labelledby="demo-{{ $platform }}-title" aria-describedby="demo-{{ $platform }}-description"
                                 @if(!empty($demo['poster']) && is_file(public_path($demo['poster']))) poster="{{ asset($demo['poster']) }}" @endif>
                                 <source src="{{ asset($demo['file']) }}" type="video/mp4">
+                                @if(!empty($demo['subtitles']) && is_file(public_path($demo['subtitles'])))
+                                    <track kind="captions" src="{{ asset($demo['subtitles']) }}" srclang="es" label="Español">
+                                @endif
                                 <a href="{{ asset($demo['file']) }}">Abrir {{ $demo['title'] }}</a>
                             </video>
                             <p id="demo-{{ $platform }}-description" class="home-demo-description">{{ $demo['description'] }}</p>

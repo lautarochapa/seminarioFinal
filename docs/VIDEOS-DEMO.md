@@ -19,11 +19,21 @@ archivo exista en `public/`; una demo pendiente no genera enlaces rotos.
 
 ## Android
 
-Todavia no grabado. Su entrada tiene `file`, `poster` y `duration` en null.
-Para incorporarlo: grabar y revisar el MP4 real del telefono; comprobar que
-no muestre notificaciones privadas ni credenciales; agregar video y poster
-versionados a `public/` y completar esa entrada, incluido el resumen textual.
-No reutilizar el video web ni la simulacion de la landing como prueba Android.
+- Archivo: `public/videos/demo-android-guiada-20260923.mp4`, 3.557.074 bytes.
+- Poster: `public/images/landing/demo-android-guiada-20260923.jpg`.
+- Subtitulos: `public/videos/demo-android-guiada-20260923.vtt`, espanol.
+- H.264, 1920x1080, 25 fps, 1:32 (92 segundos), narracion AAC.
+- Grabaciones reales de un Samsung S23 Ultra con APK 1.0.8 (9), editadas
+  en 19 escenas y con 15 resaltados suaves sincronizados.
+- Voz original del autor; sin acelerar ni recortar palabras.
+- SHA-256: `432e857f58e6660d8857467774d9c7c5d97c2c37151005b0f04600b13d2959c5`.
+- Cuenta ficticia Martin Lopez, Hogar Lopez. Sin contrasenas, tokens,
+  notificaciones privadas ni barras del sistema.
+- Recorrido: inicio, stock, receta, plan de cuatro porciones, lista,
+  compra de 400 g de arroz por ARS 1.200, stock final de 600 g y presupuesto
+  con ARS 2.400 gastados y ARS 7.600 disponibles.
+- El presupuesto se abre por un enlace interno existente de la app; el
+  montaje no muestra ni afirma que se acceda desde un boton de menu.
 
 ## Publicacion y rendimiento
 
@@ -31,14 +41,15 @@ Los MP4 son archivos estaticos servidos por Apache, sin pasar por un
 controlador PHP. No se cargan completos al abrir la landing (`preload=none`),
 no tienen autoplay y no se incorpora un reproductor de terceros.
 Se conservan controles nativos, pantalla completa, descarga y lectura alternativa.
+Android incluye subtitulos opcionales en espanol mediante una pista WebVTT local.
 Para reemplazar una version, usar un nombre de archivo nuevo y actualizar
 la configuracion; no sobrescribir la misma URL con otro contenido.
 
 ## Verificacion
 
-- `php tests/Smoke/landing-demos.php`: integridad del MP4 aprobado, duracion,
+- `php tests/Smoke/landing-demos.php`: integridad de ambos MP4 aprobados, duracion,
   poster, accesos desde la landing, controles sin autoplay/precarga, descarga,
-  texto y estados con 0/1/2 demos.
+  texto, subtitulos y estados con 0/1/2 demos.
 - `php tests/Smoke/landing-download.php`: descarga APK y capturas preservadas.
 - El montaje guiado fue decodificado completo sin errores: 3.229 cuadros,
   audio identico al montaje narrado aprobado y originales conservados.
