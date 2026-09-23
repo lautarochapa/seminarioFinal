@@ -16,6 +16,7 @@ class ShoppingListResource extends JsonResource
             'source_type' => $this->source_type,
             'status' => $this->status,
             'status_label' => $this->statusLabel(),
+            'stock_repair_requires_review' => $this->stockRepairRequiresReview(),
             'estimated_total' => $this->estimated_total,
             'optimization_mode' => $this->optimization_mode,
             'items' => ShoppingListItemResource::collection($this->whenLoaded('items')),

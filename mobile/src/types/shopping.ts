@@ -15,6 +15,7 @@ export interface ShoppingList {
   source_type: 'manual' | 'meal_plan' | 'history' | 'recipe';
   status: ShoppingListStatus;
   status_label?: string;
+  stock_repair_requires_review?: boolean;
   estimated_total: number | null;
   optimization_mode: string | null;
   items?: ShoppingListItem[];

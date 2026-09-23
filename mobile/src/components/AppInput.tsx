@@ -32,6 +32,7 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
           placeholderTextColor={COLORS.textHint}
           accessibilityLabel={label}
           accessibilityHint={error ?? hint}
+          {...rest}
           onFocus={(e) => {
             setFocused(true);
             rest.onFocus?.(e);
@@ -40,7 +41,6 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
             setFocused(false);
             rest.onBlur?.(e);
           }}
-          {...rest}
         />
         {error ? <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text> : null}
         {!error && hint ? <Text style={styles.hint}>{hint}</Text> : null}

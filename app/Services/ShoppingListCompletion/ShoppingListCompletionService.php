@@ -255,7 +255,17 @@ class ShoppingListCompletionService
         $requested = $this->indexByShoppingListItemId($data['items'] ?? []);
 
         return DB::transaction(function () use ($user, $groupId, $list, $requested, $ip, $ua) {
-            ShoppingList::where('id', $list->id)->lockForUpdate()->first();
+            $list = ShoppingList::where('id', $list->id)->lockForUpdate()->firstOrFail();
+            if ($list->status !== ShoppingList::STATUS_COMPLETED) {
+                throw new PurchaseException('SHOPPING_LIST_NOT_COMPLETED', 'La reparación solo aplica a listas finalizadas.', 409);
+            }
+            if ($list->stockRepairRequiresReview()) {
+                throw new PurchaseException(
+                    'STOCK_REPAIR_REQUIRES_REVIEW',
+                    'Esta compra ya registra ingresos a stock. Requiere revisar sus vínculos antes de agregar artículos; no se modificó Mi cocina.',
+                    409
+                );
+            }
             $purchase = Purchase::where('shopping_list_id', $list->id)->lockForUpdate()->first();
             if (!$purchase) {
                 $purchase = Purchase::create(['family_group_id' => $groupId, 'shopping_list_id' => $list->id, 'user_id' => $user->id, 'purchase_date' => now()->toDateString(), 'estimated_total' => 0, 'actual_total' => 0, 'status' => 'confirmed']);

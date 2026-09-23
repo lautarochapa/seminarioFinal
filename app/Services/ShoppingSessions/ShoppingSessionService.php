@@ -262,7 +262,7 @@ class ShoppingSessionService
                     'created_by' => $user->id,
                 ]);
 
-                PurchaseItem::create([
+                $purchaseItem = PurchaseItem::create([
                     'purchase_id' => $purchase->id,
                     'product_id' => $productId,
                     'quantity' => $quantity,
@@ -271,6 +271,9 @@ class ShoppingSessionService
                     'total_price' => $price !== null ? (float) $price * $quantity : null,
                     'created_stock_item_id' => $stock->id,
                 ]);
+                $item->purchase_item_id = $purchaseItem->id;
+                $item->stock_processed_at = now();
+                $item->save();
             }
 
             $purchase->estimated_total = $purchasedTotal;

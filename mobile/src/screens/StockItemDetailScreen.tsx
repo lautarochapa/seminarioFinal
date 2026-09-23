@@ -16,7 +16,7 @@ import { ProductPhoto } from '@/components/ProductPhoto';
 import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { stockApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { goBackOrHome } from '@/utils/navigation';
+import { useStockBackNavigation } from '@/hooks/useStockBackNavigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { useStockItem } from '@/hooks/useStockItem';
 import { formatDate } from '@/utils/retail';
@@ -38,6 +38,7 @@ function DetailRow({ label, value }: { label: string; value: string | null | und
 
 export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProps) {
   const router = useRouter();
+  const goBackToStock = useStockBackNavigation();
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { data: item, loading, error, refresh } = useStockItem(groupId, stockItemId);
@@ -47,7 +48,7 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
   if (error && !item) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Detalle de stock" showBack onBack={goBackOrHome} />
+        <AppHeader title="Detalle de stock" showBack onBack={goBackToStock} />
         <ErrorState
           message={friendlyMessage(error)}
           traceId={error.traceId}
@@ -60,7 +61,7 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
   if (!item) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Detalle de stock" showBack onBack={goBackOrHome} />
+        <AppHeader title="Detalle de stock" showBack onBack={goBackToStock} />
         <ErrorState message="Item no encontrado." onRetry={refresh} type="generic" />
       </View>
     );
@@ -107,7 +108,7 @@ export function StockItemDetailScreen({ stockItemId }: StockItemDetailScreenProp
         title={item.product?.name ?? `Item #${item.id}`}
         subtitle={item.location?.name}
         showBack
-        onBack={goBackOrHome}
+        onBack={goBackToStock}
       />
       <ScrollView
         style={styles.scroll}

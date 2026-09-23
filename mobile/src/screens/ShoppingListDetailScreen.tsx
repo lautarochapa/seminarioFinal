@@ -219,7 +219,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   }
 
   const purchasedItems = items.filter((i) => i.status === 'purchased');
-  const repairableItems = purchasedItems.filter((item) => !item.purchase_item_id && (!!item.ingredient || !item.stock_processed_at));
+  const repairableItems = list?.stock_repair_requires_review ? [] : purchasedItems.filter((item) => !item.purchase_item_id && (!!item.ingredient || !item.stock_processed_at));
 
   function canAutoAssociate(item: ShoppingListItem): boolean {
     return shoppingItemCanAutoAssociate(item);
@@ -285,7 +285,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   }
 
   async function handleRepairPending() {
-    if (!groupId) return;
+    if (!groupId || completingPurchase || list?.stock_repair_requires_review || repairableItems.length === 0) return;
     setCompletingPurchase(true); setCompleteError(null);
     try {
       const res = await shoppingListsApi.processPendingStock(groupId, listId, { items: repairableItems.map((item) => ({ shopping_list_item_id: item.id, add_to_stock: true })) });
@@ -360,6 +360,11 @@ export function ShoppingListDetailScreen({ listId }: Props) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {list.status === 'completed' && list.stock_repair_requires_review ? (
+          <View style={styles.summaryCard}>
+            <Text style={styles.itemMeta}>Esta compra ya registra ingresos a Mi cocina. Sus vínculos necesitan revisión; no vuelvas a agregar esos artículos.</Text>
+          </View>
+        ) : null}
         {list.status === 'completed' && repairableItems.length > 0 ? (
           <View style={styles.summaryCard}>
             <Text style={styles.itemMeta}>Hay {repairableItems.length} artículos comprados que todavía no se agregaron a Mi cocina.</Text>

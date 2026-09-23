@@ -423,6 +423,53 @@ class ShoppingSessionsTest extends TestCase
         \Carbon\Carbon::setTestNow();
     }
 
+    public function test_session_finish_links_stock_and_repair_is_a_noop()
+    {
+        [$user, $group, $list, $item] = $this->context(true);
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start-session')->assertStatus(201);
+        $session = ShoppingSession::where('shopping_list_id', $list->id)->firstOrFail();
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')->assertStatus(200);
+        $item->refresh();
+        $this->assertNotNull($item->purchase_item_id);
+        $this->assertNotNull($item->stock_processed_at);
+        $purchaseItem = \App\PurchaseItem::findOrFail($item->purchase_item_id);
+        $this->assertEquals($list->id, $purchaseItem->purchase->shopping_list_id);
+        $this->assertEquals(2, $purchaseItem->createdStockItem->quantity);
+        $body = ['items' => [['shopping_list_item_id' => $item->id, 'add_to_stock' => true]]];
+        foreach ([[], $body, $body] as $payload) {
+            $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/process-pending-stock', $payload)
+                ->assertStatus(200)->assertJsonPath('data.items_added_to_stock_count', 0);
+        }
+        $this->assertEquals(2, StockItem::where('family_group_id', $group->id)->sum('quantity'));
+        $this->assertEquals(1, StockMovement::where('family_group_id', $group->id)->count());
+        $this->assertEquals(1, \App\PurchaseItem::where('purchase_id', $purchaseItem->purchase_id)->count());
+        $this->assertEquals(200, Purchase::where('shopping_list_id', $list->id)->sum('actual_total'));
+        $this->actingAs($user)->getJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id)
+            ->assertStatus(200)->assertJsonPath('data.stock_repair_requires_review', false);
+    }
+
+    public function test_legacy_session_stock_is_protected_even_when_markers_are_missing()
+    {
+        [$user, $group, $list, $item] = $this->context(true);
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/start-session')->assertStatus(201);
+        $session = ShoppingSession::where('shopping_list_id', $list->id)->firstOrFail();
+        $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-sessions/'.$session->id.'/finish')->assertStatus(200);
+        $item->update(['purchase_item_id' => null, 'stock_processed_at' => null]);
+        $this->actingAs($user)->getJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id)
+            ->assertStatus(200)->assertJsonPath('data.stock_repair_requires_review', true);
+        $body = ['items' => [['shopping_list_item_id' => $item->id, 'add_to_stock' => true]]];
+        foreach ([[], $body] as $payload) {
+            $this->actingAs($user)->postJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/process-pending-stock', $payload)
+                ->assertStatus(409)->assertJsonPath('error.code', 'STOCK_REPAIR_REQUIRES_REVIEW');
+        }
+        $this->assertEquals(2, StockItem::where('family_group_id', $group->id)->sum('quantity'));
+        $this->assertEquals(1, StockMovement::where('family_group_id', $group->id)->count());
+        $purchase = Purchase::where('shopping_list_id', $list->id)->firstOrFail();
+        $this->assertEquals(1, $purchase->items()->count());
+        $this->assertEquals(200, $purchase->actual_total);
+        $this->assertNull($item->fresh()->purchase_item_id);
+    }
+
     public function test_writes_are_audited()
     {
         [$user, $group, $list] = $this->context();

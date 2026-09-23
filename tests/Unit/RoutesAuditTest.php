@@ -72,6 +72,10 @@ class RoutesAuditTest extends TestCase
             if (in_array($route->uri(), $publicUris, true)) {
                 continue;
             }
+            if ($route->uri() === 'api/v1/mobile/android/version'
+                && array_values(array_diff($route->methods(), ['HEAD'])) === ['GET']) {
+                continue;
+            }
 
             $allMiddleware = array_merge(
                 $route->middleware(),
@@ -115,6 +119,18 @@ class RoutesAuditTest extends TestCase
                 $mw,
                 "Public endpoint {$route->uri()} should NOT carry api_token middleware."
             );
+        }
+    }
+
+    /** @test */
+    public function android_release_metadata_is_public_and_read_only(): void
+    {
+        $route = RouteFacade::getRoutes()->getByName('api.mobile.android.version');
+        $this->assertNotNull($route);
+        $this->assertSame('api/v1/mobile/android/version', $route->uri());
+        $this->assertSame(['GET'], array_values(array_diff($route->methods(), ['HEAD'])));
+        foreach (['web', 'auth', 'api_token'] as $middleware) {
+            $this->assertNotContains($middleware, $route->gatherMiddleware());
         }
     }
 

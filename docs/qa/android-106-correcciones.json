@@ -1,0 +1,32 @@
+{
+  "date": "2026-09-23",
+  "baseVersion": "1.0.6",
+  "baseVersionCode": 7,
+  "apkBuilt": false,
+  "deployed": false,
+  "mobile": {
+    "suites": 31,
+    "tests": 200,
+    "failed": 0
+  },
+  "backend": {
+    "tests": 1701,
+    "assertions": 5875,
+    "failures": 0,
+    "errors": 0,
+    "isolatedLocalDatabase": true
+  },
+  "export": {
+    "verifiedSourceFiles": 246,
+    "assets": 46,
+    "bundleBytes": 3779327,
+    "bundleSHA256": "bee095575a9c88bdbc8303205f16c1254fc479872f89acde4b212627030e2830",
+    "envFilesCopied": false,
+    "nativeAPKValidated": false
+  },
+  "evidence": {
+    "mobileResultSHA256": "d593b9949fd47aaeef09846e6b40b5944c98260048318be428273eeda2af7b2a",
+    "backendResultSHA256": "66f549228c8d7ff2d9a8f5a845defdcbf41ae6714a0e1540b93e655fdfb237e9",
+    "sourceManifestSHA256": "d96707f34ec79e6338e4224ac8fdb563f8207f14e1ef0f2a5b6e3845241300e1"
+  }
+}

@@ -4,12 +4,13 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { ShoppingListDetailScreen } from '../src/screens/ShoppingListDetailScreen';
 
 let mockStatus = 'in_progress';
+let mockRepairRequiresReview = false;
 let mockInsets = { top: 24, bottom: 48, left: 0, right: 0 };
 jest.mock('../src/api/endpoints', () => ({ shoppingListItemsApi: {}, shoppingListsApi: {} }));
 jest.mock('../src/auth/FamilyGroupContext', () => ({ useFamilyGroupContext: () => ({ selectedGroup: { id: 7, name: 'Hogar QA' } }) }));
 jest.mock('../src/hooks/useShoppingListDetail', () => ({
   useShoppingListDetail: () => ({
-    list: { id: 5, status: mockStatus },
+    list: { id: 5, status: mockStatus, stock_repair_requires_review: mockRepairRequiresReview },
     items: [{ id: 10, status: 'purchased', product: { id: 12, name: 'QA arroz' }, quantity: 2, unit: { symbol: 'kg' } }],
     loading: false, error: null, refresh: jest.fn(),
   }),
@@ -22,6 +23,7 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ push: jest.fn() }) }));
 
 beforeEach(() => {
   mockStatus = 'in_progress';
+  mockRepairRequiresReview = false;
   mockInsets = { top: 24, bottom: 48, left: 0, right: 0 };
 });
 
@@ -45,4 +47,19 @@ it('updates modal padding when the safe area changes', async () => {
   const style = StyleSheet.flatten(modalContent!.props.style);
   expect(style.paddingTop).toBe(0);
   expect(style.paddingBottom).toBe(16);
+});
+
+it('does not offer to add stock again for an unlinked legacy session', async () => {
+  mockStatus = 'completed';
+  mockRepairRequiresReview = true;
+  const screen = await render(<ShoppingListDetailScreen listId={5} />);
+  expect(screen.getByText(/Sus vínculos necesitan revisión/)).toBeTruthy();
+  expect(screen.queryByText(/Agregar pendientes/)).toBeNull();
+});
+
+it('still offers repair for a genuine pending stock item', async () => {
+  mockStatus = 'completed';
+  const screen = await render(<ShoppingListDetailScreen listId={5} />);
+  expect(screen.getByText(/Agregar pendientes/)).toBeTruthy();
+  expect(screen.queryByText(/Sus vínculos necesitan revisión/)).toBeNull();
 });

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { ApiError } from '@/api/client';
 import { shoppingListsApi, shoppingListItemsApi } from '@/api/endpoints';
 import type { NormalizedError } from '@/types/api';
@@ -11,25 +12,30 @@ export function useShoppingListDetail(groupId: number | null, listId: number | n
   const [items, setItems] = useState<ShoppingListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<NormalizedError | null>(null);
+  const request = useRef(0);
 
-  const load = useCallback(() => {
-    if (!groupId || !listId) { setList(null); setItems([]); return; }
+  const load = useCallback(async () => {
+    const current = ++request.current;
+    if (!groupId || !listId) { setList(null); setItems([]); setLoading(false); setError(null); return; }
     setLoading(true);
     setError(null);
-    Promise.all([shoppingListsApi.get(groupId, listId), shoppingListItemsApi.list(groupId, listId)])
-      .then(([listRes, itemsRes]) => {
-        setList(listRes.data);
-        setItems(Array.isArray(itemsRes.data) ? itemsRes.data : []);
-        setLoading(false);
-      })
-      .catch((err: unknown) => {
-        setError(err instanceof ApiError ? err.normalized : FALLBACK);
-        setLoading(false);
-      });
+    try {
+      const [listRes, itemsRes] = await Promise.all([shoppingListsApi.get(groupId, listId), shoppingListItemsApi.list(groupId, listId)]);
+      if (current !== request.current) return;
+      setList(listRes.data);
+      setItems(Array.isArray(itemsRes.data) ? itemsRes.data : []);
+    } catch (err: unknown) {
+      if (current !== request.current) return;
+      setError(err instanceof ApiError ? err.normalized : FALLBACK);
+    } finally {
+      if (current === request.current) setLoading(false);
+    }
   }, [groupId, listId]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => {
+    void load();
+    return () => { request.current += 1; };
+  }, [load]));
 
   return { list, items, loading, error, refresh: load };
 }

@@ -67,6 +67,21 @@ class ShoppingList extends Model
     }
 
     public function familyGroup() { return $this->belongsTo(FamilyGroup::class); }
+
+    public function stockRepairRequiresReview(): bool
+    {
+        if ($this->status !== self::STATUS_COMPLETED || !$this->sessions()->where('status', 'finished')->exists()) {
+            return false;
+        }
+
+        // Legacy session closures wrote stock before they recorded the list-item link.
+        // An unlinked purchase item is not evidence of missing stock. Never add it again.
+        return PurchaseItem::whereIn('purchase_id', $this->purchases()->select('id'))
+            ->whereNotNull('created_stock_item_id')
+            ->whereNotIn('id', ShoppingListItem::whereNotNull('purchase_item_id')->select('purchase_item_id'))
+            ->exists();
+    }
+
     public function mealPlan() { return $this->belongsTo(MealPlan::class); }
     public function creator() { return $this->belongsTo(User::class, 'created_by'); }
     public function selectedBranch() { return $this->belongsTo(SupermarketBranch::class, 'selected_supermarket_branch_id'); }

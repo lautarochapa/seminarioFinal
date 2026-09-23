@@ -10,7 +10,7 @@ jest.mock('../src/hooks/useStockItem', () => ({ useStockItem: () => ({ data: moc
 jest.mock('../src/hooks/useStockLocations', () => ({ useStockLocations: () => ({ data: [], loading: false }) }));
 jest.mock('../src/auth/FamilyGroupContext', () => ({ useFamilyGroupContext: () => ({ selectedGroup: { id: 7 } }) }));
 jest.mock('../src/api/endpoints', () => ({ stockApi: { update: (...args: unknown[]) => mockUpdate(...args) } }));
-jest.mock('../src/utils/navigation', () => ({ goBackOrHome: () => mockBack() }));
+jest.mock('../src/hooks/useStockBackNavigation', () => ({ useStockBackNavigation: (id: number) => () => mockBack(id) }));
 jest.mock('../src/components/AppHeader', () => ({ AppHeader: 'AppHeader' }));
 jest.mock('@expo/vector-icons', () => ({ MaterialCommunityIcons: 'MaterialCommunityIcons' }));
 beforeEach(() => { jest.clearAllMocks(); mockUpdate.mockResolvedValue({ data: mockItem }); });
@@ -30,7 +30,7 @@ it('saves ISO dates without timezone conversion and supports decimal commas', as
   await fireEvent.changeText(screen.getByLabelText('Precio de compra'), '12,50');
   await fireEvent.press(screen.getByText('Guardar cambios'));
   await waitFor(() => expect(mockUpdate).toHaveBeenCalledWith(7, 40, { stock_location_id: null, quantity: 1, expiration_date: '2026-09-23', purchase_price: 12.5 }));
-  expect(mockBack).toHaveBeenCalled();
+  expect(mockBack).toHaveBeenCalledWith(40);
 });
 it('renders server errors for the expiration and price fields', async () => {
   mockUpdate.mockRejectedValue(new ApiError({ status: 422, code: 'VALIDATION_ERROR', message: 'Revisar', fieldErrors: { expiration_date: ['Fecha rechazada.'], purchase_price: ['Precio rechazado.'] }, traceId: '', isNetworkError: false, isTimeoutError: false }));

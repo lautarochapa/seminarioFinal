@@ -21,7 +21,8 @@ import { useStockItem } from '@/hooks/useStockItem';
 import { parseDateOnly, parseDecimal } from '@/utils/formValues';
 import { stockApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { goBackOrHome } from '@/utils/navigation';
+import { useStockBackNavigation } from '@/hooks/useStockBackNavigation';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SPACING } from '@/utils/theme';
 import type { StockLocation } from '@/types/stock';
@@ -31,6 +32,8 @@ interface StockItemEditScreenProps {
 }
 
 export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
+  const returnToDetail = useStockBackNavigation(stockItemId);
+  const insets = useSafeAreaInsets();
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { data: item, loading: loadingList, error: listError, refresh } = useStockItem(groupId, stockItemId);
@@ -59,7 +62,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
   if (listError && !item) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Editar stock" showBack onBack={goBackOrHome} />
+        <AppHeader title="Editar stock" showBack onBack={returnToDetail} />
         <ErrorState message={friendlyMessage(listError)} traceId={listError.traceId} onRetry={refresh} type="server" />
       </View>
     );
@@ -67,7 +70,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
   if (!item) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Editar stock" showBack onBack={goBackOrHome} />
+        <AppHeader title="Editar stock" showBack onBack={returnToDetail} />
         <ErrorState message="Item no encontrado." onRetry={refresh} type="generic" />
       </View>
     );
@@ -101,7 +104,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
         expiration_date: date || null,
         purchase_price: parsedPrice,
       });
-      goBackOrHome();
+      returnToDetail();
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.normalized.status === 422 && Object.keys(err.normalized.fieldErrors).length > 0) {
@@ -132,7 +135,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
         title="Editar stock"
         subtitle={item.product?.name}
         showBack
-        onBack={goBackOrHome}
+        onBack={returnToDetail}
       />
       <KeyboardAvoidingView
         style={styles.fill}
@@ -140,7 +143,7 @@ export function StockItemEditScreen({ stockItemId }: StockItemEditScreenProps) {
       >
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[styles.content, { paddingBottom: SPACING.xxl + insets.bottom }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >

@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -26,7 +27,9 @@ import { useFamilyGroupContext } from '@/auth/FamilyGroupContext';
 import { useStockLocations } from '@/hooks/useStockLocations';
 import { stockApi, productsApi, unitsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { goBackOrHome } from '@/utils/navigation';
+import { useStockBackNavigation } from '@/hooks/useStockBackNavigation';
+import { parseDateOnly, parseDecimal } from '@/utils/formValues';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useProducts } from '@/hooks/useProducts';
 import { consumePendingScanResult } from '@/utils/barcodeScanResult';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SPACING, TOUCH_TARGET } from '@/utils/theme';
@@ -43,6 +46,26 @@ interface StockCreateScreenProps {
 
 export function StockCreateScreen({ prefilledProductId, prefilledProductName }: StockCreateScreenProps) {
   const router = useRouter();
+  const goBackToStock = useStockBackNavigation();
+  const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
+  const bottomFieldFocused = useRef(false);
+  const submittingRef = useRef(false);
+  const scrollFrame = useRef<number | null>(null);
+  const revealBottomField = useCallback(() => {
+    if (scrollFrame.current !== null) cancelAnimationFrame(scrollFrame.current);
+    scrollFrame.current = requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+  }, []);
+
+  useEffect(() => {
+    const keyboard = Keyboard.addListener('keyboardDidShow', () => {
+      if (bottomFieldFocused.current) revealBottomField();
+    });
+    return () => {
+      keyboard.remove();
+      if (scrollFrame.current !== null) cancelAnimationFrame(scrollFrame.current);
+    };
+  }, [revealBottomField]);
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { data: locations, loading: loadingLocs } = useStockLocations(groupId);
@@ -120,7 +143,10 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
 
   async function handleManualProductSubmit() {
     const name = manualName.trim();
-    if (!groupId || !name || !manualUnitId || !manualQuantity || Number(manualQuantity) <= 0) return;
+    if (submittingRef.current || !groupId || !name || !manualUnitId) return;
+    const values = validateStockValues(manualQuantity, 0.0001);
+    if (!values) { setManualMessage('Revisá la cantidad, la fecha y el precio antes de guardar.'); return; }
+    submittingRef.current = true;
     setManualSubmitting(true);
     setManualMessage(null);
     try {
@@ -130,22 +156,24 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
           unit_id: manualUnitId,
         },
         stock: {
-          quantity: Number(manualQuantity),
+          quantity: values.quantity,
           unit_id: manualUnitId,
           stock_location_id: locationId,
-          expiration_date: expirationDate || null,
-          purchase_price: purchasePrice ? Number(purchasePrice) : null,
+          expiration_date: values.expiration_date,
+          purchase_price: values.purchase_price,
         },
       });
       setManualVisible(false);
       router.replace('/(app)/stock' as never);
     } catch (err) {
       if (err instanceof ApiError) {
-        setManualMessage(err.normalized.message);
+        const errors = Object.values(err.normalized.fieldErrors).flat();
+        setManualMessage(errors.length ? errors.join('\n') : err.normalized.message);
       } else {
         setManualMessage('No se pudo cargar el producto.');
       }
     } finally {
+      submittingRef.current = false;
       setManualSubmitting(false);
     }
   }
@@ -175,18 +203,34 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
     }, [groupId, units]),
   );
 
+  function validateStockValues(amount: string, minimumQuantity = 0) {
+    const errors: Record<string, string> = {};
+    const parsedQuantity = parseDecimal(amount);
+    const parsedPrice = purchasePrice.trim() ? parseDecimal(purchasePrice) : null;
+    const date = expirationDate.trim();
+    if (parsedQuantity === null || parsedQuantity < minimumQuantity) errors.quantity = 'Ingresá una cantidad válida.';
+    if (date && !parseDateOnly(date)) errors.expiration_date = 'Ingresá una fecha válida con formato YYYY-MM-DD.';
+    if (purchasePrice.trim() && (parsedPrice === null || parsedPrice < 0)) errors.purchase_price = 'Ingresá un precio válido, mayor o igual a cero.';
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      setSubmitError('Revisá los datos indicados antes de guardar.');
+      return null;
+    }
+    return { quantity: parsedQuantity!, purchase_price: parsedPrice, expiration_date: date || null };
+  }
+
   function handleSubmit() {
+    if (submittingRef.current) return;
+    const values = validateStockValues(quantity);
     const errors: Record<string, string> = {};
     if (!productId) errors.product_id = 'Seleccioná un producto.';
-    if (!quantity || isNaN(Number(quantity)) || Number(quantity) < 0) {
-      errors.quantity = 'Ingresá una cantidad válida.';
-    }
     if (!unitId) errors.unit_id = 'Seleccioná una unidad.';
     if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
+      setFieldErrors((current) => ({ ...current, ...errors }));
+      setSubmitError('Revisá los datos indicados antes de guardar.');
       return;
     }
-    if (!groupId) return;
+    if (!groupId || !values) return;
 
     if (hasDifferentExistingUnit(selectedProduct, unitId)) {
       Alert.alert(
@@ -194,17 +238,18 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
         `Ya tenés este producto cargado en ${unitNames(selectedProduct?.stock_entry_suggestion?.existing_units ?? [])}. Si elegís otra unidad se creará un lote separado.`,
         [
           { text: 'Cancelar', style: 'cancel' },
-          { text: 'Continuar', onPress: () => { void submitStock(); } },
+          { text: 'Continuar', onPress: () => { void submitStock(values); } },
         ],
       );
       return;
     }
 
-    void submitStock();
+    void submitStock(values);
   }
 
-  async function submitStock() {
-    if (!groupId || !productId || !unitId) return;
+  async function submitStock(values: { quantity: number; purchase_price: number | null; expiration_date: string | null }) {
+    if (submittingRef.current || !groupId || !productId || !unitId) return;
+    submittingRef.current = true;
 
     setSubmitting(true);
     setSubmitError(null);
@@ -214,10 +259,10 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
       await stockApi.create(groupId, {
         product_id: productId,
         stock_location_id: locationId,
-        quantity: Number(quantity),
+        quantity: values.quantity,
         unit_id: unitId,
-        expiration_date: expirationDate || null,
-        purchase_price: purchasePrice ? Number(purchasePrice) : null,
+        expiration_date: values.expiration_date,
+        purchase_price: values.purchase_price,
       });
       router.replace('/(app)/stock' as never);
     } catch (err) {
@@ -228,6 +273,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
             fe[k] = v[0] ?? '';
           });
           setFieldErrors(fe);
+          setSubmitError('Revisá los datos indicados antes de guardar.');
         } else {
           setSubmitError(err.normalized.message);
         }
@@ -235,6 +281,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
         setSubmitError('Error al guardar. Intentá de nuevo.');
       }
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
   }
@@ -242,7 +289,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
   if (!selectedGroup) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Agregar al stock" showBack onBack={goBackOrHome} />
+        <AppHeader title="Agregar al stock" showBack onBack={goBackToStock} />
         <View style={styles.centered}>
           <FamilyGroupSelector />
           <EmptyState
@@ -256,14 +303,17 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
 
   return (
     <View style={styles.fill}>
-      <AppHeader title="Agregar al stock" subtitle={selectedGroup.name} showBack onBack={goBackOrHome} />
+      <AppHeader title="Agregar al stock" subtitle={selectedGroup.name} showBack onBack={goBackToStock} />
       <KeyboardAvoidingView
+        testID="stock-create-keyboard"
         style={styles.fill}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
+          ref={scrollRef}
+          testID="stock-create-form"
           style={styles.scroll}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[styles.content, { paddingBottom: SPACING.xxl + insets.bottom }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
@@ -304,6 +354,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
           {/* Location */}
           <View style={styles.field}>
             <Text style={styles.label}>Ubicación</Text>
+            <FormError message={fieldErrors.stock_location_id} />
             {loadingLocs ? (
               <ActivityIndicator size="small" color={COLORS.primary} />
             ) : locations.length === 0 ? (
@@ -382,7 +433,10 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
           <AppInput
             label="Fecha de vencimiento"
             value={expirationDate}
-            onChangeText={setExpirationDate}
+            onChangeText={(text) => { setExpirationDate(text); setFieldErrors((errors) => ({ ...errors, expiration_date: '' })); setSubmitError(null); }}
+            error={fieldErrors.expiration_date}
+            onFocus={() => { bottomFieldFocused.current = true; revealBottomField(); }}
+            onBlur={() => { bottomFieldFocused.current = false; }}
             placeholder="YYYY-MM-DD"
             keyboardType="numbers-and-punctuation"
           />
@@ -390,7 +444,10 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
           <AppInput
             label="Precio de compra"
             value={purchasePrice}
-            onChangeText={setPurchasePrice}
+            onChangeText={(text) => { setPurchasePrice(text); setFieldErrors((errors) => ({ ...errors, purchase_price: '' })); setSubmitError(null); }}
+            error={fieldErrors.purchase_price}
+            onFocus={() => { bottomFieldFocused.current = true; revealBottomField(); }}
+            onBlur={() => { bottomFieldFocused.current = false; }}
             keyboardType="decimal-pad"
             placeholder="0.00"
           />
@@ -497,6 +554,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               <MaterialCommunityIcons name="close" size={24} color={COLORS.textPrimary} />
             </Pressable>
           </View>
+          <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
             <Text style={styles.hintText}>Se carga ahora en tu stock y queda pendiente de revisión del catálogo.</Text>
             <AppInput label="Nombre *" value={manualName} onChangeText={setManualName} placeholder="Producto" />
@@ -522,10 +580,11 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               title="Cargar producto y stock"
               onPress={handleManualProductSubmit}
               loading={manualSubmitting}
-              disabled={!manualName.trim() || !manualUnitId || !manualQuantity || Number(manualQuantity) <= 0}
+              disabled={!manualName.trim() || !manualUnitId || (parseDecimal(manualQuantity) ?? 0) <= 0}
               fullWidth
             />
           </ScrollView>
+          </KeyboardAvoidingView>
         </ModalSurface>
       </Modal>
     </View>
