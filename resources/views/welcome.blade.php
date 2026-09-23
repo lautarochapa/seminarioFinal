@@ -150,6 +150,23 @@
     .home-step h3 { margin: 0 0 9px; font-size: 20px; font-weight: 900; }
     .home-step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
+    .home-demo-link { margin: 28px 0 0; text-align: center; }
+    .home-demo-link a, .home-demo a { color: var(--green-dark); font-weight: 800; text-decoration: underline; }
+    .home-demos { scroll-margin-top: 80px; border-top: 1px solid var(--line); }
+    .home-demos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 40px; }
+    .home-demo { min-width: 0; width: 100%; max-width: 960px; margin: 0 auto; }
+    .home-demo-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .home-demo h3 { margin: 0; font-size: 24px; line-height: 1.3; font-weight: 900; }
+    .home-demo-duration { color: var(--muted); font-size: 14px; white-space: nowrap; }
+    .home-demo video { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; background: #202326; object-fit: contain; border-radius: 6px; }
+    .home-demo video:focus-visible, .home-demo summary:focus-visible { outline: 3px solid var(--green-dark); outline-offset: 4px; }
+    .home-demo-description { margin: 14px 0 10px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+    .home-demo details { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.65; }
+    .home-demo summary { color: var(--green-dark); font-weight: 800; cursor: pointer; }
+    .home-demo ol { padding-left: 24px; margin: 14px 0; }
+    .home-demo li + li { margin-top: 5px; }
+    .home-demo-note { color: var(--muted); }
+
     .screens-layout {
         display: grid;
         grid-template-columns: minmax(0, 1.35fr) minmax(320px, .8fr);
@@ -299,6 +316,11 @@
 @endsection
 
 @section('content')
+@php
+    $demoVideos = array_filter(config('demos.videos', []), function ($demo) {
+        return !empty($demo['file']) && is_file(public_path($demo['file']));
+    });
+@endphp
 <div class="home-landing">
     <section class="home-hero">
         <div class="home-container">
@@ -338,8 +360,55 @@
                 <article class="home-step"><span class="home-step-number">03</span><h3>Planificá</h3><p>Comidas y porciones para cada integrante del hogar.</p></article>
                 <article class="home-step"><span class="home-step-number">04</span><h3>Comprá</h3><p>Sólo lo necesario, comparando precios y presupuesto.</p></article>
             </div>
+            @if($demoVideos)
+                <p class="home-demo-link"><a href="#demos">Ver el recorrido en video</a></p>
+            @endif
         </div>
     </section>
+
+    @if($demoVideos)
+        <section id="demos" class="home-section home-demos" aria-labelledby="demos-title">
+            <div class="home-container">
+                <header class="home-heading">
+                    <div class="home-eyebrow">CocinaComidaControl en acción</div>
+                    <h2 id="demos-title">Mirá cómo funciona.</h2>
+                    <p>De organizar tu hogar a registrar lo que comprás y cocinás: un recorrido con datos de ejemplo.</p>
+                </header>
+                <div class="home-demos-grid">
+                    @foreach($demoVideos as $platform => $demo)
+                        <article class="home-demo" aria-labelledby="demo-{{ $platform }}-title">
+                            <header class="home-demo-header">
+                                <h3 id="demo-{{ $platform }}-title">{{ $demo['title'] }}</h3>
+                                @if(!empty($demo['duration']))
+                                    <span class="home-demo-duration">{{ $demo['duration'] }} min</span>
+                                @endif
+                            </header>
+                            <video controls playsinline preload="none" aria-labelledby="demo-{{ $platform }}-title" aria-describedby="demo-{{ $platform }}-description"
+                                @if(!empty($demo['poster']) && is_file(public_path($demo['poster']))) poster="{{ asset($demo['poster']) }}" @endif>
+                                <source src="{{ asset($demo['file']) }}" type="video/mp4">
+                                <a href="{{ asset($demo['file']) }}">Abrir {{ $demo['title'] }}</a>
+                            </video>
+                            <p id="demo-{{ $platform }}-description" class="home-demo-description">{{ $demo['description'] }}</p>
+                            <a href="{{ asset($demo['file']) }}" download>Descargar {{ $demo['title'] }} (MP4)</a>
+                            @if(!empty($demo['steps']))
+                                <details>
+                                    <summary>Leer el recorrido</summary>
+                                    <ol>
+                                        @foreach($demo['steps'] as $step)
+                                            <li>{{ $step }}</li>
+                                        @endforeach
+                                    </ol>
+                                    @if(!empty($demo['note']))
+                                        <p class="home-demo-note">{{ $demo['note'] }}</p>
+                                    @endif
+                                </details>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 
     <section class="home-section home-section-soft">
         <div class="home-container screens-layout">
