@@ -46,7 +46,7 @@ El codigo movil 1.0.7 (8) esta publicado en GitHub. Incluye correcciones de coma
 - Exportacion Android Metro/Hermes: 1.574 modulos y 46 assets, aprobada.
 - Memoria del ejecutor PHPUnit local: 512 MB; esta configuracion no modifica el limite del servicio Render.
 
-A esta fecha la APK descargable y anunciada por la API sigue siendo **1.0.6 (7)**. No se publico un binario 1.0.7 ni se anuncio una descarga inexistente: la compilacion remota requiere la autorizacion especifica para enviar el codigo movil a Expo. La exportacion Hermes no acredita compilacion Gradle, firma, instalacion ni validacion fisica en Samsung.
+La APK **1.0.7 (8)** fue compilada en Expo y publicada despues de la autorizacion de envio del codigo movil. Se verificaron firma, paquete, version, bundle standalone y descarga anonima completa. La landing y la API ya anuncian 1.0.7 (8). La instalacion y comprobacion fisica en Samsung son una etapa separada; no se dan por aprobadas por el resultado de compilacion. Ver [registro de release](ANDROID-1.0.7.md).
 
 Este documento actualiza el estado de publicacion posterior al [registro de correcciones locales](ANDROID-1.0.6-CORRECCIONES.md). No reemplaza ni modifica sus evidencias historicas.
 

@@ -6,20 +6,18 @@ en Expo. El binario no se incluye en Git ni en la imagen Docker de Render.
 
 ## Version publicada
 
-Release `android-v1.0.5-6` publicada y descargada anonimamente el 22/09/2026.
-La configuracion web apunta a este archivo; la comprobacion del despliegue
-en Render esta pendiente. [Registro de release](ANDROID-1.0.5.md).
+Release `android-v1.0.7-8` publicada y descargada anonimamente el 23/09/2026.
+La landing y la API de version en Render anuncian esta misma APK.
+[Registro de release](ANDROID-1.0.7.md).
 
-- Version: 1.0.5, compilacion 6, version de prueba.
-- Archivo: `CocinaComidaControl-1.0.5-6.apk`.
-- Tamano: 129076999 bytes.
-- SHA-256: `16e0199f303d9f5a9dfddd65a1df11481483fa3d0169a818dbc3a4faedaeda94`.
-- EAS Build: `0c5f0377-4dd7-44d5-b21c-bbf0a1315b2f`.
-- Agrega AND-13 y AND-14: margenes seguros en formularios de Compras y refresco
-  del listado al regresar. Conserva los arreglos anteriores; AND-10 pendiente.
-- Firma valida e igual a 1.0.4, mismo paquete, no debug y bundle standalone.
-- Descarga anonima y SHA-256 comprobados; actualizacion y retest de 1.0.5
-  en Samsung pendientes. La 1.0.4 si mantuvo la sesion al actualizar.
+- Version: 1.0.7, compilacion 8, version de prueba.
+- Archivo: `CocinaComidaControl-1.0.7-8.apk`.
+- Tamano: 129114783 bytes.
+- SHA-256: `5d29dbba7d6756bafac4fdca8fd7d5d71903ba1de140ce0dadbed0f27edda585`.
+- EAS Build: `4b67bba9-6f74-47e8-8ea1-6e01d05634a8`.
+- Firma valida e igual a 1.0.6, mismo paquete, no debug y bundle standalone.
+- Descarga anonima completa, integridad y publicacion web verificadas.
+- La instalacion y comprobacion fisica de esta APK se realizan en el Samsung.
 - Las APK anteriores se conservan como respaldo; no desinstalar para actualizar.
 
 ## Antecedente: build 1.0.2 (no contiene los ultimos arreglos)
@@ -67,12 +65,12 @@ la ruta no acepta URLs provistas por quien la visita.
 
 ## Aviso dentro de la app
 
-La nueva integracion local publica la misma metadata en
+La integracion publica la misma metadata en
 `GET /api/v1/mobile/android/version`. La app que incluya esta funcion consulta
 al iniciar y ofrece ir a la landing cuando hay un build superior. No es una
 actualizacion forzada ni automatica. Ver [contrato y publicacion](ANDROID-VERSION.md).
-La APK 1.0.5 ya instalada necesita una actualizacion manual inicial para
-incorporar el chequeo. Backend y APK nuevos siguen pendientes de publicacion.
+El chequeo esta incluido desde la APK 1.0.6. Una instalacion 1.0.5 o anterior
+necesita una actualizacion manual inicial; 1.0.6 puede anunciar 1.0.7 al iniciar.
 
 ## Capturas de la landing
 
