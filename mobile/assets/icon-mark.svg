@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <mask id="pot">
+      <rect width="1024" height="1024" fill="white"/>
+      <path d="M432 580l58 58 110-120" fill="none" stroke="black" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <g fill="none" stroke="white" stroke-width="32" stroke-linecap="round">
+    <path d="M443 358c-43-39 42-42 4-84M560 358c-43-39 42-42 4-84"/>
+    <path d="M298 490h-34M726 490h34"/>
+  </g>
+  <g fill="white">
+    <rect x="476" y="392" width="72" height="30" rx="15"/>
+    <rect x="282" y="416" width="460" height="34" rx="17"/>
+    <path d="M316 478h392v170a72 72 0 0 1-72 72H388a72 72 0 0 1-72-72z" mask="url(#pot)"/>
+  </g>
+</svg>

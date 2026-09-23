@@ -74,6 +74,7 @@ export interface RecipeNutrition {
 }
 
 export interface RecipeCost {
+  ingredients?: { has_price: boolean; line_cost?: number | null }[];
   total_cost?: number | string | null;
   cost_per_serving?: number | string | null;
   currency?: string | null;
@@ -129,6 +130,7 @@ export interface GenerateShoppingListRequest {
 }
 
 export interface GenerateShoppingListResult {
+  id: number;
   shopping_list_id?: number | null;
   created_items_count?: number | null;
   missing_ingredients?: unknown[];

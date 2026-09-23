@@ -38,8 +38,9 @@ describe('Expo Router dynamic route registration', () => {
   it('passes the id param to ShoppingListDetailScreen', () => {
     const route = read(path.join('shopping-lists', '[id].tsx'));
 
-    expect(route).toContain('useLocalSearchParams<{ id: string }>()');
-    expect(route).toContain('<ShoppingListDetailScreen listId={parseInt(id, 10)} />');
+    expect(route).toContain('useLocalSearchParams<{ id: string;');
+    expect(route).toContain('<ShoppingListDetailScreen listId={parseInt(id, 10)}');
+    expect(route).toContain('returnTo={returnTo} returnId={returnId}');
   });
 
   it('keeps edit route registered separately', () => {

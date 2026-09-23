@@ -26,7 +26,7 @@ class ShoppingListPreviewRepository
             ->first();
     }
 
-    public function stockItemsForIngredient(int $groupId, int $ingredientId): array
+    public function stockItemsForIngredient(int $groupId, int $ingredientId, ?int $specificProductId = null): array
     {
         return StockItem::query()
             ->join('products as p', 'p.id', '=', 'stock_items.product_id')
@@ -34,7 +34,12 @@ class ShoppingListPreviewRepository
             ->where('stock_items.status', 'active')
             ->whereNull('stock_items.deleted_at')
             ->where('stock_items.quantity', '>', 0)
-            ->where('p.ingredient_id', $ingredientId)
+            ->where($specificProductId !== null ? 'stock_items.product_id' : 'p.ingredient_id', $specificProductId ?? $ingredientId)
+            ->where(function ($query) {
+                $query->whereNull('stock_items.expiration_date')
+                    ->orWhereDate('stock_items.expiration_date', '>=', now()->toDateString());
+            })
+            ->orderByRaw('stock_items.expiration_date is null')
             ->orderBy('stock_items.expiration_date')
             ->orderBy('stock_items.id')
             ->select([
@@ -62,7 +67,18 @@ class ShoppingListPreviewRepository
             ->orderByRaw('CASE WHEN ingredient_id IS NOT NULL THEN 0 ELSE 1 END')
             ->first();
 
-        return $conversion ? (float) $conversion->factor : null;
+        if ($conversion && (float) $conversion->factor > 0) {
+            return (float) $conversion->factor;
+        }
+        $inverse = UnitConversion::where('from_unit_id', $toUnitId)
+            ->where('to_unit_id', $fromUnitId)
+            ->where('status', 'active')
+            ->where(function ($query) use ($ingredientId) {
+                $query->where('ingredient_id', $ingredientId)->orWhereNull('ingredient_id');
+            })
+            ->orderByRaw('CASE WHEN ingredient_id IS NOT NULL THEN 0 ELSE 1 END')
+            ->first();
+        return $inverse && (float) $inverse->factor > 0 ? 1 / (float) $inverse->factor : null;
     }
 
     /**
@@ -70,10 +86,17 @@ class ShoppingListPreviewRepository
      * products.ingredient_id link (there is no dedicated "default product per ingredient"
      * table). Returns null when no active product is linked to the ingredient.
      */
-    public function resolveProductForIngredient(int $ingredientId): ?\App\Product
+    public function resolveProductForIngredient(int $ingredientId, int $groupId, ?int $specificProductId = null): ?\App\Product
     {
-        return \App\Product::where('ingredient_id', $ingredientId)
-            ->where('status', 'active')
+        return \App\Product::where($specificProductId !== null ? 'id' : 'ingredient_id', $specificProductId ?? $ingredientId)
+            ->where(function ($query) use ($groupId) {
+                $query->whereNull('family_group_id')->orWhere('family_group_id', $groupId);
+            })
+            ->where(function ($query) use ($groupId) {
+                $query->where('status', 'active')->orWhere(function ($own) use ($groupId) {
+                    $own->where('status', 'pending_review')->where('origin', 'user_created')->where('family_group_id', $groupId);
+                });
+            })
             ->where('is_active', true)
             ->whereNull('deleted_at')
             ->orderBy('id')

@@ -9,6 +9,7 @@ class ShoppingListPreviewResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'specific_product_id' => $this->resource['specific_product_id'] ?? null,
             'ingredient' => $this->resource['ingredient'],
             'missing_quantity' => (float) $this->resource['missing_quantity'],
             'required_quantity' => (float) $this->resource['required_quantity'],

@@ -19,7 +19,7 @@ jest.mock('../src/hooks/useProducts', () => ({ useProducts: () => ({ data: [], l
 jest.mock('../src/hooks/useUnits', () => ({ useUnits: () => ({ data: [] }) }));
 jest.mock('@expo/vector-icons', () => ({ MaterialCommunityIcons: 'MaterialCommunityIcons' }));
 jest.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => mockInsets }));
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: jest.fn() }) }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: jest.fn(), replace: jest.fn() }), useFocusEffect: jest.fn() }));
 
 beforeEach(() => {
   mockStatus = 'in_progress';

@@ -124,7 +124,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
     setProductName(p.name);
     setSelectedProduct(p);
     const suggestedUnitId = p.stock_entry_suggestion?.unit_id ?? null;
-    const suggestedUnit = units.find((unit) => unit.id === suggestedUnitId) ?? p.unit ?? p.package_unit ?? null;
+    const suggestedUnit = suggestedUnitId ? units.find((unit) => unit.id === suggestedUnitId) ?? [p.unit, p.package_unit].find((unit) => unit?.id === suggestedUnitId) : null;
     setUnitId(suggestedUnitId);
     setUnitDisplay(suggestedUnit ? suggestedUnit.symbol || suggestedUnit.code || suggestedUnit.name : '');
     setQuantity(p.stock_entry_suggestion?.quantity != null ? String(p.stock_entry_suggestion.quantity) : '');
@@ -193,7 +193,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
         .then((res) => {
           setSelectedProduct(res.data);
           const suggestedUnitId = res.data.stock_entry_suggestion?.unit_id ?? null;
-          const suggestedUnit = units.find((unit) => unit.id === suggestedUnitId) ?? res.data.unit ?? res.data.package_unit ?? null;
+          const suggestedUnit = suggestedUnitId ? units.find((unit) => unit.id === suggestedUnitId) ?? [res.data.unit, res.data.package_unit].find((unit) => unit?.id === suggestedUnitId) : null;
           setUnitId(suggestedUnitId);
           setUnitDisplay(suggestedUnit ? suggestedUnit.symbol || suggestedUnit.code || suggestedUnit.name : '');
           setQuantity(res.data.stock_entry_suggestion?.quantity != null ? String(res.data.stock_entry_suggestion.quantity) : '');
@@ -422,7 +422,7 @@ export function StockCreateScreen({ prefilledProductId, prefilledProductName }: 
               ) : selectedProduct?.stock_entry_suggestion?.source === 'package' ? (
                 <Text style={styles.hintText}>Cantidad y unidad tomadas de la presentación del producto.</Text>
               ) : !unitId ? (
-                <Text style={styles.warningText}>El producto no tiene una unidad conocida. Elegí una antes de guardar.</Text>
+                <Text style={styles.warningText}>Elegí la unidad en la que vas a registrar esta cantidad.</Text>
               ) : null}
               {hasDifferentExistingUnit(selectedProduct, unitId) ? (
                 <Text style={styles.warningText}>Ya tenés este producto cargado en {unitNames(selectedProduct?.stock_entry_suggestion?.existing_units ?? [])}. Si elegís otra unidad se creará un lote separado.</Text>

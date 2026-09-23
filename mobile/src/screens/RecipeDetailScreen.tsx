@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { AppHeader } from '@/components/AppHeader';
@@ -19,13 +19,15 @@ import { useRecipeDetail } from '@/hooks/useRecipeDetail';
 import { useRecipeFavorites } from '@/hooks/useRecipeFavorites';
 import { recipeShoppingListApi, recipesApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { goBackOrHome } from '@/utils/navigation';
+import { useSectionBackNavigation } from '@/hooks/useSectionBackNavigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '@/utils/theme';
 import type { RecipeAvailability, RecipeShoppingListResult } from '@/types/recipe';
 
-export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
+export function RecipeDetailScreen({ recipeId, returnTo, returnId }: { recipeId: number; returnTo?: string; returnId?: string }) {
   const router = useRouter();
+  const goBack = useSectionBackNavigation(returnTo === 'meal-plan' && returnId ? '/(app)/meal-plans/[id]' : returnTo === 'planning' ? '/(app)/planning' : '/(app)/recipes', returnTo === 'meal-plan' && returnId ? { id: returnId } : {});
+  const generatingRef = useRef(false);
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
   const { data, nutrition, cost, loading, error, refresh } = useRecipeDetail(recipeId);
@@ -61,7 +63,8 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   }
 
   async function handleGenerateList() {
-    if (!groupId) return;
+    if (!groupId || generatingRef.current) return;
+    generatingRef.current = true;
     setGenerating(true);
     setResult(null);
     try {
@@ -71,17 +74,26 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
         supermarket_branch_id: selectedBranchId ?? undefined,
       });
       setResult(res.data);
+      Alert.alert('Lista de compras preparada', `${res.data.items_added} productos agregados.`, [
+        { text: 'Seguir en la receta', style: 'cancel' },
+        { text: 'Abrir lista', onPress: () => openList(res.data.shopping_list.id) },
+      ]);
     } catch (err) {
       const msg = err instanceof ApiError ? err.normalized.message : 'No se pudo generar la lista desde la receta.';
       Alert.alert('Error', msg);
     } finally {
+      generatingRef.current = false;
       setGenerating(false);
     }
   }
 
   function handleOpenList() {
     if (!result) return;
-    router.push({ pathname: '/(app)/shopping-lists/[id]' as never, params: { id: String(result.shopping_list.id) } });
+    openList(result.shopping_list.id);
+  }
+
+  function openList(id: number) {
+    router.push({ pathname: '/(app)/shopping-lists/[id]' as never, params: { id: String(id), returnTo: 'recipe', returnId: String(recipeId) } });
   }
 
   function handleCookRecipe() {
@@ -124,7 +136,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   if (error) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Receta" showBack onBack={goBackOrHome} />
+        <AppHeader title="Receta" showBack onBack={goBack} />
         <ErrorState message={friendlyMessage(error)} traceId={error.traceId} onRetry={refresh} type="server" />
       </View>
     );
@@ -132,7 +144,7 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
   if (!data) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Receta" showBack onBack={goBackOrHome} />
+        <AppHeader title="Receta" showBack onBack={goBack} />
         <EmptyState icon="chef-hat" message="No se encontró la receta." />
       </View>
     );
@@ -148,13 +160,15 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
     ['Sodio', nutrition?.sodium_per_serving ?? nutrition?.sodium_total, 'mg'],
   ].filter((row) => row[1] !== null && row[1] !== undefined && row[1] !== '');
   const costValue = cost?.cost_per_serving ?? cost?.total_cost;
+  const hasPrice = cost?.ingredients ? cost.ingredients.some((ingredient) => ingredient.has_price) : cost?.calculation_status === 'complete' || Number(costValue) > 0;
+  const costLabel = !hasPrice || costValue == null ? 'Sin precio disponible' : `${formatMoneyValue(costValue)}${cost?.currency ? ` ${cost.currency}` : ''}`;
 
   return (
     <View style={styles.fill}>
       <AppHeader
         title="Receta"
         showBack
-        onBack={goBackOrHome}
+        onBack={goBack}
         rightAction={<FavoriteButton active={favorites.favoriteIds.has(data.id)} loading={Boolean(favorites.savingIds[data.id])} onPress={() => favorites.toggle(data.id).catch(() => undefined)} />}
       />
       <ScrollView contentContainerStyle={styles.content}>
@@ -189,8 +203,9 @@ export function RecipeDetailScreen({ recipeId }: { recipeId: number }) {
           )) : <Text style={styles.emptyText}>Sin información nutricional disponible.</Text>}
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Costo estimado</Text>
-            <Text style={styles.infoValue}>{costValue === null || costValue === undefined ? 'Sin información' : `${formatMoneyValue(costValue)}${cost?.currency ? ` ${cost.currency}` : ''}`}</Text>
+            <Text style={styles.infoValue}>{costLabel}</Text>
           </View>
+          {hasPrice && cost?.calculation_status !== 'complete' ? <Text style={styles.hint}>Estimación parcial: faltan precios de algunos ingredientes.</Text> : null}
         </View>
 
         {groupId ? (
@@ -313,8 +328,8 @@ const styles = StyleSheet.create({
   noGroup: { backgroundColor: COLORS.surface, borderRadius: RADIUS.sm, padding: SPACING.md, gap: SPACING.sm, alignItems: 'center', ...SHADOW.sm },
   generateBtn: { marginTop: SPACING.xs },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', gap: SPACING.sm },
-  infoLabel: { color: COLORS.textSecondary, fontSize: FONT.captionSize },
-  infoValue: { color: COLORS.textPrimary, fontSize: FONT.captionSize, fontWeight: '700' },
+  infoLabel: { color: COLORS.textSecondary, fontSize: FONT.captionSize, flexShrink: 1 },
+  infoValue: { color: COLORS.textPrimary, fontSize: FONT.captionSize, fontWeight: '700', flexShrink: 1, textAlign: 'right' },
   servingsRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm }, servingsValue: { minWidth: 28, textAlign: 'center', color: COLORS.textPrimary, fontWeight: '800' },
   availabilityError: { color: COLORS.error, fontWeight: '700' }, warning: { color: COLORS.warning, fontSize: FONT.captionSize },
   availabilityOk: { color: COLORS.success, fontWeight: '800' }, availabilityBad: { color: COLORS.error, fontWeight: '800' },

@@ -30,7 +30,7 @@ export function ShoppingListCard({ list, onPress }: ShoppingListCardProps) {
         </View>
         {list.source_type ? (
           <Text style={styles.meta} numberOfLines={1}>
-            {list.source_type === 'manual' ? 'Manual' : list.source_type === 'meal_plan' ? 'Desde plan de comidas' : 'Desde historial'}
+            {list.source_type === 'manual' ? 'Manual' : list.source_type === 'meal_plan' ? 'Desde plan de comidas' : list.source_type === 'recipe' ? 'Desde receta' : list.source_type === 'history' ? 'Desde historial' : 'Lista de compras'}
           </Text>
         ) : null}
         <View style={styles.footer}>

@@ -93,7 +93,6 @@ class RecipeFavoritesCookedRepository
         $query = DB::table('stock_items as si')
             ->join('products as p', 'p.id', '=', 'si.product_id')
             ->where('si.family_group_id', $groupId)
-            ->where('p.ingredient_id', $ingredientId)
             ->where('si.status', 'active')
             ->whereNull('si.deleted_at')
             ->where('si.quantity', '>', 0)
@@ -104,6 +103,8 @@ class RecipeFavoritesCookedRepository
 
         if ($specificProductId !== null) {
             $query->where('si.product_id', $specificProductId);
+        } else {
+            $query->where('p.ingredient_id', $ingredientId);
         }
 
         return $query

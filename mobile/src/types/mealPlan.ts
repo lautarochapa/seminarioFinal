@@ -13,10 +13,10 @@ export interface MealPlanEntry {
   meal_type_id: number;
   meal_type?: { id: number; code: MealSlot; name: string } | null;
   recipe_id: number | null;
-  recipe?: Pick<RecipeSummary, 'id' | 'name'> & { nombre?: string | null } | null;
+  recipe?: Pick<RecipeSummary, 'id' | 'name' | 'servings'> & { nombre?: string | null } | null;
   free_meal_description: string | null;
   is_eating_out: boolean;
-  servings_total: number | null;
+  servings_total: number | string | null;
   notes: string | null;
   status: string;
   created_at?: string;
@@ -37,6 +37,8 @@ export interface MealPlan {
 }
 
 export interface MealPlanFilters {
+  date_from?: string;
+  date_to?: string;
   page?: number;
   per_page?: number;
   status?: string;

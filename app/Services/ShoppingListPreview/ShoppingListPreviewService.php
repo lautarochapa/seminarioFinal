@@ -114,7 +114,13 @@ class ShoppingListPreviewService
             $recipeUnitId = (int) $item['unit']['id'];
             $missingQty   = (float) $item['missing_quantity'];
 
-            $product = $this->repo->resolveProductForIngredient($ingredientId);
+            $product = $this->repo->resolveProductForIngredient($ingredientId, $groupId, $item['specific_product_id'] ?? null);
+            if ($product && !empty($item['specific_product_id'])) {
+                $items[$index]['resolved_product_id'] = (int) $product->id;
+                $items[$index]['purchase_quantity'] = $missingQty;
+                $items[$index]['purchase_unit_id'] = $recipeUnitId;
+                $items[$index]['estimated_price'] = null;
+            }
             if (! $product || ! $product->net_quantity || ! $product->package_unit_id) {
                 continue;
             }
@@ -162,11 +168,12 @@ class ShoppingListPreviewService
                     continue;
                 }
 
-                $key = $recipeIngredient->ingredient_id.'-'.$recipeIngredient->unit_id;
+                $key = $recipeIngredient->ingredient_id.'-'.$recipeIngredient->unit_id.'-'.$recipeIngredient->specific_product_id;
                 $quantity = ((float) $recipeIngredient->quantity / $baseServings) * $servings;
 
                 if (!isset($requirements[$key])) {
                     $requirements[$key] = [
+                        'specific_product_id' => $recipeIngredient->specific_product_id ? (int) $recipeIngredient->specific_product_id : null,
                         'ingredient' => [
                             'id' => (int) $recipeIngredient->ingredient->id,
                             'name' => $recipeIngredient->ingredient->name,
@@ -211,12 +218,17 @@ class ShoppingListPreviewService
     private function subtractStock(int $groupId, array $requirements): array
     {
         $missing = [];
+        $reserved = [];
+        // Reserve constrained products first; each lot can cover only one shared budget.
+        usort($requirements, function ($a, $b) {
+            return (int) !empty($b['specific_product_id']) <=> (int) !empty($a['specific_product_id']);
+        });
 
         foreach ($requirements as $requirement) {
             $remaining = (float) $requirement['required_quantity'];
             $ingredientId = (int) $requirement['ingredient']['id'];
             $unitId = (int) $requirement['unit']['id'];
-            $stockItems = $this->repo->stockItemsForIngredient($groupId, $ingredientId);
+            $stockItems = $this->repo->stockItemsForIngredient($groupId, $ingredientId, $requirement['specific_product_id'] ?? null);
             $incomplete = false;
 
             foreach ($stockItems as $stockItem) {
@@ -225,12 +237,16 @@ class ShoppingListPreviewService
                 }
 
                 $factor = $this->repo->conversionFactor((int) $stockItem['unit_id'], $unitId, $ingredientId);
-                if ($factor === null) {
+                if ($factor === null || $factor <= 0) {
                     $incomplete = true;
                     continue;
                 }
 
-                $remaining -= min($remaining, (float) $stockItem['quantity'] * $factor);
+                $lotId = (int) $stockItem['id'];
+                $available = max(0, (float) $stockItem['quantity'] - ($reserved[$lotId] ?? 0));
+                $used = min($remaining, $available * $factor);
+                $remaining -= $used;
+                $reserved[$lotId] = ($reserved[$lotId] ?? 0) + $used / $factor;
             }
 
             if ($remaining > 0.0001) {

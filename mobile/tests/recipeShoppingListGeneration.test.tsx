@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { RecipeDetailScreen } from '../src/screens/RecipeDetailScreen';
-import type { RecipeShoppingListResult } from '../src/types/recipe';
+import type { RecipeCost, RecipeShoppingListResult } from '../src/types/recipe';
+let mockCost: RecipeCost | undefined;
 
 jest.mock('@expo/vector-icons', () => ({
   MaterialCommunityIcons: 'MaterialCommunityIcons',
@@ -35,7 +36,7 @@ const RECIPE = {
 };
 
 jest.mock('../src/hooks/useRecipeDetail', () => ({
-  useRecipeDetail: () => ({ data: RECIPE, loading: false, error: null, refresh: jest.fn() }),
+  useRecipeDetail: () => ({ data: RECIPE, cost: mockCost, loading: false, error: null, refresh: jest.fn() }),
 }));
 
 jest.mock('../src/hooks/useRecipeFavorites', () => ({
@@ -102,6 +103,20 @@ function resultWith(overrides: Partial<RecipeShoppingListResult>): { data: Recip
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockCost = undefined;
+});
+
+it('does not display unknown recipe prices as a zero cost', async () => {
+  mockCost = { total_cost: 0, cost_per_serving: 0, calculation_status: 'partial', ingredients: [{ has_price: false }] };
+  const screen = await render(<RecipeDetailScreen recipeId={3} />);
+  expect(screen.getByText('Sin precio disponible')).toBeTruthy();
+  expect(screen.queryByText(/Estimación parcial/)).toBeNull();
+});
+
+it('labels a partial estimate instead of implying every ingredient was priced', async () => {
+  mockCost = { total_cost: 400, cost_per_serving: 100, calculation_status: 'partial', ingredients: [{ has_price: true }, { has_price: false }] };
+  const screen = await render(<RecipeDetailScreen recipeId={3} />);
+  expect(screen.getByText(/Estimación parcial/)).toBeTruthy();
 });
 
 describe('RecipeDetailScreen — generar lista desde receta', () => {
@@ -136,11 +151,11 @@ describe('RecipeDetailScreen — generar lista desde receta', () => {
       items_without_price: 1,
       estimated_total: 0,
     }));
-    const { getByRole, findByText } = await render(<RecipeDetailScreen recipeId={3} />);
+    const { getByRole, findAllByText } = await render(<RecipeDetailScreen recipeId={3} />);
 
     await fireEvent.press(getByRole('button', { name: 'Generar lista de compras' }));
 
-    expect(await findByText('Sin precio disponible')).toBeTruthy();
+    expect((await findAllByText('Sin precio disponible')).length).toBeGreaterThan(0);
   });
 
   it('shows unmapped ingredients as warnings', async () => {
@@ -149,7 +164,7 @@ describe('RecipeDetailScreen — generar lista desde receta', () => {
       items_added: 0,
       unmapped_ingredients: [{ ingredient_id: 9, ingredient_name: 'Sal', reason: 'INGREDIENT_OR_UNIT_MISSING' }],
     }));
-    const { getByText, getByRole, findByText } = await render(<RecipeDetailScreen recipeId={3} />);
+    const { getByRole, findByText } = await render(<RecipeDetailScreen recipeId={3} />);
 
     await fireEvent.press(getByRole('button', { name: 'Generar lista de compras' }));
 
@@ -196,12 +211,12 @@ describe('RecipeDetailScreen — generar lista desde receta', () => {
 
   it('navigates to the generated list when "Abrir lista" is pressed', async () => {
     mockGenerate.mockResolvedValue(resultWith({}));
-    const { getByText, getByRole, findByText } = await render(<RecipeDetailScreen recipeId={3} />);
+    const { getByRole, findByText } = await render(<RecipeDetailScreen recipeId={3} />);
 
     await fireEvent.press(getByRole('button', { name: 'Generar lista de compras' }));
     await findByText('Resumen de la generación');
     await fireEvent.press(getByRole('button', { name: 'Abrir lista' }));
 
-    expect(mockPush).toHaveBeenCalledWith({ pathname: '/(app)/shopping-lists/[id]', params: { id: '55' } });
+    expect(mockPush).toHaveBeenCalledWith({ pathname: '/(app)/shopping-lists/[id]', params: { id: '55', returnTo: 'recipe', returnId: '3' } });
   });
 });

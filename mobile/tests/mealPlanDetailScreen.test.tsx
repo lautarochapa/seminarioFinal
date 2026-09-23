@@ -22,11 +22,12 @@ const mockPush = jest.fn();
 const mockCreateItem = jest.fn();
 const mockDeleteItem = jest.fn();
 const mockMealTypesList = jest.fn();
+const mockGenerate = jest.fn();
 const mockRefresh = jest.fn();
 let mockDetail: { data: MealPlan | null; loading: boolean; error: null; refresh: jest.Mock };
 
 jest.mock('@expo/vector-icons', () => ({ MaterialCommunityIcons: 'MaterialCommunityIcons' }));
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: jest.fn() }), useFocusEffect: jest.fn() }));
 jest.mock('../src/utils/navigation', () => ({ goBackOrHome: jest.fn() }));
 jest.mock('../src/components/AppHeader', () => ({ AppHeader: 'AppHeader' }));
 jest.mock('../src/auth/FamilyGroupContext', () => ({ useFamilyGroupContext: () => ({ selectedGroup: { id: 4, name: 'Casa' } }) }));
@@ -35,7 +36,7 @@ jest.mock('../src/api/endpoints', () => ({
   mealPlansApi: {
     createItem: (...args: unknown[]) => mockCreateItem(...args),
     deleteItem: (...args: unknown[]) => mockDeleteItem(...args),
-    generateShoppingList: jest.fn(),
+    generateShoppingList: (...args: unknown[]) => mockGenerate(...args),
   },
   mealTypesApi: { list: (...args: unknown[]) => mockMealTypesList(...args) },
 }));
@@ -99,11 +100,11 @@ describe('MealPlanDetailScreen manual planning flow', () => {
     await waitFor(() => expect(mockMealTypesList).toHaveBeenCalled());
     await act(async () => { await Promise.resolve(); });
 
-    fireEvent.press(screen.getByText('Agregar comida'));
+    await fireEvent.press(screen.getByText('Agregar comida'));
     await waitFor(() => expect(screen.getAllByText('Almuerzo').length).toBeGreaterThan(1));
     const chips = screen.getAllByText('Almuerzo');
-    fireEvent.press(chips[chips.length - 1]);
-    fireEvent.press(screen.getByText('Guardar'));
+    await fireEvent.press(chips[chips.length - 1]);
+    await fireEvent.press(screen.getByText('Guardar'));
 
     await waitFor(() => expect(mockCreateItem).toHaveBeenCalledWith(4, 7, expect.objectContaining({
       date: '2026-06-16',
@@ -112,9 +113,60 @@ describe('MealPlanDetailScreen manual planning flow', () => {
     })));
     expect(mockCreateItem.mock.calls[0][2]).toHaveProperty('servings_total');
 
-    fireEvent.press(screen.getByText('Quitar'));
+    await fireEvent.press(screen.getByText('Quitar'));
     await waitFor(() => expect(mockDeleteItem).toHaveBeenCalledWith(4, 7, 21));
     expect(mockRefresh).toHaveBeenCalledTimes(2);
     alertSpy.mockRestore();
+  });
+
+  it('keeps decimal comma portions and prevents a duplicate save', async () => {
+    let finish!: (value: unknown) => void;
+    mockCreateItem.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    const screen = await render(<MealPlanDetailScreen planId={7} preselectRecipeId={12} preselectRecipeName="Tarta" />);
+    await waitFor(() => expect(mockMealTypesList).toHaveBeenCalled());
+    await fireEvent.press(screen.getByText('Agregar comida'));
+    await fireEvent.changeText(screen.getByLabelText('Porciones'), '1,5');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    expect(screen.getByRole('button', { name: 'Guardar' }).props.accessibilityState.disabled).toBe(true);
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    expect(mockCreateItem).toHaveBeenCalledTimes(1);
+    expect(mockCreateItem).toHaveBeenCalledWith(4, 7, expect.objectContaining({ servings_total: 1.5 }));
+    await act(async () => finish({ data: { id: 99 } }));
+  });
+
+  it.each(['0', '-2', 'abc', '1,2,3'])('rejects invalid portions %s without posting', async (value) => {
+    const screen = await render(<MealPlanDetailScreen planId={7} preselectRecipeId={12} />);
+    await fireEvent.press(screen.getByText('Agregar comida'));
+    await fireEvent.changeText(screen.getByLabelText('Porciones'), value);
+    await fireEvent.press(screen.getByText('Guardar'));
+    expect(screen.getByText('Ingresá una cantidad de porciones mayor que cero.')).toBeTruthy();
+    expect(mockCreateItem).not.toHaveBeenCalled();
+  });
+
+  it.each(['2026-02-30', '2026-06-23'])('rejects an invalid or out-of-plan date %s', async (value) => {
+    const screen = await render(<MealPlanDetailScreen planId={7} preselectRecipeId={12} />);
+    await fireEvent.press(screen.getByText('Agregar comida'));
+    await fireEvent.changeText(screen.getByLabelText('Fecha'), value);
+    await fireEvent.press(screen.getByText('Guardar'));
+    expect(screen.getByText('Ingresá una fecha válida dentro de las fechas del plan.')).toBeTruthy();
+    expect(mockCreateItem).not.toHaveBeenCalled();
+  });
+
+  it('asks before discarding edited portions', async () => {
+    const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    const screen = await render(<MealPlanDetailScreen planId={7} preselectRecipeId={12} />);
+    await fireEvent.press(screen.getByText('Agregar comida'));
+    await fireEvent.changeText(screen.getByLabelText('Porciones'), '2');
+    await fireEvent.press(screen.getByText('Cancelar'));
+    expect(alert).toHaveBeenCalledWith('¿Descartar los cambios?', expect.any(String), expect.any(Array));
+    expect(screen.getByLabelText('Porciones').props.value).toBe('2');
+    alert.mockRestore();
+  });
+
+  it('opens the generated list using the backend id, preserving the return route', async () => {
+    mockGenerate.mockResolvedValue({ data: { id: 55 } });
+    const screen = await render(<MealPlanDetailScreen planId={7} />);
+    await fireEvent.press(screen.getByText('Generar lista'));
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith({ pathname: '/(app)/shopping-lists/[id]', params: expect.objectContaining({ id: '55', returnTo: 'meal-plan', returnId: '7' }) }));
   });
 });

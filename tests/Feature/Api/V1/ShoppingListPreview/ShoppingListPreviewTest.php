@@ -171,6 +171,60 @@ class ShoppingListPreviewTest extends TestCase
         $this->getJson('/api/v1/family-groups/1/meal-plans/1/shopping-list-preview')->assertStatus(401);
     }
 
+    public function test_specific_product_without_ingredient_link_is_available_and_preserved_when_missing()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $grams = $this->unit('g');
+        $ingredient = $this->ingredient($grams);
+        $product = $this->product($ingredient, $grams);
+        $product->update(['ingredient_id' => null, 'status' => 'pending_review', 'origin' => 'user_created', 'family_group_id' => $group->id]);
+        $recipe = $this->recipe($ingredient, $grams, 200);
+        $recipe->ingredients()->update(['specific_product_id' => $product->id]);
+        $stock = $this->stock($group, $product, $grams, 250);
+        $plan = $this->planWithRecipe($group, $user, $recipe);
+        $url = '/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id;
+        $this->actingAs($user)->getJson($url.'/shopping-list-preview')->assertOk()->assertJsonCount(0, 'data');
+        $stock->update(['quantity' => 50]);
+        $this->postJson($url.'/generate-shopping-list')->assertStatus(201);
+        $this->assertDatabaseHas('shopping_list_items', ['product_id' => $product->id, 'quantity' => '150.0000', 'unit_id' => $grams->id]);
+        $this->assertEquals(50, (float) $stock->fresh()->quantity);
+    }
+
+    public function test_stock_is_reserved_once_across_units_and_specific_requirements()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $grams = $this->unit('g');
+        $kilos = $this->unit('kg');
+        $ingredient = $this->ingredient($grams);
+        $product = $this->product($ingredient, $grams);
+        $generic = $this->recipe($ingredient, $kilos, 0.1);
+        $specific = $this->recipe($ingredient, $grams, 100);
+        $specific->ingredients()->update(['specific_product_id' => $product->id]);
+        $this->stock($group, $product, $grams, 150);
+        UnitConversion::create(['from_unit_id' => $kilos->id, 'to_unit_id' => $grams->id, 'factor' => 1000, 'status' => 'active']);
+        $plan = $this->planWithRecipe($group, $user, $generic);
+        $item = $plan->items()->first()->replicate();
+        $item->recipe_id = $specific->id;
+        $item->save();
+        $response = $this->actingAs($user)->getJson('/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id.'/shopping-list-preview')->assertOk()->assertJsonCount(1, 'data');
+        $this->assertEquals(0.05, $response->json('data.0.missing_quantity'));
+        $this->assertNull($response->json('data.0.specific_product_id'));
+    }
+
+    public function test_preview_excludes_expired_and_other_household_stock()
+    {
+        [$user, $group] = $this->groupWithMember();
+        [, $otherGroup] = $this->groupWithMember();
+        $grams = $this->unit('g');
+        $ingredient = $this->ingredient($grams);
+        $product = $this->product($ingredient, $grams);
+        $this->stock($group, $product, $grams, 500)->update(['expiration_date' => now()->subDay()->toDateString()]);
+        $this->stock($otherGroup, $product, $grams, 500);
+        $plan = $this->planWithRecipe($group, $user, $this->recipe($ingredient, $grams, 100));
+        $response = $this->actingAs($user)->getJson('/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id.'/shopping-list-preview')->assertOk();
+        $this->assertEquals(100, $response->json('data.0.missing_quantity'));
+    }
+
     public function test_access_to_other_group_rejected()
     {
         [$user, $group] = $this->groupWithMember();

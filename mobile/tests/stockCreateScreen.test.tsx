@@ -4,6 +4,8 @@ import { Keyboard, Platform, StyleSheet } from 'react-native';
 import { COLORS, SPACING } from '../src/utils/theme';
 import { StockCreateScreen } from '../src/screens/StockCreateScreen';
 import { ApiError } from '../src/api/client';
+import type { ProductSummary } from '../src/types/product';
+let mockProducts: ProductSummary[] = [];
 
 const mockCreate = jest.fn();
 const mockCreateManual = jest.fn();
@@ -16,7 +18,7 @@ jest.mock('../src/api/endpoints', () => ({
 }));
 jest.mock('../src/auth/FamilyGroupContext', () => ({ useFamilyGroupContext: () => ({ selectedGroup: mockGroup }) }));
 jest.mock('../src/hooks/useStockLocations', () => ({ useStockLocations: () => ({ data: [], loading: false }) }));
-jest.mock('../src/hooks/useProducts', () => ({ useProducts: () => ({ data: [], loading: false, setFilters: jest.fn() }) }));
+jest.mock('../src/hooks/useProducts', () => ({ useProducts: () => ({ data: mockProducts, loading: false, setFilters: jest.fn() }) }));
 jest.mock('../src/utils/barcodeScanResult', () => ({ consumePendingScanResult: () => null }));
 jest.mock('../src/components/AppHeader', () => ({ AppHeader: 'AppHeader' }));
 jest.mock('../src/components/FamilyGroupSelector', () => ({ FamilyGroupSelector: 'FamilyGroupSelector' }));
@@ -28,6 +30,7 @@ jest.mock('expo-router', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockProducts = [];
   mockGroup = { id: 7, name: 'Hogar QA' };
   mockUnits.mockResolvedValue({ data: [{ id: 1, code: 'g', symbol: 'g', name: 'Gramos' }] });
   mockCreate.mockResolvedValue({ data: { id: 10 } });
@@ -41,6 +44,17 @@ async function openForm(quantity = '500') {
   await fireEvent.changeText(screen.getByLabelText('Cantidad *'), quantity);
   return screen;
 }
+
+it('does not present the package unit as a selected stock unit', async () => {
+  mockProducts = [{ id: 5, name: 'Arroz de prueba', normalized_name: 'arroz de prueba', brand_id: null, category_id: null, ingredient_id: null, default_unit_id: null, net_quantity: 500, barcode: null, description: null, status: 'active', brand: null, category: null, ingredient: null, unit: null, created_at: '', updated_at: '', deleted_at: null, package_unit: { id: 1, code: 'g', symbol: 'g', name: 'Gramos' }, stock_entry_suggestion: { quantity: null, unit_id: null, source: null, requires_unit_selection: true, existing_units: [] } }];
+  const screen = await render(<StockCreateScreen />);
+  await fireEvent.press(screen.getByLabelText('Seleccionar producto'));
+  await fireEvent.press(screen.getByRole('button', { name: 'Arroz de prueba' }));
+  expect(screen.queryByText(/Unidad seleccionada:/)).toBeNull();
+  expect(screen.getByText('Elegí la unidad en la que vas a registrar esta cantidad.')).toBeTruthy();
+  await fireEvent.press(screen.getByRole('button', { name: 'Gramos' }));
+  expect(screen.getByText('Unidad seleccionada: g')).toBeTruthy();
+});
 
 it('preserves decimal commas in quantity and price when creating stock', async () => {
   const screen = await openForm('0,25');

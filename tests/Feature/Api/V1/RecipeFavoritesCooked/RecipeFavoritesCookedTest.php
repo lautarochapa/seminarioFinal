@@ -481,6 +481,25 @@ class RecipeFavoritesCookedTest extends TestCase
         ]);
     }
 
+    public function test_specific_unlinked_product_cooks_with_converted_stock()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $grams = $this->unit('g');
+        $kilos = $this->unit('kg');
+        $ingredient = $this->ingredient($grams);
+        $product = $this->product($ingredient, $kilos);
+        $product->update(['ingredient_id' => null, 'status' => 'pending_review', 'origin' => 'user_created', 'family_group_id' => $group->id]);
+        $recipe = $this->recipe(['servings' => 1]);
+        $this->addIngredient($recipe, $ingredient, $grams, 100, false, $product);
+        UnitConversion::updateOrCreate(['from_unit_id' => $kilos->id, 'to_unit_id' => $grams->id], ['factor' => 1000, 'status' => 'active']);
+        $stock = $this->stockItem($group, $product, $kilos, 3.25);
+        $this->actingAs($user)->postJson('/api/v1/recipes/'.$recipe->id.'/cook', [
+            'servings' => 1, 'family_group_id' => $group->id, 'deduct_stock' => true,
+        ])->assertStatus(201);
+        $this->assertEquals(3.15, (float) $stock->fresh()->quantity);
+    }
+
     public function test_doble_ejecucion_con_idempotency_key_no_duplica_consumo()
     {
         $user   = factory(User::class)->create();

@@ -2,7 +2,7 @@
   "expo": {
     "name": "CocinaComidaControl",
     "slug": "cocinacomidacontrol",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "cccontrol",
@@ -13,9 +13,9 @@
     },
     "android": {
       "package": "com.cccontrol.mobile",
-      "versionCode": 8,
+      "versionCode": 9,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#04AC85",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

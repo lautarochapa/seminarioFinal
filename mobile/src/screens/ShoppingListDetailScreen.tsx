@@ -30,7 +30,7 @@ import { useProducts } from '@/hooks/useProducts';
 import { useUnits } from '@/hooks/useUnits';
 import { shoppingListItemsApi, shoppingListsApi } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { goBackOrHome } from '@/utils/navigation';
+import { useSectionBackNavigation } from '@/hooks/useSectionBackNavigation';
 import { friendlyMessage } from '@/utils/errorParser';
 import { COLORS, FONT, FONT_SIZE, RADIUS, SHADOW, SPACING, TOUCH_TARGET } from '@/utils/theme';
 import type { CompleteShoppingListItemRequest, ShoppingListItem } from '@/types/shopping';
@@ -38,6 +38,10 @@ import type { ProductSummary } from '@/types/product';
 
 interface Props {
   listId: number;
+  returnTo?: string;
+  returnId?: string;
+  addRecipeId?: string;
+  addRecipeName?: string;
 }
 
 const DEBOUNCE_MS = 400;
@@ -46,8 +50,12 @@ export function shoppingItemCanAutoAssociate(item: ShoppingListItem): boolean {
   return !!item.product?.id || !!item.ingredient?.id;
 }
 
-export function ShoppingListDetailScreen({ listId }: Props) {
+export function ShoppingListDetailScreen({ listId, returnTo, returnId, addRecipeId, addRecipeName }: Props) {
   const router = useRouter();
+  const backPath = returnId && returnTo === 'meal-plan' ? '/(app)/meal-plans/[id]' : returnId && returnTo === 'recipe' ? '/(app)/recipes/[id]' : '/(app)/shopping-lists';
+  const backParams: Record<string, string> = backPath.endsWith('[id]') ? { id: returnId! } : {};
+  if (returnTo === 'meal-plan' && addRecipeId) { backParams.addRecipeId = addRecipeId; backParams.addRecipeName = addRecipeName ?? ''; }
+  const goBack = useSectionBackNavigation(backPath, backParams);
   const insets = useSafeAreaInsets();
   const { selectedGroup } = useFamilyGroupContext();
   const groupId = selectedGroup?.id ?? null;
@@ -298,7 +306,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   if (!selectedGroup) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Lista" showBack onBack={goBackOrHome} />
+        <AppHeader title="Lista" showBack onBack={goBack} />
         <EmptyState icon="account-group-outline" message="Seleccioná un grupo familiar." />
       </View>
     );
@@ -309,7 +317,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
   if (error) {
     return (
       <View style={styles.fill}>
-        <AppHeader title="Lista" showBack onBack={goBackOrHome} />
+        <AppHeader title="Lista" showBack onBack={goBack} />
         <ErrorState message={friendlyMessage(error)} traceId={error.traceId ?? ''} onRetry={refresh} type="server" />
       </View>
     );
@@ -332,7 +340,7 @@ export function ShoppingListDetailScreen({ listId }: Props) {
         title={`Lista #${list.id}`}
         subtitle={selectedGroup.name}
         showBack
-        onBack={goBackOrHome}
+        onBack={goBack}
         rightAction={
           canEditItems ? (
             <Pressable
