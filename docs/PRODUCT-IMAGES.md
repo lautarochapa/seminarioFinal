@@ -10,7 +10,7 @@ La app, en cambio, mostraba un icono fijo en catalogo/detalle y stock/detalle.
 Su tipo ProductImage declaraba `url` aunque la API entrega `image_url`.
 La respuesta de stock tampoco incluia las fotos del producto.
 
-## Correccion local
+## Correccion incorporada en 1.0.6
 
 - ProductPhoto compartido en las cuatro pantallas Android, con prioridad
   para la foto principal activa, dimensiones estables y ajuste contain.
@@ -24,8 +24,9 @@ La respuesta de stock tampoco incluia las fotos del producto.
 - Catalogo y stock solo entregan fotos activas. No cambian productos,
   permisos, marcas, existencias ni datos de produccion.
 
-No se despliega ni genera otra APK como parte de este cambio. La version
-instalada 1.0.5 sigue igual hasta publicar e instalar la siguiente.
+La correccion forma parte de Android 1.0.6 (7) y su backend. Consultar el
+[registro de release](ANDROID-1.0.6.md) para comprobar su publicacion.
+La version instalada 1.0.5 sigue igual hasta actualizarla.
 
 ## Cargar las fotos que falten
 
@@ -33,7 +34,7 @@ instalada 1.0.5 sigue igual hasta publicar e instalar la siguiente.
 2. En Imagenes, usar una foto real del envase correspondiente, por archivo
    o URL HTTPS autorizada. No asociar una foto de otra marca/presentacion.
 3. Marcar la principal y guardar. Comprobar primero la foto en el catalogo web.
-4. En la proxima APK, refrescar catalogo/Mi cocina y abrir el detalle.
+4. En Android 1.0.6 o posterior, refrescar catalogo/Mi cocina y abrir el detalle.
 
 No se hicieron cargas masivas, scraping adicional ni cambios de datos online.
 La consulta anonima al catalogo online devuelve 401; queda pendiente revisar

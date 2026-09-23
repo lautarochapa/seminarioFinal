@@ -14,8 +14,40 @@
 
 ## Publicacion
 
-En preparacion. La landing conserva la version anterior hasta verificar el nuevo
-binario, su firma, su descarga publica y el despliegue de la web.
+- APK compilada y publicada como prerelease el 22/09/2026.
+- [Release Android 1.0.6 (7)](https://github.com/lautarochapa/seminarioFinal/releases/tag/android-v1.0.6-7).
+- Archivo: `CocinaComidaControl-1.0.6-7.apk`, 129110371 bytes (aprox. 129 MB).
+- SHA-256: `7d6258973e7270f91c5472f1ad0c930464711b275c6dfdc41110132e91d9a81e`.
+- Certificado SHA-256: `e29884d881b7fe8c45f2f403970c4b301ea5d61726be3766304da526f4bff483`.
+- Firma comprobada con apksig: coincide con 1.0.5. Manifiesto 1.0.6 (7),
+  paquete correcto, debuggable=false y bundle standalone presente.
+- Configuracion de web/API actualizada en conjunto. La release anterior se
+  conserva como respaldo, sin sobrescribir archivos ni cambiar la firma.
+- Descarga anonima completa comprobada: tamano y SHA-256 iguales al binario de EAS.
+
+Verificar Render Live sobre el commit de metadatos, salud HTTP 200,
+`GET /api/v1/mobile/android/version` con version 1.0.6/build 7 y
+`/descargas/android` con 302 a la APK publicada. La URL estable es
+`https://cocinacomidacontrol.com.ar/descargas/android`.
+
+## Verificacion previa
+
+- Fuente: `13ff394f76338ca45999d5a141dbdfefb4361005`.
+- Build EAS: `247c6ab3-295c-4350-a096-dea8bad43f18`.
+- 58 suites / 343 pruebas moviles aprobadas sobre la copia final de la release.
+- TypeScript aprobado; ESLint sin errores (un aviso en el setup de tests).
+- Export Android/Hermes completado.
+- Smoke PostgreSQL local aprobado: compras manuales, precios, rechazo de
+  cierres duplicados, stock, presupuesto, fotos activas y ausencia de consultas N+1.
+- Smoke HTTP de version aprobado: acceso anonimo, sin sesion ni consultas SQL,
+  metadatos validos, errores controlados y cache no-store.
+- 312 archivos del paquete EAS cotejados con el commit; sin .env, secretos,
+  dependencias locales ni documentos de tesis. Se excluye .claude/settings.json.
+
+El empaquetado EAS se hizo sin VCS para limitar el envio al directorio mobile.
+Por eso EAS no registra gitCommitHash: la trazabilidad se comprueba comparando
+el archivo inspeccionado con la fuente del commit, normalizando solo CRLF/LF.
+Persisten avisos previos de act() en tests de planificacion, sin fallos.
 
 ## Aceptacion fisica
 

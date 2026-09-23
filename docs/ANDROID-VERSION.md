@@ -1,8 +1,8 @@
 # Aviso de nueva version Android
 
-Implementacion local del 22/09/2026. No desplegada en Render ni incluida aun
-en una APK publicada. No cambia la version anunciada: sigue siendo 1.0.5 (6)
-en la configuracion local, hasta publicar un nuevo binario.
+Funcionalidad incorporada en Android 1.0.6 (7) y su backend. Consultar
+[registro de release](ANDROID-1.0.6.md) para el estado de publicacion y las
+verificaciones del binario. La API solo anuncia una APK despues de publicarla.
 
 ## Contrato HTTP
 
@@ -17,8 +17,8 @@ independientes de la version publicada.
 {
   "data": {
     "platform": "android",
-    "version": "1.0.5",
-    "build": 6,
+    "version": "1.0.6",
+    "build": 7,
     "download_page_url": "https://cocinacomidacontrol.com.ar/#descarga-app"
   },
   "trace_id": "identificador-de-la-solicitud"
@@ -84,12 +84,12 @@ No anunciar builds futuros antes de tener un archivo descargable probado.
   fallo de red, apertura explicita, navegador ausente y Expo Go/iOS.
 - `mobile/tests/apiClient.test.ts`: el endpoint no lee ni envia el token.
 
-Resultado local del 22/09/2026: 56 suites y 326 pruebas moviles aprobadas;
-TypeScript sin errores, ESLint de los archivos de esta funcion aprobado y
-exportacion Android completada. Las pruebas HTTP de version y descarga de
-landing tambien pasaron. Los 292 archivos comparados entre el proyecto movil
-y la copia materializada usada para probar coinciden. Persisten advertencias
-previas de `act()` en pruebas de planificacion, sin casos fallidos.
+Resultado de release del 22/09/2026: 58 suites y 343 pruebas moviles aprobadas;
+TypeScript sin errores, ESLint sin errores (un aviso en el setup de tests) y
+exportacion Android completada. La prueba HTTP de version paso. Los 312
+archivos del paquete EAS fueron cotejados con el commit de fuente publicado.
+Persisten advertencias previas de `act()` en pruebas de planificacion, sin
+casos fallidos. Ver la comprobacion de descarga en el registro de release.
 La exportacion valida el bundle, no reemplaza la compilacion de una nueva APK
 ni el retest en el Samsung.
 
