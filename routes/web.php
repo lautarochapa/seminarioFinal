@@ -71,12 +71,20 @@ Route::get('/callback', 'SocialAuthGoogleController@callback');
 
 Auth::routes();
 
+Route::prefix('web-session')->middleware(['trace_id', 'throttle:20,1'])->group(function () {
+    Route::post('login', 'WebSessionController@login');
+    Route::post('register', 'WebSessionController@register');
+    Route::post('logout', 'WebSessionController@logout')->middleware('auth');
+});
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/app', 'AppScreenController@dashboard')->name('app.dashboard');
 Route::get('/app/{screen}', 'AppScreenController@index')->name('app.screen');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/web-data/family-groups/{id}/stock', 'WebStockOverviewController')
+        ->where('id', '[0-9]+')->middleware(['trace_id', 'permission:stock.manage']);
     Route::get('/web', 'UserWebScreenController@dashboard')->name('web.dashboard');
     Route::get('/web/{screen}', 'UserWebScreenController@index')->name('web.screen');
 

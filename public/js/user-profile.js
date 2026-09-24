@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var state = {
         objectivesCatalog: [],
         userObjectives: [],
@@ -585,7 +587,7 @@
             });
         }
 
-        document.addEventListener('click', function (event) {
+        (window.CCPage ? window.CCPage.listen.bind(null, document) : document.addEventListener.bind(document))('click', function (event) {
             var editId = event.target.getAttribute('data-user-objective-edit');
             var deleteId = event.target.getAttribute('data-user-objective-delete');
 
@@ -662,7 +664,7 @@
             });
         }
 
-        document.addEventListener('click', function (event) {
+        (window.CCPage ? window.CCPage.listen.bind(null, document) : document.addEventListener.bind(document))('click', function (event) {
             var id = event.target.getAttribute('data-user-health-delete');
             if (!id) {
                 return;
@@ -736,7 +738,7 @@
             });
         }
 
-        document.addEventListener('click', function (event) {
+        (window.CCPage ? window.CCPage.listen.bind(null, document) : document.addEventListener.bind(document))('click', function (event) {
             var editId = event.target.getAttribute('data-measurement-edit');
             var deleteId = event.target.getAttribute('data-measurement-delete');
 
@@ -798,7 +800,7 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var profileForm = qs('[data-user-profile-form]');
         var priorityForm = qs('[data-priority-settings-form]');
         var objectivesForm = qs('[data-user-objective-form]');
@@ -817,23 +819,26 @@
         bindMeasurementForm(measurementForm);
         bindConsentsForm(consentsForm);
 
-        Promise.all([
-            loadObjectivesCatalog(),
-            loadHealthCatalog('dietary-restrictions'),
-            loadHealthCatalog('health-conditions'),
-            loadHealthCatalog('allergies'),
-            loadProfile(profileForm),
-            loadPrioritySettings(priorityForm),
-            loadUserObjectives(objectivesForm),
-            loadUserHealth('dietary-restrictions', userHealthForm),
-            loadUserHealth('health-conditions', userHealthForm),
-            loadUserHealth('allergies', userHealthForm),
-            loadMeasurements(measurementForm),
-            loadConsents(consentsForm),
-        ]).then(function () {
-            renderUserHealth(userHealthForm);
-        }).catch(function () {
-            showMessage(profileForm, '[data-profile-message]', 'warning', 'No se pudo cargar toda la informacion del perfil desde la API.');
+        var root = profileForm.closest('.workspace-profile');
+        var sections = {
+            '#datos': function () { return loadProfile(profileForm); },
+            '#prioridades': function () { return loadPrioritySettings(priorityForm); },
+            '#objetivos': function () { return Promise.all([loadObjectivesCatalog(), loadUserObjectives(objectivesForm)]); },
+            '#restricciones': function () {
+                return Promise.all(['dietary-restrictions', 'health-conditions', 'allergies'].map(function (kind) {
+                    return Promise.all([loadHealthCatalog(kind), loadUserHealth(kind, userHealthForm)]);
+                })).then(function () { renderUserHealth(userHealthForm); });
+            },
+            '#mediciones': function () { return loadMeasurements(measurementForm); },
+            '#consentimientos': function () { return loadConsents(consentsForm); }
+        };
+        Object.keys(sections).forEach(function (selector) {
+            var load = function () {
+                return sections[selector]().catch(function () {
+                    showMessage(profileForm, '[data-profile-message]', 'warning', 'No se pudo cargar toda la informacion del perfil desde la API.');
+                });
+            };
+            if (!window.CCUI || !window.CCUI.defer(root, selector, load)) load();
         });
 
         var primaryBtn = document.querySelector('[data-screen-primary-action]');
@@ -857,5 +862,8 @@
                 if (first) { first.focus(); }
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-profile', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

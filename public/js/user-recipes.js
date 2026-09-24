@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var state = {
         recipes: [],
         categories: [],
@@ -477,6 +479,7 @@
 
     function debounce(fn, wait) {
         var t;
+        if (window.CCPage) window.CCPage.onDispose(function () { clearTimeout(t); });
         return function () { clearTimeout(t); t = setTimeout(fn, wait); };
     }
 
@@ -539,7 +542,7 @@
 
     // ─── Init ─────────────────────────────────────────────────────────────────
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-user-recipes]');
         if (!root || !window.CCApi) { return; }
 
@@ -571,5 +574,8 @@
                 }
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-recipes', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

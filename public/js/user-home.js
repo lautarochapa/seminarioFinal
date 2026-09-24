@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     function qs(selector, root) {
         return (root || document).querySelector(selector);
     }
@@ -117,7 +119,7 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-user-home]');
         if (!root || !window.CCApi) {
             return;
@@ -135,5 +137,8 @@
                 var actions = qs('[data-home-actions]', root);
                 if (actions) { actions.className = 'muted'; actions.textContent = 'El resumen no está disponible.'; }
             });
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-home', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

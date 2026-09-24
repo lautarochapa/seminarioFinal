@@ -1,4 +1,4 @@
-<header class="site-navbar {{ auth()->check() ? 'site-navbar-authenticated' : '' }}">
+<header class="site-navbar {{ auth()->check() ? 'site-navbar-authenticated' : '' }}" @if(isset($screenKey) && auth()->check()) id="panel-header" data-user="{{ auth()->id() }}" data-turbo-permanent @endif>
     <div class="navbar-inner">
         <a class="logo" href="{{ url('/') }}"><img src="{{ asset('images/logo/2.svg') }}" alt="CocinaComidaControl" width="300" height="40"></a>
         @auth

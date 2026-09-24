@@ -7,6 +7,12 @@ use App\StockLocation;
 
 class StockLocationRepository
 {
+    public function activeOptionsForGroup(int $groupId)
+    {
+        return StockLocation::where('family_group_id', $groupId)->where('status', 'active')
+            ->orderBy('name')->limit(100)->get();
+    }
+
     public function paginateForGroup(int $groupId, array $filters)
     {
         $query = StockLocation::where('family_group_id', $groupId)

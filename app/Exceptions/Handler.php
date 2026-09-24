@@ -81,6 +81,10 @@ class Handler extends ExceptionHandler
     {
         $traceId = $request->attributes->get('trace_id', (string) Str::uuid());
 
+        if ($exception instanceof \Illuminate\Session\TokenMismatchException) {
+            return $this->errorJson('CSRF_TOKEN_MISMATCH', 'La sesion del formulario vencio. Recarga la pagina e intenta nuevamente.', 419, $traceId);
+        }
+
         if ($exception instanceof AuthException) {
             return $this->errorJson(
                 $exception->getErrorCode(),

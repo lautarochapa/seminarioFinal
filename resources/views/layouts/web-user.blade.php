@@ -4,46 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="ccc-auth" content="session">
     <title>@yield('title', 'CC Control Web')</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLcE=" crossorigin="" defer></script>
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
-    <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
-    <script src="{{ asset('js/panel-ui.js') }}?v={{ filemtime(public_path('js/panel-ui.js')) }}" defer></script>
-    <script src="{{ asset('js/loader.js') }}?v={{ filemtime(public_path('js/loader.js')) }}" defer></script>
-    <script src="{{ asset('js/user-onboarding.js') }}?v={{ file_exists(public_path('js/user-onboarding.js')) ? filemtime(public_path('js/user-onboarding.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-home.js') }}?v={{ file_exists(public_path('js/user-home.js')) ? filemtime(public_path('js/user-home.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-profile.js') }}?v={{ file_exists(public_path('js/user-profile.js')) ? filemtime(public_path('js/user-profile.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-catalog.js') }}?v={{ file_exists(public_path('js/user-catalog.js')) ? filemtime(public_path('js/user-catalog.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-barcode.js') }}?v={{ file_exists(public_path('js/user-barcode.js')) ? filemtime(public_path('js/user-barcode.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-supermarkets.js') }}?v={{ file_exists(public_path('js/user-supermarkets.js')) ? filemtime(public_path('js/user-supermarkets.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-branches.js') }}?v={{ file_exists(public_path('js/user-branches.js')) ? filemtime(public_path('js/user-branches.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-payment-methods.js') }}?v={{ file_exists(public_path('js/user-payment-methods.js')) ? filemtime(public_path('js/user-payment-methods.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-stock-locations.js') }}?v={{ file_exists(public_path('js/user-stock-locations.js')) ? filemtime(public_path('js/user-stock-locations.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-ingredients.js') }}?v={{ file_exists(public_path('js/recipe-ingredients.js')) ? filemtime(public_path('js/recipe-ingredients.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-steps.js') }}?v={{ file_exists(public_path('js/recipe-steps.js')) ? filemtime(public_path('js/recipe-steps.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-nutrition.js') }}?v={{ file_exists(public_path('js/recipe-nutrition.js')) ? filemtime(public_path('js/recipe-nutrition.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-cost.js') }}?v={{ file_exists(public_path('js/recipe-cost.js')) ? filemtime(public_path('js/recipe-cost.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-availability.js') }}?v={{ file_exists(public_path('js/recipe-availability.js')) ? filemtime(public_path('js/recipe-availability.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-substitutions.js') }}?v={{ file_exists(public_path('js/recipe-substitutions.js')) ? filemtime(public_path('js/recipe-substitutions.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-favorites-actions.js') }}?v={{ file_exists(public_path('js/recipe-favorites-actions.js')) ? filemtime(public_path('js/recipe-favorites-actions.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/recipe-sharing-branch.js') }}?v={{ file_exists(public_path('js/recipe-sharing-branch.js')) ? filemtime(public_path('js/recipe-sharing-branch.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-recipes.js') }}?v={{ file_exists(public_path('js/user-recipes.js')) ? filemtime(public_path('js/user-recipes.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-recipe-favorites.js') }}?v={{ file_exists(public_path('js/user-recipe-favorites.js')) ? filemtime(public_path('js/user-recipe-favorites.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-recipe-search.js') }}?v={{ file_exists(public_path('js/user-recipe-search.js')) ? filemtime(public_path('js/user-recipe-search.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-recipe-suggestions.js') }}?v={{ file_exists(public_path('js/user-recipe-suggestions.js')) ? filemtime(public_path('js/user-recipe-suggestions.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-meal-plans.js') }}?v={{ file_exists(public_path('js/user-meal-plans.js')) ? filemtime(public_path('js/user-meal-plans.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-notifications.js') }}?v={{ file_exists(public_path('js/user-notifications.js')) ? filemtime(public_path('js/user-notifications.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-reports.js') }}?v={{ file_exists(public_path('js/user-reports.js')) ? filemtime(public_path('js/user-reports.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-supplements.js') }}?v={{ file_exists(public_path('js/user-supplements.js')) ? filemtime(public_path('js/user-supplements.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-budget.js') }}?v={{ file_exists(public_path('js/user-budget.js')) ? filemtime(public_path('js/user-budget.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-purchases.js') }}?v={{ file_exists(public_path('js/user-purchases.js')) ? filemtime(public_path('js/user-purchases.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-shopping-session.js') }}?v={{ file_exists(public_path('js/user-shopping-session.js')) ? filemtime(public_path('js/user-shopping-session.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/shopping-alternatives.js') }}?v={{ file_exists(public_path('js/shopping-alternatives.js')) ? filemtime(public_path('js/shopping-alternatives.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/shopping-compare.js') }}?v={{ file_exists(public_path('js/shopping-compare.js')) ? filemtime(public_path('js/shopping-compare.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/user-shopping-lists.js') }}?v={{ file_exists(public_path('js/user-shopping-lists.js')) ? filemtime(public_path('js/user-shopping-lists.js')) : time() }}" defer></script>
+    @include('partials.panel-assets')
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css')) }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
@@ -126,7 +89,7 @@
 @include('partials.site-header')
 @include('partials.navigation-loader')
 <div class="web-shell">
-    <main class="content">
+    <main class="content" data-panel-page>
         @yield('content')
     </main>
 </div>

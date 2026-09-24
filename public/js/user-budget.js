@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var state = {
         groups: [],
         budgets: [],
@@ -1278,7 +1280,7 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-user-budget]');
         if (!root) { return; }
         bind(root);
@@ -1317,5 +1319,8 @@
                 if (table) { table.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-budget', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

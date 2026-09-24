@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var API = '/api/v1';
 
     var state = {
@@ -422,7 +424,7 @@
         button.dataset.invitationId = invitation.id;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-family-groups]');
         if (!root || !window.CCApi) {
             return;
@@ -460,5 +462,8 @@
                 }
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('family-groups', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

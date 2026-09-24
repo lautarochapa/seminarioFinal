@@ -7,8 +7,10 @@ function client(response) {
     const storage = new Map();
     const window = { localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: key => storage.delete(key) },
         fetch: async () => ({ ok: true, status: 200, headers: { get: () => 'test-trace' }, text: async () => '{"data":[]}', ...response }) };
-    vm.runInNewContext(source, { window, FormData: class FormData {} });
-    window.CCApi.setSession({ token: 'test-token', user: {} });
+    window.document = { querySelector: () => null };
+    window.addEventListener = () => {};
+    vm.runInNewContext(source, { window, AbortController, FormData: class FormData {} });
+    window.CCApi.setSession({ token: { access_token: 'test-token' }, data: {} });
     return window.CCApi;
 }
 (async () => {
@@ -23,5 +25,19 @@ function client(response) {
     assert.equal(redirected.getToken(), null);
     await assert.rejects(client({ ok: false, status: 422, text: async () => '{"error":{"message":"Cantidad requerida"}}' }).request('/api/test'), /Cantidad requerida/);
     assert.equal((await client({ status: 204 }).request('/api/test')).data, null);
+    const handlers = {};
+    let reloads = 0;
+    const style = {};
+    const browser = {
+        document: { querySelector: () => ({}), documentElement: { style } },
+        localStorage: { removeItem() {} },
+        addEventListener: (name, handler) => { handlers[name] = handler; },
+        location: { reload: () => reloads++ },
+    };
+    vm.runInNewContext(source, { window: browser, AbortController, FormData: class FormData {} });
+    handlers.pagehide();
+    assert.equal(style.visibility, 'hidden', 'Do not cache a visible private page for browser Back');
+    handlers.pageshow({ persisted: true });
+    assert.equal(reloads, 1, 'A bfcache restore revalidates the session on the server');
     console.log('PASS: API JSON, HTML errors, redirects, validation and empty responses');
 })().catch(error => { console.error(error); process.exitCode = 1; });

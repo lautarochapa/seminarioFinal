@@ -378,6 +378,8 @@
     // ─── Public API ─────────────────────────────────────────────────────────────
 
     function mount(containerEl, recipeId, canEdit, initialIngredients) {
+        clearTimeout(state.searchTimeout);
+        if (window.CCPage) window.CCPage.onDispose(function () { clearTimeout(state.searchTimeout); state.el = null; });
         state.el                 = containerEl;
         state.recipeId           = recipeId;
         state.canEdit            = !!canEdit;

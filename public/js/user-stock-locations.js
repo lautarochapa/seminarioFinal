@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var API_BASE = '/api/v1';
 
     var state = {
@@ -13,6 +15,7 @@
         stock: [],
         stockPage: 1,
         stockLastPage: 1,
+        stockRequest: 0,
         movements: [],
         movementPage: 1,
         movementLastPage: 1,
@@ -262,9 +265,11 @@
                 return;
             }
             var current = select.value;
+            var selected = select.selectedOptions[0];
             select.innerHTML = '<option value="">Selecciona producto</option>' + state.products.map(function (product) {
                 return '<option value="' + product.id + '">' + escapeHtml(productLabel(product)) + '</option>';
             }).join('');
+            if (current && selected && !Array.from(select.options).some(function (item) { return item.value === current; })) select.add(selected);
             select.value = current;
         });
         var wasteProduct = qs('[data-waste-product-filter]', root);
@@ -426,9 +431,11 @@
                 return;
             }
             var current = select.value;
+            var selected = select.selectedOptions[0];
             select.innerHTML = '<option value="">Selecciona unidad</option>' + state.units.map(function (unit) {
                 return '<option value="' + unit.id + '">' + escapeHtml(unit.name) + (unit.symbol ? ' (' + escapeHtml(unit.symbol) + ')' : '') + '</option>';
             }).join('');
+            if (current && selected && !Array.from(select.options).some(function (item) { return item.value === current; })) select.add(selected);
             select.value = current;
         });
     }
@@ -897,6 +904,10 @@
         form.elements.id.value = item.id;
         form.elements.stock_location_id.value = item.stock_location_id || '';
         form.elements.quantity.value = item.quantity || 0;
+        if (item.unit && !state.units.some(function (unit) { return String(unit.id) === String(item.unit_id); })) {
+            state.units.push(item.unit);
+            renderUnits(root);
+        }
         form.elements.unit_id.value = item.unit_id || '';
         form.elements.expiration_date.value = item.expiration_date || '';
         form.elements.purchase_price.value = item.purchase_price === null || item.purchase_price === undefined ? '' : item.purchase_price;
@@ -935,6 +946,14 @@
             return;
         }
         form.elements.id.value = rule.id;
+        if (rule.product && !state.products.some(function (product) { return String(product.id) === String(rule.product_id); })) {
+            state.products.push(rule.product);
+            renderProducts(root);
+        }
+        if (rule.unit && !state.units.some(function (unit) { return String(unit.id) === String(rule.unit_id); })) {
+            state.units.push(rule.unit);
+            renderUnits(root);
+        }
         form.elements.product_id.value = rule.product_id || '';
         form.elements.minimum_quantity.value = rule.minimum_quantity || 0;
         form.elements.unit_id.value = rule.unit_id || '';
@@ -972,6 +991,7 @@
     }
 
     function loadLocations(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#ubicaciones', function () { return loadLocations(root); }, 'loadLocations')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderLocations(root);
             return Promise.resolve();
@@ -1027,6 +1047,8 @@
             return Promise.resolve();
         }
         renderStockLoading(root);
+        var requestNumber = ++state.stockRequest;
+        var groupId = state.currentGroupId;
         var params = new URLSearchParams();
         params.set('page', state.stockPage);
         params.set('per_page', 20);
@@ -1038,14 +1060,20 @@
         if (expiry && expiry.value) {
             params.set('expires_before', expiry.value);
         }
-        return window.CCApi.request(endpoint(state.currentGroupId, '/stock') + '?' + params.toString())
+        return window.CCApi.request('/web-data/family-groups/' + groupId + '/stock?' + params.toString())
             .then(function (response) {
+                if (requestNumber !== state.stockRequest || groupId !== state.currentGroupId) return;
                 state.stock = response.data || [];
                 state.stockPage = response.meta ? response.meta.current_page : 1;
                 state.stockLastPage = response.meta ? response.meta.last_page : 1;
+                state.locationOptions = response.locations || [];
+                renderLocationOptions(root);
+                renderSummary(root, response.summary || {});
+                renderValue(root, response.value || {});
                 renderStock(root);
             })
             .catch(function (error) {
+                if (requestNumber !== state.stockRequest || groupId !== state.currentGroupId) return;
                 state.stock = [];
                 renderStock(root);
                 handleError(root, error);
@@ -1053,6 +1081,7 @@
     }
 
     function loadMovements(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#movimientos', function () { return loadMovements(root); }, 'loadMovements')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderMovements(root);
             return Promise.resolve();
@@ -1088,6 +1117,7 @@
     }
 
     function loadAlerts(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#alertas', function () { return loadAlerts(root); }, 'loadAlerts')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderAlerts(root);
             return Promise.resolve();
@@ -1115,6 +1145,7 @@
     }
 
     function loadExpiring(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#alertas', function () { return loadExpiring(root); }, 'loadExpiring')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderExpiring(root);
             return Promise.resolve();
@@ -1136,6 +1167,7 @@
     }
 
     function loadLowStock(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#alertas', function () { return loadLowStock(root); }, 'loadLowStock')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderLowStock(root);
             return Promise.resolve();
@@ -1153,6 +1185,7 @@
     }
 
     function loadRules(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#alertas', function () { return loadRules(root); }, 'loadRules')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderRules(root);
             return Promise.resolve();
@@ -1170,6 +1203,7 @@
     }
 
     function loadWaste(root) {
+        if (window.CCUI && window.CCUI.defer(root, '#reportes', function () { return loadWaste(root); }, 'loadWaste')) return Promise.resolve();
         if (!state.currentGroupId) {
             renderWaste(root);
             return Promise.resolve();
@@ -1213,37 +1247,10 @@
             });
     }
 
-    function loadSummary(root) {
-        if (!state.currentGroupId) {
-            return Promise.resolve();
-        }
-        return window.CCApi.request(endpoint(state.currentGroupId, '/stock/summary'))
-            .then(function (response) {
-                renderSummary(root, response.data || {});
-            })
-            .catch(function () {
-                renderSummary(root, {});
-            });
-    }
-
-    function loadValue(root) {
-        if (!state.currentGroupId) {
-            return Promise.resolve();
-        }
-        return window.CCApi.request(endpoint(state.currentGroupId, '/stock/value'))
-            .then(function (response) {
-                renderValue(root, response.data || {});
-            })
-            .catch(function () {
-                renderValue(root, {});
-            });
-    }
-
     function reloadGroupData(root) {
         clearMessage(root);
         return Promise.all([
             loadLocations(root),
-            loadLocationOptions(root),
             loadStock(root),
             loadMovements(root),
             loadAlerts(root),
@@ -1251,8 +1258,6 @@
             loadLowStock(root),
             loadRules(root),
             loadWaste(root),
-            loadSummary(root),
-            loadValue(root),
         ]);
     }
 
@@ -1270,6 +1275,7 @@
     }
 
     function loadProducts(root, search) {
+        if (window.CCUI && window.CCUI.defer(root, '[data-stock-item-form], [data-stock-rule-form], #reportes', function () { return loadProducts(root, search); }, 'loadProducts')) return Promise.resolve();
         var params = new URLSearchParams();
         params.set('per_page', 100);
         if (search) {
@@ -1522,6 +1528,7 @@
     }
 
     function loadUnits(root) {
+        if (window.CCUI && window.CCUI.defer(root, '[data-stock-item-form], [data-stock-rule-form]', function () { return loadUnits(root); }, 'loadUnits')) return Promise.resolve();
         return window.CCApi.request(API_BASE + '/units?per_page=100')
             .then(function (response) {
                 state.units = response.data || [];
@@ -1639,7 +1646,7 @@
             resetStockForm(root);
             showMessage(root, 'success', id ? 'Stock actualizado.' : 'Stock cargado.');
             if (window.CCUI) { window.CCUI.saved(form, id ? 'Stock actualizado.' : 'Stock cargado.'); }
-            return Promise.all([loadStock(root), loadSummary(root), loadValue(root)]);
+            return loadStock(root);
         }).catch(function (error) {
             applyApiFieldErrors(root, error);
             if (error.status === 403) {
@@ -1679,7 +1686,7 @@
             method: 'DELETE',
         }).then(function () {
             showMessage(root, 'success', 'Item de stock eliminado.');
-            return Promise.all([loadStock(root), loadSummary(root), loadValue(root)]);
+            return loadStock(root);
         }).catch(function (error) {
             handleError(root, error);
         });
@@ -1730,7 +1737,7 @@
             resetMovementForm(root);
             showMessage(root, 'success', 'Movimiento registrado.');
             if (window.CCUI) { window.CCUI.saved(form, 'Movimiento registrado.'); }
-            return Promise.all([loadStock(root), loadMovements(root), loadSummary(root), loadValue(root)]);
+            return Promise.all([loadStock(root), loadMovements(root)]);
         }).catch(function (error) {
             handleError(root, error);
         }).then(function () {
@@ -1928,8 +1935,6 @@
         if (stockRefresh) {
             stockRefresh.addEventListener('click', function () {
                 loadStock(root);
-                loadSummary(root);
-                loadValue(root);
             });
         }
         if (stockPrev) {
@@ -2177,11 +2182,15 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-user-stock-locations]');
         if (!root || !window.CCApi) {
             return;
         }
+        if (window.CCPage) window.CCPage.onDispose(function () {
+            window.clearTimeout(state.productSearchTimer);
+            window.clearTimeout(state.wasteSearchTimer);
+        });
         bind(root);
         updateMovementModeVisibility(root);
         updateStockFormAvailability(root);
@@ -2210,5 +2219,8 @@
                 window.location.href = '/web/shopping-list';
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-stock-locations', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

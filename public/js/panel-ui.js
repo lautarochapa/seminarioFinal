@@ -1,6 +1,29 @@
 (function (window, document) {
     'use strict';
+    function mountPage() {
     var counter = 0;
+    var deferred = new Map();
+    function visible(element) {
+        var panel = element.closest('[role="tabpanel"]');
+        var dialog = element.closest('dialog');
+        return (!panel || !panel.hidden) && (!dialog || dialog.open);
+    }
+    function defer(root, selector, load, key) {
+        var elements = all(selector, root);
+        if (!elements.length || elements.some(visible)) return false;
+        var jobs = deferred.get(root) || new Map();
+        jobs.set(key || selector, { selector: selector, load: load }); deferred.set(root, jobs);
+        return true;
+    }
+    function flushVisible() {
+        deferred.forEach(function (jobs, root) {
+            if (!root.isConnected) { deferred.delete(root); return; }
+            jobs.forEach(function (job, key) {
+                if (all(job.selector, root).some(visible)) { jobs.delete(key); job.load(); }
+            });
+            if (!jobs.size) deferred.delete(root);
+        });
+    }
     function all(selector, root) { return Array.from((root || document).querySelectorAll(selector)); }
     function button(text, cls) {
         var el = document.createElement('button');
@@ -15,6 +38,7 @@
         if (dialog && !dialog.open) {
             dialog.ccReturnFocus = document.activeElement;
             dialog.showModal();
+            flushVisible();
         }
     }
     function close(el) {
@@ -62,8 +86,9 @@
                 });
                 if (focus) {
                     tab.focus();
-                    window.history.replaceState(null, '', '#' + id);
+                    window.history.replaceState(window.history.state, '', '#' + id);
                 }
+                flushVisible();
             };
             tab.addEventListener('click', function () { panel.ccSelect(true); });
             tab.addEventListener('keydown', function (event) {
@@ -77,7 +102,7 @@
         });
         var selected = panels.find(function (panel) { return '#' + panel.id === window.location.hash; });
         (selected || panels[0]).ccSelect(false);
-        window.addEventListener('hashchange', function () {
+        (window.CCPage ? window.CCPage.listen.bind(null, window) : window.addEventListener.bind(window))('hashchange', function () {
             var target = panels.find(function (panel) { return '#' + panel.id === window.location.hash; });
             if (target) { target.ccSelect(false); }
         });
@@ -192,11 +217,13 @@
         // Screen-level validation must remain visible while a modal is on top.
         var alerts = all('.alert', root).filter(function (el) { return !el.closest('dialog'); });
         alerts.forEach(function (alert) {
-            new MutationObserver(function () {
+            var observer = new MutationObserver(function () {
                 if (!dialog.open || alert.style.display === 'none') { return; }
                 message.textContent = alert.textContent; message.className = alert.className;
                 message.hidden = !alert.textContent.trim();
-            }).observe(alert, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+            });
+            observer.observe(alert, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+            if (window.CCPage) window.CCPage.onDispose(function () { observer.disconnect(); });
         });
         dialog.addEventListener('invalid', function () { reveal(form); }, true);
         return dialog;
@@ -332,6 +359,9 @@
         var purchases = document.querySelector('[data-user-purchases]');
         if (purchases) { modal(purchases, '[data-purchases-item-form]', 'Agregar artículo'); }
     }
-    window.CCUI = { reveal: reveal, close: close, saved: saved, tabs: tabs, modal: modal };
-    document.addEventListener('DOMContentLoaded', setup);
+    window.CCUI = { reveal: reveal, close: close, saved: saved, tabs: tabs, modal: modal, defer: defer };
+    setup();
+    }
+    if (window.CCPage) window.CCPage.register('panel-ui', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

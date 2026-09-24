@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var state = {
         groups: [],
         currentGroupId: null,
@@ -1278,7 +1280,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-user-meal-plans]');
         if (!root) {
             return;
@@ -1313,5 +1315,8 @@
                 }
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-meal-plans', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

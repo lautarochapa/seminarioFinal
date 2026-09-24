@@ -38,11 +38,12 @@ class UserWebScreenController extends Controller
             session()->forget('url.intended');
         }
 
-        return view('web.user-screen', [
+        return response()->view('web.user-screen', [
             'screenKey' => $screen,
             'screen' => $screens[$screen],
             'screens' => $screens,
-            'stats' => $this->stats(),
+            'stats' => $this->stats(in_array($screen, ['dashboard', 'stock', 'profile-objectives'], true)
+                ? [] : $screens[$screen]['metrics']),
             'metricLabels' => [
                 'family_groups' => 'Grupos familiares', 'stock_items' => 'Productos en stock',
                 'stock_alerts' => 'Alertas de stock', 'recipes' => 'Recetas',
@@ -51,7 +52,7 @@ class UserWebScreenController extends Controller
                 'report_exports' => 'Reportes exportados', 'objectives' => 'Objetivos',
                 'professional_links' => 'Profesionales vinculados', 'payment_methods' => 'Metodos de pago',
             ],
-        ]);
+        ])->header('Cache-Control', 'no-store, private');
     }
 
     public function dashboard()
@@ -59,27 +60,37 @@ class UserWebScreenController extends Controller
         return $this->index('dashboard');
     }
 
-    private function stats()
+    private function stats(array $keys)
     {
+        if (!$keys) {
+            return [];
+        }
         $userId = auth()->id();
         $groupIds = \Illuminate\Support\Facades\DB::table('family_group_members')
             ->select('family_group_id')->where('user_id', $userId)->where('status', 'active');
-        return [
-            'family_groups' => FamilyGroup::whereIn('id', $groupIds)->count(),
-            'stock_items' => StockItem::whereIn('family_group_id', $groupIds)->where('status', 'active')->count(),
-            'stock_alerts' => StockAlert::whereIn('family_group_id', $groupIds)->where('status', '!=', 'resolved')->count(),
+        $queries = [
+            'family_groups' => FamilyGroup::whereIn('id', $groupIds),
+            'stock_items' => StockItem::whereIn('family_group_id', $groupIds)->where('status', 'active'),
+            'stock_alerts' => StockAlert::whereIn('family_group_id', $groupIds)->where('status', '!=', 'resolved'),
             'recipes' => Recipe::where('status', 'active')->where(function ($visible) use ($userId) {
                 $visible->where('is_public', true)->orWhere('owner_user_id', $userId);
-            })->count(),
-            'meal_plans' => MealPlan::whereIn('family_group_id', $groupIds)->count(),
-            'shopping_lists' => ShoppingList::whereIn('family_group_id', $groupIds)->count(),
-            'purchases' => Purchase::whereIn('family_group_id', $groupIds)->count(),
-            'budgets' => Budget::whereIn('family_group_id', $groupIds)->count(),
-            'report_exports' => ReportExport::where('user_id', $userId)->count(),
-            'objectives' => UserObjective::where('user_id', $userId)->count(),
-            'professional_links' => ProfessionalUserLink::where('user_id', $userId)->count(),
-            'payment_methods' => \App\UserPaymentMethod::where('user_id', $userId)->where('status', 'active')->count(),
+            }),
+            'meal_plans' => MealPlan::whereIn('family_group_id', $groupIds),
+            'shopping_lists' => ShoppingList::whereIn('family_group_id', $groupIds),
+            'purchases' => Purchase::whereIn('family_group_id', $groupIds),
+            'budgets' => Budget::whereIn('family_group_id', $groupIds),
+            'report_exports' => ReportExport::where('user_id', $userId),
+            'objectives' => UserObjective::where('user_id', $userId),
+            'professional_links' => ProfessionalUserLink::where('user_id', $userId),
+            'payment_methods' => \App\UserPaymentMethod::where('user_id', $userId)->where('status', 'active'),
         ];
+        $stats = [];
+        foreach ($keys as $key) {
+            if (isset($queries[$key])) {
+                $stats[$key] = $queries[$key]->count();
+            }
+        }
+        return $stats;
     }
 
     private function screens()

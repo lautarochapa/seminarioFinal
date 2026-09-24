@@ -104,8 +104,9 @@
 @auth
     @foreach($portalMenus as $label => $menu)
         @php
-            $visibleItems = array_values(array_filter($menu['items'], function ($item) use ($currentUser) {
-                return $currentUser && $currentUser->hasPermission($item[2]);
+            $visibleItems = array_values(array_filter($menu['items'], function ($item) use ($currentUser, $label, $userMainRoutes) {
+                return ($label !== 'Usuario' || in_array($item[1], $userMainRoutes, true))
+                    && $currentUser && $currentUser->hasPermission($item[2]);
             }));
             if ($label === 'Usuario') {
                 $visibleItems = array_values(array_filter($visibleItems, function ($item) use ($userMainRoutes) {

@@ -132,8 +132,8 @@
         return '/web';
     }
 
-    function redirectAfterAuth(fallback) {
-        return establishWebSession().then(function (payload) {
+    function redirectAfterAuth(fallback, confirmedPayload) {
+        return (confirmedPayload ? Promise.resolve(confirmedPayload) : establishWebSession()).then(function (payload) {
             document.dispatchEvent(new Event('cc:navigating'));
             window.location.href = dashboardRedirect(fallback, payload);
         });
@@ -147,6 +147,7 @@
         var pending = false;
         var authenticated = false;
         var navigating = false;
+        var confirmedPayload = null;
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -169,6 +170,7 @@
                     if (form.dataset.authSession === 'true') {
                         window.CCApi.setSession(payload);
                         authenticated = true;
+                        confirmedPayload = payload;
                     }
                 });
             }).then(function () {
@@ -177,7 +179,7 @@
                 }
 
                 if (form.dataset.redirect && form.dataset.authSession === 'true') {
-                    return redirectAfterAuth(form.dataset.redirect).then(function () {
+                    return redirectAfterAuth(form.dataset.redirect, confirmedPayload).then(function () {
                         navigating = true;
                     });
                 }
@@ -205,16 +207,26 @@
     }
 
     function bindLogout(link) {
+        if (link.dataset.apiBound === 'true') return;
+        link.dataset.apiBound = 'true';
+        var pending = false;
         link.addEventListener('click', function (event) {
             event.preventDefault();
-            window.CCApi.request('/api/v1/auth/logout', { method: 'POST' }).finally(function () {
+            if (pending) return;
+            pending = true;
+            window.CCApi.request('/api/v1/auth/logout', { method: 'POST' }).then(function () {
                 window.CCApi.clearSession();
                 window.location.href = '/login';
+            }).catch(function () {
+                pending = false;
+                window.alert('No pudimos cerrar la sesión. Volvé a intentarlo.');
             });
         });
     }
 
     function bindProfileForm(form) {
+        if (form.dataset.apiBound === 'true') return;
+        form.dataset.apiBound = 'true';
         var message = form.querySelector('[data-api-message]');
 
         window.CCApi.request('/api/v1/auth/me').then(function (payload) {
@@ -272,6 +284,7 @@
     }
 
     function filterPermissionElements() {
+        if (window.CCApi.usesWebSession && window.CCApi.usesWebSession()) return;
         var user = window.CCApi.getUser();
         var permissions = user && Array.isArray(user.permissions) ? user.permissions : null;
 
@@ -286,11 +299,13 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function setup() {
         Array.prototype.forEach.call(document.querySelectorAll('form[data-api-endpoint]'), bindApiForm);
         Array.prototype.forEach.call(document.querySelectorAll('[data-api-logout]'), bindLogout);
         Array.prototype.forEach.call(document.querySelectorAll('form[data-profile-api]'), bindProfileForm);
         Array.prototype.forEach.call(document.querySelectorAll('[data-demo-login]'), bindDemoLogin);
         filterPermissionElements();
-    });
+    }
+    if (window.CCPage) window.CCPage.register('auth', setup);
+    else document.addEventListener('DOMContentLoaded', setup);
 })(window, document);

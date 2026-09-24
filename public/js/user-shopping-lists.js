@@ -1,6 +1,8 @@
 (function (window, document) {
     'use strict';
 
+    function mountPage() {
+
     var state = {
         groups: [],
         currentGroupId: null,
@@ -145,10 +147,10 @@
             return option('#' + plan.id + ' - ' + text(plan.start_date) + ' / ' + text(plan.end_date), plan.id, false);
         }).join('');
         if (select) {
-            select.innerHTML = '<option value="">Plan asociado opcional</option>' + options;
+            replaceOptions(select, '<option value="">Plan asociado opcional</option>' + options);
         }
         if (generateSelect) {
-            generateSelect.innerHTML = '<option value="">Plan para generar lista</option>' + options;
+            replaceOptions(generateSelect, '<option value="">Plan para generar lista</option>' + options);
         }
     }
 
@@ -157,20 +159,33 @@
         var productSelect = qs('[data-shopping-list-item-product]', root);
         var unitSelect = qs('[data-shopping-list-item-unit]', root);
         if (ingredientSelect) {
-            ingredientSelect.innerHTML = '<option value="">Ingrediente opcional</option>' + state.ingredients.map(function (ingredient) {
+            replaceOptions(ingredientSelect, '<option value="">Ingrediente opcional</option>' + state.ingredients.map(function (ingredient) {
                 return option(catalogName(ingredient), ingredient.id, false);
-            }).join('');
+            }).join(''));
         }
         if (productSelect) {
-            productSelect.innerHTML = '<option value="">Producto opcional</option>' + state.products.map(function (product) {
+            replaceOptions(productSelect, '<option value="">Producto opcional</option>' + state.products.map(function (product) {
                 return option(catalogName(product), product.id, false);
-            }).join('');
+            }).join(''));
         }
         if (unitSelect) {
-            unitSelect.innerHTML = '<option value="">Unidad</option>' + state.units.map(function (unit) {
+            replaceOptions(unitSelect, '<option value="">Unidad</option>' + state.units.map(function (unit) {
                 return option(catalogUnitName(unit), unit.id, false);
-            }).join('');
+            }).join(''));
         }
+    }
+
+    function selectRecord(select, record, label) {
+        if (record && !Array.from(select.options).some(function (item) { return item.value === String(record.id); })) {
+            select.add(new Option(label || catalogName(record), record.id));
+        }
+        select.value = record ? record.id : '';
+    }
+
+    function replaceOptions(select, html) {
+        var selected = select.selectedOptions[0];
+        select.innerHTML = html;
+        if (selected && selected.value) selectRecord(select, { id: selected.value }, selected.textContent);
     }
 
     function renderLists(root, meta) {
@@ -395,7 +410,7 @@
         }
         form.elements.id.value = list.id;
         form.elements.source_type.value = list.source_type || 'manual';
-        form.elements.meal_plan_id.value = list.meal_plan_id || '';
+        selectRecord(form.elements.meal_plan_id, list.meal_plan_id ? { id: list.meal_plan_id } : null, '#' + list.meal_plan_id);
         form.elements.status.value = list.status || 'draft';
         form.elements.optimization_mode.value = list.optimization_mode || '';
         if (title) {
@@ -426,10 +441,10 @@
         }
         form.elements.id.value = item.id;
         form.elements.free_text_name.value = item.free_text_name || '';
-        form.elements.ingredient_id.value = item.ingredient ? item.ingredient.id : '';
-        form.elements.product_id.value = item.product ? item.product.id : '';
+        selectRecord(form.elements.ingredient_id, item.ingredient);
+        selectRecord(form.elements.product_id, item.product);
         form.elements.quantity.value = item.quantity || '';
-        form.elements.unit_id.value = item.unit ? item.unit.id : '';
+        selectRecord(form.elements.unit_id, item.unit, item.unit ? catalogUnitName(item.unit) : '');
         form.elements.estimated_price.value = item.estimated_price || '';
         form.elements.actual_price.value = item.actual_price || '';
         form.elements.status.value = item.status || 'pending';
@@ -523,6 +538,7 @@
     }
 
     function loadMealPlans(root) {
+        if (window.CCUI && window.CCUI.defer(root, '[data-shopping-list-generate-plan-form], [data-shopping-list-form]', function () { return loadMealPlans(root); })) return Promise.resolve();
         if (!state.currentGroupId) {
             state.mealPlans = [];
             renderMealPlans(root);
@@ -544,6 +560,7 @@
     }
 
     function loadItemCatalogs(root) {
+        if (window.CCUI && window.CCUI.defer(root, '[data-shopping-list-item-form]', function () { return loadItemCatalogs(root); })) return Promise.resolve();
         return Promise.all([
             window.CCApi.request(api('/ingredients?per_page=100')).catch(function () { return { data: [] }; }),
             window.CCApi.request(api('/products?per_page=100')).catch(function () { return { data: [] }; }),
@@ -877,7 +894,7 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    (function initialize() {
         var root = qs('[data-user-shopping-lists]');
         if (!root) {
             return;
@@ -901,5 +918,8 @@
                 }
             });
         }
-    });
+    })();
+    }
+    if (window.CCPage) window.CCPage.register('user-shopping-lists', mountPage);
+    else document.addEventListener('DOMContentLoaded', mountPage);
 })(window, document);

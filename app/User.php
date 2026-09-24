@@ -364,7 +364,23 @@ class User extends Authenticatable
 
     public function hasRole($code)
     {
-        return $this->roles()->where('code', $code)->exists();
+        return in_array($code, $this->authorizationValues('roles', function () {
+            return $this->roles()->pluck('roles.code')->all();
+        }), true);
+    }
+
+    // Request attributes keep permissions isolated from other users and subsequent requests.
+    private function authorizationValues($kind, callable $resolve)
+    {
+        if (!$this->exists) {
+            return [];
+        }
+        $request = app('request');
+        $key = 'ccc.authorization.'.$this->getKey().'.'.$kind;
+        if (!$request->attributes->has($key)) {
+            $request->attributes->set($key, $resolve());
+        }
+        return $request->attributes->get($key);
     }
 
     /**
@@ -387,10 +403,12 @@ class User extends Authenticatable
         if ($this->status !== 'active' || $this->trashed() || \App\Services\Auth\RolePolicy::retiredPermission($code)) {
             return false;
         }
-        if ($this->hasRole('super_admin')) {
-            return Permission::where('code', $code)->where('status', 'active')->exists();
-        }
-        return $this->permissions()->where('permissions.code', $code)->exists();
+        $codes = $this->authorizationValues('permissions', function () {
+            return $this->hasRole('super_admin')
+                ? Permission::where('status', 'active')->pluck('code')->all()
+                : $this->permissions()->pluck('permissions.code')->all();
+        });
+        return in_array($code, $codes, true);
     }
 
     public function canUseMobile(): bool

@@ -20,10 +20,12 @@
         if (video) video.pause();
     }
     document.addEventListener('cc:navigating', show);
+    document.addEventListener('turbo:load', hide);
     window.addEventListener('pageshow', hide);
     document.addEventListener('click', function (event) {
         var link = event.target.closest('a[data-page-navigation]');
         if (!link || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target) return;
+        if (link.dataset.turbo === 'true') return;
         var url = new URL(link.href, window.location.href);
         if (url.origin === window.location.origin && url.pathname !== window.location.pathname) show();
     });
