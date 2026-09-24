@@ -38,8 +38,8 @@ it('keeps preview an installable HTTPS release with demo accounts hidden', () =>
   }
   expect(cli.appVersionSource).toBe('local');
   expect(expo.android.package).toBe('com.cccontrol.mobile');
-  expect(expo.version).toBe('1.0.8');
-  expect(expo.android.versionCode).toBe(9);
+  expect(expo.version).toBe('1.0.9');
+  expect(expo.android.versionCode).toBe(10);
   expect(pkg.version).toBe(expo.version);
   expect(lock.version).toBe(expo.version);
   expect(lock.packages[''].version).toBe(expo.version);
