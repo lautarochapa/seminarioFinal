@@ -143,7 +143,7 @@
         if (category && category.value) { params.set('category_id', category.value); }
 
         var listEl = qs('[data-recipes-list]', root);
-        listEl.innerHTML = '<p class="muted">Cargando recetas...</p>';
+        listEl.innerHTML = '<div class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando recetas...</div>';
 
         return window.CCApi.request(endpoint('/recipes?' + params.toString()))
             .then(function (r) {
@@ -235,7 +235,7 @@
         detailEl.style.display = '';
         formPanel.style.display = 'none';
         state.view = 'detail';
-        detailEl.innerHTML = '<p class="muted">Cargando detalle...</p>';
+        detailEl.innerHTML = '<div class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando detalle...</div>';
 
         window.CCApi.request(endpoint('/recipes/' + recipeId))
             .then(function (r) {
@@ -376,6 +376,7 @@
 
         detailEl.style.display  = 'none';
         formPanel.style.display = '';
+        if (window.CCUI) { window.CCUI.reveal(form); }
         state.view   = 'form';
         state.editId = recipe ? recipe.id : null;
 
@@ -406,6 +407,7 @@
     }
 
     function hideForm(root) {
+        if (window.CCUI) { window.CCUI.close(qs('[data-recipes-form]', root)); }
         var detailEl  = qs('[data-recipes-detail]', root);
         var formPanel = qs('[data-recipes-form-panel]', root);
         detailEl.style.display  = '';
@@ -563,6 +565,7 @@
                 e.preventDefault();
                 var search = qs('[data-recipes-search]', root);
                 if (search) {
+                    if (window.CCUI) { window.CCUI.reveal(search); }
                     search.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     search.focus();
                 }

@@ -23,7 +23,7 @@
         </div>
     </section>
 
-    @if($screenKey !== 'dashboard')
+    @if(!in_array($screenKey, ['dashboard', 'stock', 'profile-objectives']))
     <section class="metric-row">
         @foreach($screen['metrics'] as $metric)
             <article class="metric">
@@ -56,8 +56,23 @@
                 </article>
                 <aside class="aside-panel">
                     <h2>Para resolver</h2>
-                    <div id="home-actions" data-home-actions class="muted">Cargando pendientes...</div>
+                    <div id="home-actions" data-home-actions class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando novedades...</div>
                 </aside>
+            </div>
+            <div class="home-overview">
+                <section>
+                    <h2>Mes actual</h2>
+                    <label class="panel-group">Hogar <select class="form-control" data-home-budget-group aria-label="Hogar del presupuesto"></select></label>
+                    <div data-home-budget class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando presupuesto...</div>
+                    <a href="{{ url('/web/budget') }}" class="btn-secondary-web" style="margin-top:18px">Ver presupuestos</a>
+                </section>
+                <section>
+                    <h2>Tu hogar, organizado</h2>
+                    <div class="table-line"><span>Comidas y porciones de la semana</span><a href="{{ url('/web/planning') }}">Ver plan</a></div>
+                    <div class="table-line"><span>Listas y compras realizadas</span><a href="{{ url('/web/shopping-list') }}">Ver compras</a></div>
+                    <div class="table-line"><span>Miembros y preferencias compartidas</span><a href="{{ url('/web/family-group') }}">Ver hogar</a></div>
+                    <div class="table-line"><span>Objetivos y preferencias personales</span><a href="{{ url('/web/profile-objectives') }}">Mi perfil</a></div>
+                </section>
             </div>
         </section>
     @elseif($screenKey === 'onboarding')
@@ -65,9 +80,9 @@
             <div class="alert" data-onboarding-message style="display:none"></div>
             <article class="panel">
                 <h2>Tu progreso</h2>
-                <p class="muted" data-onboarding-progress>Cargando tu progreso...</p>
+                <p class="muted" data-onboarding-progress></p>
                 <ol class="onboarding-steps" data-onboarding-steps style="list-style:none;padding:0;display:grid;gap:10px">
-                    <li class="muted">Cargando pasos...</li>
+                    <li class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando tu progreso...</li>
                 </ol>
                 <div class="web-tools" data-onboarding-done style="display:none;margin-top:14px">
                     <a class="btn-main" href="{{ url('/web') }}">Ir al inicio</a>
@@ -918,17 +933,6 @@
             </article>
             </div>
 
-            <aside class="aside-panel">
-                <h2>Sesion API</h2>
-                <div class="table-line"><span class="muted">Perfil</span><strong>GET/PATCH /users/me/profile</strong></div>
-                <div class="table-line"><span class="muted">Prioridades</span><strong>GET/PATCH /users/me/priority-settings</strong></div>
-                <div class="table-line"><span class="muted">Mediciones</span><strong>CRUD /users/me/body-measurements</strong></div>
-                <div class="table-line"><span class="muted">Objetivos</span><strong>CRUD /users/me/objectives</strong></div>
-                <div class="table-line"><span class="muted">Restricciones</span><strong>Catalogos + POST/DELETE /users/me/*</strong></div>
-                <div class="table-line"><span class="muted">Consentimientos</span><strong>GET/PATCH /users/me/consents</strong></div>
-                <div class="table-line"><span class="muted">Catalogo</span><strong>GET /catalog/objectives</strong></div>
-                <p class="muted" style="margin-top:14px">Esta pantalla usa el token activo para traer el perfil personal, administrar objetivos, restricciones, mediciones y consentimientos, y guardar la configuracion de prioridades.</p>
-            </aside>
         </section>
     @elseif($screenKey === 'family-group')
         <section data-family-groups>
@@ -1412,7 +1416,7 @@
                     </div>
                     <div class="alert" data-recipes-message style="display:none"></div>
                     <div data-recipes-list style="display:grid;gap:10px;margin-top:10px">
-                        <p class="muted">Cargando recetas...</p>
+                        <div class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando recetas...</div>
                     </div>
                     <div class="catalog-pagination" style="margin-top:12px">
                         <button type="button" class="btn-secondary-web btn-sm" data-recipes-prev>Anterior</button>
@@ -1940,19 +1944,15 @@
                             <div class="alert" data-budget-cat-form-message style="display:none"></div>
                             <form data-budget-cat-form>
                                 <input type="hidden" name="id">
-                                <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;align-items:end">
-                                    <div>
-                                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Nombre *</label>
-                                        <input class="form-control" type="text" name="name" placeholder="Ej: Carnes, Lácteos..." maxlength="80">
-                                    </div>
-                                    <div>
-                                        <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Color</label>
-                                        <input type="color" name="color" value="#04ac85" style="height:38px;padding:2px;border:1px solid #dde6df;border-radius:4px;cursor:pointer">
-                                    </div>
+                                <div style="margin-bottom:10px">
+                                    <label for="budget-category-choice">Categoría *</label>
+                                    <select id="budget-category-choice" class="form-control" name="category_choice" required>
+                                        <option value="">Cargando categorías...</option>
+                                    </select>
                                 </div>
                                 <div style="margin-bottom:10px">
                                     <label style="font-size:11px;font-weight:700;display:block;margin-bottom:3px">Monto asignado *</label>
-                                    <input class="form-control" type="number" name="allocated_amount" min="0" step="0.01" placeholder="0.00">
+                                    <input class="form-control" type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required>
                                 </div>
                                 <div style="display:flex;gap:8px">
                                     <button type="submit" class="btn-main btn-sm" data-budget-cat-save>Guardar</button>

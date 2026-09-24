@@ -10,6 +10,8 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
+    <script src="{{ asset('js/panel-ui.js') }}?v={{ filemtime(public_path('js/panel-ui.js')) }}" defer></script>
+    <script src="{{ asset('js/loader.js') }}?v={{ filemtime(public_path('js/loader.js')) }}" defer></script>
     <script src="{{ asset('js/user-onboarding.js') }}?v={{ file_exists(public_path('js/user-onboarding.js')) ? filemtime(public_path('js/user-onboarding.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-home.js') }}?v={{ file_exists(public_path('js/user-home.js')) ? filemtime(public_path('js/user-home.js')) : time() }}" defer></script>
     <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
@@ -117,28 +119,17 @@
             .workspace-profile, .workspace-profile .profile-grid { grid-template-columns:minmax(0,1fr); }
         }
     </style>
+    <link href="{{ asset('css/loader.css') }}?v={{ filemtime(public_path('css/loader.css')) }}" rel="stylesheet">
+    <link href="{{ asset('css/panel-ui.css') }}?v={{ filemtime(public_path('css/panel-ui.css')) }}" rel="stylesheet">
 </head>
 <body>
-<header class="site-navbar">
-    <a class="logo" href="{{ url('/') }}"><img src="{{ asset('images/logo/2.svg') }}" alt="logo" height="40em"></a>
-    <nav>
-        <ul class="nav__links">
-            @include('partials.portal-navbar')
-        </ul>
-    </nav>
-    @include('partials.user-navbar-menu')
-</header>
+@include('partials.site-header')
+@include('partials.navigation-loader')
 <div class="web-shell">
     <main class="content">
         @yield('content')
     </main>
 </div>
-<footer style="background-color:#24252a;color:#edf0f1;padding:28px 15%;width:100%;">
-    <div class="row">
-        <div class="col-md-4 align-self-center" style="text-align:center;">Imagenes de Pexels<br>Iconos de Flaticon</div>
-        <div class="col-md-4 align-self-center" style="text-align:center;"><img src="{{ asset('images/logo/1.svg') }}" alt="logo" height="92em"></div>
-        <div class="col-md-4 align-self-center" style="text-align:center;">Desarrollado por:<br>Lautaro Chiappero<br>comidacocinacontrol@gmail.com</div>
-    </div>
-</footer>
+@include('partials.site-footer')
 </body>
 </html>

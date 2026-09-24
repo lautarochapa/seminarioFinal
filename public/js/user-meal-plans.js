@@ -423,6 +423,7 @@
     }
 
     function fillForm(root, plan) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-meal-plan-form]', root)); }
         var form = qs('[data-meal-plan-form]', root);
         var title = qs('[data-meal-plan-form-title]', root);
         if (!form || !plan) {
@@ -447,6 +448,7 @@
     }
 
     function fillItemForm(root, item) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-meal-plan-item-form]', root)); }
         var form = qs('[data-meal-plan-item-form]', root);
         var title = qs('[data-meal-plan-item-form-title]', root);
         if (!form || !item) {
@@ -466,6 +468,7 @@
     }
 
     function fillPortionForm(root, portion) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-meal-plan-portion-form]', root)); }
         var form = qs('[data-meal-plan-portion-form]', root);
         var title = qs('[data-meal-plan-portion-form-title]', root);
         if (!form || !portion) {
@@ -679,6 +682,7 @@
                 state.shoppingPreview = [];
                 state.generatedShoppingList = null;
                 renderDetail(root, state.selectedPlan);
+                if (window.CCUI) { window.CCUI.reveal(qs('[data-meal-plan-detail]', root)); }
                 renderPortions(root);
                 renderIncompatibilities(root);
                 renderShoppingPreview(root);
@@ -818,6 +822,7 @@
             .then(function (response) {
                 state.portions = response.data || [];
                 renderPortions(root);
+                if (window.CCUI) { window.CCUI.reveal(qs('[data-meal-plan-portions-panel]', root)); }
             })
             .catch(function (error) {
                 handleError(root, error);
@@ -836,6 +841,7 @@
             body: buildItemPayload(form),
         }).then(function () {
             showMessage(root, 'success', itemId ? 'Comida actualizada.' : 'Comida agregada.');
+            if (window.CCUI) { window.CCUI.saved(form, itemId ? 'Comida actualizada.' : 'Comida agregada.'); }
             resetItemForm(root);
             return loadPlan(root, state.selectedPlan.id).then(function () {
                 return loadPlans(root);
@@ -880,6 +886,7 @@
             body: buildPortionPayload(form),
         }).then(function () {
             showMessage(root, 'success', portionId ? 'Porcion actualizada.' : 'Porcion asignada.');
+            if (window.CCUI) { window.CCUI.saved(form, portionId ? 'Porcion actualizada.' : 'Porcion asignada.'); }
             resetPortionForm(root);
             return loadPortions(root, state.selectedItem.id);
         }).catch(function (error) {
@@ -966,6 +973,7 @@
             body: buildPayload(form),
         }).then(function (response) {
             showMessage(root, 'success', id ? 'Plan actualizado.' : 'Plan creado.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Plan actualizado.' : 'Plan creado.'); }
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
             state.incompatibilities = [];
@@ -1005,6 +1013,7 @@
             });
         }).then(function (response) {
             showMessage(root, 'success', 'Menu sugerido generado. Revisalo y aprobalo si esta correcto.');
+            if (window.CCUI) { window.CCUI.saved(form, 'Menu sugerido generado. Revisalo y aprobalo si esta correcto.'); }
             state.selectedPlan = response.data || null;
             renderDetail(root, state.selectedPlan);
             state.incompatibilities = [];
@@ -1283,6 +1292,7 @@
                 e.preventDefault();
                 var form = qs('[data-meal-plan-item-form]', root);
                 if (form) {
+                    if (window.CCUI) { window.CCUI.reveal(form); }
                     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
@@ -1296,6 +1306,7 @@
                 e.preventDefault();
                 var form = qs('[data-meal-plan-generate-form]', root);
                 if (form) {
+                    if (window.CCUI) { window.CCUI.reveal(form); }
                     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }

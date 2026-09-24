@@ -39,10 +39,10 @@ checkDemo(strpos(file_get_contents(public_path($android['subtitles'])), 'WEBVTT'
 $document = demoDocument();
 checkDemo($document->query('//section[@id="demos"]//video')->length === 2, 'Mostrar ambas demos disponibles.');
 checkDemo($document->query('//section[@id="demos"]//video[@controls and @playsinline and @preload="none" and not(@autoplay) and not(@loop)]')->length === 2, 'No precargar ni reproducir automaticamente los videos.');
-checkDemo($document->query('//a[@href="#demos"]')->length === 2, 'Faltan los accesos a las demos.');
+checkDemo($document->query('//a[@href="#demos"]')->length === 1, 'Conservar un acceso directo a las demos sin repetir el salto.');
 checkDemo($document->query('//section[contains(@class,"home-hero")]//a[@href="#demos" and normalize-space(.)="Ver demo"]')->length === 1, 'Falta el acceso a la demo desde el inicio.');
 checkDemo($document->query('//section[@id="demos"]//a[@download]')->length === 2, 'Faltan las descargas alternativas.');
-checkDemo($document->query('//section[@id="demos"]//details//li')->length === 10, 'Falta la alternativa de lectura.');
+checkDemo($document->query('//section[@id="demos"]//details//li')->length === 24, 'Falta el recorrido completo de lectura.');
 checkDemo($document->query('//*[@id="demo-android-title"]')->length === 1, 'Falta el titulo Android.');
 // DOMDocument usa el parser HTML4, que trata source como un elemento contenedor.
 checkDemo($document->query('//video[@aria-labelledby="demo-android-title"]//track[@kind="captions" and @srclang="es"]')->length === 1, 'Faltan los subtitulos en espanol.');

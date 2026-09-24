@@ -269,6 +269,7 @@
                     form.reset();
                     state.currentGroupId = response.data.id;
                     showMessage(root, 'success', 'Grupo familiar creado correctamente.');
+                    if (window.CCUI) { window.CCUI.saved(form, 'Grupo familiar creado correctamente.'); }
                     return loadGroups(root);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -276,12 +277,15 @@
 
         qs('[data-family-edit-form]', root).addEventListener('submit', function (event) {
             event.preventDefault();
+            var form = event.currentTarget;
             if (!requireGroup(root)) {
                 return;
             }
-            window.CCApi.request(API + '/family-groups/' + state.currentGroupId, { method: 'PATCH', body: formData(event.currentTarget) })
+            clearMessage(root);
+            window.CCApi.request(API + '/family-groups/' + state.currentGroupId, { method: 'PATCH', body: formData(form) })
                 .then(function () {
                     showMessage(root, 'success', 'Grupo actualizado correctamente.');
+                    if (window.CCUI) { window.CCUI.saved(form, 'Grupo actualizado correctamente.'); }
                     return loadGroups(root);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -310,6 +314,7 @@
                 .then(function () {
                     form.reset();
                     showMessage(root, 'success', 'Miembro agregado correctamente.');
+                    if (window.CCUI) { window.CCUI.saved(form, 'Miembro agregado correctamente.'); }
                     return loadMembers(root);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -346,6 +351,7 @@
                 .then(function () {
                     form.reset();
                     showMessage(root, 'success', 'Invitacion aceptada correctamente.');
+                    if (window.CCUI) { window.CCUI.saved(form, 'Invitacion aceptada correctamente.'); }
                     return loadGroups(root);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -433,8 +439,9 @@
         if (primaryBtn) {
             primaryBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                var createForm = qs('[data-family-create-form]', root);
+                var createForm = qs('[data-invitation-form]', root);
                 if (createForm) {
+                    if (window.CCUI) { window.CCUI.reveal(createForm); }
                     createForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     var first = createForm.querySelector('input:not([type=hidden]),select');
                     if (first) { first.focus(); }
@@ -446,8 +453,9 @@
         if (secondaryBtn) {
             secondaryBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                var editForm = qs('[data-family-edit-form]', root);
+                var editForm = qs('[data-preferences-form]', root);
                 if (editForm) {
+                    if (window.CCUI) { window.CCUI.reveal(editForm); }
                     editForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });

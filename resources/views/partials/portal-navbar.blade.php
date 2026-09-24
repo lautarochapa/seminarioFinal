@@ -74,7 +74,7 @@
         ],
     ];
     $currentUser = Auth::user();
-    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/budget', '/web/family-group', '/web/profile-objectives'];
+    $userMainRoutes = ['/web', '/web/stock', '/web/recipes', '/web/planning', '/web/shopping-list', '/web/budget', '/web/family-group'];
     $adminMainRoutes = [
         '/admin-web',
         '/admin-web/users',
@@ -113,7 +113,22 @@
                 }));
             }
         @endphp
-        @if(count($visibleItems) > 0)
+        @if($label === 'Usuario' && count($visibleItems) > 0)
+            @foreach($visibleItems as $item)
+                @php
+                    $sections = [
+                        '/web/stock' => ['stock','catalog','barcode-scanner','reports'],
+                        '/web/recipes' => ['recipes','recipe-search','recipe-suggestions','recipe-favorites'],
+                        '/web/planning' => ['planning'],
+                        '/web/shopping-list' => ['shopping-list','shopping-session','purchases','supermarkets','branches','payment-methods'],
+                        '/web/budget' => ['budget'],
+                        '/web/family-group' => ['family-group'],
+                    ];
+                    $isActive = request()->is(ltrim($item[1], '/')) || in_array(request()->segment(2), $sections[$item[1]] ?? [], true);
+                @endphp
+                <li><a class="{{ $isActive ? 'active' : '' }}" @if($isActive) aria-current="page" @endif href="{{ url($item[1]) }}" data-page-navigation>{{ $userMainLabels[$item[1]] ?? $item[0] }}</a></li>
+            @endforeach
+        @elseif(count($visibleItems) > 0)
             <li class="dropdown" data-permission="{{ $menu['permission'] }}">
                 <a href="#" class="dropdown-toggle" role="button" id="portalDropdown{{ $label }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ $label }}

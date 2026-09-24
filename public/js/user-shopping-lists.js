@@ -387,6 +387,7 @@
     }
 
     function fillForm(root, list) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-shopping-list-form]', root)); }
         var form = qs('[data-shopping-list-form]', root);
         var title = qs('[data-shopping-list-form-title]', root);
         if (!form || !list) {
@@ -417,6 +418,7 @@
     }
 
     function fillItemForm(root, item) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-shopping-list-item-form]', root)); }
         var form = qs('[data-shopping-list-item-form]', root);
         var title = qs('[data-shopping-list-item-form-title]', root);
         if (!form || !item) {
@@ -583,6 +585,7 @@
                 state.selectedList = response.data || null;
                 renderDetail(root, state.selectedList);
                 resetItemForm(root);
+                if (window.CCUI) { window.CCUI.reveal(qs('[data-shopping-list-detail]', root)); }
             })
             .catch(function (error) {
                 handleError(root, error);
@@ -614,6 +617,7 @@
             body: buildPayload(form),
         }).then(function (response) {
             showMessage(root, 'success', id ? 'Lista actualizada.' : 'Lista creada.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Lista actualizada.' : 'Lista creada.'); }
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
             resetForm(root);
@@ -656,6 +660,7 @@
             body: { meal_plan_id: Number(mealPlanId) },
         }).then(function (response) {
             showMessage(root, 'success', 'Lista generada desde menu.');
+            if (window.CCUI) { window.CCUI.saved(form, 'Lista generada desde menu.'); }
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
             resetItemForm(root);
@@ -682,6 +687,7 @@
             body: data,
         }).then(function (response) {
             showMessage(root, 'success', 'Lista generada desde historico.');
+            if (window.CCUI) { window.CCUI.saved(form, 'Lista generada desde historico.'); }
             state.selectedList = response.data || null;
             renderDetail(root, state.selectedList);
             resetItemForm(root);
@@ -702,6 +708,7 @@
             body: buildItemPayload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Item actualizado.' : 'Item agregado.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Item actualizado.' : 'Item agregado.'); }
             resetItemForm(root);
             return loadItems(root).then(function () {
                 return loadLists(root);
@@ -887,6 +894,7 @@
                 resetForm(root);
                 var form = qs('[data-shopping-list-form]', root);
                 if (form) {
+                    if (window.CCUI) { window.CCUI.reveal(form); }
                     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     var first = form.querySelector('select,input:not([type=hidden])');
                     if (first) { first.focus(); }

@@ -125,12 +125,12 @@
     .home-strip-item strong { font-size: 15px; }
     .home-strip-item span { margin-top: 3px; color: #b9c4c0; font-size: 12px; }
 
-    .home-section { padding: 80px 0; }
+    .home-section { padding: 64px 0; }
     .home-section-soft { background: var(--soft); }
 
     .home-heading {
         max-width: 860px;
-        margin: 0 auto 54px;
+        margin: 0 auto 36px;
         text-align: center;
     }
 
@@ -146,12 +146,11 @@
 
     .home-step { padding: 30px 28px 36px; border-right: 1px solid var(--line); }
     .home-step:last-child { border: 0; }
-    .home-step-number { display: block; margin-bottom: 28px; color: var(--green-dark); font-size: 13px; font-weight: 900; }
+    .home-step-number { display: block; margin-bottom: 18px; color: var(--green-dark); font-size: 44px; line-height: 1; font-weight: 900; }
     .home-step h3 { margin: 0 0 9px; font-size: 20px; font-weight: 900; }
     .home-step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
-    .home-demo-link { margin: 28px 0 0; text-align: center; }
-    .home-demo-link a, .home-demo a { color: var(--green-dark); font-weight: 800; text-decoration: underline; }
+    .home-demo a { color: var(--green-dark); font-weight: 800; text-decoration: underline; }
     .home-demos { scroll-margin-top: 80px; border-top: 1px solid var(--line); }
     .home-demos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 40px; }
     .home-demo { min-width: 0; width: 100%; max-width: 960px; margin: 0 auto; }
@@ -247,7 +246,7 @@
         grid-template-columns: 1.1fr .9fr .9fr;
         grid-template-rows: 360px;
         gap: 18px;
-        margin-top: 70px;
+        margin-top: 36px;
     }
 
     .filler-image {
@@ -273,7 +272,7 @@
     .home-button-outline { color: #fff !important; border-color: #66736e; background: transparent; }
 
     @media (max-width: 980px) {
-        .home-hero { min-height: 680px; background-position: 60% center; }
+        .home-hero { min-height: 680px; background-position: left center; }
         .home-hero-copy { width: 60%; }
         .home-strip-grid { grid-template-columns: repeat(2, 1fr); }
         .home-strip-item:nth-child(2) { border-right: 0; }
@@ -329,7 +328,7 @@
                 <h1>Cocina<wbr>Comida<wbr><span>Control</span></h1>
                 <p>Organizá el stock, planificá las comidas y cuidá el presupuesto familiar desde una sola plataforma.</p>
                 <div class="home-actions">
-                    <a class="home-button home-button-primary" href="{{ route('login') }}">Ingresar</a>
+                    <a class="home-button home-button-primary" href="{{ route('login') }}" data-mobile-entry="login">Ingresar</a>
                     @if($demoVideos)
                         <a class="home-button home-button-light" href="#demos">Ver demo</a>
                     @else
@@ -350,6 +349,22 @@
         </div>
     </section>
 
+    <section class="home-section home-section-soft">
+        <div class="home-container">
+            <header class="home-heading">
+                <div class="home-eyebrow">Pensada para la vida real</div>
+                <h2>Menos desperdicio. Más organización.</h2>
+                <p>Una experiencia que acompaña las decisiones cotidianas sin perder de vista la salud ni el bolsillo.</p>
+            </header>
+
+            <div class="filler-grid">
+                <div class="filler-image"><span>Planificar con lo que ya tenés</span></div>
+                <div class="filler-image"><span>Elegir alimentos variados</span></div>
+                <div class="filler-image"><span>Ordenar la cocina y el hogar</span></div>
+            </div>
+        </div>
+    </section>
+
     <section id="producto" class="home-section">
         <div class="home-container">
             <header class="home-heading">
@@ -364,58 +379,10 @@
                 <article class="home-step"><span class="home-step-number">03</span><h3>Planificá</h3><p>Comidas y porciones para cada integrante del hogar.</p></article>
                 <article class="home-step"><span class="home-step-number">04</span><h3>Comprá</h3><p>Sólo lo necesario, comparando precios y presupuesto.</p></article>
             </div>
-            @if($demoVideos)
-                <p class="home-demo-link"><a href="#demos">Ver el recorrido en video</a></p>
-            @endif
         </div>
     </section>
 
-    @if($demoVideos)
-        <section id="demos" class="home-section home-demos" aria-labelledby="demos-title">
-            <div class="home-container">
-                <header class="home-heading">
-                    <div class="home-eyebrow">Demo</div>
-                    <h2 id="demos-title">Mirá cómo funciona.</h2>
-                    <p>De organizar tu hogar a registrar lo que comprás y cocinás: un recorrido con datos de ejemplo.</p>
-                </header>
-                <div class="home-demos-grid">
-                    @foreach($demoVideos as $platform => $demo)
-                        <article class="home-demo" aria-labelledby="demo-{{ $platform }}-title">
-                            <header class="home-demo-header">
-                                <h3 id="demo-{{ $platform }}-title">{{ $demo['title'] }}</h3>
-                                @if(!empty($demo['duration']))
-                                    <span class="home-demo-duration">{{ $demo['duration'] }} min</span>
-                                @endif
-                            </header>
-                            <video controls playsinline preload="none" aria-labelledby="demo-{{ $platform }}-title" aria-describedby="demo-{{ $platform }}-description"
-                                @if(!empty($demo['poster']) && is_file(public_path($demo['poster']))) poster="{{ asset($demo['poster']) }}" @endif>
-                                <source src="{{ asset($demo['file']) }}" type="video/mp4">
-                                @if(!empty($demo['subtitles']) && is_file(public_path($demo['subtitles'])))
-                                    <track kind="captions" src="{{ asset($demo['subtitles']) }}" srclang="es" label="Español">
-                                @endif
-                                <a href="{{ asset($demo['file']) }}">Abrir {{ $demo['title'] }}</a>
-                            </video>
-                            <p id="demo-{{ $platform }}-description" class="home-demo-description">{{ $demo['description'] }}</p>
-                            <a href="{{ asset($demo['file']) }}" download>Descargar {{ $demo['title'] }} (MP4)</a>
-                            @if(!empty($demo['steps']))
-                                <details>
-                                    <summary>Leer el recorrido</summary>
-                                    <ol>
-                                        @foreach($demo['steps'] as $step)
-                                            <li>{{ $step }}</li>
-                                        @endforeach
-                                    </ol>
-                                    @if(!empty($demo['note']))
-                                        <p class="home-demo-note">{{ $demo['note'] }}</p>
-                                    @endif
-                                </details>
-                            @endif
-                        </article>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
+
 
     <section class="home-section home-section-soft">
         <div class="home-container screens-layout">
@@ -464,29 +431,62 @@
         </div>
     </section>
 
-    <section class="home-section home-section-soft">
-        <div class="home-container">
-            <header class="home-heading">
-                <div class="home-eyebrow">Pensada para la vida real</div>
-                <h2>Menos desperdicio. Más organización.</h2>
-                <p>Una experiencia que acompaña las decisiones cotidianas sin perder de vista la salud ni el bolsillo.</p>
-            </header>
 
-            <div class="filler-grid">
-                <div class="filler-image"><span>Planificar con lo que ya tenés</span></div>
-                <div class="filler-image"><span>Elegir alimentos variados</span></div>
-                <div class="filler-image"><span>Ordenar la cocina y el hogar</span></div>
+
+    @if($demoVideos)
+        <section id="demos" class="home-section home-demos" aria-labelledby="demos-title">
+            <div class="home-container">
+                <header class="home-heading">
+                    <div class="home-eyebrow">Demo</div>
+                    <h2 id="demos-title">Mirá cómo funciona.</h2>
+                    <p>De organizar tu hogar a registrar lo que comprás y cocinás: un recorrido con datos de ejemplo.</p>
+                </header>
+                <div class="home-demos-grid">
+                    @foreach($demoVideos as $platform => $demo)
+                        <article class="home-demo" aria-labelledby="demo-{{ $platform }}-title">
+                            <header class="home-demo-header">
+                                <h3 id="demo-{{ $platform }}-title">{{ $demo['title'] }}</h3>
+                                @if(!empty($demo['duration']))
+                                    <span class="home-demo-duration">{{ $demo['duration'] }} min</span>
+                                @endif
+                            </header>
+                            <video controls playsinline preload="none" aria-labelledby="demo-{{ $platform }}-title" aria-describedby="demo-{{ $platform }}-description"
+                                @if(!empty($demo['poster']) && is_file(public_path($demo['poster']))) poster="{{ asset($demo['poster']) }}" @endif>
+                                <source src="{{ asset($demo['file']) }}" type="video/mp4">
+                                @if(!empty($demo['subtitles']) && is_file(public_path($demo['subtitles'])))
+                                    <track kind="captions" src="{{ asset($demo['subtitles']) }}" srclang="es" label="Español">
+                                @endif
+                                <a href="{{ asset($demo['file']) }}">Abrir {{ $demo['title'] }}</a>
+                            </video>
+                            <p id="demo-{{ $platform }}-description" class="home-demo-description">{{ $demo['description'] }}</p>
+                            <a href="{{ asset($demo['file']) }}" download>Descargar {{ $demo['title'] }} (MP4)</a>
+                            @if(!empty($demo['steps']))
+                                <details>
+                                    <summary>Leer el recorrido</summary>
+                                    <ol>
+                                        @foreach($demo['steps'] as $step)
+                                            <li>{{ $step }}</li>
+                                        @endforeach
+                                    </ol>
+                                    @if(!empty($demo['note']))
+                                        <p class="home-demo-note">{{ $demo['note'] }}</p>
+                                    @endif
+                                </details>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     <section id="descarga-app" class="download-band">
         <div class="home-container download-inner">
             <div class="download-copy">
                 <h2>Llevá tu cocina con vos.</h2>
                 @if(config('mobile.android.download_url'))
-                    <p>Descargá la versión de prueba para Android y entrá con tu misma cuenta. Tu hogar y tus listas, también en el celular.</p>
-                    <p class="download-version">Android · Versión {{ config('mobile.android.version') }} ({{ config('mobile.android.build') }}) · {{ number_format(config('mobile.android.size_bytes') / 1000000, 0) }} MB · En pruebas</p>
+                    <p>Descargá la app para Android y entrá con tu misma cuenta. Tu hogar y tus listas, también en el celular.</p>
+                    <p class="download-version">Android · Versión {{ config('mobile.android.version') }} · {{ number_format(config('mobile.android.size_bytes') / 1000000, 0) }} MB</p>
                 @else
                     <p>Estamos preparando la descarga para Android. Mientras tanto, podés usar tu cuenta desde la web.</p>
                 @endif
@@ -495,7 +495,7 @@
                 @if(config('mobile.android.download_url'))
                     <a class="home-button home-button-primary" href="{{ route('downloads.android') }}">Descargar APK {{ config('mobile.android.version') }}</a>
                 @endif
-                <a class="home-button home-button-outline" href="{{ route('login') }}">Ingresar a la web</a>
+                <a class="home-button home-button-outline" href="{{ route('login') }}" data-mobile-entry="login">Ingresar</a>
             </div>
         </div>
     </section>

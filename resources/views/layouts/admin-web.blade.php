@@ -112,22 +112,12 @@
     </style>
 </head>
 <body>
-<header class="site-navbar">
-    <a class="logo" href="{{ url('/') }}"><img src="{{ asset('images/logo/2.svg') }}" alt="logo" height="40em"></a>
-    <nav><ul class="nav__links">@include('partials.portal-navbar')</ul></nav>
-    @include('partials.user-navbar-menu')
-</header>
+@include('partials.site-header')
 <div class="admin-shell">
     <main class="content">
         @yield('content')
     </main>
 </div>
-<footer style="background-color:#24252a;color:#edf0f1;padding:28px 15%;width:100%;box-sizing:border-box;">
-    <div class="row">
-        <div class="col-md-4 align-self-center" style="text-align:center;">Imagenes de Pexels<br>Iconos de Flaticon</div>
-        <div class="col-md-4 align-self-center" style="text-align:center;"><img src="{{ asset('images/logo/1.svg') }}" alt="logo" height="92em"></div>
-        <div class="col-md-4 align-self-center" style="text-align:center;">Desarrollado por:<br>Lautaro Chiappero<br>comidacocinacontrol@gmail.com</div>
-    </div>
-</footer>
+@include('partials.site-footer')
 </body>
 </html>

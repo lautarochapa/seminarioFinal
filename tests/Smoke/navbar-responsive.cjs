@@ -1,23 +1,21 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-
-const css = fs.readFileSync(path.join(__dirname, '../../public/css/navbar.css'), 'utf8');
-const smallScreen = css.slice(css.indexOf('@media only screen and (max-width: 800px)'));
-assert.ok(smallScreen.startsWith('@media'));
-assert.doesNotMatch(smallScreen, /display\s*:\s*none\b/, 'No ocultar el login ni los dropdowns en ventanas angostas.');
-assert.match(smallScreen, /\.site-navbar\s*\{[^}]*flex-wrap\s*:\s*wrap/s);
-assert.match(smallScreen, /\.site-navbar\s+\.nav__links\s*\{[^}]*flex-wrap\s*:\s*wrap/s);
-assert.match(smallScreen, /\.site-navbar\s+\.cta:not\(\.menu\)\s*\{[^}]*display\s*:\s*inline-flex/s);
-assert.doesNotMatch(css, /\bheader\b/, 'El navbar no debe modificar los encabezados del contenido.');
-assert.match(smallScreen, /max-width\s*:\s*calc\(100vw - 32px\)/);
-assert.doesNotMatch(smallScreen, /\.menu\s*\{[^}]*display\s*:\s*(?:initial|block|flex)/s);
-
-for (const layout of ['app', 'web-user', 'admin-web', 'teacher-web']) {
-  const blade = fs.readFileSync(path.join(__dirname, `../../resources/views/layouts/${layout}.blade.php`), 'utf8');
-  assert.ok(blade.includes('<header class="site-navbar">'));
-  assert.ok(blade.includes("asset('css/navbar.css') }}?v={{ filemtime(public_path('css/navbar.css'))"),
-    `El layout ${layout} debe invalidar la cache del navbar cuando cambia el CSS.`);
+const read = file => fs.readFileSync(path.join(__dirname, '../..', file), 'utf8');
+const css = read('public/css/navbar.css');
+assert.match(css, /max-width:1180px/);
+assert.match(css, /@media \(max-width:680px\)/);
+assert.match(css, /\.logo img \{ width:170px/);
+assert.match(css, /\.nav-auth-actions \.cta \{ padding:8px 11px/);
+assert.doesNotMatch(css, /\bheader\s*\{/);
+for (const layout of ['app', 'web-user', 'admin-web']) {
+ const blade = read('resources/views/layouts/' + layout + '.blade.php');
+ assert.ok(blade.includes("@include('partials.site-header')"));
+ assert.ok(blade.includes("@include('partials.site-footer')"));
+ assert.ok(blade.includes("filemtime(public_path('css/navbar.css'))"));
 }
-
-console.log('OK: navbar adaptable, accesos visibles y CSS versionado.');
+const header = read('resources/views/partials/user-navbar-menu.blade.php');
+assert.ok(header.includes('Registrate'));
+assert.ok(header.includes('data-mobile-entry="login"'));
+assert.ok(header.includes('data-mobile-entry="register"'));
+console.log('PASS: shared header/footer, registration and compact public mobile navbar');

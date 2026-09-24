@@ -56,10 +56,25 @@
                 return { ok: response.ok, status: response.status, data: null };
             }
 
-            return response.json().then(function (data) {
+            return response.text().then(function (body) {
+                var data;
+                try {
+                    data = JSON.parse(body);
+                } catch (parseError) {
+                    var loginRedirect = response.redirected && /\/login(?:[?#]|$)/.test(response.url || '');
+                    var invalid = new Error(loginRedirect
+                        ? 'Tu sesión venció. Volvé a ingresar para continuar.'
+                        : 'No pudimos cargar la información. Intentá nuevamente en unos instantes.');
+                    invalid.status = loginRedirect ? 401 : response.status;
+                    invalid.code = 'API_INVALID_RESPONSE';
+                    invalid.traceId = response.headers.get('X-Trace-Id');
+                    if (loginRedirect) clearSession();
+                    throw invalid;
+                }
                 if (!response.ok) {
                     var error = new Error((data.error && data.error.message) || 'No se pudo completar la operacion.');
                     error.status = response.status;
+                    if (response.status === 401) clearSession();
                     error.payload = data;
                     throw error;
                 }

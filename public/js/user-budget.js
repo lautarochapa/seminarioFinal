@@ -213,6 +213,7 @@
     }
 
     function fillForm(root, budget) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-budget-form]', root)); }
         var form = qs('[data-budget-form]', root);
         var title = qs('[data-budget-form-title]', root);
         if (!form || !budget) { return; }
@@ -316,6 +317,7 @@
             state.saving = false;
             if (btn) { btn.disabled = false; }
             showMsg(root, 'success', id ? 'Presupuesto actualizado.' : 'Presupuesto creado.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Presupuesto actualizado.' : 'Presupuesto creado.'); }
             resetForm(root);
             return Promise.all([loadBudgets(root), loadCurrent(root)]);
         }).catch(function (err) {
@@ -564,13 +566,48 @@
         el.style.display = 'none';
     }
 
+    function categoryName(category) {
+        return category.product_category_name || category.ingredient_category_name || 'Categoría #' + category.id;
+    }
+
+    function loadCategoryChoices(root) {
+        var select = qs('[data-budget-cat-form]', root).elements.category_choice;
+        return Promise.all([
+            window.CCApi.request('/api/v1/product-categories'),
+            window.CCApi.request('/api/v1/ingredient-categories')
+        ]).then(function (responses) {
+            var selected = select.value;
+            var previous = select.selectedOptions[0];
+            select.innerHTML = '<option value="">Seleccioná una categoría</option>';
+            responses.forEach(function (response, index) {
+                var group = document.createElement('optgroup');
+                group.label = index ? 'Ingredientes' : 'Productos';
+                function append(items, prefix) {
+                    (items || []).forEach(function (item) {
+                        var option = document.createElement('option');
+                        option.value = (index ? 'ingredient:' : 'product:') + item.id;
+                        option.textContent = prefix + item.name; group.appendChild(option);
+                        append(item.children, prefix + item.name + ' / ');
+                    });
+                }
+                append(response.data, ''); select.appendChild(group);
+            });
+            if (selected && !Array.from(select.options).some(function (option) { return option.value === selected; }) && previous) {
+                select.appendChild(previous);
+            }
+            select.value = selected;
+        }).catch(function () {
+            showCatFormMsg(root, 'danger', 'No se pudieron cargar las categorías. Volvé a abrir Presupuesto para reintentar.');
+        });
+    }
+
     function resetCatForm(root) {
         var form = qs('[data-budget-cat-form]', root);
         var title = qs('[data-budget-cat-form-title]', root);
         if (form) {
             form.reset();
             if (form.elements.id) { form.elements.id.value = ''; }
-            if (form.elements.color) { form.elements.color.value = '#04ac85'; }
+            form.elements.category_choice.disabled = false;
         }
         if (title) { title.textContent = 'Agregar categoría'; }
         state.selectedCatId = null;
@@ -581,11 +618,16 @@
         var form = qs('[data-budget-cat-form]', root);
         var title = qs('[data-budget-cat-form-title]', root);
         if (!form || !cat) { return; }
+        if (window.CCUI) { window.CCUI.reveal(form); }
         if (form.elements.id) { form.elements.id.value = cat.id; }
-        if (form.elements.name) { form.elements.name.value = cat.name || ''; }
-        if (form.elements.allocated_amount) { form.elements.allocated_amount.value = cat.allocated_amount || ''; }
-        if (form.elements.color) { form.elements.color.value = cat.color || '#04ac85'; }
-        if (title) { title.textContent = 'Editar: ' + (cat.name || 'categoría'); }
+        var choice = form.elements.category_choice;
+        var key = cat.product_category_id ? 'product:' + cat.product_category_id : 'ingredient:' + cat.ingredient_category_id;
+        if (!Array.from(choice.options).some(function (option) { return option.value === key; })) {
+            var option = document.createElement('option'); option.value = key; option.textContent = categoryName(cat); choice.appendChild(option);
+        }
+        choice.value = key; choice.disabled = true;
+        form.elements.amount.value = cat.amount;
+        if (title) { title.textContent = 'Editar: ' + categoryName(cat); }
         state.selectedCatId = cat.id;
         clearCatFormMsg(root);
     }
@@ -612,7 +654,7 @@
         }
 
         var totalBudget = budget ? (parseFloat(budget.total_amount) || 0) : 0;
-        var totalAlloc = state.categories.reduce(function (acc, c) { return acc + (parseFloat(c.allocated_amount) || 0); }, 0);
+        var totalAlloc = state.categories.reduce(function (acc, c) { return acc + (parseFloat(c.amount) || 0); }, 0);
         var unalloc = totalBudget - totalAlloc;
 
         if (allocEl && totalBudget) {
@@ -637,18 +679,15 @@
         }
 
         listEl.innerHTML = state.categories.map(function (cat) {
-            var alloc = parseFloat(cat.allocated_amount) || 0;
-            var spent = parseFloat(cat.spent) || 0;
-            var avail = alloc - spent;
+            var alloc = parseFloat(cat.amount) || 0;
+            var spent = cat.spent_amount;
+            var avail = cat.available_amount;
             var spentPct = alloc ? Math.min(100, Math.round((spent / alloc) * 100)) : 0;
-            var barColor = spentPct >= 90 ? '#b33a3a' : spentPct >= 70 ? '#b35c00' : (cat.color || '#04ac85');
+            var barColor = spentPct >= 90 ? '#b33a3a' : spentPct >= 70 ? '#b35c00' : '#04ac85';
             var availColor = avail >= 0 ? '#2a7a2a' : '#b33a3a';
-            var dot = cat.color
-                ? '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + escapeHtml(cat.color) + ';margin-right:6px;flex-shrink:0"></span>'
-                : '';
             return '<div style="border:1px solid #dde6df;border-radius:6px;padding:10px 12px;margin-bottom:8px">' +
                 '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">' +
-                '<div style="display:flex;align-items:center;font-size:13px;font-weight:700;min-width:0">' + dot + escapeHtml(cat.name || 'Sin nombre') + '</div>' +
+                '<div style="display:flex;align-items:center;font-size:13px;font-weight:700;min-width:0">' + escapeHtml(categoryName(cat)) + '</div>' +
                 '<div style="display:flex;gap:4px;flex-shrink:0">' +
                 '<button type="button" class="btn-secondary-web btn-sm" style="padding:3px 8px;font-size:11px" data-cat-edit="' + escapeHtml(String(cat.id)) + '">Editar</button>' +
                 '<button type="button" class="btn-secondary-web btn-sm" style="padding:3px 8px;font-size:11px" data-cat-delete="' + escapeHtml(String(cat.id)) + '">✕</button>' +
@@ -698,14 +737,15 @@
 
     function saveCategory(root, form) {
         if (!state.catsBudgetId || !state.currentGroupId) { return; }
-        var name = form.elements.name ? form.elements.name.value.trim() : '';
-        var amount = form.elements.allocated_amount ? form.elements.allocated_amount.value : '';
-        if (!name) { showCatFormMsg(root, 'warning', 'Ingresá el nombre de la categoría.'); return; }
-        if (!amount) { showCatFormMsg(root, 'warning', 'Ingresá el monto asignado.'); return; }
-
         var id = form.elements.id ? form.elements.id.value : '';
-        var payload = { name: name, allocated_amount: parseFloat(amount) };
-        if (form.elements.color && form.elements.color.value) { payload.color = form.elements.color.value; }
+        var amount = Number(form.elements.amount.value);
+        if (!Number.isFinite(amount) || amount <= 0) { showCatFormMsg(root, 'warning', 'Ingresá un monto mayor a cero.'); return; }
+        var payload = { amount: amount };
+        if (!id) {
+            var choice = /^(product|ingredient):([1-9][0-9]*)$/.exec(form.elements.category_choice.value);
+            if (!choice) { showCatFormMsg(root, 'warning', 'Seleccioná una categoría.'); return; }
+            payload[choice[1] === 'product' ? 'product_category_id' : 'ingredient_category_id'] = Number(choice[2]);
+        }
 
         state.catSaving = true;
         var btn = qs('[data-budget-cat-save]', root);
@@ -718,6 +758,7 @@
             state.catSaving = false;
             if (btn) { btn.disabled = false; }
             showCatsMsg(root, 'success', id ? 'Categoría actualizada.' : 'Categoría creada.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Categoría actualizada.' : 'Categoría creada.'); }
             resetCatForm(root);
             return loadCategories(root, state.catsBudgetId);
         }).catch(function (err) {
@@ -730,7 +771,7 @@
     function deleteCategory(root, catId) {
         if (!state.catsBudgetId || !catId) { return; }
         var cat = state.categories.find(function (c) { return String(c.id) === String(catId); });
-        if (!window.confirm('¿Eliminar la categoría "' + (cat ? cat.name : catId) + '"?')) { return; }
+        if (!window.confirm('¿Eliminar la categoría "' + (cat ? categoryName(cat) : catId) + '"?')) { return; }
         window.CCApi.request(catBudgetPath('/' + encodeURIComponent(catId)), { method: 'DELETE' })
             .then(function () {
                 showCatsMsg(root, 'success', 'Categoría eliminada.');
@@ -779,7 +820,7 @@
         if (!sel) { return; }
         sel.innerHTML = '<option value="">Sin categoría</option>' +
             state.categories.map(function (c) {
-                return '<option value="' + escapeHtml(c.id) + '">' + escapeHtml(c.name || ('#' + c.id)) + '</option>';
+                return '<option value="' + escapeHtml(c.id) + '">' + escapeHtml(categoryName(c)) + '</option>';
             }).join('');
     }
 
@@ -919,6 +960,7 @@
                     loadSummary(root, state.summaryBudgetId, false);
                 }
                 showAdjMsg(root, 'success', 'Ajuste guardado correctamente.');
+                if (window.CCUI) { window.CCUI.saved(form, 'Ajuste guardado correctamente.'); }
             })
             .catch(function (err) {
                 state.movSaving = false;
@@ -1244,6 +1286,7 @@
         renderCategoriesPanel(root);
         renderMovementsPanel(root);
         renderAlertsPanel(root);
+        loadCategoryChoices(root);
         loadGroups(root).then(function () {
             if (state.currentGroupId) {
                 return Promise.all([loadBudgets(root), loadCurrent(root)]);
@@ -1256,6 +1299,7 @@
                 e.preventDefault();
                 var form = qs('[data-budget-form]', root);
                 if (form) {
+                    if (window.CCUI) { window.CCUI.reveal(form); }
                     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     var first = form.querySelector('select,input:not([type=hidden])');
                     if (first) { first.focus(); }

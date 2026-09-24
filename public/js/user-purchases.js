@@ -190,6 +190,7 @@
     }
 
     function fillForm(root, item) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-purchases-item-form]', root)); }
         var form = qs('[data-purchases-item-form]', root);
         var title = qs('[data-purchases-form-title]', root);
         if (!form || !item) { return; }
@@ -303,6 +304,7 @@
             state.saving = false;
             if (btn) { btn.disabled = false; }
             showMsg(root, 'success', id ? 'Ítem actualizado.' : 'Ítem agregado.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Ítem actualizado.' : 'Ítem agregado.'); }
             resetForm(root);
             return loadItems(root);
         }).catch(function (err) {

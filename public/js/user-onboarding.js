@@ -3,38 +3,38 @@
 
     var STEP_META = {
         basic_profile: {
-            title: '1. Datos basicos',
+            title: 'Datos básicos',
             hint: 'Altura. El peso actual y el peso objetivo son opcionales.',
-            link: '/web/profile-objectives',
+            link: '/web/profile-objectives#datos',
             cta: 'Completar datos',
         },
         objective: {
-            title: '2. Objetivo',
+            title: 'Objetivo',
             hint: 'Elegi al menos un objetivo personal.',
-            link: '/web/profile-objectives',
+            link: '/web/profile-objectives#objetivos',
             cta: 'Elegir objetivo',
         },
         meals_per_day: {
-            title: '3. Comidas por dia',
+            title: 'Comidas por día',
             hint: 'Cuantas comidas haces por dia.',
-            link: '/web/profile-objectives',
+            link: '/web/profile-objectives#datos',
             cta: 'Definir comidas',
         },
         food_preferences: {
             title: 'Preferencias alimentarias (opcional)',
             hint: 'Restricciones, alergias y condiciones de salud.',
-            link: '/web/profile-objectives',
+            link: '/web/profile-objectives#restricciones',
             cta: 'Revisar preferencias',
         },
         family_group: {
-            title: '4. Grupo familiar',
+            title: 'Grupo familiar',
             hint: 'Crea un grupo o unite a uno existente.',
             link: '/web/family-group',
             cta: 'Ir a grupo familiar',
         },
     };
 
-    var STEP_ORDER = ['basic_profile', 'objective', 'meals_per_day', 'food_preferences', 'family_group'];
+    var STEP_ORDER = ['basic_profile', 'objective', 'meals_per_day', 'family_group', 'food_preferences'];
 
     function qs(selector, root) {
         return (root || document).querySelector(selector);
@@ -97,20 +97,19 @@
             continueLink.textContent = data.complete ? 'Ir al inicio' : 'Continuar';
         }
 
-        list.innerHTML = STEP_ORDER.map(function (key) {
+        list.innerHTML = STEP_ORDER.map(function (key, index) {
             var step = data.steps[key];
             if (!step) {
                 return '';
             }
             var meta = STEP_META[key];
-            var badge = step.complete
-                ? '<span style="color:#04ac85;font-weight:700">Listo</span>'
-                : (step.optional ? '<span class="muted">Opcional</span>' : '<span style="color:#b33a3a;font-weight:700">Pendiente</span>');
-            return '<li class="panel" style="padding:12px">' +
-                '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center">' +
-                '<strong>' + escapeHtml(meta.title) + '</strong>' + badge + '</div>' +
-                '<p class="muted" style="margin:4px 0">' + escapeHtml(meta.hint) + '</p>' +
-                '<p class="muted" style="margin:4px 0;font-size:12px">' + escapeHtml(stepDetail(key, step)) + '</p>' +
+            var badge = step.complete ? 'Completo' : (step.optional ? 'Opcional' : 'Pendiente');
+            return '<li class="onboarding-step' + (step.complete ? ' is-complete' : '') + '">' +
+                '<span class="step-marker" aria-hidden="true">' + (step.complete ? '&#10003;' : (index + 1)) + '</span>' +
+                '<div class="step-copy"><h3>' + escapeHtml(meta.title) + '</h3>' +
+                '<span class="step-status">' + badge + '</span>' +
+                '<p>' + escapeHtml(meta.hint) + '</p>' +
+                '<p>' + escapeHtml(stepDetail(key, step)) + '</p></div>' +
                 '<a class="btn-secondary-web" href="' + escapeHtml(meta.link) + '">' + escapeHtml(meta.cta) + '</a>' +
                 '</li>';
         }).join('');
@@ -123,7 +122,7 @@
     function load(root) {
         var list = qs('[data-onboarding-steps]', root);
         if (list) {
-            list.innerHTML = '<li class="muted">Cargando pasos...</li>';
+            list.innerHTML = '<li class="cc-loading" role="status"><span class="cc-spinner" aria-hidden="true"></span>Cargando tu progreso...</li>';
         }
         window.CCApi.request('/api/v1/users/me/onboarding')
             .then(function (response) {
@@ -136,7 +135,7 @@
                 }
                 showMessage(root, 'danger', message);
                 if (list) {
-                    list.innerHTML = '<li class="muted">' + escapeHtml(message) + '</li>';
+                    list.innerHTML = '<li class="onboarding-error">' + escapeHtml(message) + '</li>';
                 }
             });
     }

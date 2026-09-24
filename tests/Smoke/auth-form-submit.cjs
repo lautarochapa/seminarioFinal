@@ -25,6 +25,7 @@ function harness(dataset = {}) {
     let ready;
     const calls = [];
     const window = {
+        dispatchEvent() {},
         location: { origin: 'https://cocina.example.com', href: '' },
         CCApi: {
             request(route) { const call = { route, ...deferred() }; calls.push(call); return call.promise; },
@@ -32,11 +33,12 @@ function harness(dataset = {}) {
         },
     };
     const document = {
+        dispatchEvent() {},
         querySelectorAll: selector => selector === 'form[data-api-endpoint]' ? [form] : [],
         addEventListener: (event, handler) => { if (event === 'DOMContentLoaded') ready = handler; },
     };
     class FormData { entries() { return [['email', 'prueba@example.invalid']]; } }
-    vm.runInNewContext(source, { window, document, URL, FormData });
+    vm.runInNewContext(source, { window, document, URL, FormData, Event: class Event {} });
     ready();
     ready();
     assert.equal(handlers.length, 1, 'Do not bind a second submit handler.');

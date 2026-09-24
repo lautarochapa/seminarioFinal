@@ -1,5 +1,8 @@
 @guest
-    <a class="cta" href="{{ route('login') }}">Ingresar</a>
+    <div class="nav-auth-actions">
+        <a class="cta nav-register" href="{{ route('register') }}" data-mobile-entry="register">Registrate</a>
+        <a class="cta" href="{{ route('login') }}" data-mobile-entry="login">Ingresar</a>
+    </div>
 @else
     <div class="dropdown">
         <a class="cta dropdown-toggle" href="#" role="button" id="userNavbarMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

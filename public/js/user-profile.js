@@ -604,6 +604,7 @@
                 setValue(form, 'target_unit', assignment.target_unit);
                 setValue(form, 'target_date', assignment.target_date);
                 setValue(form, 'notes', assignment.notes);
+                if (window.CCUI) { window.CCUI.reveal(form); }
                 form.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
@@ -754,6 +755,7 @@
                 if (submit) {
                     submit.textContent = 'Actualizar medicion';
                 }
+                if (window.CCUI) { window.CCUI.reveal(form); }
                 form.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
@@ -838,6 +840,7 @@
         if (primaryBtn) {
             primaryBtn.addEventListener('click', function (e) {
                 e.preventDefault();
+                if (window.CCUI) { window.CCUI.reveal(profileForm); }
                 profileForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 var first = profileForm.querySelector('input:not([type=hidden]),select,textarea');
                 if (first) { first.focus(); }
@@ -848,6 +851,7 @@
         if (secondaryBtn) {
             secondaryBtn.addEventListener('click', function (e) {
                 e.preventDefault();
+                if (window.CCUI) { window.CCUI.reveal(objectivesForm); }
                 objectivesForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 var first = objectivesForm.querySelector('input:not([type=hidden]),select,textarea');
                 if (first) { first.focus(); }

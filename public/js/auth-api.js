@@ -134,6 +134,7 @@
 
     function redirectAfterAuth(fallback) {
         return establishWebSession().then(function (payload) {
+            document.dispatchEvent(new Event('cc:navigating'));
             window.location.href = dashboardRedirect(fallback, payload);
         });
     }

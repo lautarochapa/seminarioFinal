@@ -858,6 +858,7 @@
     }
 
     function fillLocationForm(root, location) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-stock-location-form]', root)); }
         var form = qs('[data-stock-location-form]', root);
         var title = qs('[data-stock-location-form-title]', root);
         var cancel = qs('[data-stock-location-cancel]', root);
@@ -877,6 +878,7 @@
     }
 
     function fillStockForm(root, item) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-stock-item-form]', root)); }
         var form = qs('[data-stock-item-form]', root);
         var title = qs('[data-stock-item-form-title]', root);
         var cancel = qs('[data-stock-item-cancel]', root);
@@ -909,6 +911,7 @@
     }
 
     function fillMovementForm(root, item) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-stock-movement-form]', root)); }
         var form = qs('[data-stock-movement-form]', root);
         var title = qs('[data-stock-movement-form-title]', root);
         if (!form || !item) {
@@ -925,6 +928,7 @@
     }
 
     function fillRuleForm(root, rule) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-stock-rule-form]', root)); }
         var form = qs('[data-stock-rule-form]', root);
         var title = qs('[data-stock-rule-form-title]', root);
         if (!form || !rule) {
@@ -1554,6 +1558,7 @@
         }).then(function () {
             resetLocationForm(root);
             showMessage(root, 'success', id ? 'Ubicacion actualizada.' : 'Ubicacion creada.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Ubicacion actualizada.' : 'Ubicacion creada.'); }
             return reloadGroupData(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -1633,6 +1638,7 @@
         }).then(function () {
             resetStockForm(root);
             showMessage(root, 'success', id ? 'Stock actualizado.' : 'Stock cargado.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Stock actualizado.' : 'Stock cargado.'); }
             return Promise.all([loadStock(root), loadSummary(root), loadValue(root)]);
         }).catch(function (error) {
             applyApiFieldErrors(root, error);
@@ -1723,6 +1729,7 @@
         }).then(function () {
             resetMovementForm(root);
             showMessage(root, 'success', 'Movimiento registrado.');
+            if (window.CCUI) { window.CCUI.saved(form, 'Movimiento registrado.'); }
             return Promise.all([loadStock(root), loadMovements(root), loadSummary(root), loadValue(root)]);
         }).catch(function (error) {
             handleError(root, error);
@@ -1762,6 +1769,7 @@
         }).then(function () {
             resetRuleForm(root);
             showMessage(root, 'success', id ? 'Regla actualizada.' : 'Regla creada.');
+            if (window.CCUI) { window.CCUI.saved(form, id ? 'Regla actualizada.' : 'Regla creada.'); }
             return Promise.all([loadRules(root), loadLowStock(root)]);
         }).catch(function (error) {
             handleError(root, error);
@@ -2187,6 +2195,7 @@
                 e.preventDefault();
                 var form = qs('[data-stock-item-form]', root);
                 if (form) {
+                    if (window.CCUI) { window.CCUI.reveal(form); }
                     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
