@@ -53,9 +53,12 @@ class PhaseOneRolesTest extends TestCase
         $this->actingAs($catalog)->get('/admin-web/supermarkets')->assertOk();
         $this->actingAs($catalog)->get('/admin-web/official-recipes')->assertForbidden();
         $chef = $this->account('recipe_admin');
+        $this->actingAs($chef)->get('/admin-web/meal-types')->assertOk();
+        $this->actingAs($catalog)->get('/admin-web/meal-types')->assertForbidden();
         $this->assertTrue($chef->hasPermission('recipes.manage'));
         $this->assertFalse($chef->hasPermission('catalog.manage'));
         $this->actingAs($chef)->get('/admin-web/official-recipes')->assertOk();
+        $this->actingAs($chef)->get('/admin-web')->assertSee('/admin-web/recipe-tags')->assertDontSee('/admin-web/users');
         $this->actingAs($chef)->getJson('/api/v1/ingredients')->assertOk();
         $this->actingAs($chef)->getJson('/api/v1/units')->assertOk();
         $this->actingAs($chef)->postJson('/api/v1/admin/products', [])->assertForbidden();

@@ -61,7 +61,7 @@
                 ['Categorias recetas', '/admin-web/recipe-categories', 'web.admin.recipe-categories'],
                 ['Tags recetas', '/admin-web/recipe-tags', 'web.admin.recipe-tags'],
                 ['Recetas oficiales', '/admin-web/official-recipes', 'web.admin.official-recipes'],
-                ['Tipos de comida', '/admin-web/meal-types', 'catalog.manage'],
+                ['Tipos de comida', '/admin-web/meal-types', 'recipes.manage'],
                 ['Importar recetas', '/admin-web/recipe-import', 'web.admin.recipe-import'],
                 ['Importar por texto', '/admin-web/recipe-import-text', 'web.admin.recipe-import-text'],
                 ['Validacion recetas', '/admin-web/imported-recipes', 'recipes.manage'],
@@ -111,10 +111,6 @@
                 $visibleItems = array_values(array_filter($visibleItems, function ($item) use ($userMainRoutes) {
                     return in_array($item[1], $userMainRoutes, true);
                 }));
-            } elseif ($label === 'Admin') {
-                $visibleItems = array_values(array_filter($visibleItems, function ($item) use ($adminMainRoutes) {
-                    return in_array($item[1], $adminMainRoutes, true);
-                }));
             }
         @endphp
         @if(count($visibleItems) > 0)
@@ -122,7 +118,7 @@
                 <a href="#" class="dropdown-toggle" role="button" id="portalDropdown{{ $label }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ $label }}
                 </a>
-                <div class="dropdown-menu" aria-labelledby="portalDropdown{{ $label }}">
+                <div class="dropdown-menu" aria-labelledby="portalDropdown{{ $label }}" style="max-height:70vh;overflow-y:auto">
                     @foreach($visibleItems as $item)
                         <a class="dropdown-item {{ request()->is(ltrim($item[1], '/')) ? 'active' : '' }}" data-permission="{{ $item[2] }}" href="{{ url($item[1]) }}">{{ $label === 'Usuario' ? ($userMainLabels[$item[1]] ?? $item[0]) : $item[0] }}</a>
                     @endforeach
