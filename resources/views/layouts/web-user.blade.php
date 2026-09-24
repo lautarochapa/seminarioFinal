@@ -14,7 +14,6 @@
     <script src="{{ asset('js/user-home.js') }}?v={{ file_exists(public_path('js/user-home.js')) ? filemtime(public_path('js/user-home.js')) : time() }}" defer></script>
     <script src="{{ asset('js/family-groups.js') }}?v={{ file_exists(public_path('js/family-groups.js')) ? filemtime(public_path('js/family-groups.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-profile.js') }}?v={{ file_exists(public_path('js/user-profile.js')) ? filemtime(public_path('js/user-profile.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/professional-links.js') }}?v={{ file_exists(public_path('js/professional-links.js')) ? filemtime(public_path('js/professional-links.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-catalog.js') }}?v={{ file_exists(public_path('js/user-catalog.js')) ? filemtime(public_path('js/user-catalog.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-barcode.js') }}?v={{ file_exists(public_path('js/user-barcode.js')) ? filemtime(public_path('js/user-barcode.js')) : time() }}" defer></script>
     <script src="{{ asset('js/user-supermarkets.js') }}?v={{ file_exists(public_path('js/user-supermarkets.js')) ? filemtime(public_path('js/user-supermarkets.js')) : time() }}" defer></script>

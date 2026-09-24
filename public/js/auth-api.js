@@ -125,10 +125,6 @@
             return '/admin-web';
         }
 
-        if (permissions.indexOf('web.teacher.home') !== -1) {
-            return '/teacher-web';
-        }
-
         if (permissions.indexOf('web.user.dashboard') !== -1) {
             return '/web';
         }

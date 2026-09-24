@@ -2,45 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Demo scenarios — admin and public
-Route::get('admin/demo-scenarios',         [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'adminIndex'])
-    ->middleware('permission:demo_scenarios.manage');
-Route::post('admin/demo-scenarios',        [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'store'])
-    ->middleware('permission:demo_scenarios.manage');
-Route::get('admin/demo-scenarios/{id}',    [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'adminShow'])
-    ->middleware('permission:demo_scenarios.manage');
-Route::patch('admin/demo-scenarios/{id}',  [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'update'])
-    ->middleware('permission:demo_scenarios.manage');
-Route::delete('admin/demo-scenarios/{id}', [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'destroy'])
-    ->middleware('permission:demo_scenarios.manage');
-
-Route::get('demo-scenarios',       [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'publicIndex'])
-    ->middleware('permission:demo_scenarios.read');
-Route::get('demo-scenarios/{id}',  [\App\Http\Controllers\Api\V1\DemoScenarios\DemoScenarioController::class, 'publicShow'])
-    ->middleware('permission:demo_scenarios.read');
-
-// Thesis documents — admin
-Route::get('admin/thesis-documents', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'index'])
-    ->middleware('permission:thesis_documents.manage');
-Route::post('admin/thesis-documents', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'store'])
-    ->middleware('permission:thesis_documents.manage');
-Route::get('admin/thesis-documents/{id}/versions', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'indexVersions'])
-    ->middleware('permission:thesis_documents.manage');
-Route::post('admin/thesis-documents/{id}/versions', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'storeVersion'])
-    ->middleware('permission:thesis_documents.manage');
-Route::post('admin/thesis-documents/{id}/sections', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'storeSection'])
-    ->middleware('permission:thesis_documents.manage');
-Route::patch('admin/thesis-documents/{id}/sections/{sectionId}', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'updateSection'])
-    ->middleware('permission:thesis_documents.manage');
-Route::delete('admin/thesis-documents/{id}/sections/{sectionId}', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'destroySection'])
-    ->middleware('permission:thesis_documents.manage');
-Route::get('admin/thesis-documents/{id}', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'show'])
-    ->middleware('permission:thesis_documents.manage');
-Route::patch('admin/thesis-documents/{id}', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'update'])
-    ->middleware('permission:thesis_documents.manage');
-Route::delete('admin/thesis-documents/{id}', [\App\Http\Controllers\Api\V1\AdminThesisDocuments\AdminThesisDocumentController::class, 'destroy'])
-    ->middleware('permission:thesis_documents.manage');
-
 // Admin reports
 Route::get('admin/reports/users-active', [\App\Http\Controllers\Api\V1\AdminReports\AdminReportController::class, 'usersActive'])
     ->middleware('permission:audit.read');

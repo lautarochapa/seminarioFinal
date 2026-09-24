@@ -9,7 +9,7 @@ class RoleRepository
 {
     public function paginate(array $filters): LengthAwarePaginator
     {
-        $query = Role::with('permissions');
+        $query = Role::with('permissions')->whereNotIn('code', \App\Services\Auth\RolePolicy::RETIRED);
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -37,7 +37,7 @@ class RoleRepository
 
     public function findOrFail(int $id): Role
     {
-        return Role::with('permissions')->findOrFail($id);
+        return Role::with('permissions')->whereNotIn('code', \App\Services\Auth\RolePolicy::RETIRED)->findOrFail($id);
     }
 
     public function create(array $data): Role

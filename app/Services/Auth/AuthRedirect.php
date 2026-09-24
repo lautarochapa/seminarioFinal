@@ -13,6 +13,6 @@ class AuthRedirect
         if ($id && parse_url($intended, PHP_URL_PATH) === '/web/family-group') {
             return url('/web/family-group').'?invitation='.$id;
         }
-        return url('/web');
+        return url(auth()->user() && auth()->user()->hasPermission('web.admin.dashboard') ? '/admin-web' : '/web');
     }
 }

@@ -43,7 +43,6 @@ class WebUserScreensRouteTest extends TestCase
         'family-group'            => ['data-*' => 'data-family-groups'],
         'profile-objectives'      => ['data-*' => 'data-user-profile'],
         'payment-methods'         => ['data-*' => 'data-user-payment-methods'],
-        'professional-permissions'=> ['data-*' => 'data-professional-links'],
         'catalog'                 => ['data-*' => 'data-user-catalog'],
         'barcode-scanner'         => ['data-*' => 'data-user-barcode'],
         'supermarkets'            => ['data-*' => 'data-user-supermarkets'],
@@ -166,9 +165,10 @@ class WebUserScreensRouteTest extends TestCase
         $response->assertSee('data-user-payment-methods', false);
     }
 
-    public function test_professional_permissions_returns_200_with_correct_section()
+    public function test_professional_permissions_is_not_available_in_this_phase()
     {
-        $this->assertScreenOk('professional-permissions', 'data-professional-links');
+        $user = factory(User::class)->create();
+        $this->actingAs($user)->get('/web/professional-permissions')->assertNotFound();
     }
 
     public function test_catalog_returns_200_with_correct_section()

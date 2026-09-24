@@ -80,8 +80,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin-web', 'AdminWebScreenController@dashboard')->name('admin.web.dashboard');
     Route::get('/admin-web/{screen}', 'AdminWebScreenController@index')->name('admin.web.screen');
 
-    Route::get('/teacher-web', 'TeacherWebScreenController@home')->name('teacher.web.home');
-    Route::get('/teacher-web/{screen}', 'TeacherWebScreenController@index')->name('teacher.web.screen');
 });
 
 

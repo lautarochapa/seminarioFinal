@@ -11,13 +11,9 @@ class SecuritySeeder extends Seeder
 
         $roles = [
             ['code' => 'user', 'name' => 'Usuario comun', 'description' => 'Registro, perfil, grupo familiar, stock, recetas, planificacion, compras, presupuesto, reportes, notificaciones y suplementos.'],
-            ['code' => 'dietologist', 'name' => 'Dietologo / profesional', 'description' => 'Ver usuarios autorizados, consultar perfil, reportes y planificacion, y modificar planes si tiene permiso.'],
-            ['code' => 'catalog_admin', 'name' => 'Admin catalogo', 'description' => 'Ingredientes, productos, marcas, categorias, nutrientes, unidades, equivalencias y validacion de productos scrapeados.'],
-            ['code' => 'supermarket_admin', 'name' => 'Admin supermercados', 'description' => 'Supermercados, sucursales, precios, promociones, scraping de supermercados y alertas.'],
+            ['code' => 'catalog_admin', 'name' => 'Administrador de catalogo y supermercados', 'description' => 'Ingredientes, productos, marcas, categorias, nutrientes, unidades, equivalencias y validacion de productos scrapeados.'],
             ['code' => 'recipe_admin', 'name' => 'Admin recetas / chef', 'description' => 'Recetas oficiales, tags, categorias, importacion y revision de recetas externas.'],
-            ['code' => 'teacher', 'name' => 'Docente', 'description' => 'Ver documentacion, comentar documentacion y acceder a escenarios demo.'],
             ['code' => 'super_admin', 'name' => 'Super admin', 'description' => 'Usuarios, roles, permisos, auditoria, configuracion, feature flags, alertas criticas y control total.'],
-            ['code' => 'system_jobs', 'name' => 'Sistema / Jobs', 'description' => 'Scraping, calculos nutricionales, costos, stock automatico, alertas, presupuesto, recomendaciones e incompatibilidades.'],
         ];
 
         foreach ($roles as $role) {
@@ -68,12 +64,8 @@ class SecuritySeeder extends Seeder
 
         $rolePermissions = [
             'user' => ['profile.manage', 'family.manage', 'stock.manage', 'recipes.use', 'meal_plans.manage', 'shopping.manage', 'budget.manage', 'reports.read', 'notifications.manage', 'supplements.manage'],
-            'dietologist' => ['professional.users.read', 'reports.read', 'meal_plans.manage', 'professional.meal_plans.write'],
             'catalog_admin' => ['catalog.manage', 'scraped_products.review'],
-            'supermarket_admin' => ['supermarkets.manage', 'scraping.manage'],
             'recipe_admin' => ['recipes.manage'],
-            'teacher' => ['thesis_documents.read', 'thesis_comments.write', 'demo_scenarios.read'],
-            'system_jobs' => ['jobs.run', 'scraping.manage', 'stock.manage', 'budget.manage', 'notifications.manage'],
         ];
 
         foreach ($rolePermissions as $roleCode => $permissionCodes) {
@@ -97,5 +89,6 @@ class SecuritySeeder extends Seeder
                 ['created_at' => $now]
             );
         }
+        \App\Services\Auth\RolePolicy::synchronize();
     }
 }

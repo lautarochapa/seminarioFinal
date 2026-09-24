@@ -9,6 +9,7 @@ import { authApi } from '@/api/endpoints';
 import { ApiError, registerUnauthorizedHandler } from '@/api/client';
 import { sessionStorage } from '@/storage/sessionStorage';
 import { offlineCache } from '@/storage/offlineCache';
+import { assertMobileAccess } from './mobileAccess';
 import type { AuthState, AuthUser, LoginRequest, RegisterRequest } from '@/types/auth';
 
 interface AuthContextValue {
@@ -90,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       // Validate token by calling /me
       const meRes = await authApi.me();
+      assertMobileAccess(meRes.data.roles);
       await sessionStorage.save({
         accessToken: stored.accessToken,
         user: {
@@ -111,6 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOADING' });
     try {
       const res = await authApi.login(payload);
+      assertMobileAccess(res.data.roles);
       await sessionStorage.save({
         accessToken: res.token.access_token,
         user: {
@@ -133,6 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOADING' });
     try {
       const res = await authApi.register(payload);
+      assertMobileAccess(res.data.roles);
       await sessionStorage.save({
         accessToken: res.token.access_token,
         user: {
@@ -164,9 +168,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshCurrentUser = useCallback(async () => {
     try {
       const meRes = await authApi.me();
+      try {
+        assertMobileAccess(meRes.data.roles);
+      } catch {
+        await clearSession();
+        return;
+      }
       dispatch({ type: 'AUTHENTICATED', user: meRes.data });
     } catch (err) {
-      if (err instanceof ApiError && err.normalized.status === 401) {
+      if (err instanceof ApiError && (err.normalized.status === 401 || err.normalized.code === 'AUTH_WEB_ONLY')) {
         await clearSession();
       }
     }

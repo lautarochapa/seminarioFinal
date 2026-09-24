@@ -15,15 +15,3 @@ Route::post('family-groups/{id}/reports/export',            [\App\Http\Controlle
 
 // Report exports
 Route::get('report-exports/{id}', [\App\Http\Controllers\Api\V1\ReportExports\ReportExportController::class, 'show']);
-
-// Thesis documents — public
-Route::get('thesis-documents',               [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'index'])
-    ->middleware('permission:thesis_documents.read');
-Route::get('thesis-documents/{id}/sections', [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'sections'])
-    ->middleware('permission:thesis_documents.read');
-Route::get('thesis-documents/{id}',          [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisDocumentController::class, 'show'])
-    ->middleware('permission:thesis_documents.read');
-Route::get('thesis-documents/{id}/comments',  [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisCommentController::class, 'index'])
-    ->middleware('permission:thesis_documents.read');
-Route::post('thesis-documents/{id}/comments', [\App\Http\Controllers\Api\V1\ThesisDocuments\ThesisCommentController::class, 'store'])
-    ->middleware('permission:thesis_comments.write');

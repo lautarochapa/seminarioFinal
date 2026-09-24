@@ -24,34 +24,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return redirect()->route('web.dashboard');
-
-        // User role
-        $role = Auth::user()->nivel_acceso; 
-        
-        // Check user role
-        switch ($role) {
-            case '1':
-                    return view('profiles/comensal');
-                break;
-                case '2':
-                        return view('profiles/admin');
-                    break;
-                    case '3':
-                            return view('profiles/superadmin');
-                        break;
-                        case '4':
-                                return view('profiles/somelier');
-                            break;
-                            case '5':
-                                    return view('profiles/chef');
-                                break;
-                                case '6':
-                                        return view('profiles/nutritionist');
-                                    break; 
-            default:
-                    return view('/login'); 
-                break;
-        }
+        return redirect(\App\Services\Auth\AuthRedirect::afterLogin());
     }
 }

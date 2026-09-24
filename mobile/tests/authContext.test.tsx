@@ -24,6 +24,27 @@ const USER = { id: 4, name: 'Martina', lastname: null, email: 'qa@example.invali
 const RESPONSE = { data: USER, token: { access_token: 'fake-qa-token' } };
 const wrapper = ({ children }: { children: React.ReactNode }) => <AuthProvider>{children}</AuthProvider>;
 
+it('rejects an administrative login response before persisting credentials', async () => {
+  mockLogin.mockResolvedValue({ ...RESPONSE, data: { ...USER, roles: ['super_admin'] } });
+  const { result } = await renderHook(() => useAuth(), { wrapper });
+  await waitFor(() => expect(result.current.state).toBe('unauthenticated'));
+  await act(async () => {
+    await expect(result.current.login({ email: USER.email, password: 'fake-qa-password' })).rejects.toThrow();
+  });
+  expect(mockSave).not.toHaveBeenCalled();
+  expect(result.current.state).toBe('unauthenticated');
+});
+
+it('clears a previously saved session when the account is now an administrator', async () => {
+  mockGetSession.mockResolvedValue({ accessToken: 'fake-stored-token', user: USER });
+  mockMe.mockResolvedValue({ data: { ...USER, roles: ['catalog_admin'] } });
+  const { result } = await renderHook(() => useAuth(), { wrapper });
+  await waitFor(() => expect(result.current.state).toBe('unauthenticated'));
+  expect(mockClear).toHaveBeenCalled();
+  expect(mockClearCache).toHaveBeenCalled();
+  expect(mockSave).not.toHaveBeenCalled();
+});
+
 beforeEach(() => {
   jest.clearAllMocks();
   mockGetSession.mockResolvedValue(null);

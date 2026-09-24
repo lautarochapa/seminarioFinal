@@ -34,7 +34,6 @@ Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/ingredients.ph
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/recipes.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/stock.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/health.php'));
-Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/professional.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/scraping-admin.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/admin-misc.php'));
 Route::prefix('v1')->middleware($v1)->group(base_path('routes/api/meal-plans.php'));

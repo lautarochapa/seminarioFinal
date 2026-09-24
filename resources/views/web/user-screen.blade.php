@@ -871,7 +871,7 @@
 
             <article class="panel">
                 <h2>Consentimientos</h2>
-                <p class="muted" style="margin-bottom:16px">Desde aca podes aceptar o revocar permisos de privacidad, uso de datos sensibles y acceso profesional. Cada cambio guarda su fecha de aceptacion o revocacion.</p>
+                <p class="muted" style="margin-bottom:16px">Desde aca podes aceptar o revocar permisos de privacidad y uso de datos sensibles. Cada cambio guarda su fecha de aceptacion o revocacion.</p>
 
                 <form class="profile-form" data-consents-form>
                     <div class="alert" data-consents-message style="display:none"></div>
@@ -886,12 +886,8 @@
                             <span>Politica de privacidad</span>
                         </label>
                         <label class="checkbox-card">
-                            <input type="checkbox" name="professional_access_consent" value="1">
-                            <span>Acceso profesional</span>
-                        </label>
-                        <label class="checkbox-card">
                             <input type="checkbox" name="medical_disclaimer_accepted" value="1">
-                            <span>Aviso profesional</span>
+                            <span>Aviso de salud</span>
                         </label>
                         <label class="checkbox-card">
                             <input type="checkbox" name="terms_accepted" value="1">

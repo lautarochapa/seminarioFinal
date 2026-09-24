@@ -19,12 +19,16 @@ class AuthenticateApiToken
     {
         $token = $this->bearerToken($request);
 
-        if (!$request->user() && $token) {
+        if ($token) {
             $user = $this->tokens->authenticate($token);
             Auth::guard()->setUser($user);
             $request->setUserResolver(function () use ($user) {
                 return $user;
             });
+        }
+
+        if ($request->header('X-CCC-Client') === 'android' && $request->user() && !$request->user()->canUseMobile()) {
+            throw new \App\Exceptions\Auth\AuthException('AUTH_WEB_ONLY', 'Esta cuenta es exclusiva de la web.', 403);
         }
 
         return $next($request);

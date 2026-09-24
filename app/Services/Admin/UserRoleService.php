@@ -21,6 +21,9 @@ class UserRoleService
     {
         $user = $this->userRepo->findOrFail($userId);
         $role = Role::findOrFail($roleId);
+        if ($role->status !== 'active' || in_array($role->code, \App\Services\Auth\RolePolicy::RETIRED, true)) {
+            throw new RbacException('ROLE_NOT_AVAILABLE', 'El rol no esta disponible.', 422);
+        }
 
         $exists = DB::table('user_roles')
             ->where('user_id', $userId)

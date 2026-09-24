@@ -42,6 +42,7 @@ class AdminWebScreenController extends Controller
     public function index($screen = 'dashboard')
     {
         $screens = $this->screens();
+        unset($screens['thesis-docs'], $screens['demo-scenarios']);
 
         if (! isset($screens[$screen])) {
             abort(404);

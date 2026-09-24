@@ -32,6 +32,9 @@ class RoleAdminService
 
     public function create(int $actorId, array $data, string $ip, string $ua): Role
     {
+        if (in_array($data['code'], \App\Services\Auth\RolePolicy::RETIRED, true)) {
+            throw new RbacException('ROLE_NOT_AVAILABLE', 'El rol fue retirado de esta fase.', 422);
+        }
         if (Role::where('code', $data['code'])->exists()) {
             throw new RbacException('ROLE_CODE_ALREADY_EXISTS', 'El código de rol ya existe.', 409);
         }

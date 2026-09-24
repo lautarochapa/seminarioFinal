@@ -244,13 +244,13 @@ class RecipeService
     private function assertCanEdit(User $actor, Recipe $recipe)
     {
         if ($recipe->is_official) {
-            if (!$actor->hasPermission('catalog.manage')) {
+            if (!$actor->hasPermission('recipes.manage')) {
                 throw new RecipeException('RECIPE_OFFICIAL_FORBIDDEN', 'Las recetas oficiales solo pueden ser editadas por administradores.', 403);
             }
             return;
         }
 
-        if ((int) $recipe->owner_user_id !== (int) $actor->id && !$actor->hasPermission('catalog.manage')) {
+        if ((int) $recipe->owner_user_id !== (int) $actor->id && !$actor->hasPermission('recipes.manage')) {
             throw new RecipeException('RECIPE_EDIT_FORBIDDEN', 'No tiene permiso para modificar esta receta.', 403);
         }
     }

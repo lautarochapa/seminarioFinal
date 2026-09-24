@@ -4,17 +4,17 @@ use Illuminate\Support\Facades\Route;
 
 // Recipe categories — admin and catalog
 Route::get('admin/recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryAdminController::class, 'index'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::post('admin/recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryAdminController::class, 'store'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/recipe-categories/{id}/restore', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryAdminController::class, 'restore'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::get('admin/recipe-categories/{id}', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryAdminController::class, 'show'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/recipe-categories/{id}', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryAdminController::class, 'update'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::delete('admin/recipe-categories/{id}', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryAdminController::class, 'destroy'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 
 Route::get('recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\RecipeCategoryCatalogController::class, 'index']);
 
@@ -22,39 +22,39 @@ Route::get('recipe-categories', [\App\Http\Controllers\Api\V1\RecipeCategories\R
 Route::get('meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeCatalogController::class, 'index']);
 
 Route::get('admin/meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'index'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::post('admin/meal-types', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'store'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/meal-types/{id}/restore', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'restore'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::get('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'show'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'update'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::delete('admin/meal-types/{id}', [\App\Http\Controllers\Api\V1\MealTypes\MealTypeAdminController::class, 'destroy'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 
 // Recipe tags — admin and catalog
 Route::get('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'index'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::post('admin/recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'store'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/recipe-tags/{id}/restore', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'restore'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::get('admin/recipe-tags/{id}', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'show'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/recipe-tags/{id}', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'update'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::delete('admin/recipe-tags/{id}', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagAdminController::class, 'destroy'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 
 Route::get('recipe-tags', [\App\Http\Controllers\Api\V1\RecipeTags\RecipeTagCatalogController::class, 'index']);
 
 // Admin recipes — specific sub-routes before wildcard {id}
 Route::get('admin/recipes', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'index'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::post('admin/recipes', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'store'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 
 // Import candidates before {id} to prevent shadowing
 Route::get('admin/recipes/import-candidates', [\App\Http\Controllers\Api\V1\RecipeImportCandidates\RecipeImportCandidatesController::class, 'index'])
@@ -100,11 +100,11 @@ Route::post('admin/recipes/import/url', [\App\Http\Controllers\Api\V1\RecipeImpo
 
 // Admin recipe operations requiring {id} — after all specific sub-prefixes
 Route::get('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'show'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::patch('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'update'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 Route::delete('admin/recipes/{id}', [\App\Http\Controllers\Api\V1\Recipes\AdminRecipeController::class, 'destroy'])
-    ->middleware('permission:catalog.manage');
+    ->middleware('permission:recipes.manage');
 
 Route::post('admin/recipes/{id}/recalculate-cost', [\App\Http\Controllers\Api\V1\RecipeCost\RecipeCostController::class, 'recalculate'])
     ->middleware('permission:recipes.manage');

@@ -16,9 +16,9 @@ class MealTypesTest extends TestCase
     private function adminUser(): User
     {
         $user = factory(User::class)->create();
-        $role = Role::firstOrCreate(['code' => 'catalog_admin'], ['name' => 'Catalog Admin', 'status' => 'active']);
-        $perm = Permission::firstOrCreate(['code' => 'catalog.manage'], [
-            'name' => 'Manage Catalog', 'module' => 'catalog', 'action' => 'manage', 'status' => 'active',
+        $role = Role::firstOrCreate(['code' => 'recipe_admin'], ['name' => 'Recipe Admin', 'status' => 'active']);
+        $perm = Permission::firstOrCreate(['code' => 'recipes.manage'], [
+            'name' => 'Manage Recipes', 'module' => 'recipes', 'action' => 'manage', 'status' => 'active',
         ]);
         $role->permissions()->syncWithoutDetaching([$perm->id]);
         $user->roles()->syncWithoutDetaching([$role->id]);

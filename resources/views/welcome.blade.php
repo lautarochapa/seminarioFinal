@@ -434,7 +434,7 @@
                 <div class="screen-points">
                     <div class="screen-point"><span class="screen-point-mark">1</span><div><strong>Gestión clara</strong><span>Más espacio para revisar y editar.</span></div></div>
                     <div class="screen-point"><span class="screen-point-mark">2</span><div><strong>Información conectada</strong><span>Salud, economía, tiempo y stock.</span></div></div>
-                    <div class="screen-point"><span class="screen-point-mark">3</span><div><strong>Permisos por rol</strong><span>Accesos para usuarios, profesionales y administradores.</span></div></div>
+                    <div class="screen-point"><span class="screen-point-mark">3</span><div><strong>Permisos por rol</strong><span>Accesos para usuarios y administradores.</span></div></div>
                 </div>
             </div>
         </div>

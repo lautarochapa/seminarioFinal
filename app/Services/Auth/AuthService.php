@@ -83,6 +83,10 @@ class AuthService
             throw new AuthException('AUTH_USER_INACTIVE', 'La cuenta no está activa.', 403);
         }
 
+        if ($request->header('X-CCC-Client') === 'android' && !$user->canUseMobile()) {
+            throw new AuthException('AUTH_WEB_ONLY', 'Esta cuenta es exclusiva de la web. En la app solo pueden ingresar usuarios comunes.', 403);
+        }
+
         Auth::login($user, $remember);
         if ($request->hasSession()) {
             $request->session()->regenerate();

@@ -29,37 +29,15 @@ class LoginController extends Controller
      */
     //protected $redirectTo = RouteServiceProvider::HOME;
 
-    public function redirectTo(){
-        
-        // User role
-        $role = Auth::user()->nivel_acceso; 
-        
-        // Check user role
-        switch ($role) {
-            case '1':
-                    return '/comensal';
-                break;
-                case '2':
-                        return '/admin';
-                    break;
-                    case '3':
-                            return '/superadmin';
-                        break;
-                        case '4':
-                                return '/somelier';
-                            break;
-                            case '5':
-                                    return '/chef';
-                                break;
-                                case '6':
-                                        return '/nutritionist';
-                                    break; 
-            default:
-                    return '/login'; 
-                break;
-        }
+    public function redirectTo()
+    {
+        return \App\Services\Auth\AuthRedirect::afterLogin();
     }
 
+    protected function credentials(\Illuminate\Http\Request $request)
+    {
+        return array_merge($request->only($this->username(), 'password'), ['status' => 'active']);
+    }
 
     /**
      * Create a new controller instance.

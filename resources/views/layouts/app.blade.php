@@ -14,7 +14,6 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
-    <script src="{{ asset('js/professional-panel.js') }}?v={{ file_exists(public_path('js/professional-panel.js')) ? filemtime(public_path('js/professional-panel.js')) : time() }}" defer></script>
     <!--<script src="{{ asset('js/navbar.js') }}" defer></script>-->
 
     <!-- Fonts -->
@@ -124,9 +123,6 @@ body {
                             @endif
                             @if(Auth::user()->hasPermission('web.admin.dashboard'))
                                 <a href="{{ url('/admin-web') }}">Admin</a>
-                            @endif
-                            @if(Auth::user()->hasPermission('web.teacher.home'))
-                                <a href="{{ url('/teacher-web') }}">Docente</a>
                             @endif
                         @endauth
                     </div>

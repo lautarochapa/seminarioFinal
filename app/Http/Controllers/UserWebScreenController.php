@@ -20,6 +20,7 @@ class UserWebScreenController extends Controller
     public function index($screen = 'dashboard')
     {
         $screens = $this->screens();
+        unset($screens['professional-permissions']);
 
         if (! isset($screens[$screen])) {
             abort(404);

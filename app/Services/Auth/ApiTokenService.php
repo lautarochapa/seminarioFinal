@@ -12,6 +12,12 @@ class ApiTokenService
 {
     public function issue(User $user, string $name = 'api', int $ttlMinutes = 10080): array
     {
+        if (request()->header('X-CCC-Client') === 'android') {
+            if (!$user->canUseMobile()) {
+                throw new AuthException('AUTH_WEB_ONLY', 'Esta cuenta es exclusiva de la web.', 403);
+            }
+            $name = 'android';
+        }
         $user->load('roles');
         $permissions = $user->permissions()->pluck('code')->values()->all();
         $roles = $user->roles->pluck('code')->values()->all();
@@ -69,6 +75,11 @@ class ApiTokenService
 
         if (!$user || $user->status !== 'active') {
             throw new AuthException('AUTH_TOKEN_INVALID', 'Token invalido o expirado.', 401);
+        }
+
+        if (($record->name === 'android' || request()->header('X-CCC-Client') === 'android') && !$user->canUseMobile()) {
+            $record->update(['revoked_at' => now()]);
+            throw new AuthException('AUTH_WEB_ONLY', 'Esta cuenta es exclusiva de la web.', 403);
         }
 
         Auth::login($user);

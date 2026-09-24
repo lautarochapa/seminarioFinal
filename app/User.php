@@ -78,7 +78,9 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'user_roles')->withPivot('created_at');
+        return $this->belongsToMany(Role::class, 'user_roles')->withPivot('created_at')
+            ->where('roles.status', 'active')
+            ->whereNotIn('roles.code', \App\Services\Auth\RolePolicy::RETIRED);
     }
 
     public function permissions()
@@ -87,6 +89,10 @@ class User extends Authenticatable
             ->select('permissions.*')
             ->join('role_permissions', 'permissions.id', '=', 'role_permissions.permission_id')
             ->join('user_roles', 'role_permissions.role_id', '=', 'user_roles.role_id')
+            ->join('roles', 'roles.id', '=', 'user_roles.role_id')
+            ->where('roles.status', 'active')
+            ->whereNotIn('roles.code', \App\Services\Auth\RolePolicy::RETIRED)
+            ->where('permissions.status', 'active')
             ->where('user_roles.user_id', $this->id)
             ->distinct();
     }
@@ -378,7 +384,20 @@ class User extends Authenticatable
 
     public function hasPermission($code)
     {
+        if ($this->status !== 'active' || $this->trashed() || \App\Services\Auth\RolePolicy::retiredPermission($code)) {
+            return false;
+        }
+        if ($this->hasRole('super_admin')) {
+            return Permission::where('code', $code)->where('status', 'active')->exists();
+        }
         return $this->permissions()->where('permissions.code', $code)->exists();
+    }
+
+    public function canUseMobile(): bool
+    {
+        $roles = $this->roles()->pluck('code');
+        return $this->status === 'active' && !$this->trashed()
+            && $roles->contains('user') && $roles->every(function ($code) { return $code === 'user'; });
     }
 
 }

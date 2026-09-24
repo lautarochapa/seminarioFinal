@@ -6,7 +6,9 @@
             {{ Auth::user()->name }}
         </a>
         <div class="dropdown-menu" aria-labelledby="userNavbarMenu">
-            <a class="dropdown-item" href="{{ url('/web/profile-objectives') }}">Mi Perfil</a>
+            @if(Auth::user()->hasPermission('web.user.profile-objectives'))
+                <a class="dropdown-item" href="{{ url('/web/profile-objectives') }}">Mi Perfil</a>
+            @endif
             <a class="dropdown-item" href="{{ route('logout') }}" data-api-logout data-fallback-form="#logout-form-navbar">
                 Cerrar Sesion
             </a>

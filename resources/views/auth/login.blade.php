@@ -104,13 +104,9 @@
                                 <tbody>
                                     @foreach([
                                         ['Usuario comun', 'usuario@cccontrol.test'],
-                                        ['Dietologo / profesional', 'dietologo@cccontrol.test'],
-                                        ['Admin catalogo', 'catalogo@cccontrol.test'],
-                                        ['Admin supermercados', 'supermercados@cccontrol.test'],
+                                        ['Admin catalogo y supermercados', 'catalogo@cccontrol.test'],
                                         ['Admin recetas / chef', 'recetas@cccontrol.test'],
-                                        ['Docente', 'docente@cccontrol.test'],
                                         ['Super admin', 'superadmin@cccontrol.test'],
-                                        ['Sistema / Jobs', 'sistema@cccontrol.test'],
                                     ] as $demo)
                                         <tr>
                                             <td>{{ $demo[0] }}</td>

@@ -47,6 +47,7 @@ async function buildHeaders(includeAuth: boolean): Promise<Record<string, string
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
+    'X-CCC-Client': 'android',
   };
   if (includeAuth) {
     const token = await sessionStorage.getToken();
@@ -157,7 +158,7 @@ async function request<T>(
 
   if (!response.ok) {
     const normalized = await parseApiError(response);
-    if (response.status === 401 && !options.skipAuth) {
+    if ((response.status === 401 || normalized.code === 'AUTH_WEB_ONLY') && !options.skipAuth) {
       triggerUnauthorized();
     }
     throw new ApiError(normalized);

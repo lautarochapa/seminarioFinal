@@ -48,8 +48,6 @@
     <script src="{{ asset('js/admin-scraping-alerts.js') }}?v={{ file_exists(public_path('js/admin-scraping-alerts.js')) ? filemtime(public_path('js/admin-scraping-alerts.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-price-refresh-requests.js') }}?v={{ file_exists(public_path('js/admin-price-refresh-requests.js')) ? filemtime(public_path('js/admin-price-refresh-requests.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-reports.js') }}?v={{ file_exists(public_path('js/admin-reports.js')) ? filemtime(public_path('js/admin-reports.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/admin-thesis-docs.js') }}?v={{ file_exists(public_path('js/admin-thesis-docs.js')) ? filemtime(public_path('js/admin-thesis-docs.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/admin-demo-scenarios.js') }}?v={{ file_exists(public_path('js/admin-demo-scenarios.js')) ? filemtime(public_path('js/admin-demo-scenarios.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-settings.js') }}?v={{ file_exists(public_path('js/admin-settings.js')) ? filemtime(public_path('js/admin-settings.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-feature-flags.js') }}?v={{ file_exists(public_path('js/admin-feature-flags.js')) ? filemtime(public_path('js/admin-feature-flags.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-ai-foundation.js') }}?v={{ file_exists(public_path('js/admin-ai-foundation.js')) ? filemtime(public_path('js/admin-ai-foundation.js')) : time() }}" defer></script>

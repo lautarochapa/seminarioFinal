@@ -403,7 +403,6 @@
         return {
             health_data_consent: checked(form, 'health_data_consent'),
             privacy_consent: checked(form, 'privacy_consent'),
-            professional_access_consent: checked(form, 'professional_access_consent'),
             medical_disclaimer_accepted: checked(form, 'medical_disclaimer_accepted'),
             terms_accepted: checked(form, 'terms_accepted'),
         };
@@ -498,12 +497,8 @@
                 title: 'Politica de privacidad',
                 description: 'Aceptacion de politicas de tratamiento y resguardo de informacion personal.',
             },
-            professional_access_consent: {
-                title: 'Acceso profesional',
-                description: 'Permite compartir informacion con profesionales autorizados por el usuario.',
-            },
             medical_disclaimer_accepted: {
-                title: 'Aviso profesional',
+                title: 'Aviso de salud',
                 description: 'Confirma que la app no reemplaza seguimiento medico o nutricional.',
             },
             terms_accepted: {
