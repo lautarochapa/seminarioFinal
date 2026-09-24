@@ -6,7 +6,7 @@
 @else
     <div class="dropdown">
         <a class="cta dropdown-toggle" href="#" role="button" id="userNavbarMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ Auth::user()->name }}
+            <span class="navbar-user-name" title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="userNavbarMenu">
             @if(Auth::user()->hasPermission('web.user.profile-objectives'))
