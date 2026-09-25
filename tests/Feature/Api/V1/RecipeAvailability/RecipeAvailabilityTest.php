@@ -290,13 +290,13 @@ class RecipeAvailabilityTest extends TestCase
         $ing    = $this->ingredient($grams);
         $prod   = $this->product($ing, $grams);
         $this->addIngredient($recipe, $ing, $grams, 400.0); // 100g/serving
-        $this->stockItem($group, $prod, $grams, 150.0);     // 1 serving possible
+        $this->stockItem($group, $prod, $grams, 150.0);     // 1.5 servings possible
 
         $response = $this->actingAs($user)->getJson('/api/v1/recipes/' . $recipe->id . '/availability?family_group_id=' . $group->id);
 
         $response->assertStatus(200)
             ->assertJsonPath('data.status', 'almost_possible')
-            ->assertJsonPath('data.suggested_servings', 1);
+            ->assertJsonPath('data.suggested_servings', 1.5);
     }
 
     public function test_porciones_solicitadas_escalan_requerimientos_y_contadores()

@@ -15,7 +15,7 @@ class MealPlanItemStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'servings' => 'sometimes|numeric|min:0.01|max:999',
+            'servings' => 'sometimes|numeric|min:0.01|max:999|regex:/^\d+(?:\.\d{1,2})?$/',
             'notes' => 'sometimes|nullable|string|max:1000',
             'eating_out' => 'sometimes|boolean',
         ];

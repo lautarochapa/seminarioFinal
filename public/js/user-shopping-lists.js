@@ -281,7 +281,36 @@
             (canComplete ? renderCompletePanel(purchased) : '');
         if (window.ShoppingAlternatives && state.currentGroupId) {
             var altPanel = qs('[data-alt-panel]', target);
-            if (altPanel) { window.ShoppingAlternatives.mount(altPanel, state.currentGroupId, list.id); }
+            if (altPanel) {
+                var alternativeGroupId = state.currentGroupId;
+                window.ShoppingAlternatives.mount(altPanel, alternativeGroupId, list.id, {
+                    canSelect: ['draft', 'active', 'in_progress'].indexOf(list.status) !== -1,
+                    onSelected: function () {
+                        function stillSelected() {
+                            return !state.disposed && root.isConnected
+                                && String(state.currentGroupId) === String(alternativeGroupId)
+                                && state.selectedList && String(state.selectedList.id) === String(list.id);
+                        }
+                        if (!stillSelected()) return;
+                        var base = api('/family-groups/' + encodeURIComponent(alternativeGroupId) + '/shopping-lists');
+                        return Promise.all([
+                            window.CCApi.request(base + '/' + encodeURIComponent(list.id)),
+                            window.CCApi.request(base + '?' + buildQuery(root)),
+                        ]).then(function (responses) {
+                            if (!stillSelected()) return;
+                            state.selectedList = responses[0].data || null;
+                            state.lists = responses[1].data || [];
+                            var meta = responses[1].meta || {};
+                            state.page = meta.current_page || state.page;
+                            state.lastPage = meta.last_page || 1;
+                            renderLists(root, meta);
+                            renderDetail(root, state.selectedList);
+                            resetItemForm(root);
+                            if (window.CCUI) window.CCUI.reveal(qs('[data-shopping-list-detail]', root));
+                        });
+                    },
+                });
+            }
         }
         if (window.ShoppingCompare && state.currentGroupId) {
             var comparePanel = qs('[data-compare-panel]', target);

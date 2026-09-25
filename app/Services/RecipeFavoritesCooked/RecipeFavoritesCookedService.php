@@ -80,7 +80,7 @@ class RecipeFavoritesCookedService
             throw RecipeFavoritesCookedException::recipeNotFound();
         }
 
-        $servings      = (int) $input['servings'];
+        $servings      = (float) $input['servings'];
         $familyGroupId = isset($input['family_group_id']) ? (int) $input['family_group_id'] : null;
         $deductStock   = !empty($input['deduct_stock']);
         $idempotencyKey = ! empty($input['idempotency_key']) ? trim((string) $input['idempotency_key']) : null;
@@ -177,7 +177,7 @@ class RecipeFavoritesCookedService
         return ['paginator' => $this->repo->paginateCookLogs($user->id, $page, $perPage)];
     }
 
-    private function deductStock(int $logId, $recipe, int $servings, int $familyGroupId, int $userId, int $recipeId): int
+    private function deductStock(int $logId, $recipe, float $servings, int $familyGroupId, int $userId, int $recipeId): int
     {
         $recipeWithIng = $this->repo->loadRecipeWithIngredients($recipe->id);
         $baseServings  = ($recipeWithIng->servings !== null && $recipeWithIng->servings > 0)

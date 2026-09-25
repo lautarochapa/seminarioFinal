@@ -124,6 +124,147 @@ class RecipeFavoritesCookedTest extends TestCase
         return $g;
     }
 
+    public function test_fractional_recipe_cook_matches_availability_stock_and_history()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $unit = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $this->addIngredient($recipe, $ingredient, $unit, 100);
+        $stock = $this->stockItem($group, $product, $unit, 150);
+
+        $this->actingAs($user)->getJson('/api/v1/recipes/'.$recipe->id.'/availability?family_group_id='.$group->id.'&servings=1.5')
+            ->assertOk()->assertJsonPath('data.can_cook', true)->assertJsonPath('data.required_servings', 1.5);
+        $response = $this->postJson('/api/v1/recipes/'.$recipe->id.'/cook', [
+            'servings' => 1.5, 'family_group_id' => $group->id, 'deduct_stock' => true,
+            'idempotency_key' => 'fractional-cook',
+        ])->assertStatus(201)->assertJsonPath('data.servings', 1.5);
+        $this->assertEquals(0, (float) $stock->fresh()->quantity);
+        $this->assertDatabaseHas('recipe_cook_logs', ['id' => $response->json('data.cook_log_id'), 'servings' => 1.5, 'stock_discounted' => true]);
+        $this->assertEquals(150, StockMovement::where('related_recipe_id', $recipe->id)->sum('quantity'));
+        $this->getJson('/api/v1/users/me/cooked-recipes')->assertOk()->assertJsonPath('data.0.servings', 1.5);
+
+        $this->postJson('/api/v1/recipes/'.$recipe->id.'/cook', [
+            'servings' => 1.5, 'family_group_id' => $group->id, 'deduct_stock' => true,
+            'idempotency_key' => 'fractional-cook',
+        ])->assertStatus(201)->assertJsonPath('data.cook_log_id', $response->json('data.cook_log_id'));
+        $this->assertSame(1, \App\RecipeCookLog::where('recipe_id', $recipe->id)->count());
+        $this->assertEquals(0, (float) $stock->fresh()->quantity);
+    }
+
+    public function test_fractional_recipe_cook_below_one_and_minimum()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $unit = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $this->addIngredient($recipe, $ingredient, $unit, 100);
+        $stock = $this->stockItem($group, $product, $unit, 51);
+        foreach ([0.5, 0.01] as $servings) {
+            $this->actingAs($user)->postJson('/api/v1/recipes/'.$recipe->id.'/cook', [
+                'servings' => $servings, 'family_group_id' => $group->id, 'deduct_stock' => true,
+            ])->assertStatus(201)->assertJsonPath('data.servings', $servings);
+            $this->assertDatabaseHas('recipe_cook_logs', ['recipe_id' => $recipe->id, 'servings' => $servings]);
+        }
+        $this->assertEquals(0, (float) $stock->fresh()->quantity);
+        $this->assertEquals(51, StockMovement::where('related_recipe_id', $recipe->id)->sum('quantity'));
+    }
+    public function test_fractional_servings_reject_invalid_precision_and_preserve_endpoint_limits()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $recipe = $this->recipe(['servings' => 1]);
+        $cook = '/api/v1/recipes/'.$recipe->id.'/cook';
+        $availability = '/api/v1/recipes/'.$recipe->id.'/availability?family_group_id='.$group->id.'&servings=';
+        $generate = '/api/v1/family-groups/'.$group->id.'/recipes/'.$recipe->id.'/shopping-list';
+        $this->actingAs($user);
+        foreach ([0, -1, 1.234, 'bad', '1,5'] as $servings) {
+            $this->postJson($cook, ['servings' => $servings])->assertStatus(422);
+            $this->getJson($availability.rawurlencode((string) $servings))->assertStatus(422);
+            $this->postJson($generate, ['servings' => $servings])->assertStatus(422);
+        }
+        $this->postJson($cook, ['servings' => 100.01])->assertStatus(422);
+        $this->getJson($availability.'100.01')->assertStatus(422);
+        $this->postJson($generate, ['servings' => 1000.01])->assertStatus(422);
+        $this->assertSame(0, \App\RecipeCookLog::where('recipe_id', $recipe->id)->count());
+        $this->assertSame(0, \App\ShoppingList::where('family_group_id', $group->id)->count());
+        $this->postJson($cook, ['servings' => 100])->assertStatus(201)->assertJsonPath('data.servings', 100);
+        $this->getJson($availability.'100')->assertOk();
+        $this->postJson($generate, ['servings' => 1000])->assertStatus(201);
+    }
+
+    public function test_fractional_servings_migration_preserves_history_nulls_and_safe_rollback()
+    {
+        require_once database_path('migrations/2026_09_25_000002_allow_fractional_recipe_cook_log_servings.php');
+        $migration = new \AllowFractionalRecipeCookLogServings;
+        $migration->down();
+        $recipe = $this->recipe();
+        $logs = [];
+        foreach ([null, 2, 32767] as $servings) {
+            $logs[] = \App\RecipeCookLog::create(['recipe_id' => $recipe->id, 'servings' => $servings]);
+        }
+        $migration->up();
+        $type = DB::selectOne("SELECT data_type, numeric_precision, numeric_scale FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'recipe_cook_logs' AND column_name = 'servings'");
+        $this->assertSame('numeric', $type->data_type);
+        $this->assertEquals(8, $type->numeric_precision);
+        $this->assertEquals(2, $type->numeric_scale);
+        $this->assertNull($logs[0]->fresh()->servings);
+        // An old rounded value is preserved, not guessed from another record.
+        $this->assertEquals(2, $logs[1]->fresh()->servings);
+        $this->assertEquals(32767, $logs[2]->fresh()->servings);
+        $migration->down();
+        $this->assertEquals(2, $logs[1]->fresh()->servings);
+        $migration->up();
+        $this->assertSame(3, \App\RecipeCookLog::where('recipe_id', $recipe->id)->count());
+    }
+
+    public function test_fractional_servings_migration_refuses_lossy_rollback()
+    {
+        require_once database_path('migrations/2026_09_25_000002_allow_fractional_recipe_cook_log_servings.php');
+        $migration = new \AllowFractionalRecipeCookLogServings;
+        $recipe = $this->recipe();
+        $log = \App\RecipeCookLog::create(['recipe_id' => $recipe->id, 'servings' => 1.5]);
+        foreach ([1.5, 40000, -40000] as $servings) {
+            $log->update(['servings' => $servings]);
+            try {
+                $migration->down();
+                $this->fail('Lossy rollback must refuse decimal or out-of-range history.');
+            } catch (\RuntimeException $error) {
+                $this->assertStringContainsString('Cannot restore SMALLINT', $error->getMessage());
+            }
+            $this->assertEquals($servings, $log->fresh()->servings);
+            $this->assertSame('numeric', DB::selectOne("SELECT data_type FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'recipe_cook_logs' AND column_name = 'servings'")->data_type);
+        }
+    }
+    public function test_fractional_availability_does_not_truncate_an_insufficient_request()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $unit = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $this->addIngredient($recipe, $ingredient, $unit, 100);
+        $stock = $this->stockItem($group, $product, $unit, 100);
+        $availability = '/api/v1/recipes/'.$recipe->id.'/availability?family_group_id='.$group->id.'&servings=';
+        $this->actingAs($user)->getJson($availability.'1.5')->assertOk()->assertJsonPath('data.can_cook', false);
+        $this->postJson('/api/v1/recipes/'.$recipe->id.'/cook', [
+            'servings' => 1.5, 'family_group_id' => $group->id, 'deduct_stock' => true,
+        ])->assertStatus(422);
+        $this->assertEquals(100, (float) $stock->fresh()->quantity);
+        $this->assertSame(0, \App\RecipeCookLog::where('recipe_id', $recipe->id)->count());
+        foreach ([0.5, 1.5, 0.29] as $servings) {
+            $stock->update(['quantity' => $servings * 100]);
+            $this->getJson($availability.$servings)->assertOk()
+                ->assertJsonPath('data.can_cook', true)->assertJsonPath('data.max_possible_servings', $servings);
+            $this->getJson($availability.($servings + 0.01))->assertOk()
+                ->assertJsonPath('data.can_cook', false)->assertJsonPath('data.suggested_servings', $servings);
+        }
+    }
     public function test_agregar_favorito_sin_autenticacion_retorna_401()
     {
         $recipe = $this->recipe();

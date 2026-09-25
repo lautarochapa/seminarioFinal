@@ -11,6 +11,7 @@ class RecipeCookLog extends Model
     protected $fillable = ['user_id', 'family_group_id', 'recipe_id', 'meal_plan_item_id', 'servings', 'cooked_at', 'stock_discounted', 'notes'];
 
     protected $casts = [
+        'servings' => 'float',
         'cooked_at' => 'datetime',
         'stock_discounted' => 'boolean',
         'created_at' => 'datetime',

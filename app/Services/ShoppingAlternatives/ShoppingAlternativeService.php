@@ -14,6 +14,7 @@ use App\Repositories\ShoppingLists\ShoppingListRepository;
 use App\ShoppingList;
 use App\ShoppingListItem;
 use App\User;
+use App\UnitMeasure;
 use Illuminate\Support\Facades\DB;
 
 class ShoppingAlternativeService
@@ -51,6 +52,9 @@ class ShoppingAlternativeService
         foreach ($items as $item) {
             $data[] = [
                 'item_id' => $item->id,
+                'status' => $item->status,
+                'list_status' => $list->status,
+                'can_select' => $this->canSelect($list, $item),
                 'ingredient' => $item->ingredient ? [
                     'id' => $item->ingredient->id,
                     'name' => $item->ingredient->name,
@@ -72,44 +76,87 @@ class ShoppingAlternativeService
         return $data;
     }
 
-    public function select(User $user, int $groupId, int $listId, int $itemId, int $alternativeId, string $ip, string $ua): ShoppingListItem
+    public function select(User $user, int $groupId, int $listId, int $itemId, ?int $alternativeId, string $ip, string $ua, ?int $supermarketProductId = null): ShoppingListItem
     {
         $this->assertMember($user, $groupId);
         $list = $this->findList($groupId, $listId);
-        $item = $this->findItem($list->id, $itemId);
-        $alternative = $this->alternatives->findAlternativeForItem($item->id, $alternativeId);
+        $this->findItem($list->id, $itemId);
 
-        if (!$alternative || !$alternative->product || $alternative->product->status !== 'active' || !$alternative->product->is_active || $alternative->product->deleted_at !== null) {
-            throw new FamilyGroupException('SHOPPING_ALTERNATIVE_NOT_FOUND', 'La alternativa no existe para este item.', 404);
-        }
+        return DB::transaction(function () use ($user, $list, $itemId, $alternativeId, $supermarketProductId, $ip, $ua) {
+            // Serialize with completion before changing any product, quantity or price.
+            $list = ShoppingList::where('id', $list->id)->lockForUpdate()->firstOrFail();
+            $item = ShoppingListItem::where('shopping_list_id', $list->id)->where('id', $itemId)->lockForUpdate()->firstOrFail();
+            if (!$this->canSelect($list, $item)) {
+                throw new FamilyGroupException('SHOPPING_ALTERNATIVE_NOT_EDITABLE', 'Solo podes cambiar alternativas de items pendientes en una lista abierta.', 409);
+            }
 
-        return DB::transaction(function () use ($user, $item, $alternative, $ip, $ua) {
-            $item = ShoppingListItem::where('id', $item->id)->lockForUpdate()->firstOrFail();
-            $purchase = $this->alternativePurchase($item, $alternative->product);
+            $alternative = $alternativeId ? $this->alternatives->findAlternativeForItem($item->id, $alternativeId) : null;
+            if ($alternativeId && !$alternative) {
+                throw new FamilyGroupException('SHOPPING_ALTERNATIVE_NOT_FOUND', 'La alternativa no existe para este item.', 404);
+            }
+            $offerId = $alternative ? $alternative->supermarket_product_id : $supermarketProductId;
+            $offer = $this->candidateProducts($item, true)->firstWhere('id', $offerId);
+            $price = $offer ? $offer->prices->first() : null;
+            if (!$offer || !$price || ($alternative && (int) $alternative->product_id !== (int) $offer->product_id)) {
+                throw new FamilyGroupException('SHOPPING_ALTERNATIVE_NOT_FOUND', 'La alternativa ya no esta disponible para este item.', 404);
+            }
+            $purchase = $this->alternativePurchase($item, $offer->product);
             if ($purchase === null) {
                 throw new FamilyGroupException('SHOPPING_ALTERNATIVE_INCOMPATIBLE', 'No se puede conservar el contenido con la presentacion de esta alternativa.', 422);
             }
-            $old = $this->payload($item);
-            $this->alternatives->clearSelected($item->id);
-            $alternative->refresh();
-            $alternative->is_selected = true;
-            $alternative->save();
 
-            if ($this->packaging->isPackageUnit((int) $item->unit_id) && (int) $item->product_id !== (int) $alternative->product_id) {
+            $old = $this->payload($item);
+            $ingredientId = $item->ingredient_id ?: optional($item->product)->ingredient_id;
+            $reason = $this->reason($item, (int) $offer->product->ingredient_id, (int) $ingredientId, $price->price, $purchase['quantity']);
+            $alternative = $alternative ?: $this->alternatives->selectionForOffer($item->id, $offer->id);
+            $this->alternatives->clearSelected($item->id);
+            if ($alternative->exists) $alternative->refresh();
+            $alternative->fill([
+                'product_id' => $offer->product_id,
+                'supermarket_product_id' => $offer->id,
+                'price' => $price->price,
+                'reason' => $reason,
+                'is_selected' => true,
+            ])->save();
+
+            if ((int) $item->product_id !== (int) $offer->product_id || (int) $item->unit_id !== $purchase['unit_id']) {
                 $item->actual_price = null;
             }
-            $item->product_id = $alternative->product_id;
+            $item->product_id = $offer->product_id;
             $item->quantity = $purchase['quantity'];
             $item->unit_id = $purchase['unit_id'];
-            $item->selected_supermarket_product_id = $alternative->supermarket_product_id;
-            $item->estimated_price = $alternative->price;
+            $item->selected_supermarket_product_id = $offer->id;
+            $item->estimated_price = $price->price;
+            $item->price_source = 'supermarket';
+            $item->price_updated_at = $price->scraped_at;
+            $item->supermarket_chain_id = $offer->supermarket_chain_id;
+            $item->supermarket_branch_id = $offer->supermarket_branch_id;
             $item->save();
+            $list->estimated_total = round((float) $list->items()->whereNotIn('status', ['skipped', 'cancelled'])
+                ->sum(DB::raw('quantity * COALESCE(estimated_price, 0)')), 2);
+            $list->save();
             $item = $item->fresh(['ingredient', 'product', 'unit']);
 
             $this->audit($user->id, 'shopping_list_item.alternative_selected', $item->id, $old, $this->payload($item), $ip, $ua);
-
             return $item;
         });
+    }
+
+    private function canSelect(ShoppingList $list, ShoppingListItem $item): bool
+    {
+        return in_array($list->status, ['draft', 'active', 'in_progress'], true)
+            && $item->status === 'pending' && !$item->purchase_item_id && !$item->stock_processed_at;
+    }
+
+    private function candidateProducts(ShoppingListItem $item, bool $includeCurrent = false)
+    {
+        $ingredientId = $item->ingredient_id ?: optional($item->product)->ingredient_id;
+        if (!$ingredientId || !$item->unit_id) return collect();
+        $packageCount = $this->packaging->isPackageUnit((int) $item->unit_id);
+        // Package substitutions preserve the same food, not an inferred food-equivalence ratio.
+        $ingredientIds = $packageCount ? [(int) $ingredientId] : $this->alternatives->compatibleIngredientIds((int) $ingredientId);
+        return $this->alternatives->productsForIngredients($ingredientIds, (int) $item->unit_id,
+            !$includeCurrent && $item->product_id ? (int) $item->product_id : null, $packageCount);
     }
 
     private function alternativesForItem(ShoppingListItem $item): array
@@ -119,11 +166,7 @@ class ShoppingAlternativeService
             return [];
         }
 
-        $packageCount = $this->packaging->isPackageUnit((int) $item->unit_id);
-        // A package-size replacement preserves the same ingredient. Food substitutions
-        // need their own quantity ratio and must not be inferred from an equivalence tag.
-        $ingredientIds = $packageCount ? [(int) $ingredientId] : $this->alternatives->compatibleIngredientIds((int) $ingredientId);
-        $products = $this->alternatives->productsForIngredients($ingredientIds, (int) $item->unit_id, $item->product_id ? (int) $item->product_id : null, $packageCount);
+        $products = $this->candidateProducts($item);
         $seen = [];
         $data = [];
 
@@ -147,12 +190,15 @@ class ShoppingAlternativeService
                 'product' => [
                     'id' => $product->id,
                     'name' => $product->name,
+                    'net_quantity' => $product->net_quantity,
+                    'package_unit' => $this->unitPayload($product->packageUnit),
                 ],
                 'supermarket_product_id' => $supermarketProduct->id,
                 'price' => $price->price,
                 'unit_price' => $price->unit_price,
                 'purchase_quantity' => $purchase['quantity'],
                 'purchase_unit_id' => $purchase['unit_id'],
+                'purchase_unit' => $this->unitPayload(UnitMeasure::find($purchase['unit_id'])),
                 'estimated_subtotal' => round((float) $price->price * $purchase['quantity'], 2),
                 'reason' => $this->reason($item, $product->ingredient_id, $ingredientId, $price->price, $purchase['quantity']),
             ];
@@ -165,10 +211,29 @@ class ShoppingAlternativeService
         return array_values($data);
     }
 
+    private function unitPayload($unit): ?array
+    {
+        return $unit ? ['id' => $unit->id, 'code' => $unit->code, 'symbol' => $unit->symbol] : null;
+    }
+
     private function alternativePurchase(ShoppingListItem $item, Product $product): ?array
     {
         if (!$this->packaging->isPackageUnit((int) $item->unit_id)) {
-            return ['quantity' => (float) $item->quantity, 'unit_id' => (int) $item->unit_id];
+            if (!$this->packaging->hasContent($product)) {
+                if ((float) $product->net_quantity > 0 || (int) $product->default_unit_id !== (int) $item->unit_id) {
+                    return null;
+                }
+                return ['quantity' => (float) $item->quantity, 'unit_id' => (int) $item->unit_id];
+            }
+            // A supermarket price describes the whole package, never each gram of its content.
+            $ingredientId = $item->ingredient_id ?: optional($item->product)->ingredient_id;
+            $unitId = $this->packaging->purchaseUnitId($product);
+            $factor = $this->conversions->findConversionFactor((int) $item->unit_id, (int) $product->package_unit_id, (int) $ingredientId);
+            if (!$unitId || $factor === null || $factor <= 0 || (float) $item->quantity <= 0) {
+                return null;
+            }
+            $packages = max(1, (int) ceil(round((float) $item->quantity * $factor / (float) $product->net_quantity, 8)));
+            return ['quantity' => $packages, 'unit_id' => $unitId];
         }
         $original = $item->product;
         if (!$original || !$original->ingredient_id || (int) $original->ingredient_id !== (int) $product->ingredient_id

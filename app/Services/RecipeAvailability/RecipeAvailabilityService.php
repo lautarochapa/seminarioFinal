@@ -20,7 +20,7 @@ class RecipeAvailabilityService
         $this->repo = $repo;
     }
 
-    public function availability(User $user, $recipeId, int $familyGroupId, ?int $servings = null): array
+    public function availability(User $user, $recipeId, int $familyGroupId, ?float $servings = null): array
     {
         $recipe = $this->resolveRecipe($user, $recipeId, $familyGroupId);
         list($stockByIngredient, $stockByProduct, $conversions) = $this->loadStockContext($familyGroupId, collect([$recipe]));
@@ -54,7 +54,7 @@ class RecipeAvailabilityService
      * single family group, sharing one stock/conversion load. Same per-recipe
      * shape as availability(). Returns [ recipe_id => result ].
      */
-    public function availabilityBatch(Collection $recipes, int $familyGroupId, ?int $servings = null): array
+    public function availabilityBatch(Collection $recipes, int $familyGroupId, ?float $servings = null): array
     {
         list($stockByIngredient, $stockByProduct, $conversions) = $this->loadStockContext($familyGroupId, $recipes);
 
@@ -109,7 +109,7 @@ class RecipeAvailabilityService
         return $recipe;
     }
 
-    private function compute($recipe, array $stockByIngredient, array $stockByProduct, Collection $conversions, bool $includeOptional, ?int $requestedServings = null): array
+    private function compute($recipe, array $stockByIngredient, array $stockByProduct, Collection $conversions, bool $includeOptional, ?float $requestedServings = null): array
     {
         $ingredients     = $recipe->ingredients ?? collect();
         $baseServings = ($recipe->servings !== null && $recipe->servings > 0) ? (int) $recipe->servings : 1;
@@ -145,7 +145,7 @@ class RecipeAvailabilityService
             $itemStatus  = $covered ? 'available' : ($availableQty > 0 ? 'insufficient' : 'missing');
 
             $perServing      = $requiredQty / $requiredServings;
-            $maxFromThis     = $perServing > 0 ? (int) floor($availableQty / $perServing) : ($covered ? PHP_INT_MAX : 0);
+            $maxFromThis     = $perServing > 0 ? floor(($availableQty / $perServing) * 100 + 1e-9) / 100 : ($covered ? PHP_INT_MAX : 0);
             $maxServings     = min($maxServings, $maxFromThis);
 
             $totalReq   += $requiredQty;
@@ -254,7 +254,7 @@ class RecipeAvailabilityService
         return $candidates->first(fn ($c) => $c->ingredient_id === null);
     }
 
-    private function overallStatus(int $maxServings, int $requiredServings): string
+    private function overallStatus(float $maxServings, float $requiredServings): string
     {
         if ($maxServings >= $requiredServings) {
             return self::STATUS_POSSIBLE;

@@ -16,7 +16,10 @@ class RecipeCookWebContractTest extends TestCase
         $this->assertStringContainsString('body.family_group_id', $script);
         $this->assertStringContainsString('body.idempotency_key = s.cookAttempt.key', $script);
         $this->assertStringContainsString('s.cookAttempt.signature !== signature', $script);
-        $this->assertStringContainsString("if (err && err.status) { s.cookAttempt = null; }", $script);
+        $this->assertStringContainsString('err.status >= 500 || err.status === 409', $script);
+        $this->assertStringContainsString('s.cookAttempt.uncertain = true', $script);
+        $this->assertStringContainsString('s.cookAttempt.uncertain && s.cookAttempt.signature !== signature', $script);
+        $this->assertStringContainsString('if (s.cookAttempt && !s.cookAttempt.uncertain) { s.cookAttempt = null; }', $script);
         $this->assertStringContainsString('s.cookAttempt = null;', $script);
         $this->assertStringContainsString('window.crypto.randomUUID()', $script);
     }

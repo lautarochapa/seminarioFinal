@@ -59,7 +59,7 @@ class MealPlanItemStatusService
                 'family_group_id' => $groupId,
                 'recipe_id' => $recipe->id,
                 'meal_plan_item_id' => $item->id,
-                'servings' => (int) ceil($servings),
+                'servings' => $servings,
                 'cooked_at' => now(),
                 'stock_discounted' => false,
                 'notes' => $input['notes'] ?? null,

@@ -17,7 +17,7 @@ class GenerateRecipeShoppingListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'servings'               => 'nullable|integer|min:1|max:1000',
+            'servings'               => 'nullable|numeric|min:0.01|max:1000|regex:/^\d+(?:\.\d{1,2})?$/',
             'shopping_list_id'       => 'nullable|integer|min:1',
             'supermarket_branch_id'  => 'nullable|integer|min:1',
             'supermarket_chain_id'   => 'nullable|integer|min:1',

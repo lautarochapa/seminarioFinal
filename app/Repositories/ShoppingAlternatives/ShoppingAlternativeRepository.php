@@ -34,6 +34,8 @@ class ShoppingAlternativeRepository
                 'product',
                 'prices' => function ($prices) {
                     $prices->where('status', 'active')
+                        ->where(function ($query) { $query->whereNull('valid_from')->orWhere('valid_from', '<=', now()); })
+                        ->where(function ($query) { $query->whereNull('valid_to')->orWhere('valid_to', '>=', now()); })
                         ->orderByDesc('scraped_at')
                         ->orderByDesc('id');
                 },
@@ -41,7 +43,14 @@ class ShoppingAlternativeRepository
             ->where('status', 'active')
             ->whereHas('product', function ($product) use ($ingredientIds, $unitId, $currentProductId, $packageCount) {
                 $product->whereIn('ingredient_id', $ingredientIds)
-                    ->when(!$packageCount, function ($query) use ($unitId) { $query->where('default_unit_id', $unitId); })
+                    ->when(!$packageCount, function ($query) use ($unitId) {
+                        $query->where(function ($units) use ($unitId) {
+                            $units->where('default_unit_id', $unitId)
+                                ->orWhere(function ($packaged) {
+                                    $packaged->where('net_quantity', '>', 0)->whereNotNull('package_unit_id');
+                                });
+                        });
+                    })
                     ->where('status', 'active')
                     ->where('is_active', true)
                     ->whereNull('deleted_at');
@@ -61,6 +70,14 @@ class ShoppingAlternativeRepository
             ->where('shopping_list_item_id', $itemId)
             ->where('id', $alternativeId)
             ->first();
+    }
+
+    public function selectionForOffer(int $itemId, int $offerId): ShoppingListItemAlternative
+    {
+        return ShoppingListItemAlternative::firstOrNew([
+            'shopping_list_item_id' => $itemId,
+            'supermarket_product_id' => $offerId,
+        ]);
     }
 
     public function clearSelected(int $itemId): void

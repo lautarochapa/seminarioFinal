@@ -49,7 +49,7 @@ class RecipeShoppingListService
         $this->assertValidSupermarketSelection($branchId, $chainId);
 
         $baseServings = ($recipe->servings !== null && (float) $recipe->servings > 0) ? (float) $recipe->servings : 1.0;
-        $targetServings = (isset($data['servings']) && (int) $data['servings'] > 0)
+        $targetServings = (isset($data['servings']) && (float) $data['servings'] > 0)
             ? (float) $data['servings']
             : $baseServings;
         $scale = $targetServings / $baseServings;

@@ -28,14 +28,16 @@ class ShoppingAlternativeController extends Controller
 
     public function select(SelectShoppingAlternativeRequest $request, int $id, int $listId, int $itemId): JsonResponse
     {
+        $data = $request->validated();
         $item = $this->service->select(
             $request->user(),
             $id,
             $listId,
             $itemId,
-            (int) $request->validated()['alternative_id'],
+            isset($data['alternative_id']) ? (int) $data['alternative_id'] : null,
             $request->ip(),
-            $request->userAgent() ?? ''
+            $request->userAgent() ?? '',
+            isset($data['supermarket_product_id']) ? (int) $data['supermarket_product_id'] : null
         );
 
         return response()->json([

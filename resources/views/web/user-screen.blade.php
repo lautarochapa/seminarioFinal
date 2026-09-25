@@ -2416,6 +2416,29 @@
                     </form>
                 </aside>
             </div>
+            <dialog class="panel-dialog" id="meal-plan-cook-dialog" data-meal-plan-cook-dialog aria-labelledby="meal-plan-cook-title" aria-describedby="meal-plan-cook-description">
+                <div class="dialog-header">
+                    <h2 id="meal-plan-cook-title">Registrar cocción</h2>
+                    <button type="button" class="dialog-close" aria-label="Cerrar" data-meal-plan-cook-close>×</button>
+                </div>
+                <div class="dialog-body">
+                    <p id="meal-plan-cook-description">Registrá las porciones que cocinaste de <strong data-meal-plan-cook-recipe></strong>. Se descontarán sus ingredientes de Mi cocina.</p>
+                    <form class="family-form" data-meal-plan-cook-form novalidate>
+                        <div data-meal-plan-cook-use-plan-row hidden>
+                            <label for="meal-plan-cook-use-plan"><input type="checkbox" id="meal-plan-cook-use-plan" data-meal-plan-cook-use-plan aria-describedby="meal-plan-cook-plan-help"> Usar las porciones del plan</label>
+                            <p class="muted" id="meal-plan-cook-plan-help">Se usarán las porciones asignadas a los integrantes. Si no hay asignaciones, se usará la cantidad base de la receta. Desmarcá esta opción para indicar otra cantidad.</p>
+                        </div>
+                        <label for="meal-plan-cook-servings">Porciones cocinadas</label>
+                        <input class="form-control" id="meal-plan-cook-servings" name="servings" type="text" inputmode="decimal" required data-meal-plan-cook-servings aria-describedby="meal-plan-cook-help meal-plan-cook-error">
+                        <p class="muted" id="meal-plan-cook-help">De 0,01 a 999 porciones, con hasta dos decimales. Podés usar punto o coma.</p>
+                        <div class="alert alert-danger" id="meal-plan-cook-error" data-meal-plan-cook-error role="alert" tabindex="-1" hidden></div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="submit" class="btn-main" data-meal-plan-cook-submit>Confirmar cocción</button>
+                            <button type="button" class="btn-secondary-web" data-meal-plan-cook-cancel>Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
         </section>
 
     @elseif($screenKey === 'recipe-search')

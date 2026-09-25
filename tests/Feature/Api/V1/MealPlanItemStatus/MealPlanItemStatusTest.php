@@ -174,6 +174,49 @@ class MealPlanItemStatusTest extends TestCase
         ]);
     }
 
+    public function test_fractional_plan_cook_preserves_explicit_and_planned_servings()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $recipe = $this->recipeWithIngredient($ingredient, $unit, 100);
+        $product = $this->product($ingredient, $unit);
+        $stock = $this->stock($group, $product, $unit, 301);
+        $plan = $this->plan($group, $user);
+        foreach ([['servings' => 1.5], [], ['servings' => 0.01]] as $input) {
+            $item = $this->item($plan, $this->mealType(), ['recipe_id' => $recipe->id, 'servings_total' => 1.5]);
+            $endpoint = '/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id.'/items/'.$item->id.'/mark-cooked';
+            $this->actingAs($user)->postJson($endpoint, $input)->assertOk()->assertJsonPath('data.status', 'cooked');
+            $this->assertEquals($input['servings'] ?? 1.5, (float) RecipeCookLog::where('meal_plan_item_id', $item->id)->firstOrFail()->servings);
+            $quantity = (float) $stock->fresh()->quantity;
+            $this->postJson($endpoint, $input)->assertStatus(409);
+            $this->assertEquals($quantity, (float) $stock->fresh()->quantity);
+            $this->assertSame(1, RecipeCookLog::where('meal_plan_item_id', $item->id)->count());
+        }
+        $this->assertEquals(0, (float) $stock->fresh()->quantity);
+        $this->assertEquals(-301, StockMovement::where('related_recipe_id', $recipe->id)->sum('quantity'));
+    }
+    public function test_fractional_plan_servings_validation_does_not_round_or_mutate()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit();
+        $ingredient = $this->ingredient($unit);
+        $recipe = $this->recipeWithIngredient($ingredient, $unit, 1);
+        $product = $this->product($ingredient, $unit);
+        $stock = $this->stock($group, $product, $unit, 1000);
+        $plan = $this->plan($group, $user);
+        $item = $this->item($plan, $this->mealType(), ['recipe_id' => $recipe->id, 'servings_total' => 1.5]);
+        $endpoint = '/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id.'/items/'.$item->id.'/mark-cooked';
+        foreach ([0, -1, 1.234, 999.01, 'bad', '1,5'] as $servings) {
+            $this->actingAs($user)->postJson($endpoint, ['servings' => $servings])->assertStatus(422);
+        }
+        $this->assertSame('planned', $item->fresh()->status);
+        $this->assertEquals(1000, (float) $stock->fresh()->quantity);
+        $this->assertSame(0, RecipeCookLog::where('meal_plan_item_id', $item->id)->count());
+        $this->postJson($endpoint, ['servings' => 999])->assertOk();
+        $this->assertEquals(999, RecipeCookLog::where('meal_plan_item_id', $item->id)->firstOrFail()->servings);
+        $this->assertEquals(1, (float) $stock->fresh()->quantity);
+    }
     public function test_auth_required()
     {
         $this->postJson('/api/v1/family-groups/1/meal-plans/1/items/1/mark-cooked')->assertStatus(401);

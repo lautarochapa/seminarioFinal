@@ -14,7 +14,7 @@ class CookRecipeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'servings'         => 'required|integer|min:1|max:100',
+            'servings'         => 'required|numeric|min:0.01|max:100|regex:/^\d+(?:\.\d{1,2})?$/',
             'family_group_id'  => 'required_if:deduct_stock,true|nullable|integer|min:1',
             'deduct_stock'     => 'sometimes|boolean',
             'idempotency_key'  => 'sometimes|string|max:120',
@@ -39,8 +39,9 @@ class CookRecipeRequest extends FormRequest
     {
         return [
             'servings.required' => 'Indicá una cantidad válida de porciones.',
-            'servings.integer' => 'Indicá una cantidad válida de porciones.',
+            'servings.numeric' => 'Indicá una cantidad válida de porciones.',
             'servings.min' => 'Indicá una cantidad válida de porciones.',
+            'servings.regex' => 'Indicá porciones con hasta dos decimales.',
             'servings.max' => 'La cantidad máxima es de 100 porciones.',
             'family_group_id.required_if' => 'Seleccioná el grupo familiar del que querés descontar los ingredientes.',
             'family_group_id.integer' => 'Seleccioná un grupo familiar válido.',

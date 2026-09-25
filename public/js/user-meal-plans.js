@@ -3,6 +3,7 @@
 
     function mountPage() {
 
+    var disposed = false;
     var state = {
         groups: [],
         currentGroupId: null,
@@ -18,6 +19,9 @@
         recipes: [],
         page: 1,
         lastPage: 1,
+        cookPending: false,
+        cookContext: null,
+        cookUncertain: null,
     };
 
     function qs(selector, root) {
@@ -223,7 +227,7 @@
         var rows = items.length ? items.map(function (item) {
             var finalized = itemIsFinalized(item);
             var statusActions = finalized ? '' :
-                (item.recipe_id ? '<button type="button" class="btn-main btn-sm" data-meal-plan-item-cooked="' + escapeHtml(item.id) + '">Cocine esto</button> ' : '') +
+                (item.recipe_id ? '<button type="button" class="btn-main btn-sm" data-meal-plan-item-cooked="' + escapeHtml(item.id) + '" aria-haspopup="dialog" aria-controls="meal-plan-cook-dialog">Cocine esto</button> ' : '') +
                 '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-skip="' + escapeHtml(item.id) + '">Saltear</button> ' +
                 '<button type="button" class="btn-secondary-web btn-sm" data-meal-plan-item-eating-out="' + escapeHtml(item.id) + '">Comi afuera</button> ';
             return '<tr>' +
@@ -904,6 +908,153 @@
         });
     }
 
+    function parseCookingServings(value) {
+        var normalized = String(value === null || value === undefined ? '' : value).trim().replace(',', '.');
+        if (!/^(?:\d+(?:\.\d{1,2})?|\.\d{1,2})$/.test(normalized)) { return null; }
+        var servings = Number(normalized);
+        return Number.isFinite(servings) && servings >= 0.01 && servings <= 999 ? servings : null;
+    }
+
+    function cookDialogMessage(root, message) {
+        var error = qs('[data-meal-plan-cook-error]', root);
+        error.textContent = message || '';
+        error.hidden = !message;
+    }
+
+    function updateCookPending(root) {
+        var dialog = qs('[data-meal-plan-cook-dialog]', root);
+        var form = qs('[data-meal-plan-cook-form]', dialog);
+        form.setAttribute('aria-busy', String(state.cookPending));
+        Array.from(dialog.querySelectorAll('button, input')).forEach(function (field) { field.disabled = state.cookPending; });
+        var usePlan = qs('[data-meal-plan-cook-use-plan]', dialog);
+        qs('[data-meal-plan-cook-servings]', dialog).disabled = state.cookPending || (!qs('[data-meal-plan-cook-use-plan-row]', dialog).hidden && usePlan.checked);
+        var submit = qs('[data-meal-plan-cook-submit]', dialog);
+        submit.disabled = state.cookPending || !!(state.cookContext && state.cookUncertain === state.cookContext.key);
+        submit.textContent = state.cookPending ? 'Guardando…' : 'Confirmar cocción';
+    }
+
+    function closeCookDialog(root) {
+        if (state.cookPending) { return; }
+        var dialog = qs('[data-meal-plan-cook-dialog]', root);
+        if (dialog && dialog.open) { dialog.close(); }
+    }
+
+    function openCookDialog(root, item) {
+        if (state.cookPending || disposed) { return; }
+        var key = [state.currentGroupId, state.selectedPlan.id, item.id].join('/');
+        if (state.cookUncertain === key) {
+            showMessage(root, 'warning', 'No pudimos confirmar el resultado anterior. Recargá esta página para revisar el estado antes de volver a cocinar.');
+            return;
+        }
+        var dialog = qs('[data-meal-plan-cook-dialog]', root);
+        if (!dialog) { return; }
+        state.cookContext = { key: key, groupId: state.currentGroupId, planId: state.selectedPlan.id, item: item };
+        dialog.ccReturnFocus = qs('[data-meal-plan-item-cooked="' + item.id + '"]', root) || document.activeElement;
+        qs('[data-meal-plan-cook-recipe]', dialog).textContent = itemTitle(item);
+        var input = qs('[data-meal-plan-cook-servings]', dialog);
+        var hasTotal = item.servings_total !== null && item.servings_total !== undefined;
+        var usePlan = qs('[data-meal-plan-cook-use-plan]', dialog);
+        qs('[data-meal-plan-cook-use-plan-row]', dialog).hidden = hasTotal;
+        usePlan.checked = !hasTotal;
+        input.value = hasTotal ? String(item.servings_total).replace('.', ',') : '';
+        input.removeAttribute('aria-invalid');
+        cookDialogMessage(root, '');
+        updateCookPending(root);
+        if (!dialog.open) { dialog.showModal(); }
+        (hasTotal ? input : usePlan).focus();
+    }
+
+    function submitCookDialog(root) {
+        var context = state.cookContext;
+        if (state.cookPending || !context || disposed || !root.isConnected || state.cookUncertain === context.key) { return; }
+        if (String(state.currentGroupId) !== String(context.groupId) || !state.selectedPlan || String(state.selectedPlan.id) !== String(context.planId)) {
+            closeCookDialog(root);
+            showMessage(root, 'warning', 'La selección cambió. Volvé a elegir la comida que querés cocinar.');
+            return;
+        }
+        var input = qs('[data-meal-plan-cook-servings]', root);
+        var usePlan = !qs('[data-meal-plan-cook-use-plan-row]', root).hidden && qs('[data-meal-plan-cook-use-plan]', root).checked;
+        var servings = usePlan ? null : parseCookingServings(input.value);
+        if (!usePlan && servings === null) {
+            input.setAttribute('aria-invalid', 'true');
+            cookDialogMessage(root, 'Ingresá entre 0,01 y 999 porciones, con hasta dos decimales.');
+            input.focus();
+            return;
+        }
+        input.removeAttribute('aria-invalid');
+        cookDialogMessage(root, '');
+        state.cookPending = true;
+        updateCookPending(root);
+        // Capture the household, plan and item before sending; later navigation cannot retarget the request.
+        return window.CCApi.request(api('/family-groups/' + encodeURIComponent(context.groupId) + '/meal-plans/' + encodeURIComponent(context.planId) + '/items/' + encodeURIComponent(context.item.id) + '/mark-cooked'), {
+            method: 'POST',
+            body: usePlan ? {} : { servings: servings },
+        }).then(function () {
+            if (disposed || !root.isConnected) { return; }
+            state.cookPending = false;
+            context.item.status = 'cooked';
+            updateCookPending(root);
+            renderDetail(root, state.selectedPlan);
+            closeCookDialog(root);
+            showMessage(root, 'success', 'Comida marcada como cocinada.');
+            state.selectedItem = null;
+            state.portions = [];
+            renderPortions(root);
+            resetPortionForm(root);
+            return loadPlan(root, context.planId).then(function () {
+                if (!disposed && root.isConnected) { return loadPlans(root); }
+            });
+        }, function (error) {
+            if (disposed || !root.isConnected) { return; }
+            state.cookPending = false;
+            var apiError = (error && error.payload && error.payload.error) || {};
+            var fields = apiError.field_errors || {};
+            var uncertain = !error || !error.status || error.status >= 500 || error.status === 409;
+            if (uncertain) { state.cookUncertain = context.key; }
+            updateCookPending(root);
+            cookDialogMessage(root, uncertain
+                ? 'No pudimos confirmar el resultado. Recargá esta página para revisar el estado antes de volver a cocinar.'
+                : ((fields.servings && fields.servings[0]) || apiError.message || 'No se pudo registrar la cocción.'));
+            if (!usePlan && (fields.servings || (error && error.status === 422))) {
+                input.setAttribute('aria-invalid', 'true');
+                input.focus();
+            } else { qs('[data-meal-plan-cook-error]', root).focus(); }
+        });
+    }
+
+    function bindCookDialog(root) {
+        var dialog = qs('[data-meal-plan-cook-dialog]', root);
+        if (!dialog) { return; }
+        qs('[data-meal-plan-cook-form]', dialog).addEventListener('submit', function (event) {
+            event.preventDefault();
+            submitCookDialog(root);
+        });
+        Array.from(dialog.querySelectorAll('[data-meal-plan-cook-close], [data-meal-plan-cook-cancel]')).forEach(function (button) {
+            button.addEventListener('click', function () { closeCookDialog(root); });
+        });
+        dialog.addEventListener('cancel', function (event) {
+            if (state.cookPending) { event.preventDefault(); }
+        });
+        dialog.addEventListener('close', function () {
+            state.cookContext = null;
+            if (disposed) { return; }
+            if (dialog.ccReturnFocus && dialog.ccReturnFocus.isConnected) { dialog.ccReturnFocus.focus(); }
+            else {
+                var detail = qs('[data-meal-plan-detail]', root);
+                if (detail) { detail.tabIndex = -1; detail.focus(); }
+            }
+        });
+        qs('[data-meal-plan-cook-use-plan]', dialog).addEventListener('change', function (event) {
+            cookDialogMessage(root, '');
+            qs('[data-meal-plan-cook-servings]', dialog).removeAttribute('aria-invalid');
+            updateCookPending(root);
+            if (!event.target.checked) { qs('[data-meal-plan-cook-servings]', dialog).focus(); }
+        });
+        qs('[data-meal-plan-cook-servings]', dialog).addEventListener('input', function (event) {
+            event.target.removeAttribute('aria-invalid');
+        });
+    }
+
     function changeItemStatus(root, itemId, action) {
         if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id || !itemId) {
             showMessage(root, 'warning', 'Selecciona una comida del plan.');
@@ -921,23 +1072,19 @@
             return Promise.resolve();
         }
 
-        var endpoint = action === 'cooked' ? 'mark-cooked' : 'skip';
+        if (action === 'cooked') {
+            openCookDialog(root, item);
+            return Promise.resolve();
+        }
+
+        var endpoint = 'skip';
         var body = {};
-        var question = action === 'cooked' ? 'Marcar esta comida como cocinada?' : (action === 'eating_out' ? 'Marcar como comida afuera?' : 'Saltear esta comida?');
+        var question = action === 'eating_out' ? 'Marcar como comida afuera?' : 'Saltear esta comida?';
         if (!window.confirm(question)) {
             return Promise.resolve();
         }
         if (action === 'eating_out') {
             body.eating_out = true;
-        }
-        if (action === 'cooked') {
-            var servings = window.prompt('Porciones cocinadas (opcional)', item.servings_total || '');
-            if (servings === null) {
-                return Promise.resolve();
-            }
-            if (String(servings).trim() !== '') {
-                body.servings = Number(servings);
-            }
         }
         if (action !== 'cooked') {
             var notes = window.prompt('Notas (opcional)', '');
@@ -1294,6 +1441,14 @@
             return;
         }
         bind(root);
+        bindCookDialog(root);
+        if (window.CCPage) {
+            window.CCPage.onDispose(function () {
+                disposed = true;
+                var dialog = qs('[data-meal-plan-cook-dialog]', root);
+                if (dialog && dialog.open) { dialog.close(); }
+            });
+        }
         Promise.all([loadCatalogs(root), loadGroups(root)]);
 
         var primaryBtn = document.querySelector('[data-screen-primary-action]');

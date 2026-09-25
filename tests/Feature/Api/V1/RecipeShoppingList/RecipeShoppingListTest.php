@@ -183,6 +183,23 @@ class RecipeShoppingListTest extends TestCase
         ]);
     }
 
+    public function test_fractional_recipe_shopping_list_scales_below_and_above_one()
+    {
+        $user = factory(User::class)->create();
+        $group = $this->familyGroup($user);
+        $unit = $this->unit('g');
+        $recipe = $this->recipe(['servings' => 1]);
+        $ingredient = $this->ingredient($unit);
+        $this->addIngredient($recipe, $ingredient, $unit, 100);
+        foreach ([1.5, 0.5, 0.01] as $servings) {
+            $response = $this->actingAs($user)->postJson($this->endpoint($group->id, $recipe->id), ['servings' => $servings])
+                ->assertStatus(201)->assertJsonPath('data.items_added', 1);
+            $this->assertDatabaseHas('shopping_list_items', [
+                'shopping_list_id' => $response->json('data.shopping_list.id'),
+                'ingredient_id' => $ingredient->id, 'unit_id' => $unit->id, 'quantity' => $servings * 100,
+            ]);
+        }
+    }
     public function test_sin_autenticacion_retorna_401()
     {
         $recipe = $this->recipe();
