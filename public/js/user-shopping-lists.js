@@ -19,6 +19,7 @@
         listRequest: 0,
         detailRefresh: 0,
         itemMutationPending: false,
+        generationPending: false,
         disposed: false,
     };
 
@@ -784,6 +785,52 @@
         });
     }
 
+    function setGenerationPending(root, pending) {
+        state.generationPending = pending;
+        setItemMutationPending(root, pending);
+        Array.from(root.querySelectorAll('[data-shopping-list-generate-plan-form], [data-shopping-list-generate-history-form]')).forEach(function (form) {
+            form.setAttribute('aria-busy', String(pending));
+            Array.from(form.elements).forEach(function (field) {
+                if (pending) { field.ccGenerationDisabled = field.disabled; field.disabled = true; }
+                else if (Object.prototype.hasOwnProperty.call(field, 'ccGenerationDisabled')) {
+                    field.disabled = field.ccGenerationDisabled;
+                    delete field.ccGenerationDisabled;
+                }
+            });
+        });
+    }
+
+    function generateList(root, form, endpoint, body, successMessage) {
+        if (state.generationPending || state.itemMutationPending) return Promise.resolve();
+        var groupId = state.currentGroupId;
+        var version = state.selectionVersion;
+        var listId = state.selectedList ? state.selectedList.id : null;
+        function current() {
+            return !state.disposed && root.isConnected && version === state.selectionVersion
+                && String(state.currentGroupId) === String(groupId)
+                && String(state.selectedList ? state.selectedList.id : null) === String(listId);
+        }
+        var path = api('/family-groups/' + encodeURIComponent(groupId) + '/shopping-lists/' + endpoint);
+        setGenerationPending(root, true);
+        return window.CCApi.request(path, { method: 'POST', body: body }).then(function (response) {
+            if (!current()) return;
+            state.selectionVersion += 1;
+            state.selectedList = response.data || null;
+            renderDetail(root, state.selectedList);
+            resetItemForm(root);
+            if (window.CCUI) window.CCUI.saved(form, successMessage);
+            if (!state.selectedList) return;
+            var context = selectedListContext();
+            return refreshSelectedList(root, context).then(function (applied) {
+                if (applied) showMessage(root, 'success', successMessage);
+            }, function () {
+                if (isCurrentList(root, context)) showMessage(root, 'warning', 'La lista se generó, pero no pudimos actualizar el detalle y la tabla. Volvé a abrir la lista para consultar el total actual.');
+            });
+        }, function (error) {
+            if (current()) handleError(root, error);
+        }).finally(function () { setGenerationPending(root, false); });
+    }
+
     function generateFromMealPlan(root, form) {
         if (!state.currentGroupId) {
             showMessage(root, 'warning', 'Selecciona un grupo familiar.');
@@ -794,19 +841,7 @@
             showMessage(root, 'warning', 'Selecciona un plan para generar la lista.');
             return Promise.resolve();
         }
-        return window.CCApi.request(groupPath('/shopping-lists/generate-from-meal-plan'), {
-            method: 'POST',
-            body: { meal_plan_id: Number(mealPlanId) },
-        }).then(function (response) {
-            showMessage(root, 'success', 'Lista generada desde menu.');
-            if (window.CCUI) { window.CCUI.saved(form, 'Lista generada desde menu.'); }
-            state.selectedList = response.data || null;
-            renderDetail(root, state.selectedList);
-            resetItemForm(root);
-            return loadLists(root);
-        }).catch(function (error) {
-            handleError(root, error);
-        });
+        return generateList(root, form, 'generate-from-meal-plan', { meal_plan_id: Number(mealPlanId) }, 'Lista generada desde menu.');
     }
 
     function generateFromHistory(root, form) {
@@ -815,25 +850,9 @@
             return Promise.resolve();
         }
         var data = {};
-        if (form.elements.date_from.value) {
-            data.date_from = form.elements.date_from.value;
-        }
-        if (form.elements.date_to.value) {
-            data.date_to = form.elements.date_to.value;
-        }
-        return window.CCApi.request(groupPath('/shopping-lists/generate-from-history'), {
-            method: 'POST',
-            body: data,
-        }).then(function (response) {
-            showMessage(root, 'success', 'Lista generada desde historico.');
-            if (window.CCUI) { window.CCUI.saved(form, 'Lista generada desde historico.'); }
-            state.selectedList = response.data || null;
-            renderDetail(root, state.selectedList);
-            resetItemForm(root);
-            return loadLists(root);
-        }).catch(function (error) {
-            handleError(root, error);
-        });
+        if (form.elements.date_from.value) data.date_from = form.elements.date_from.value;
+        if (form.elements.date_to.value) data.date_to = form.elements.date_to.value;
+        return generateList(root, form, 'generate-from-history', data, 'Lista generada desde historico.');
     }
 
     function saveItem(root, form) {

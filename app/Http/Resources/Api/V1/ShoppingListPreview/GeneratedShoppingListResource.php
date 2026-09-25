@@ -14,6 +14,7 @@ class GeneratedShoppingListResource extends JsonResource
             'meal_plan_id' => $this->meal_plan_id,
             'source_type' => $this->source_type,
             'status' => $this->status,
+            'estimated_total' => $this->estimated_total,
             'items' => $this->whenLoaded('items', function () {
                 return $this->items->map(function ($item) {
                     return [

@@ -113,6 +113,8 @@ class ShoppingListPreviewRepository
             ->where('meal_plan_id', $planId)
             ->whereIn('status', [ShoppingList::STATUS_DRAFT, ShoppingList::STATUS_ACTIVE])
             ->whereNull('deleted_at')
+            ->orderBy('id')
+            ->lockForUpdate()
             ->first();
     }
 

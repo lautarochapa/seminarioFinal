@@ -3,11 +3,14 @@
 namespace App\Services\ShoppingListPreview;
 
 use App\AuditLog;
+use App\MealPlan;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Exceptions\MealPlanItems\MealPlanItemException;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingListPreview\ShoppingListPreviewRepository;
 use App\Services\RecipeShoppingList\RecipePriceEstimator;
+use App\Services\ShoppingLists\ShoppingListGenerationGuard;
+use App\Services\ShoppingLists\ShoppingListTotalService;
 use App\ShoppingList;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -17,15 +20,21 @@ class ShoppingListPreviewService
     private $groups;
     private $repo;
     private $priceEstimator;
+    private $totals;
+    private $generationGuard;
 
     public function __construct(
         FamilyGroupRepository $groups,
         ShoppingListPreviewRepository $repo,
-        RecipePriceEstimator $priceEstimator
+        RecipePriceEstimator $priceEstimator,
+        ShoppingListTotalService $totals,
+        ShoppingListGenerationGuard $generationGuard
     ) {
         $this->groups = $groups;
         $this->repo = $repo;
         $this->priceEstimator = $priceEstimator;
+        $this->totals = $totals;
+        $this->generationGuard = $generationGuard;
     }
 
     public function preview(User $user, int $groupId, int $planId): array
@@ -47,11 +56,15 @@ class ShoppingListPreviewService
         $items = $this->resolvePurchasableProducts($groupId, $items);
 
         return DB::transaction(function () use ($user, $groupId, $planId, $items, $ip, $ua) {
+            // Serialize even when no reusable list exists, without blocking FK KEY SHARE.
+            MealPlan::where('family_group_id', $groupId)->where('id', $planId)
+                ->lock(DB::connection()->getDriverName() === 'pgsql' ? 'for no key update' : true)->firstOrFail();
             $existing = $this->repo->existingList($groupId, $planId);
             $created = false;
 
             if ($existing) {
                 $list = $existing;
+                $this->generationGuard->assertReusable($list);
                 if ($list->status !== ShoppingList::STATUS_ACTIVE && $list->canTransitionTo(ShoppingList::STATUS_ACTIVE)) {
                     $list->status = ShoppingList::STATUS_ACTIVE;
                     $list->save();
@@ -68,6 +81,7 @@ class ShoppingListPreviewService
             }
 
             $this->repo->replaceItems($list, $items);
+            $this->totals->recalculate($list);
             $list = $this->repo->loadList($list);
 
             AuditLog::create([

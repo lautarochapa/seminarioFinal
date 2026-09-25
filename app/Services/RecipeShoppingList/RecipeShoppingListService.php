@@ -10,6 +10,8 @@ use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\RecipeAvailability\RecipeAvailabilityRepository;
 use App\Repositories\ShoppingListItems\ShoppingListItemRepository;
 use App\Repositories\ShoppingLists\ShoppingListRepository;
+use App\Services\ShoppingLists\ShoppingListGenerationGuard;
+use App\Services\ShoppingLists\ShoppingListTotalService;
 use App\ShoppingList;
 use App\SupermarketBranch;
 use App\SupermarketChain;
@@ -24,19 +26,25 @@ class RecipeShoppingListService
     private $lists;
     private $items;
     private $priceEstimator;
+    private $totals;
+    private $generationGuard;
 
     public function __construct(
         FamilyGroupRepository $groups,
         RecipeAvailabilityRepository $recipeAvailability,
         ShoppingListRepository $lists,
         ShoppingListItemRepository $items,
-        RecipePriceEstimator $priceEstimator
+        RecipePriceEstimator $priceEstimator,
+        ShoppingListTotalService $totals,
+        ShoppingListGenerationGuard $generationGuard
     ) {
         $this->groups = $groups;
         $this->recipeAvailability = $recipeAvailability;
         $this->lists = $lists;
         $this->items = $items;
         $this->priceEstimator = $priceEstimator;
+        $this->totals = $totals;
+        $this->generationGuard = $generationGuard;
     }
 
     public function generate(User $user, int $groupId, int $recipeId, array $data, string $ip, string $ua): array
@@ -184,6 +192,8 @@ class RecipeShoppingListService
                 ];
             }
 
+            $this->totals->recalculate($list);
+
             AuditLog::create([
                 'user_id'     => $user->id,
                 'action'      => 'shopping_list.generated_from_recipe',
@@ -237,7 +247,8 @@ class RecipeShoppingListService
     private function resolveList(User $user, int $groupId, array $data): ShoppingList
     {
         if (! empty($data['shopping_list_id'])) {
-            $list = $this->lists->findInGroup($groupId, (int) $data['shopping_list_id']);
+            $list = ShoppingList::where('family_group_id', $groupId)
+                ->where('id', (int) $data['shopping_list_id'])->lockForUpdate()->first();
 
             if (! $list) {
                 throw new FamilyGroupException('SHOPPING_LIST_NOT_FOUND', 'La lista de compras no existe.', 404);
@@ -247,6 +258,7 @@ class RecipeShoppingListService
                 throw new FamilyGroupException('SHOPPING_LIST_CLOSED', 'La lista de compras esta cerrada.', 409);
             }
 
+            $this->generationGuard->assertReusable($list);
             return $list;
         }
 

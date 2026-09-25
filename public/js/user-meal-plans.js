@@ -14,6 +14,10 @@
         incompatibilities: [],
         shoppingPreview: [],
         generatedShoppingList: null,
+        planSelectionVersion: 0,
+        shoppingResultRequest: 0,
+        shoppingPreviewRequest: 0,
+        shoppingGenerating: false,
         members: [],
         mealTypes: [],
         recipes: [],
@@ -687,8 +691,14 @@
         if (!state.currentGroupId) {
             return Promise.resolve();
         }
+        var groupId = state.currentGroupId;
+        var version = ++state.planSelectionVersion;
+        function current() {
+            return !disposed && root.isConnected && version === state.planSelectionVersion && String(state.currentGroupId) === String(groupId);
+        }
         return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(id)))
             .then(function (response) {
+                if (!current()) return;
                 state.selectedPlan = response.data || null;
                 state.selectedItem = null;
                 state.portions = [];
@@ -705,7 +715,7 @@
                 return loadIncompatibilities(root);
             })
             .catch(function (error) {
-                handleError(root, error);
+                if (current()) handleError(root, error);
             });
     }
 
@@ -751,52 +761,69 @@
         });
     }
 
+    function shoppingContext() {
+        return { groupId: state.currentGroupId, planId: state.selectedPlan.id, version: state.planSelectionVersion, request: ++state.shoppingResultRequest };
+    }
+
+    function isCurrentShopping(root, context) {
+        return !disposed && root.isConnected && context.request === state.shoppingResultRequest
+            && context.version === state.planSelectionVersion && String(context.groupId) === String(state.currentGroupId)
+            && state.selectedPlan && String(context.planId) === String(state.selectedPlan.id);
+    }
+
+    function updateShoppingPending(root) {
+        var preview = qs('[data-meal-plan-shopping-preview]', root);
+        var generate = qs('[data-meal-plan-shopping-generate]', root);
+        if (preview) preview.disabled = state.shoppingGenerating || !!state.shoppingPreviewRequest;
+        if (generate) generate.disabled = state.shoppingGenerating;
+    }
+
     function loadShoppingPreview(root) {
+        if (state.shoppingGenerating) return Promise.resolve();
         if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
             state.shoppingPreview = [];
             state.generatedShoppingList = null;
             renderShoppingPreview(root);
             return Promise.resolve();
         }
-        var button = qs('[data-meal-plan-shopping-preview]', root);
-        if (button) {
-            button.disabled = true;
-        }
-        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/shopping-list-preview'))
+        var context = shoppingContext();
+        state.shoppingPreviewRequest = context.request;
+        updateShoppingPending(root);
+        return window.CCApi.request(api('/family-groups/' + encodeURIComponent(context.groupId) + '/meal-plans/' + encodeURIComponent(context.planId) + '/shopping-list-preview'))
             .then(function (response) {
+                if (!isCurrentShopping(root, context)) return;
                 state.shoppingPreview = response.data || [];
                 state.generatedShoppingList = null;
                 renderShoppingPreview(root);
                 showMessage(root, 'success', state.shoppingPreview.length ? 'Faltantes calculados.' : 'No hay faltantes para comprar.');
             })
             .catch(function (error) {
+                if (!isCurrentShopping(root, context)) return;
                 state.shoppingPreview = [];
                 state.generatedShoppingList = null;
                 renderShoppingPreview(root);
                 handleError(root, error);
             })
             .finally(function () {
-                if (button) {
-                    button.disabled = false;
-                }
+                if (state.shoppingPreviewRequest === context.request) state.shoppingPreviewRequest = 0;
+                updateShoppingPending(root);
             });
     }
 
     function generateShoppingList(root) {
+        if (state.shoppingGenerating) return Promise.resolve();
         if (!state.currentGroupId || !state.selectedPlan || !state.selectedPlan.id) {
             showMessage(root, 'warning', 'Selecciona un plan para generar la lista.');
             return Promise.resolve();
         }
-        if (!window.confirm('Generar lista de compras desde este plan?')) {
-            return Promise.resolve();
-        }
-        var button = qs('[data-meal-plan-shopping-generate]', root);
-        if (button) {
-            button.disabled = true;
-        }
-        return window.CCApi.request(groupPath('/meal-plans/' + encodeURIComponent(state.selectedPlan.id) + '/generate-shopping-list'), {
+        if (!window.confirm('Generar lista de compras desde este plan?')) return Promise.resolve();
+        var context = shoppingContext();
+        state.shoppingGenerating = true;
+        updateShoppingPending(root);
+        return window.CCApi.request(api('/family-groups/' + encodeURIComponent(context.groupId) + '/meal-plans/' + encodeURIComponent(context.planId) + '/generate-shopping-list'), {
             method: 'POST',
         }).then(function (response) {
+            if (!isCurrentShopping(root, context)) return;
             state.generatedShoppingList = response.data || null;
             state.shoppingPreview = (state.generatedShoppingList && state.generatedShoppingList.items ? state.generatedShoppingList.items.map(function (item) {
                 return {
@@ -811,11 +838,10 @@
             renderShoppingPreview(root);
             showMessage(root, 'success', 'Lista de compras generada.');
         }).catch(function (error) {
-            handleError(root, error);
+            if (isCurrentShopping(root, context)) handleError(root, error);
         }).finally(function () {
-            if (button) {
-                button.disabled = false;
-            }
+            state.shoppingGenerating = false;
+            updateShoppingPending(root);
         });
     }
 
@@ -1274,6 +1300,7 @@
         });
         if (groupSelect) {
             groupSelect.addEventListener('change', function () {
+                state.planSelectionVersion += 1;
                 state.currentGroupId = groupSelect.value || null;
                 state.page = 1;
                 state.selectedPlan = null;
@@ -1370,6 +1397,7 @@
                     return String(item.id) === String(id);
                 });
                 if (plan) {
+                    state.planSelectionVersion += 1;
                     state.selectedPlan = plan;
                     renderDetail(root, plan);
                     fillForm(root, plan);

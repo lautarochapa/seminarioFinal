@@ -3,10 +3,13 @@
 namespace App\Services\ShoppingListGeneration;
 
 use App\AuditLog;
+use App\FamilyGroup;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingListGeneration\ShoppingListGenerationRepository;
 use App\Services\ShoppingListPreview\ShoppingListPreviewService;
+use App\Services\ShoppingLists\ShoppingListGenerationGuard;
+use App\Services\ShoppingLists\ShoppingListTotalService;
 use App\User;
 use Illuminate\Support\Facades\DB;
 
@@ -15,15 +18,21 @@ class ShoppingListGenerationService
     private $groups;
     private $historyRepo;
     private $mealPlanGenerator;
+    private $totals;
+    private $generationGuard;
 
     public function __construct(
         FamilyGroupRepository $groups,
         ShoppingListGenerationRepository $historyRepo,
-        ShoppingListPreviewService $mealPlanGenerator
+        ShoppingListPreviewService $mealPlanGenerator,
+        ShoppingListTotalService $totals,
+        ShoppingListGenerationGuard $generationGuard
     ) {
         $this->groups = $groups;
         $this->historyRepo = $historyRepo;
         $this->mealPlanGenerator = $mealPlanGenerator;
+        $this->totals = $totals;
+        $this->generationGuard = $generationGuard;
     }
 
     public function fromMealPlan(User $user, int $groupId, int $mealPlanId, string $ip, string $ua): array
@@ -41,7 +50,11 @@ class ShoppingListGenerationService
         }
 
         return DB::transaction(function () use ($user, $groupId, $items, $ip, $ua) {
+            // NO KEY UPDATE permits purchases' FK checks while serializing history generators.
+            FamilyGroup::where('id', $groupId)
+                ->lock(DB::connection()->getDriverName() === 'pgsql' ? 'for no key update' : true)->firstOrFail();
             $list = $this->historyRepo->existingHistoryList($groupId);
+            if ($list) $this->generationGuard->assertReusable($list);
             $created = false;
 
             if (!$list) {
@@ -53,6 +66,7 @@ class ShoppingListGenerationService
             }
 
             $this->historyRepo->replaceItems($list, $items);
+            $this->totals->recalculate($list);
             $list = $this->historyRepo->loadList($list);
 
             AuditLog::create([

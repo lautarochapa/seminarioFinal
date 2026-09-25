@@ -44,6 +44,8 @@ class ShoppingListGenerationRepository
             ->whereNull('meal_plan_id')
             ->whereIn('status', [ShoppingList::STATUS_DRAFT, ShoppingList::STATUS_ACTIVE])
             ->whereNull('deleted_at')
+            ->orderBy('id')
+            ->lockForUpdate()
             ->first();
     }
 
