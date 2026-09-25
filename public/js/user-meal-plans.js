@@ -159,6 +159,14 @@
         var page = qs('[data-meal-plan-page]', root);
         var prev = qs('[data-meal-plan-prev]', root);
         var next = qs('[data-meal-plan-next]', root);
+        var summaryCount = qs('[data-meal-plan-summary-count]');
+        if (summaryCount) {
+            if (!state.currentGroupId) {
+                summaryCount.textContent = '0';
+            } else if (meta.total !== undefined && meta.total !== null) {
+                summaryCount.textContent = meta.total;
+            }
+        }
         var period = qs('[data-meal-plan-period]', root);
         var visiblePlans = state.plans.filter(function (plan) {
             return !period || !period.value || plan.period_type === period.value;

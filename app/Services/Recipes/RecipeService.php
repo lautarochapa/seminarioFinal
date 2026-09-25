@@ -97,6 +97,7 @@ class RecipeService
 
             if (array_key_exists('name', $data)) {
                 $recipe->normalized_name = $this->normalize($data['name']);
+                $recipe->nombre = $data['name'];
             }
 
             $recipe->save();

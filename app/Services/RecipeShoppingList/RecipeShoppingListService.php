@@ -383,6 +383,11 @@ class RecipeShoppingListService
         $neededInPackageUnit = $missingQty * $factor;
         $packages = (int) ceil($neededInPackageUnit / (float) $product->net_quantity);
 
-        return [max(1, $packages), $packageUnitId, null];
+        $packaging = app(\App\Services\Products\ProductPackagingService::class);
+        $purchaseUnitId = $packaging->hasContent($product) ? $packaging->purchaseUnitId($product) : null;
+        if ($purchaseUnitId === null) {
+            return [null, $unitId, 'Sin unidad Paquete activa o contenido valido: se conserva el faltante en su unidad original, sin precio estimado.'];
+        }
+        return [max(1, $packages), $purchaseUnitId, null];
     }
 }

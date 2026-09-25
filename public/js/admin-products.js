@@ -167,6 +167,10 @@
         var body = qs('[data-products-body]', root);
         var count = qs('[data-products-count]', root);
         var page = qs('[data-products-page]', root);
+        var summaryCount = qs('[data-products-summary-count]');
+        if (summaryCount && meta.total !== undefined && meta.total !== null) {
+            summaryCount.textContent = meta.total;
+        }
 
         if (count) {
             count.textContent = (meta.total || state.products.length) + ' productos';

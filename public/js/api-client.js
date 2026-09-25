@@ -3,12 +3,20 @@
 
     var TOKEN_KEY = 'cccontrol.auth.token';
     var USER_KEY = 'cccontrol.auth.user';
-    var page = 0, reads = new Set(), writes = new Set();
+    var page = 0, reads = new Set(), writes = new Set(), requests = new Set();
+    var sessionClosing = false, sessionClosePromise = null;
 
     function cancelPageReads() {
         page += 1;
-        reads.forEach(function (controller) { controller.abort(); });
-        reads.clear();
+        if (sessionClosing) return; // Keep draining HTTP responses until logout owns the last cookie.
+        reads.forEach(function (read) {
+            // Discard the old render through its generation, but keep cookie-session
+            // responses tracked: the server may still write the session after navigation.
+            if (!read.webSession) {
+                read.controller.abort();
+                reads.delete(read);
+            }
+        });
     }
 
     function afterWrites() {
@@ -57,7 +65,42 @@
         }
     }
 
+    function afterRequests() {
+        return Promise.all(Array.from(requests).map(function (pending) {
+            return pending.catch(function () {});
+        })).then(function () {
+            return requests.size ? afterRequests() : undefined;
+        });
+    }
+
+    function closeWebSession() {
+        if (sessionClosePromise) return sessionClosePromise;
+        sessionClosing = true;
+        // A cancelled fetch can still finish on the server and restore its old session.
+        // Let every response finish before invalidating the cookie with the logout POST.
+        sessionClosePromise = afterRequests().then(function () {
+            return sendRequest('/api/v1/auth/logout', { method: 'POST' });
+        }).then(function (data) {
+            page += 1;
+            return data;
+        }, function (error) {
+            sessionClosing = false;
+            sessionClosePromise = null;
+            throw error;
+        });
+        return sessionClosePromise;
+    }
+
     function request(path, options) {
+        if (sessionClosing) {
+            var error = new Error('Estamos cerrando la sesión. Esperá un momento.');
+            error.code = 'SESSION_CLOSING';
+            return Promise.reject(error);
+        }
+        return sendRequest(path, options);
+    }
+
+    function sendRequest(path, options) {
         var config = options || {};
         var headers = config.headers || {};
         var token = getToken();
@@ -65,8 +108,9 @@
         var reading = method === 'GET' || method === 'HEAD';
         var generation = page;
         var controller = new AbortController();
-        if (reading) reads.add(controller);
-        if (usesWebSession()) {
+        var read = { controller: controller, webSession: usesWebSession() };
+        if (reading) reads.add(read);
+        if (read.webSession) {
             path = path.replace(/^\/api\/v1\/auth\/(login|register|logout)$/, '/web-session/$1');
             var csrf = window.document.querySelector('meta[name="csrf-token"]');
             if (csrf) headers['X-CSRF-TOKEN'] = csrf.content;
@@ -119,9 +163,10 @@
                 return data;
             });
         });
+        requests.add(pending);
         if (!reading) writes.add(pending);
         return pending.finally(function () {
-            reads.delete(controller); writes.delete(pending);
+            reads.delete(read); writes.delete(pending); requests.delete(pending);
         }).then(function (data) {
             // A replaced screen must not run its old render chain against the new DOM.
             return reading && generation !== page ? new Promise(function () {}) : data;
@@ -139,6 +184,7 @@
         getUser: getUser,
         usesWebSession: usesWebSession,
         cancelPageReads: cancelPageReads,
+        closeWebSession: closeWebSession,
         hasPendingWrites: function () { return writes.size > 0; },
         afterWrites: afterWrites,
     };

@@ -182,6 +182,10 @@
         var listEl  = qs('[data-recipes-list]', root);
         var countEl = qs('[data-recipes-count]', root);
         var pageEl  = qs('[data-recipes-page]', root);
+        var summaryCountEl = qs('[data-recipes-summary-count]');
+        if (summaryCountEl && meta.total !== undefined && meta.total !== null) {
+            summaryCountEl.textContent = meta.total;
+        }
 
         if (countEl) { countEl.textContent = (meta.total || state.recipes.length) + ' recetas'; }
         if (pageEl)  { pageEl.textContent = 'Pág ' + (meta.current_page || state.page) + ' / ' + (meta.last_page || state.lastPage); }

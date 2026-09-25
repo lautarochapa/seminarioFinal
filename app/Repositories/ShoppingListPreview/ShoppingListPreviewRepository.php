@@ -153,6 +153,9 @@ class ShoppingListPreviewRepository
 
     private function notes(array $item): ?string
     {
+        if (!empty($item['purchase_warning'])) {
+            return $item['purchase_warning'];
+        }
         if (empty($item['incomplete'])) {
             return null;
         }

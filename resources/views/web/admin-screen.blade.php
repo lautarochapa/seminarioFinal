@@ -18,7 +18,7 @@
     <section class="metrics">
         @foreach($screen['metrics'] as $metric)
             <article class="metric">
-                <strong>{{ $stats[$metric] ?? 0 }}</strong>
+                <strong @if($screenKey === 'products' && $metric === 'products') data-products-summary-count @endif>{{ $stats[$metric] ?? 0 }}</strong>
                 <span>{{ str_replace('_', ' ', $metric) }}</span>
             </article>
         @endforeach

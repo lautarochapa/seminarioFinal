@@ -29,7 +29,7 @@ class StockItem extends Model
         'expiration_date' => 'date',
         'opened_at' => 'datetime',
         'is_open' => 'boolean',
-        'estimated_purchase_price' => 'decimal:2',
+        'estimated_purchase_price' => 'decimal:12',
     ];
 
     public function familyGroup()

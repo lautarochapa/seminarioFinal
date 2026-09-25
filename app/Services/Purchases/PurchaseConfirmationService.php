@@ -12,6 +12,7 @@ use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\HouseholdStock\HouseholdStockRepository;
 use App\Repositories\Purchases\PurchaseRepository;
 use App\Repositories\StockMovements\StockMovementRepository;
+use App\Services\Products\ProductPackagingService;
 use App\StockItem;
 use Illuminate\Support\Facades\DB;
 
@@ -26,19 +27,22 @@ class PurchaseConfirmationService
     private $stockRepo;
     private $movementRepo;
     private $budgetAlerts;
+    private $packaging;
 
     public function __construct(
         PurchaseRepository $purchaseRepo,
         FamilyGroupRepository $groupRepo,
         HouseholdStockRepository $stockRepo,
         StockMovementRepository $movementRepo,
-        BudgetAlertRepository $budgetAlerts
+        BudgetAlertRepository $budgetAlerts,
+        ProductPackagingService $packaging
     ) {
         $this->purchaseRepo = $purchaseRepo;
         $this->groupRepo    = $groupRepo;
         $this->stockRepo    = $stockRepo;
         $this->movementRepo = $movementRepo;
         $this->budgetAlerts = $budgetAlerts;
+        $this->packaging = $packaging;
     }
 
     public function confirm(int $groupId, int $purchaseId, int $userId, string $ip, string $ua): Purchase
@@ -119,15 +123,16 @@ class PurchaseConfirmationService
                     throw new PurchaseException('PURCHASE_ITEM_PRODUCT_INACTIVE', 'El producto del item ID ' . $item->id . ' no esta activo.', 422);
                 }
 
-                $stockItem = $this->resolveStockItem($groupId, $item, $purchase);
+                $stockEntry = $this->packaging->toStock($item->product, (float) $item->quantity, (int) $item->unit_id, $item->unit_price !== null ? (float) $item->unit_price : null);
+                $stockItem = $this->resolveStockItem($groupId, $item, $purchase, $stockEntry);
 
                 $this->movementRepo->create([
                     'family_group_id'     => $groupId,
                     'stock_item_id'       => $stockItem->id,
                     'product_id'          => $item->product_id,
                     'movement_type'       => 'purchase_entry',
-                    'quantity'            => (float) $item->quantity,
-                    'unit_id'             => $item->unit_id,
+                    'quantity'            => $stockEntry['quantity'],
+                    'unit_id'             => $stockEntry['unit_id'],
                     'reason'              => 'Carga desde compra #' . $purchase->id,
                     'related_purchase_id' => $purchase->id,
                     'created_by'          => $userId,
@@ -155,19 +160,27 @@ class PurchaseConfirmationService
         });
     }
 
-    private function resolveStockItem(int $groupId, PurchaseItem $item, Purchase $purchase): StockItem
+    private function resolveStockItem(int $groupId, PurchaseItem $item, Purchase $purchase, array $stockEntry): StockItem
     {
+        $expirationDate = $item->expiration_date ? $item->expiration_date->toDateString() : null;
         $existing = StockItem::where('family_group_id', $groupId)
             ->where('product_id', $item->product_id)
+            ->where('unit_id', $stockEntry['unit_id'])
+            ->whereNull('stock_location_id')
+            ->where(function ($query) use ($expirationDate) {
+                $expirationDate === null
+                    ? $query->whereNull('expiration_date')
+                    : $query->whereDate('expiration_date', $expirationDate);
+            })
             ->where('status', 'active')
             ->whereNull('deleted_at')
             ->lockForUpdate()
             ->first();
 
         if ($existing) {
-            $existing->quantity = round((float) $existing->quantity + (float) $item->quantity, 4);
-            if ($item->unit_price !== null) {
-                $existing->estimated_purchase_price = (float) $item->unit_price;
+            $existing->quantity = round((float) $existing->quantity + $stockEntry['quantity'], 4);
+            if ($stockEntry['unit_price'] !== null) {
+                $existing->estimated_purchase_price = $stockEntry['unit_price'];
             }
             $existing->save();
             return $existing;
@@ -176,11 +189,11 @@ class PurchaseConfirmationService
         return StockItem::create([
             'family_group_id'          => $groupId,
             'product_id'               => $item->product_id,
-            'quantity'                 => (float) $item->quantity,
-            'unit_id'                  => $item->unit_id,
+            'quantity'                 => $stockEntry['quantity'],
+            'unit_id'                  => $stockEntry['unit_id'],
             'expiration_date'          => $item->expiration_date,
             'purchase_date'            => $purchase->purchase_date,
-            'estimated_purchase_price' => $item->unit_price !== null ? (float) $item->unit_price : null,
+            'estimated_purchase_price' => $stockEntry['unit_price'],
             'status'                   => 'active',
         ]);
     }

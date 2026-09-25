@@ -139,12 +139,20 @@
             '</div>';
     }
 
-    function renderList(root) {
+    function renderList(root, meta) {
         var tbody = qs('[data-budget-body]', root);
         var countEl = qs('[data-budget-count]', root);
         var pageEl = qs('[data-budget-page]', root);
         var prevBtn = qs('[data-budget-prev]', root);
         var nextBtn = qs('[data-budget-next]', root);
+        var summaryCount = qs('[data-budget-summary-count]');
+        if (summaryCount) {
+            if (!state.currentGroupId) {
+                summaryCount.textContent = '0';
+            } else if (meta && meta.total !== undefined && meta.total !== null) {
+                summaryCount.textContent = meta.total;
+            }
+        }
 
         if (countEl) { countEl.textContent = state.total + ' presupuesto' + (state.total !== 1 ? 's' : ''); }
         if (pageEl) { pageEl.textContent = 'Pág. ' + state.page + ' / ' + state.lastPage; }
@@ -254,6 +262,7 @@
                     state.currentGroupId = state.groups[0].id;
                 }
                 renderGroups(root);
+                if (!state.currentGroupId) { renderList(root); }
             })
             .catch(function (err) { showMsg(root, 'danger', errMsg(err)); });
     }
@@ -288,7 +297,7 @@
                 state.total = (response.meta && response.meta.total) || state.budgets.length;
                 state.page = (response.meta && response.meta.current_page) || state.page;
                 state.lastPage = (response.meta && response.meta.last_page) || 1;
-                renderList(root);
+                renderList(root, response.meta || {});
             })
             .catch(function (err) {
                 state.budgets = [];

@@ -32,7 +32,7 @@ class RecipeShoppingListTest extends TestCase
     {
         return UnitMeasure::firstOrCreate(['code' => $code], [
             'name'   => $code,
-            'type'   => 'weight',
+            'type'   => $code === 'package' ? 'package' : 'weight',
             'symbol' => $code,
             'status' => 'active',
         ]);
@@ -76,6 +76,7 @@ class RecipeShoppingListTest extends TestCase
 
     private function product(Ingredient $ingredient, UnitMeasure $pkgUnit): Product
     {
+        $this->unit('package');
         $name = 'Prod ' . uniqid();
         return Product::create([
             'name'            => $name,
@@ -554,7 +555,7 @@ class RecipeShoppingListTest extends TestCase
             'purchase_id' => $purchase->id,
             'product_id'  => $prod->id,
             'quantity'    => 1,
-            'unit_id'     => $grams->id,
+            'unit_id'     => $this->unit('package')->id,
             'unit_price'  => 777.0,
         ]);
 
@@ -617,6 +618,7 @@ class RecipeShoppingListTest extends TestCase
         $grams  = $this->unit('g');
         $recipe = $this->recipe(['servings' => 1]);
         $ing    = $this->ingredient($grams);
+        $this->unit('package');
         // paquete de 500g (net_quantity en el helper product() es 100, override abajo)
         $prod = Product::create([
             'name' => 'Prod', 'normalized_name' => 'prod', 'ingredient_id' => $ing->id,

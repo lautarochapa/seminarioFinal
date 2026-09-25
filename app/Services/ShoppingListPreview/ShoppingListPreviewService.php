@@ -115,7 +115,7 @@ class ShoppingListPreviewService
             $missingQty   = (float) $item['missing_quantity'];
 
             $product = $this->repo->resolveProductForIngredient($ingredientId, $groupId, $item['specific_product_id'] ?? null);
-            if ($product && !empty($item['specific_product_id'])) {
+            if ($product) {
                 $items[$index]['resolved_product_id'] = (int) $product->id;
                 $items[$index]['purchase_quantity'] = $missingQty;
                 $items[$index]['purchase_unit_id'] = $recipeUnitId;
@@ -134,9 +134,12 @@ class ShoppingListPreviewService
             $neededInPackageUnit = $missingQty * $factor;
             $packages = max(1, (int) ceil($neededInPackageUnit / (float) $product->net_quantity));
 
-            // compare-supermarkets keys the price lookup on products.default_unit_id, so the
-            // item must carry that unit. The demo dataset keeps default_unit_id == package_unit_id.
-            $purchaseUnitId = (int) ($product->default_unit_id ?: $packageUnitId);
+            $packaging = app(\App\Services\Products\ProductPackagingService::class);
+            $purchaseUnitId = $packaging->hasContent($product) ? $packaging->purchaseUnitId($product) : null;
+            if ($purchaseUnitId === null) {
+                $items[$index]['purchase_warning'] = 'Sin unidad Paquete activa o contenido valido: se conserva el faltante en su unidad original, sin precio estimado.';
+                continue;
+            }
 
             $price = $this->priceEstimator->resolve((int) $product->id, $groupId, null, null);
 
@@ -193,7 +196,7 @@ class ShoppingListPreviewService
                 $requirements[$key]['recipe_sources'][] = [
                     'meal_plan_item_id' => (int) $item->id,
                     'recipe_id' => (int) $item->recipe->id,
-                    'recipe_name' => $item->recipe->nombre,
+                    'recipe_name' => $item->recipe->name ?: $item->recipe->nombre,
                     'quantity' => $quantity,
                 ];
             }

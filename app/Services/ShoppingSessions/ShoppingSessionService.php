@@ -9,6 +9,7 @@ use App\PurchaseItem;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingLists\ShoppingListRepository;
 use App\Repositories\ShoppingSessions\ShoppingSessionRepository;
+use App\Services\Products\ProductPackagingService;
 use App\ShoppingList;
 use App\ShoppingSession;
 use App\ShoppingSessionScan;
@@ -24,12 +25,14 @@ class ShoppingSessionService
     private $groups;
     private $lists;
     private $sessions;
+    private $packaging;
 
-    public function __construct(FamilyGroupRepository $groups, ShoppingListRepository $lists, ShoppingSessionRepository $sessions)
+    public function __construct(FamilyGroupRepository $groups, ShoppingListRepository $lists, ShoppingSessionRepository $sessions, ProductPackagingService $packaging)
     {
         $this->groups = $groups;
         $this->lists = $lists;
         $this->sessions = $sessions;
+        $this->packaging = $packaging;
     }
 
     public function start(User $user, int $groupId, int $listId, string $ip, string $ua): ShoppingSession
@@ -199,9 +202,10 @@ class ShoppingSessionService
                 $scan = $scans->get($item->id);
                 $quantity = (float) ($scan->quantity ?? $item->quantity ?? 0);
                 $productId = $item->product_id;
+                $product = $item->product;
                 $price = $item->actual_price;
 
-                if (!$productId || $quantity <= 0) {
+                if (!$productId || !$product || $quantity <= 0) {
                     $stockSkipped++;
                     $warnings[] = [
                         'shopping_list_item_id' => $item->id ?? null,
@@ -217,9 +221,11 @@ class ShoppingSessionService
                 }
                 $purchasedTotal += (float) ($item->estimated_price ?? 0) * $quantity;
 
+                $stockEntry = $this->packaging->toStock($product, $quantity, (int) $item->unit_id, $price !== null ? (float) $price : null);
+
                 $existingStock = StockItem::where('family_group_id', $groupId)
                     ->where('product_id', $productId)
-                    ->where('unit_id', $item->unit_id)
+                    ->where('unit_id', $stockEntry['unit_id'])
                     ->where('status', 'active')
                     ->whereNull('deleted_at')
                     ->where(function ($q) use ($stockLocationId) {
@@ -229,9 +235,9 @@ class ShoppingSessionService
                     ->first();
 
                 if ($existingStock) {
-                    $existingStock->quantity = (float) $existingStock->quantity + $quantity;
-                    if ($price !== null) {
-                        $existingStock->estimated_purchase_price = $price;
+                    $existingStock->quantity = (float) $existingStock->quantity + $stockEntry['quantity'];
+                    if ($stockEntry['unit_price'] !== null) {
+                        $existingStock->estimated_purchase_price = $stockEntry['unit_price'];
                     }
                     $existingStock->save();
                     $stock = $existingStock;
@@ -241,10 +247,10 @@ class ShoppingSessionService
                         'family_group_id' => $groupId,
                         'product_id' => $productId,
                         'stock_location_id' => $stockLocationId,
-                        'quantity' => $quantity,
-                        'unit_id' => $item->unit_id,
+                        'quantity' => $stockEntry['quantity'],
+                        'unit_id' => $stockEntry['unit_id'],
                         'purchase_date' => now()->toDateString(),
-                        'estimated_purchase_price' => $price,
+                        'estimated_purchase_price' => $stockEntry['unit_price'],
                         'status' => 'active',
                     ]);
                     $stockCreated++;
@@ -255,8 +261,8 @@ class ShoppingSessionService
                     'stock_item_id' => $stock->id,
                     'product_id' => $productId,
                     'movement_type' => 'entry',
-                    'quantity' => $quantity,
-                    'unit_id' => $item->unit_id,
+                    'quantity' => $stockEntry['quantity'],
+                    'unit_id' => $stockEntry['unit_id'],
                     'reason' => 'shopping_session',
                     'related_purchase_id' => $purchase->id,
                     'created_by' => $user->id,

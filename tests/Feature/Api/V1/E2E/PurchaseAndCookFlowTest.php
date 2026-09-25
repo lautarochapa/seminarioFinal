@@ -35,6 +35,8 @@ class PurchaseAndCookFlowTest extends TestCase
 
         require_once database_path('seeds/DemoScenarioSeeder.php');
         $this->seed(\DemoScenarioSeeder::class);
+        // Purchase counts require a real package unit; the demo catalog seeds only physical units.
+        \App\UnitMeasure::firstOrCreate(['code' => 'package'], ['name' => 'Paquete', 'type' => 'package', 'symbol' => 'paq', 'status' => 'active']);
 
         $this->laura = User::where('email', \DemoScenarioSeeder::USER_EMAIL)->firstOrFail();
         $this->groupId = (int) DB::table('family_groups')

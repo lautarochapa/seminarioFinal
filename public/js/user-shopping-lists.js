@@ -194,6 +194,14 @@
         var page = qs('[data-shopping-list-page]', root);
         var prev = qs('[data-shopping-list-prev]', root);
         var next = qs('[data-shopping-list-next]', root);
+        var summaryCount = qs('[data-shopping-list-summary-count]');
+        if (summaryCount) {
+            if (!state.currentGroupId) {
+                summaryCount.textContent = '0';
+            } else if (meta && meta.total !== undefined && meta.total !== null) {
+                summaryCount.textContent = meta.total;
+            }
+        }
         if (count) {
             count.textContent = (meta && meta.total !== undefined ? meta.total : state.lists.length) + ' listas';
         }

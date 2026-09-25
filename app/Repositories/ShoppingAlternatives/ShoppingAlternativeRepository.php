@@ -28,7 +28,7 @@ class ShoppingAlternativeRepository
         return array_values(array_unique($ids));
     }
 
-    public function productsForIngredients(array $ingredientIds, int $unitId, ?int $currentProductId = null): Collection
+    public function productsForIngredients(array $ingredientIds, int $unitId, ?int $currentProductId = null, bool $packageCount = false): Collection
     {
         $query = SupermarketProduct::with([
                 'product',
@@ -39,9 +39,9 @@ class ShoppingAlternativeRepository
                 },
             ])
             ->where('status', 'active')
-            ->whereHas('product', function ($product) use ($ingredientIds, $unitId, $currentProductId) {
+            ->whereHas('product', function ($product) use ($ingredientIds, $unitId, $currentProductId, $packageCount) {
                 $product->whereIn('ingredient_id', $ingredientIds)
-                    ->where('default_unit_id', $unitId)
+                    ->when(!$packageCount, function ($query) use ($unitId) { $query->where('default_unit_id', $unitId); })
                     ->where('status', 'active')
                     ->where('is_active', true)
                     ->whereNull('deleted_at');

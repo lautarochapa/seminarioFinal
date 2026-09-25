@@ -42,7 +42,16 @@ class RecipePriceEstimator
 
         $lastPaid = $this->purchaseItems->lastPriceForProductInGroup($productId, $groupId);
         if ($lastPaid !== null) {
-            return $this->result($lastPaid['price'], 'group_history', $lastPaid['updated_at'], null, null);
+            $product = \App\Product::find($productId);
+            $packaging = app(\App\Services\Products\ProductPackagingService::class);
+            $ambiguousPhysicalHistory = $lastPaid['generated_or_unknown_list_source']
+                && !$packaging->isPackageUnit($lastPaid['unit_id']);
+            $packagePrice = $product && !$ambiguousPhysicalHistory
+                ? $packaging->packagePriceFromUnit($product, $lastPaid['unit_id'], $lastPaid['price'])
+                : null;
+            if ($packagePrice !== null) {
+                return $this->result($packagePrice, 'group_history', $lastPaid['updated_at'], null, null);
+            }
         }
 
         $best = $this->supermarketProducts->bestPriceForProduct($productId);

@@ -214,11 +214,16 @@
             event.preventDefault();
             if (pending) return;
             pending = true;
-            window.CCApi.request('/api/v1/auth/logout', { method: 'POST' }).then(function () {
+            link.setAttribute('aria-busy', 'true');
+            var logout = window.CCApi.usesWebSession()
+                ? window.CCApi.closeWebSession()
+                : window.CCApi.request('/api/v1/auth/logout', { method: 'POST' });
+            logout.then(function () {
                 window.CCApi.clearSession();
                 window.location.href = '/login';
             }).catch(function () {
                 pending = false;
+                link.removeAttribute('aria-busy');
                 window.alert('No pudimos cerrar la sesión. Volvé a intentarlo.');
             });
         });

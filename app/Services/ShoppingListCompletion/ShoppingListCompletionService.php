@@ -10,6 +10,7 @@ use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingListCompletion\ShoppingListCompletionRepository;
 use App\Repositories\ShoppingLists\ShoppingListRepository;
 use App\Services\ManualProductStock\ManualProductStockService;
+use App\Services\Products\ProductPackagingService;
 use App\ShoppingList;
 use App\ShoppingListItem;
 use App\User;
@@ -21,17 +22,20 @@ class ShoppingListCompletionService
     private $lists;
     private $repo;
     private $manualProductStock;
+    private $packaging;
 
     public function __construct(
         FamilyGroupRepository $groups,
         ShoppingListRepository $lists,
         ShoppingListCompletionRepository $repo,
-        ManualProductStockService $manualProductStock
+        ManualProductStockService $manualProductStock,
+        ProductPackagingService $packaging
     ) {
         $this->groups = $groups;
         $this->lists = $lists;
         $this->repo = $repo;
         $this->manualProductStock = $manualProductStock;
+        $this->packaging = $packaging;
     }
 
     public function complete(User $user, int $groupId, int $listId, array $data, string $ip, string $ua): array
@@ -149,12 +153,13 @@ class ShoppingListCompletionService
                     $reusedMovement ? $stockUpdated++ : $stockCreated++;
                     $movementsCreated++;
                 } else {
-                    $existing = $this->repo->findCompatibleStock($groupId, $product->id, $unitId, $locationId, $expirationDate);
+                    $stockEntry = $this->packaging->toStock($product, $quantity, $unitId, $actualPrice !== null ? (float) $actualPrice : null);
+                    $existing = $this->repo->findCompatibleStock($groupId, $product->id, $stockEntry['unit_id'], $locationId, $expirationDate);
 
                     if ($existing) {
                         $existing = $this->repo->updateStockItem($existing, array_filter([
-                            'quantity' => (float) $existing->quantity + $quantity,
-                            'estimated_purchase_price' => $actualPrice ?? $existing->estimated_purchase_price,
+                            'quantity' => (float) $existing->quantity + $stockEntry['quantity'],
+                            'estimated_purchase_price' => $stockEntry['unit_price'] ?? $existing->estimated_purchase_price,
                         ], function ($v) {
                             return $v !== null;
                         }));
@@ -165,11 +170,11 @@ class ShoppingListCompletionService
                             'family_group_id' => $groupId,
                             'product_id' => $product->id,
                             'stock_location_id' => $locationId,
-                            'quantity' => $quantity,
-                            'unit_id' => $unitId,
+                            'quantity' => $stockEntry['quantity'],
+                            'unit_id' => $stockEntry['unit_id'],
                             'purchase_date' => now()->toDateString(),
                             'expiration_date' => $expirationDate,
-                            'estimated_purchase_price' => $actualPrice,
+                            'estimated_purchase_price' => $stockEntry['unit_price'],
                             'status' => 'active',
                         ]);
                         $stockCreated++;
@@ -180,8 +185,8 @@ class ShoppingListCompletionService
                         'stock_item_id' => $stockItem->id,
                         'product_id' => $product->id,
                         'movement_type' => 'entry',
-                        'quantity' => $quantity,
-                        'unit_id' => $unitId,
+                        'quantity' => $stockEntry['quantity'],
+                        'unit_id' => $stockEntry['unit_id'],
                         'reason' => 'shopping_list_completion',
                         'related_purchase_id' => $purchase->id,
                         'created_by' => $user->id,
@@ -278,6 +283,7 @@ class ShoppingListCompletionService
             }
             $items = $query->lockForUpdate()->get();
             $processed = 0; $omitted = 0; $created = 0; $updated = 0; $movements = 0;
+            $actualAddedTotal = 0.0;
             foreach ($items as $item) {
                 $request = $requested[$item->id] ?? ['shopping_list_item_id' => $item->id, 'add_to_stock' => true];
                 if (empty($request['add_to_stock'])) {
@@ -290,17 +296,23 @@ class ShoppingListCompletionService
                 $unitId = (int) ($request['unit_id'] ?? $item->unit_id);
                 $price = $request['actual_price'] ?? $item->actual_price;
                 if (!$stockItem) {
-                    $existing = $this->repo->findCompatibleStock($groupId, $product->id, $unitId, null, null);
+                    $stockEntry = $this->packaging->toStock($product, $quantity, $unitId, $price !== null ? (float) $price : null);
+                    $existing = $this->repo->findCompatibleStock($groupId, $product->id, $stockEntry['unit_id'], null, null);
                     if ($existing) {
-                        $stockItem = $this->repo->updateStockItem($existing, ['quantity' => (float) $existing->quantity + $quantity]); $updated++;
+                        $stockItem = $this->repo->updateStockItem($existing, ['quantity' => (float) $existing->quantity + $stockEntry['quantity'], 'estimated_purchase_price' => $stockEntry['unit_price'] ?? $existing->estimated_purchase_price]); $updated++;
                     } else {
-                        $stockItem = $this->repo->createStockItem(['family_group_id' => $groupId, 'product_id' => $product->id, 'quantity' => $quantity, 'unit_id' => $unitId, 'purchase_date' => now()->toDateString(), 'status' => 'active']); $created++;
+                        $stockItem = $this->repo->createStockItem(['family_group_id' => $groupId, 'product_id' => $product->id, 'quantity' => $stockEntry['quantity'], 'unit_id' => $stockEntry['unit_id'], 'purchase_date' => now()->toDateString(), 'estimated_purchase_price' => $stockEntry['unit_price'], 'status' => 'active']); $created++;
                     }
-                    $this->repo->createMovement(['family_group_id' => $groupId, 'stock_item_id' => $stockItem->id, 'product_id' => $product->id, 'movement_type' => 'entry', 'quantity' => $quantity, 'unit_id' => $unitId, 'reason' => 'shopping_list_completion', 'related_purchase_id' => $purchase->id, 'created_by' => $user->id]);
+                    $this->repo->createMovement(['family_group_id' => $groupId, 'stock_item_id' => $stockItem->id, 'product_id' => $product->id, 'movement_type' => 'entry', 'quantity' => $stockEntry['quantity'], 'unit_id' => $stockEntry['unit_id'], 'reason' => 'shopping_list_completion', 'related_purchase_id' => $purchase->id, 'created_by' => $user->id]);
                 } else { $serviceUpdated ? $updated++ : $created++; }
                 $movements++;
                 $purchaseItem = PurchaseItem::create(['purchase_id' => $purchase->id, 'product_id' => $product->id, 'quantity' => $quantity, 'unit_id' => $unitId, 'unit_price' => $price, 'total_price' => $price !== null ? (float) $price * $quantity : null, 'created_stock_item_id' => $stockItem->id]);
+                $actualAddedTotal += (float) ($purchaseItem->total_price ?? 0);
                 $item->product_id = $product->id; $item->purchase_item_id = $purchaseItem->id; $item->stock_processed_at = now(); $item->save(); $processed++;
+            }
+            if ($actualAddedTotal > 0) {
+                $purchase->actual_total = round((float) ($purchase->actual_total ?? 0) + $actualAddedTotal, 2);
+                $purchase->save();
             }
             return ['purchase' => $purchase->fresh(['items.product', 'items.unit']), 'list' => $list->fresh(['items.ingredient', 'items.product', 'items.unit']), 'summary' => ['items_purchased_count' => $items->count(), 'items_added_to_stock_count' => $processed, 'items_omitted_count' => $omitted, 'stock_items_created' => $created, 'stock_items_updated' => $updated, 'stock_movements_created' => $movements, 'warnings' => []]];
         });

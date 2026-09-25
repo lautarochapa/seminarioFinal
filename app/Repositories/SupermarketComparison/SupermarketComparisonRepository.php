@@ -24,14 +24,13 @@ class SupermarketComparisonRepository
     {
         return SupermarketProductPrice::with(['promotion', 'supermarketProduct'])
             ->where('status', 'active')
-            ->whereHas('supermarketProduct', function ($query) use ($branchId, $productId, $unitId) {
+            ->whereHas('supermarketProduct', function ($query) use ($branchId, $productId) {
                 $query->where('supermarket_branch_id', $branchId)
                     ->where('product_id', $productId)
                     ->where('status', 'active')
-                    ->whereHas('product', function ($product) use ($unitId) {
+                    ->whereHas('product', function ($product) {
                         $product->where('status', 'active')
                             ->where('is_active', true)
-                            ->where('default_unit_id', $unitId)
                             ->whereNull('deleted_at');
                     });
             })

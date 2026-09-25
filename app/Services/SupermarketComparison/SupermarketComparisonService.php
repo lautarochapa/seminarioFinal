@@ -54,8 +54,14 @@ class SupermarketComparisonService
                     continue;
                 }
 
+                $unitPrice = app(\App\Services\Products\ProductPackagingService::class)
+                    ->pricePerUnit($item->product, (int) $item->unit_id, (float) $price->price);
+                if ($unitPrice === null) {
+                    $missing[] = $this->missingItem($item);
+                    continue;
+                }
                 $currency = $currency ?: $price->currency;
-                $lineTotal = (float) $price->price * (float) $item->quantity;
+                $lineTotal = $unitPrice * (float) $item->quantity;
                 $effectiveLineTotal = $this->applyPromotion($lineTotal, $price->promotion);
                 $total += $effectiveLineTotal;
                 $lastPriceAt = $price->scraped_at;
@@ -67,7 +73,7 @@ class SupermarketComparisonService
                         'name' => $item->product->name,
                     ],
                     'quantity' => $item->quantity,
-                    'unit_price' => $price->price,
+                    'unit_price' => $unitPrice,
                     'total' => round($effectiveLineTotal, 2),
                     'currency' => $price->currency,
                 ];

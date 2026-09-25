@@ -252,8 +252,49 @@ class ShoppingListPreviewTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.0.ingredient.id', $ingredient->id)
-            ->assertJsonPath('data.0.unit.id', $unit->id);
+            ->assertJsonPath('data.0.unit.id', $unit->id)
+            ->assertJsonPath('data.0.recipe_sources.0.recipe_name', $recipe->nombre);
         $this->assertEquals(10.0, $response->json('data.0.missing_quantity'));
+    }
+
+    public function test_preview_uses_renamed_user_recipe_without_changing_quantities()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit('g');
+        $ingredient = $this->ingredient($unit);
+        $product = $this->product($ingredient, $unit);
+        $recipe = $this->recipe($ingredient, $unit, 150);
+        $recipe->update(['name' => 'Avena de prueba', 'nombre' => 'Avena de prueba', 'owner_user_id' => $user->id]);
+        $stock = $this->stock($group, $product, $unit, 50);
+        $plan = $this->planWithRecipe($group, $user, $recipe);
+
+        $this->actingAs($user)->patchJson('/api/v1/recipes/'.$recipe->id, ['name' => 'Arroz de prueba'])
+            ->assertOk()->assertJsonPath('data.name', 'Arroz de prueba');
+
+        $response = $this->getJson('/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id.'/shopping-list-preview')
+            ->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.recipe_sources.0.recipe_id', $recipe->id)
+            ->assertJsonPath('data.0.recipe_sources.0.recipe_name', 'Arroz de prueba');
+        $this->assertEquals(150, $response->json('data.0.required_quantity'));
+        $this->assertEquals(100, $response->json('data.0.missing_quantity'));
+        $this->assertEquals(150, $response->json('data.0.recipe_sources.0.quantity'));
+        $this->assertEquals(50, (float) $stock->fresh()->quantity);
+        $this->assertDatabaseHas('recipes', ['id' => $recipe->id, 'name' => 'Arroz de prueba', 'nombre' => 'Arroz de prueba']);
+    }
+
+    public function test_preview_prefers_canonical_recipe_name_when_legacy_name_is_stale()
+    {
+        [$user, $group] = $this->groupWithMember();
+        $unit = $this->unit('g');
+        $ingredient = $this->ingredient($unit);
+        $recipe = $this->recipe($ingredient, $unit, 150);
+        $recipe->update(['name' => 'Arroz de prueba', 'nombre' => 'Avena de prueba']);
+        $plan = $this->planWithRecipe($group, $user, $recipe);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/family-groups/'.$group->id.'/meal-plans/'.$plan->id.'/shopping-list-preview')
+            ->assertOk()->assertJsonPath('data.0.recipe_sources.0.recipe_name', 'Arroz de prueba');
+        $this->assertDatabaseHas('recipes', ['id' => $recipe->id, 'nombre' => 'Avena de prueba']);
     }
 
     public function test_preview_ignores_sufficient_stock()

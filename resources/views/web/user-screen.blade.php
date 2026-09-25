@@ -27,8 +27,14 @@
     <section class="metric-row">
         @foreach($screen['metrics'] as $metric)
             <article class="metric">
-                <strong>{{ $stats[$metric] ?? 0 }}</strong>
-                <span>{{ $metricLabels[$metric] ?? 'Total' }}</span>
+                <strong
+                    @if($screenKey === 'family-group' && $metric === 'family_groups') data-family-summary-count @endif
+                    @if($screenKey === 'recipes' && $metric === 'recipes') data-recipes-summary-count @endif
+                    @if($screenKey === 'planning' && $metric === 'meal_plans') data-meal-plan-summary-count @endif
+                    @if($screenKey === 'shopping-list' && $metric === 'shopping_lists') data-shopping-list-summary-count @endif
+                    @if($screenKey === 'budget' && $metric === 'budgets') data-budget-summary-count @endif
+                >{{ ($screenKey === 'planning' && $metric === 'meal_plans') || ($screenKey === 'shopping-list' && $metric === 'shopping_lists') || ($screenKey === 'budget' && $metric === 'budgets') ? '-' : ($stats[$metric] ?? 0) }}</strong>
+                <span>{{ $screenKey === 'planning' && $metric === 'meal_plans' ? 'Planes del hogar' : ($screenKey === 'shopping-list' && $metric === 'shopping_lists' ? 'Listas del hogar' : ($screenKey === 'budget' && $metric === 'budgets' ? 'Presupuestos del hogar' : ($metricLabels[$metric] ?? 'Total'))) }}</span>
             </article>
         @endforeach
     </section>
@@ -387,7 +393,7 @@
                         <input class="form-control" name="expiration_date" type="date">
                         <span class="invalid-feedback" data-stock-field-error="expiration_date" role="alert"></span>
                         <label>Precio de compra</label>
-                        <input class="form-control" name="purchase_price" type="number" step="0.01" min="0">
+                        <input class="form-control" name="purchase_price" type="number" step="0.000000000001" min="0">
                         <span class="invalid-feedback" data-stock-field-error="purchase_price" role="alert"></span>
                         <label>Estado</label>
                         <select class="form-control" name="status">
@@ -436,7 +442,7 @@
                                 <label>Vencimiento</label>
                                 <input class="form-control" name="expiration_date" type="date">
                                 <label>Precio de compra</label>
-                                <input class="form-control" name="purchase_price" type="number" step="0.01" min="0">
+                                <input class="form-control" name="purchase_price" type="number" step="0.000000000001" min="0">
                                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
                                     <button type="submit" class="btn-main" data-product-request-submit>Cargar producto y stock</button>
                                     <button type="button" class="btn-secondary-web" data-product-request-close>Cancelar</button>

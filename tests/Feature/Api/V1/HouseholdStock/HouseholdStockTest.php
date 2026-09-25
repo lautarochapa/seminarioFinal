@@ -160,7 +160,7 @@ class HouseholdStockTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('data.family_group_id', $group->id)
-            ->assertJsonPath('data.purchase_price', '100.00');
+            ->assertJsonPath('data.purchase_price', '100.000000000000');
     }
 
     public function test_duplicate_updates_existing_item()

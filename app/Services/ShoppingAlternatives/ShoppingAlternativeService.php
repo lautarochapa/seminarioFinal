@@ -4,6 +4,9 @@ namespace App\Services\ShoppingAlternatives;
 
 use App\AuditLog;
 use App\Exceptions\FamilyGroup\FamilyGroupException;
+use App\Product;
+use App\Repositories\RecipeAvailability\RecipeAvailabilityRepository;
+use App\Services\Products\ProductPackagingService;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingAlternatives\ShoppingAlternativeRepository;
 use App\Repositories\ShoppingListItems\ShoppingListItemRepository;
@@ -19,17 +22,23 @@ class ShoppingAlternativeService
     private $lists;
     private $items;
     private $alternatives;
+    private $packaging;
+    private $conversions;
 
     public function __construct(
         FamilyGroupRepository $groups,
         ShoppingListRepository $lists,
         ShoppingListItemRepository $items,
-        ShoppingAlternativeRepository $alternatives
+        ShoppingAlternativeRepository $alternatives,
+        ProductPackagingService $packaging,
+        RecipeAvailabilityRepository $conversions
     ) {
         $this->groups = $groups;
         $this->lists = $lists;
         $this->items = $items;
         $this->alternatives = $alternatives;
+        $this->packaging = $packaging;
+        $this->conversions = $conversions;
     }
 
     public function list(User $user, int $groupId, int $listId): array
@@ -75,12 +84,23 @@ class ShoppingAlternativeService
         }
 
         return DB::transaction(function () use ($user, $item, $alternative, $ip, $ua) {
+            $item = ShoppingListItem::where('id', $item->id)->lockForUpdate()->firstOrFail();
+            $purchase = $this->alternativePurchase($item, $alternative->product);
+            if ($purchase === null) {
+                throw new FamilyGroupException('SHOPPING_ALTERNATIVE_INCOMPATIBLE', 'No se puede conservar el contenido con la presentacion de esta alternativa.', 422);
+            }
             $old = $this->payload($item);
             $this->alternatives->clearSelected($item->id);
+            $alternative->refresh();
             $alternative->is_selected = true;
             $alternative->save();
 
+            if ($this->packaging->isPackageUnit((int) $item->unit_id) && (int) $item->product_id !== (int) $alternative->product_id) {
+                $item->actual_price = null;
+            }
             $item->product_id = $alternative->product_id;
+            $item->quantity = $purchase['quantity'];
+            $item->unit_id = $purchase['unit_id'];
             $item->selected_supermarket_product_id = $alternative->supermarket_product_id;
             $item->estimated_price = $alternative->price;
             $item->save();
@@ -99,8 +119,11 @@ class ShoppingAlternativeService
             return [];
         }
 
-        $ingredientIds = $this->alternatives->compatibleIngredientIds((int) $ingredientId);
-        $products = $this->alternatives->productsForIngredients($ingredientIds, (int) $item->unit_id, $item->product_id ? (int) $item->product_id : null);
+        $packageCount = $this->packaging->isPackageUnit((int) $item->unit_id);
+        // A package-size replacement preserves the same ingredient. Food substitutions
+        // need their own quantity ratio and must not be inferred from an equivalence tag.
+        $ingredientIds = $packageCount ? [(int) $ingredientId] : $this->alternatives->compatibleIngredientIds((int) $ingredientId);
+        $products = $this->alternatives->productsForIngredients($ingredientIds, (int) $item->unit_id, $item->product_id ? (int) $item->product_id : null, $packageCount);
         $seen = [];
         $data = [];
 
@@ -114,6 +137,10 @@ class ShoppingAlternativeService
             if (!$price) {
                 continue;
             }
+            $purchase = $this->alternativePurchase($item, $product);
+            if ($purchase === null) {
+                continue;
+            }
 
             $seen[$product->id] = true;
             $data[] = [
@@ -124,20 +151,43 @@ class ShoppingAlternativeService
                 'supermarket_product_id' => $supermarketProduct->id,
                 'price' => $price->price,
                 'unit_price' => $price->unit_price,
-                'reason' => $this->reason($item, $product->ingredient_id, $ingredientId, $price->price),
+                'purchase_quantity' => $purchase['quantity'],
+                'purchase_unit_id' => $purchase['unit_id'],
+                'estimated_subtotal' => round((float) $price->price * $purchase['quantity'], 2),
+                'reason' => $this->reason($item, $product->ingredient_id, $ingredientId, $price->price, $purchase['quantity']),
             ];
         }
 
         usort($data, function ($left, $right) {
-            return (float) $left['price'] <=> (float) $right['price'];
+            return (float) $left['estimated_subtotal'] <=> (float) $right['estimated_subtotal'];
         });
 
         return array_values($data);
     }
 
-    private function reason(ShoppingListItem $item, int $productIngredientId, int $itemIngredientId, $price): string
+    private function alternativePurchase(ShoppingListItem $item, Product $product): ?array
     {
-        if ($item->estimated_price !== null && (float) $price < (float) $item->estimated_price) {
+        if (!$this->packaging->isPackageUnit((int) $item->unit_id)) {
+            return ['quantity' => (float) $item->quantity, 'unit_id' => (int) $item->unit_id];
+        }
+        $original = $item->product;
+        if (!$original || !$original->ingredient_id || (int) $original->ingredient_id !== (int) $product->ingredient_id
+            || !$this->packaging->hasContent($original) || !$this->packaging->hasContent($product)) {
+            return null;
+        }
+        $unitId = $this->packaging->purchaseUnitId($product);
+        $factor = $this->conversions->findConversionFactor((int) $original->package_unit_id, (int) $product->package_unit_id, (int) $original->ingredient_id);
+        if (!$unitId || $factor === null || $factor <= 0 || (float) $item->quantity <= 0) {
+            return null;
+        }
+        $requiredContent = (float) $item->quantity * (float) $original->net_quantity * $factor;
+        $packages = max(1, (int) ceil(round($requiredContent / (float) $product->net_quantity, 8)));
+        return ['quantity' => $packages, 'unit_id' => $unitId];
+    }
+
+    private function reason(ShoppingListItem $item, int $productIngredientId, int $itemIngredientId, $price, float $quantity): string
+    {
+        if ($item->estimated_price !== null && (float) $price * $quantity < (float) $item->estimated_price * (float) $item->quantity) {
             return 'cheaper';
         }
 

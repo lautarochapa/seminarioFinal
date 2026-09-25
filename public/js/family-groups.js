@@ -149,6 +149,10 @@
         var counter = qs('[data-family-count]', root);
 
         counter.textContent = state.groups.length + ' grupos';
+        var summaryCounter = qs('[data-family-summary-count]');
+        if (summaryCounter) {
+            summaryCounter.textContent = state.groups.length;
+        }
 
         if (!state.groups.length) {
             select.innerHTML = '<option value="">Sin grupos familiares</option>';

@@ -222,19 +222,47 @@ class WebUserScreensRouteTest extends TestCase
     public function test_key_scripts_are_present_in_layout()
     {
         $user = factory(User::class)->create();
-        $this->grantPermission($user, 'web.user.stock');
+        $screenScripts = [
+            'stock' => ['user-stock-locations', 'user-shopping-lists', 'user-budget', 'family-groups'],
+            'shopping-session' => ['user-shopping-session'],
+            'purchases' => ['user-purchases'],
+            'recipe-search' => ['user-recipe-search'],
+            'recipe-favorites' => ['user-recipe-favorites'],
+            'recipe-suggestions' => ['user-recipe-suggestions'],
+        ];
+        foreach (array_keys($screenScripts) as $screen) {
+            $this->grantPermission($user, 'web.user.' . $screen);
+        }
 
-        $response = $this->actingAs($user)->get('/web/stock');
+        foreach ($screenScripts as $screen => $scripts) {
+            $response = $this->actingAs($user)->get('/web/' . $screen);
+            $response->assertStatus(200);
+            $response->assertSee('name="csrf-token"', false);
+            $response->assertSee('name="ccc-auth" content="session"', false);
+            foreach (['panel-menu', 'api-client', 'auth-api', 'panel-ui', 'loader'] as $commonScript) {
+                $response->assertSee('/js/' . $commonScript . '.js', false);
+            }
+            foreach ($scripts as $script) {
+                $response->assertSee('/js/' . $script . '.js', false);
+            }
 
-        $response->assertStatus(200);
-        $response->assertSee('user-shopping-session.js', false);
-        $response->assertSee('user-purchases.js', false);
-        $response->assertSee('user-recipe-search.js', false);
-        $response->assertSee('user-recipe-favorites.js', false);
-        $response->assertSee('user-recipe-suggestions.js', false);
-        $response->assertSee('user-shopping-lists.js', false);
-        $response->assertSee('user-budget.js', false);
-        $response->assertSee('family-groups.js', false);
+            if ($screen === 'stock') {
+                $response->assertSee('/js/panel-navigation.js', false);
+                $response->assertSee('turbo.es2017-umd.js', false);
+                $response->assertSee('name="turbo-cache-control" content="no-cache"', false);
+            } else {
+                $response->assertSee('name="turbo-visit-control" content="reload"', false);
+                $response->assertDontSee('/js/panel-navigation.js', false);
+            }
+
+            foreach ($screenScripts as $otherScreen => $otherScripts) {
+                if ($otherScreen !== 'stock' && $otherScreen !== $screen) {
+                    foreach ($otherScripts as $otherScript) {
+                        $response->assertDontSee('/js/' . $otherScript . '.js', false);
+                    }
+                }
+            }
+        }
     }
 
     // ── Helper ────────────────────────────────────────────────────────────────
