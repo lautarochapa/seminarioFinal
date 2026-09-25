@@ -32,9 +32,10 @@
                     @if($screenKey === 'recipes' && $metric === 'recipes') data-recipes-summary-count @endif
                     @if($screenKey === 'planning' && $metric === 'meal_plans') data-meal-plan-summary-count @endif
                     @if($screenKey === 'shopping-list' && $metric === 'shopping_lists') data-shopping-list-summary-count @endif
+                    @if($screenKey === 'shopping-list' && $metric === 'purchases') data-shopping-purchase-summary-count @endif
                     @if($screenKey === 'budget' && $metric === 'budgets') data-budget-summary-count @endif
-                >{{ ($screenKey === 'planning' && $metric === 'meal_plans') || ($screenKey === 'shopping-list' && $metric === 'shopping_lists') || ($screenKey === 'budget' && $metric === 'budgets') ? '-' : ($stats[$metric] ?? 0) }}</strong>
-                <span>{{ $screenKey === 'planning' && $metric === 'meal_plans' ? 'Planes del hogar' : ($screenKey === 'shopping-list' && $metric === 'shopping_lists' ? 'Listas del hogar' : ($screenKey === 'budget' && $metric === 'budgets' ? 'Presupuestos del hogar' : ($metricLabels[$metric] ?? 'Total'))) }}</span>
+                >{{ ($screenKey === 'planning' && $metric === 'meal_plans') || ($screenKey === 'shopping-list' && in_array($metric, ['shopping_lists', 'purchases'])) || ($screenKey === 'budget' && $metric === 'budgets') ? '-' : ($stats[$metric] ?? 0) }}</strong>
+                <span>{{ $screenKey === 'planning' && $metric === 'meal_plans' ? 'Planes del hogar' : ($screenKey === 'shopping-list' && $metric === 'shopping_lists' ? 'Listas del hogar' : ($screenKey === 'shopping-list' && $metric === 'purchases' ? 'Compras del hogar' : ($screenKey === 'budget' && $metric === 'budgets' ? 'Presupuestos del hogar' : ($metricLabels[$metric] ?? 'Total')))) }}</span>
             </article>
         @endforeach
     </section>

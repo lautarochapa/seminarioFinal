@@ -14,6 +14,8 @@
         units: [],
         page: 1,
         lastPage: 1,
+        purchaseSummaryRequest: 0,
+        disposed: false,
     };
 
     function qs(selector, root) {
@@ -371,13 +373,13 @@
             var summary = response.data || {};
             showMessage(root, 'success', 'Compra finalizada. Agregamos ' + (summary.items_added_to_stock_count || 0) + ' producto(s) a Mi cocina.');
             return loadList(root, state.selectedList.id).then(function () {
-                return loadLists(root);
+                return Promise.all([loadLists(root), loadPurchaseSummary(root)]);
             });
         }).catch(function (error) {
             if (error.status === 409) {
                 showMessage(root, 'warning', 'Esta lista ya habia sido finalizada.');
                 return loadList(root, state.selectedList.id).then(function () {
-                    return loadLists(root);
+                    return Promise.all([loadLists(root), loadPurchaseSummary(root)]);
                 });
             }
             handleError(root, error);
@@ -531,6 +533,7 @@
                     state.currentGroupId = state.groups[0].id;
                 }
                 renderGroups(root);
+                loadPurchaseSummary(root);
                 if (!state.currentGroupId) {
                     renderLists(root, {});
                     showMessage(root, 'warning', 'Necesitas un grupo familiar para gestionar listas.');
@@ -579,6 +582,25 @@
             state.units = readCollection(responses[2]);
             renderItemCatalogs(root);
         });
+    }
+
+    function loadPurchaseSummary(root) {
+        var count = qs('[data-shopping-purchase-summary-count]');
+        if (!count || state.disposed) return Promise.resolve();
+        var groupId = state.currentGroupId;
+        var requestId = ++state.purchaseSummaryRequest;
+        count.textContent = groupId ? '-' : '0';
+        if (!groupId) return Promise.resolve();
+
+        return window.CCApi.request(api('/family-groups/' + encodeURIComponent(groupId) + '/purchases?per_page=1'))
+            .then(function (response) {
+                if (state.disposed || requestId !== state.purchaseSummaryRequest || String(groupId) !== String(state.currentGroupId) || !root.isConnected || !count.isConnected) return;
+                var meta = response.meta || {};
+                if (meta.total !== undefined && meta.total !== null) count.textContent = meta.total;
+            })
+            .catch(function () {
+                // An unavailable summary must not turn a completed purchase into a failure.
+            });
     }
 
     function loadLists(root) {
@@ -783,6 +805,7 @@
                 renderDetail(root, null);
                 resetForm(root);
                 resetItemForm(root);
+                loadPurchaseSummary(root);
                 loadMealPlans(root).then(function () {
                     return loadLists(root);
                 });
@@ -790,6 +813,7 @@
         }
         qs('[data-shopping-list-refresh]', root).addEventListener('click', function () {
             loadLists(root);
+            loadPurchaseSummary(root);
         });
         qs('[data-shopping-list-prev]', root).addEventListener('click', function () {
             if (state.page > 1) {
@@ -907,6 +931,7 @@
         if (!root) {
             return;
         }
+        if (window.CCPage) window.CCPage.onDispose(function () { state.disposed = true; });
         bind(root);
         loadItemCatalogs(root).then(function () {
             return loadGroups(root);

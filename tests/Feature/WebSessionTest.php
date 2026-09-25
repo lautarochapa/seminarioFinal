@@ -49,6 +49,40 @@ class WebSessionTest extends TestCase
         $this->getJson('/api/v1/family-groups')->assertStatus(401);
     }
 
+    public function test_api_activity_does_not_consume_the_web_logout_limit()
+    {
+        $user = $this->account();
+        $login = $this->withSession(['_token' => 'qa-throttle-csrf'])
+            ->postJson('/web-session/login', ['email' => $user->email, 'password' => 'Local-tests-only-9081'],
+                ['X-CSRF-TOKEN' => 'qa-throttle-csrf'])->assertOk();
+        $csrf = $login->json('csrf_token');
+
+        for ($request = 0; $request < 25; $request++) {
+            $api = $this->getJson('/api/v1/auth/me')->assertOk();
+        }
+        $api->assertHeader('X-RateLimit-Limit', '60');
+        $api->assertHeader('X-RateLimit-Remaining', '35');
+        $this->postJson('/web-session/logout')->assertStatus(419);
+        $this->assertAuthenticatedAs($user);
+        $this->postJson('/web-session/logout', [], ['X-CSRF-TOKEN' => $csrf])->assertNoContent();
+        $this->assertGuest();
+        $this->withSession(['_token' => 'qa-guest-csrf'])
+            ->postJson('/web-session/logout', [], ['X-CSRF-TOKEN' => 'qa-guest-csrf'])->assertStatus(401);
+    }
+
+    public function test_web_login_keeps_its_twenty_attempt_limit()
+    {
+        $this->withSession(['_token' => 'qa-login-limit']);
+        $credentials = ['email' => 'missing-throttle-user@example.invalid', 'password' => 'Invalid-local-only'];
+        for ($attempt = 0; $attempt < 20; $attempt++) {
+            $this->postJson('/web-session/login', $credentials, ['X-CSRF-TOKEN' => 'qa-login-limit'])
+                ->assertStatus(401);
+        }
+        $this->postJson('/web-session/login', $credentials, ['X-CSRF-TOKEN' => 'qa-login-limit'])
+            ->assertStatus(429)->assertJsonPath('error.code', 'AUTH_TOO_MANY_ATTEMPTS');
+        $this->assertGuest();
+    }
+
     public function test_android_token_login_and_writes_keep_working_without_csrf()
     {
         $user = $this->account();

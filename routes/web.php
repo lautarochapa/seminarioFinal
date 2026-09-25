@@ -71,7 +71,7 @@ Route::get('/callback', 'SocialAuthGoogleController@callback');
 
 Auth::routes();
 
-Route::prefix('web-session')->middleware(['trace_id', 'throttle:20,1'])->group(function () {
+Route::prefix('web-session')->middleware(['trace_id', 'throttle:20,1,web-session'])->group(function () {
     Route::post('login', 'WebSessionController@login');
     Route::post('register', 'WebSessionController@register');
     Route::post('logout', 'WebSessionController@logout')->middleware('auth');
