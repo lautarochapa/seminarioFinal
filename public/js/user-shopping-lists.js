@@ -15,6 +15,10 @@
         page: 1,
         lastPage: 1,
         purchaseSummaryRequest: 0,
+        selectionVersion: 0,
+        listRequest: 0,
+        detailRefresh: 0,
+        itemMutationPending: false,
         disposed: false,
     };
 
@@ -283,31 +287,11 @@
             var altPanel = qs('[data-alt-panel]', target);
             if (altPanel) {
                 var alternativeGroupId = state.currentGroupId;
+                var alternativeSelectionVersion = state.selectionVersion;
                 window.ShoppingAlternatives.mount(altPanel, alternativeGroupId, list.id, {
                     canSelect: ['draft', 'active', 'in_progress'].indexOf(list.status) !== -1,
                     onSelected: function () {
-                        function stillSelected() {
-                            return !state.disposed && root.isConnected
-                                && String(state.currentGroupId) === String(alternativeGroupId)
-                                && state.selectedList && String(state.selectedList.id) === String(list.id);
-                        }
-                        if (!stillSelected()) return;
-                        var base = api('/family-groups/' + encodeURIComponent(alternativeGroupId) + '/shopping-lists');
-                        return Promise.all([
-                            window.CCApi.request(base + '/' + encodeURIComponent(list.id)),
-                            window.CCApi.request(base + '?' + buildQuery(root)),
-                        ]).then(function (responses) {
-                            if (!stillSelected()) return;
-                            state.selectedList = responses[0].data || null;
-                            state.lists = responses[1].data || [];
-                            var meta = responses[1].meta || {};
-                            state.page = meta.current_page || state.page;
-                            state.lastPage = meta.last_page || 1;
-                            renderLists(root, meta);
-                            renderDetail(root, state.selectedList);
-                            resetItemForm(root);
-                            if (window.CCUI) window.CCUI.reveal(qs('[data-shopping-list-detail]', root));
-                        });
+                        return refreshSelectedList(root, { groupId: alternativeGroupId, listId: list.id, version: alternativeSelectionVersion });
                     },
                 });
             }
@@ -466,6 +450,7 @@
         form.reset();
         form.elements.id.value = '';
         form.elements.status.value = 'pending';
+        form.ccEstimatedPriceContext = itemPriceContext(form);
         if (title) {
             title.textContent = 'Agregar articulo';
         }
@@ -484,8 +469,9 @@
         selectRecord(form.elements.product_id, item.product);
         form.elements.quantity.value = item.quantity || '';
         selectRecord(form.elements.unit_id, item.unit, item.unit ? catalogUnitName(item.unit) : '');
-        form.elements.estimated_price.value = item.estimated_price || '';
-        form.elements.actual_price.value = item.actual_price || '';
+        form.elements.estimated_price.value = item.estimated_price === null || item.estimated_price === undefined ? '' : item.estimated_price;
+        form.elements.actual_price.value = item.actual_price === null || item.actual_price === undefined ? '' : item.actual_price;
+        form.ccEstimatedPriceContext = itemPriceContext(form);
         form.elements.status.value = item.status || 'pending';
         form.elements.notes.value = item.notes || '';
         if (title) {
@@ -507,6 +493,10 @@
         return data;
     }
 
+    function itemPriceContext(form) {
+        return [form.elements.product_id.value, form.elements.unit_id.value].join('/');
+    }
+
     function buildItemPayload(form) {
         var data = {};
         if (form.elements.ingredient_id.value) {
@@ -524,8 +514,13 @@
         if (form.elements.unit_id.value) {
             data.unit_id = Number(form.elements.unit_id.value);
         }
-        if (form.elements.estimated_price.value !== '') {
+        var priceContextChanged = form.ccEstimatedPriceContext !== undefined && form.ccEstimatedPriceContext !== itemPriceContext(form);
+        if (priceContextChanged) {
+            data.estimated_price = null;
+        } else if (form.elements.estimated_price.value !== '') {
             data.estimated_price = Number(form.elements.estimated_price.value);
+        } else if (form.elements.id.value) {
+            data.estimated_price = null;
         }
         if (form.elements.actual_price.value !== '') {
             data.actual_price = Number(form.elements.actual_price.value);
@@ -638,14 +633,18 @@
             renderLists(root, {});
             return Promise.resolve();
         }
+        var groupId = state.currentGroupId;
+        var requestId = ++state.listRequest;
         return window.CCApi.request(groupPath('/shopping-lists?' + buildQuery(root)))
             .then(function (response) {
+                if (state.disposed || !root.isConnected || requestId !== state.listRequest || String(state.currentGroupId) !== String(groupId)) return;
                 state.lists = response.data || [];
                 state.page = response.meta ? response.meta.current_page : state.page;
                 state.lastPage = response.meta ? response.meta.last_page : 1;
                 renderLists(root, response.meta || {});
             })
             .catch(function (error) {
+                if (state.disposed || !root.isConnected || requestId !== state.listRequest || String(state.currentGroupId) !== String(groupId)) return;
                 state.lists = [];
                 renderLists(root, {});
                 handleError(root, error);
@@ -653,33 +652,97 @@
     }
 
     function loadList(root, id) {
-        if (!state.currentGroupId) {
-            return Promise.resolve();
+        if (!state.currentGroupId) { return Promise.resolve(); }
+        var groupId = state.currentGroupId;
+        var version = ++state.selectionVersion;
+        function current() {
+            return !state.disposed && root.isConnected && version === state.selectionVersion
+                && String(state.currentGroupId) === String(groupId);
         }
         return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(id)))
             .then(function (response) {
+                if (!current()) return;
                 state.selectedList = response.data || null;
                 renderDetail(root, state.selectedList);
                 resetItemForm(root);
                 if (window.CCUI) { window.CCUI.reveal(qs('[data-shopping-list-detail]', root)); }
             })
-            .catch(function (error) {
-                handleError(root, error);
-            });
+            .catch(function (error) { if (current()) handleError(root, error); });
     }
 
-    function loadItems(root) {
-        if (!state.currentGroupId || !state.selectedList) {
-            return Promise.resolve();
-        }
-        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/items'))
-            .then(function (response) {
-                state.selectedList.items = response.data || [];
-                renderDetail(root, state.selectedList);
-            })
-            .catch(function (error) {
-                handleError(root, error);
+    function selectedListContext() {
+        return { groupId: state.currentGroupId, listId: state.selectedList.id, version: state.selectionVersion };
+    }
+
+    function isCurrentList(root, context) {
+        return !state.disposed && root.isConnected && state.selectionVersion === context.version
+            && String(state.currentGroupId) === String(context.groupId)
+            && state.selectedList && String(state.selectedList.id) === String(context.listId);
+    }
+
+    function refreshSelectedList(root, context) {
+        if (!isCurrentList(root, context)) return Promise.resolve(false);
+        var base = api('/family-groups/' + encodeURIComponent(context.groupId) + '/shopping-lists');
+        var query = buildQuery(root);
+        var refreshId = ++state.detailRefresh;
+        var requestId = ++state.listRequest;
+        return Promise.all([
+            window.CCApi.request(base + '/' + encodeURIComponent(context.listId)),
+            window.CCApi.request(base + '?' + query),
+        ]).then(function (responses) {
+            if (!isCurrentList(root, context) || refreshId !== state.detailRefresh) return false;
+            state.selectedList = responses[0].data || null;
+            // A changed table filter/page owns its newer result; the detail still belongs to this list.
+            if (requestId === state.listRequest && query === buildQuery(root)) {
+                state.lists = responses[1].data || [];
+                var meta = responses[1].meta || {};
+                state.page = meta.current_page || state.page;
+                state.lastPage = meta.last_page || 1;
+                renderLists(root, meta);
+            }
+            renderDetail(root, state.selectedList);
+            resetItemForm(root);
+            if (window.CCUI) window.CCUI.reveal(qs('[data-shopping-list-detail]', root));
+            return true;
+        }).catch(function (error) {
+            if (!isCurrentList(root, context) || refreshId !== state.detailRefresh) return false;
+            throw error;
+        });
+    }
+
+    function setItemMutationPending(root, pending) {
+        state.itemMutationPending = pending;
+        var form = qs('[data-shopping-list-item-form]', root);
+        if (form) form.setAttribute('aria-busy', String(pending));
+        Array.from(root.querySelectorAll('[data-shopping-list-item-form] input, [data-shopping-list-item-form] select, [data-shopping-list-item-form] textarea, [data-shopping-list-item-form] button, [data-shopping-list-item-edit], [data-shopping-list-item-delete]')).forEach(function (field) {
+            if (pending) {
+                field.ccItemMutationDisabled = field.disabled;
+                field.disabled = true;
+            } else if (Object.prototype.hasOwnProperty.call(field, 'ccItemMutationDisabled')) {
+                field.disabled = field.ccItemMutationDisabled;
+                delete field.ccItemMutationDisabled;
+            }
+        });
+    }
+
+    function mutateItem(root, itemId, options, successMessage, form) {
+        if (state.itemMutationPending) return Promise.resolve();
+        var context = selectedListContext();
+        var base = api('/family-groups/' + encodeURIComponent(context.groupId) + '/shopping-lists/' + encodeURIComponent(context.listId) + '/items');
+        setItemMutationPending(root, true);
+        return window.CCApi.request(base + (itemId ? '/' + encodeURIComponent(itemId) : ''), options).then(function () {
+            if (!isCurrentList(root, context)) return;
+            // The write is complete even if a subsequent read fails. Clear saved input and never retry the mutation here.
+            resetItemForm(root);
+            if (form && window.CCUI) window.CCUI.saved(form, successMessage);
+            return refreshSelectedList(root, context).then(function (applied) {
+                if (applied) showMessage(root, 'success', successMessage);
+            }, function () {
+                if (isCurrentList(root, context)) showMessage(root, 'warning', 'El cambio del artículo se guardó, pero no pudimos actualizar el total. Volvé a abrir la lista para consultar el estado actual.');
             });
+        }, function (error) {
+            if (isCurrentList(root, context)) handleError(root, error);
+        }).finally(function () { setItemMutationPending(root, false); });
     }
 
     function saveList(root, form) {
@@ -774,41 +837,20 @@
     }
 
     function saveItem(root, form) {
+        if (state.itemMutationPending) return Promise.resolve();
         if (!state.currentGroupId || !state.selectedList) {
             showMessage(root, 'warning', 'Selecciona una lista antes de cargar items.');
             return Promise.resolve();
         }
         var id = form.elements.id.value;
-        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/items' + (id ? '/' + encodeURIComponent(id) : '')), {
-            method: id ? 'PATCH' : 'POST',
-            body: buildItemPayload(form),
-        }).then(function () {
-            showMessage(root, 'success', id ? 'Item actualizado.' : 'Item agregado.');
-            if (window.CCUI) { window.CCUI.saved(form, id ? 'Item actualizado.' : 'Item agregado.'); }
-            resetItemForm(root);
-            return loadItems(root).then(function () {
-                return loadLists(root);
-            });
-        }).catch(function (error) {
-            handleError(root, error);
-        });
+        return mutateItem(root, id, { method: id ? 'PATCH' : 'POST', body: buildItemPayload(form) }, id ? 'Item actualizado.' : 'Item agregado.', form);
     }
 
     function deleteItem(root, id) {
-        if (!state.currentGroupId || !state.selectedList || !id || !window.confirm('Eliminar este item?')) {
+        if (state.itemMutationPending || !state.currentGroupId || !state.selectedList || !id || !window.confirm('Eliminar este item?')) {
             return Promise.resolve();
         }
-        return window.CCApi.request(groupPath('/shopping-lists/' + encodeURIComponent(state.selectedList.id) + '/items/' + encodeURIComponent(id)), {
-            method: 'DELETE',
-        }).then(function () {
-            showMessage(root, 'success', 'Item eliminado.');
-            resetItemForm(root);
-            return loadItems(root).then(function () {
-                return loadLists(root);
-            });
-        }).catch(function (error) {
-            handleError(root, error);
-        });
+        return mutateItem(root, id, { method: 'DELETE' }, 'Item eliminado.');
     }
 
     function bind(root) {
@@ -828,6 +870,7 @@
         });
         if (groupSelect) {
             groupSelect.addEventListener('change', function () {
+                state.selectionVersion += 1;
                 state.currentGroupId = groupSelect.value || null;
                 state.page = 1;
                 state.selectedList = null;
@@ -866,6 +909,19 @@
             });
         }
         if (itemForm) {
+            ['product_id', 'unit_id'].forEach(function (name) {
+                itemForm.elements[name].addEventListener('change', function () {
+                    var context = itemPriceContext(itemForm);
+                    if (itemForm.ccEstimatedPriceContext === context) return;
+                    var hadPrice = itemForm.elements.estimated_price.value !== '';
+                    itemForm.elements.estimated_price.value = '';
+                    itemForm.ccEstimatedPriceContext = context;
+                    if (hadPrice) showMessage(root, 'info', 'Al cambiar el producto o la unidad, ingresá nuevamente el precio estimado si lo conocés.');
+                });
+            });
+            itemForm.elements.estimated_price.addEventListener('input', function () {
+                itemForm.ccEstimatedPriceContext = itemPriceContext(itemForm);
+            });
             itemForm.addEventListener('submit', function (event) {
                 event.preventDefault();
                 saveItem(root, itemForm);
@@ -899,6 +955,7 @@
                     return String(candidate.id) === String(id);
                 });
                 if (list) {
+                    state.selectionVersion += 1;
                     state.selectedList = list;
                     renderDetail(root, list);
                     resetItemForm(root);
@@ -918,7 +975,7 @@
             var pauseBtn = event.target.closest('[data-shopping-list-pause]');
             var repairBtn = event.target.closest('[data-process-pending-stock]');
             if (repairBtn) { repairBtn.disabled = true; processPendingStock(root); }
-            if (edit && state.selectedList) {
+            if (edit && state.selectedList && !state.itemMutationPending) {
                 var editId = edit.getAttribute('data-shopping-list-item-edit');
                 var item = (state.selectedList.items || []).find(function (candidate) {
                     return String(candidate.id) === String(editId);

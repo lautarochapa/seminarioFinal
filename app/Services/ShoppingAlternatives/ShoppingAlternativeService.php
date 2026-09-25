@@ -11,6 +11,7 @@ use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingAlternatives\ShoppingAlternativeRepository;
 use App\Repositories\ShoppingListItems\ShoppingListItemRepository;
 use App\Repositories\ShoppingLists\ShoppingListRepository;
+use App\Services\ShoppingLists\ShoppingListTotalService;
 use App\ShoppingList;
 use App\ShoppingListItem;
 use App\User;
@@ -25,6 +26,7 @@ class ShoppingAlternativeService
     private $alternatives;
     private $packaging;
     private $conversions;
+    private $totals;
 
     public function __construct(
         FamilyGroupRepository $groups,
@@ -32,7 +34,8 @@ class ShoppingAlternativeService
         ShoppingListItemRepository $items,
         ShoppingAlternativeRepository $alternatives,
         ProductPackagingService $packaging,
-        RecipeAvailabilityRepository $conversions
+        RecipeAvailabilityRepository $conversions,
+        ShoppingListTotalService $totals
     ) {
         $this->groups = $groups;
         $this->lists = $lists;
@@ -40,6 +43,7 @@ class ShoppingAlternativeService
         $this->alternatives = $alternatives;
         $this->packaging = $packaging;
         $this->conversions = $conversions;
+        $this->totals = $totals;
     }
 
     public function list(User $user, int $groupId, int $listId): array
@@ -132,9 +136,7 @@ class ShoppingAlternativeService
             $item->supermarket_chain_id = $offer->supermarket_chain_id;
             $item->supermarket_branch_id = $offer->supermarket_branch_id;
             $item->save();
-            $list->estimated_total = round((float) $list->items()->whereNotIn('status', ['skipped', 'cancelled'])
-                ->sum(DB::raw('quantity * COALESCE(estimated_price, 0)')), 2);
-            $list->save();
+            $this->totals->recalculate($list);
             $item = $item->fresh(['ingredient', 'product', 'unit']);
 
             $this->audit($user->id, 'shopping_list_item.alternative_selected', $item->id, $old, $this->payload($item), $ip, $ua);

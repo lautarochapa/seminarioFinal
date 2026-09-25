@@ -50,6 +50,7 @@ class ShoppingListService
             'created_by' => $user->id,
             'source_type' => $sourceType,
             'status' => $data['status'] ?? ShoppingList::STATUS_DRAFT,
+            'estimated_total' => 0,
             'optimization_mode' => $data['optimization_mode'] ?? null,
         ]);
 

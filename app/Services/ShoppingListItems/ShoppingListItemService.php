@@ -7,23 +7,27 @@ use App\Exceptions\FamilyGroup\FamilyGroupException;
 use App\Repositories\FamilyGroup\FamilyGroupRepository;
 use App\Repositories\ShoppingListItems\ShoppingListItemRepository;
 use App\Repositories\ShoppingLists\ShoppingListRepository;
+use App\Services\ShoppingLists\ShoppingListTotalService;
 use App\ShoppingList;
 use App\ShoppingListItem;
 use App\UnitMeasure;
 use App\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class ShoppingListItemService
 {
     private $groups;
     private $lists;
     private $items;
+    private $totals;
 
-    public function __construct(FamilyGroupRepository $groups, ShoppingListRepository $lists, ShoppingListItemRepository $items)
+    public function __construct(FamilyGroupRepository $groups, ShoppingListRepository $lists, ShoppingListItemRepository $items, ShoppingListTotalService $totals)
     {
         $this->groups = $groups;
         $this->lists = $lists;
         $this->items = $items;
+        $this->totals = $totals;
     }
 
     public function list(User $user, int $groupId, int $listId): Collection
@@ -37,56 +41,85 @@ class ShoppingListItemService
     public function create(User $user, int $groupId, int $listId, array $data, string $ip, string $ua): ShoppingListItem
     {
         $this->assertMember($user, $groupId);
-        $list = $this->findList($groupId, $listId);
 
-        $payload = $this->payloadFromInput($data);
-        $payload = $this->applyFreeTextDefaults($payload);
-        $payload['shopping_list_id'] = $list->id;
-        $payload['status'] = $payload['status'] ?? 'pending';
+        return DB::transaction(function () use ($user, $groupId, $listId, $data, $ip, $ua) {
+            $list = $this->lockEditableList($groupId, $listId);
+            $payload = $this->applyFreeTextDefaults($this->payloadFromInput($data));
+            $payload['shopping_list_id'] = $list->id;
+            $payload['status'] = $payload['status'] ?? 'pending';
 
-        $this->validateReferences($payload, $groupId);
-        $this->assertNoDuplicate($list->id, $payload['ingredient_id'] ?? null, $payload['product_id'] ?? null, $payload['unit_id'] ?? null, $payload['free_text_name'] ?? null);
+            $this->validateReferences($payload, $groupId);
+            $this->assertNoDuplicate($list->id, $payload['ingredient_id'] ?? null, $payload['product_id'] ?? null, $payload['unit_id'] ?? null, $payload['free_text_name'] ?? null);
 
-        $item = $this->items->create($payload);
-        $this->audit($user->id, 'shopping_list_item.created', $item->id, null, $this->payload($item), $ip, $ua);
-
-        return $item;
+            $item = $this->items->create($payload);
+            $this->totals->recalculate($list);
+            $this->audit($user->id, 'shopping_list_item.created', $item->id, null, $this->payload($item), $ip, $ua);
+            return $item;
+        });
     }
 
     public function update(User $user, int $groupId, int $listId, int $itemId, array $data, string $ip, string $ua): ShoppingListItem
     {
         $this->assertMember($user, $groupId);
-        $list = $this->findList($groupId, $listId);
-        $item = $this->findItem($list->id, $itemId);
 
-        $old = $this->payload($item);
-        $fields = $this->payloadFromInput($data);
-        $merged = array_merge($old, $fields);
+        return DB::transaction(function () use ($user, $groupId, $listId, $itemId, $data, $ip, $ua) {
+            $list = $this->lockEditableList($groupId, $listId);
+            $item = $this->lockEditableItem($list->id, $itemId);
+            $old = $this->payload($item);
+            $fields = $this->payloadFromInput($data);
+            $merged = array_merge($old, $fields);
 
-        $this->validateReferences($merged, $groupId);
-        $this->assertNoDuplicate($list->id, $merged['ingredient_id'] ?? null, $merged['product_id'] ?? null, $merged['unit_id'] ?? null, $merged['free_text_name'] ?? null, $item->id);
+            $this->validateReferences($merged, $groupId);
+            $this->assertNoDuplicate($list->id, $merged['ingredient_id'] ?? null, $merged['product_id'] ?? null, $merged['unit_id'] ?? null, $merged['free_text_name'] ?? null, $item->id);
+            $fields = $this->applyManualPriceInvalidation($item, $fields);
 
-        $fields = $this->applyManualPriceInvalidation($item, $fields);
-
-        $updated = $this->items->update($item, $fields);
-        $new = $this->payload($updated);
-
-        if ($old !== $new) {
-            $this->audit($user->id, 'shopping_list_item.updated', $updated->id, $old, $new, $ip, $ua);
-        }
-
-        return $updated;
+            $updated = $this->items->update($item, $fields);
+            $this->totals->recalculate($list);
+            $new = $this->payload($updated);
+            if ($old !== $new) {
+                $this->audit($user->id, 'shopping_list_item.updated', $updated->id, $old, $new, $ip, $ua);
+            }
+            return $updated;
+        });
     }
 
     public function delete(User $user, int $groupId, int $listId, int $itemId, string $ip, string $ua): void
     {
         $this->assertMember($user, $groupId);
-        $list = $this->findList($groupId, $listId);
-        $item = $this->findItem($list->id, $itemId);
-        $old = $this->payload($item);
 
-        $this->items->delete($item);
-        $this->audit($user->id, 'shopping_list_item.deleted', $item->id, $old, ['deleted' => true], $ip, $ua);
+        DB::transaction(function () use ($user, $groupId, $listId, $itemId, $ip, $ua) {
+            $list = $this->lockEditableList($groupId, $listId);
+            $item = $this->lockEditableItem($list->id, $itemId);
+            $old = $this->payload($item);
+            $this->items->delete($item);
+            $this->totals->recalculate($list);
+            $this->audit($user->id, 'shopping_list_item.deleted', $item->id, $old, ['deleted' => true], $ip, $ua);
+        });
+    }
+
+    private function lockEditableList(int $groupId, int $listId): ShoppingList
+    {
+        // Every item write takes the parent first, as completion and alternatives do.
+        $list = ShoppingList::where('family_group_id', $groupId)->where('id', $listId)->lockForUpdate()->first();
+        if (!$list) {
+            throw new FamilyGroupException('SHOPPING_LIST_NOT_FOUND', 'La lista de compras no existe.', 404);
+        }
+        if (!in_array($list->status, [ShoppingList::STATUS_DRAFT, ShoppingList::STATUS_ACTIVE, ShoppingList::STATUS_IN_PROGRESS], true)) {
+            throw new FamilyGroupException('SHOPPING_LIST_NOT_EDITABLE', 'Solo podes modificar articulos de una lista abierta.', 409);
+        }
+        return $list;
+    }
+
+    private function lockEditableItem(int $listId, int $itemId): ShoppingListItem
+    {
+        $item = ShoppingListItem::where('shopping_list_id', $listId)->where('id', $itemId)->lockForUpdate()->first();
+        if (!$item) {
+            throw new FamilyGroupException('SHOPPING_LIST_ITEM_NOT_FOUND', 'El item de la lista no existe.', 404);
+        }
+        if ($item->purchase_item_id || $item->stock_processed_at) {
+            throw new FamilyGroupException('SHOPPING_LIST_ITEM_NOT_EDITABLE', 'El articulo ya fue procesado en una compra y no se puede modificar.', 409);
+        }
+        return $item;
     }
 
     private function assertMember(User $user, int $groupId): void
@@ -102,16 +135,6 @@ class ShoppingListItemService
         }
 
         return $list;
-    }
-
-    private function findItem(int $listId, int $itemId): ShoppingListItem
-    {
-        $item = $this->items->findInShoppingList($listId, $itemId);
-        if (!$item) {
-            throw new FamilyGroupException('SHOPPING_LIST_ITEM_NOT_FOUND', 'El item de la lista no existe.', 404);
-        }
-
-        return $item;
     }
 
     /**
