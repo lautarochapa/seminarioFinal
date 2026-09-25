@@ -2132,6 +2132,7 @@
                                 <option value="manual">Manual</option>
                                 <option value="meal_plan">Planificacion</option>
                                 <option value="history">Historico</option>
+                                <option value="recipe">Receta</option>
                             </select>
                             <button type="button" class="btn-secondary-web" data-shopping-list-refresh>Actualizar</button>
                             <span class="chip" data-shopping-list-count>0 listas</span>
@@ -2189,6 +2190,7 @@
                             <option value="manual">Manual</option>
                             <option value="meal_plan">Desde plan</option>
                             <option value="history">Desde historico</option>
+                            <option value="recipe" disabled hidden>Receta</option>
                         </select>
                         <select class="form-control" name="meal_plan_id" data-shopping-list-plan>
                             <option value="">Plan asociado opcional</option>

@@ -98,7 +98,7 @@
     }
 
     function sourceLabel(value) {
-        var labels = { manual: 'Manual', meal_plan: 'Planificacion', history: 'Historico' };
+        var labels = { manual: 'Manual', meal_plan: 'Planificacion', history: 'Historico', recipe: 'Receta' };
         return labels[value] || value;
     }
 
@@ -418,6 +418,9 @@
         }
         form.reset();
         form.elements.id.value = '';
+        form.ccOriginalSourceType = null;
+        form.elements.source_type.disabled = false;
+        form.elements.source_type.querySelector('[value="recipe"]').hidden = true;
         form.elements.source_type.value = 'manual';
         form.elements.status.value = 'draft';
         if (title) {
@@ -433,7 +436,10 @@
             return;
         }
         form.elements.id.value = list.id;
-        form.elements.source_type.value = list.source_type || 'manual';
+        form.ccOriginalSourceType = list.source_type || 'manual';
+        form.elements.source_type.querySelector('[value="recipe"]').hidden = form.ccOriginalSourceType !== 'recipe';
+        form.elements.source_type.disabled = form.ccOriginalSourceType === 'recipe';
+        form.elements.source_type.value = form.ccOriginalSourceType;
         selectRecord(form.elements.meal_plan_id, list.meal_plan_id ? { id: list.meal_plan_id } : null, '#' + list.meal_plan_id);
         form.elements.status.value = list.status || 'draft';
         form.elements.optimization_mode.value = list.optimization_mode || '';
@@ -481,10 +487,11 @@
     }
 
     function buildPayload(form) {
-        var data = {
-            source_type: form.elements.source_type.value,
-            status: form.elements.status.value,
-        };
+        var data = { status: form.elements.status.value };
+        // Recipe is assigned by generation; the edit API preserves it when omitted.
+        if (!form.elements.id.value || form.ccOriginalSourceType !== 'recipe') {
+            data.source_type = form.elements.source_type.value;
+        }
         if (form.elements.meal_plan_id.value) {
             data.meal_plan_id = Number(form.elements.meal_plan_id.value);
         }

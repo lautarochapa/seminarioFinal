@@ -8,14 +8,15 @@ function deferred(){let resolve,reject;const promise=new Promise((a,b)=>{resolve
 async function fixture(screen,options={}){
  const parsed=new JSDOM(read('resources/views/web/user-screen.blade.php'));const selector=screen==='lists'?'[data-user-shopping-lists]':'[data-user-meal-plans]';const markup=parsed.window.document.querySelector(selector).outerHTML;parsed.window.close();
  const dom=new JSDOM(markup,{url:'https://qa.invalid/web/'+(screen==='lists'?'shopping-list':'planning'),runScripts:'outside-only'}),w=dom.window,calls=[],posts=[],disposers=[];let mount,generated=false,preview;
- const oldList={id:16,family_group_id:8,source_type:'manual',status:'draft',estimated_total:'50.00',items:[]};
- const otherList={...oldList,id:17,estimated_total:'70.00'};
+ const oldList={id:16,family_group_id:8,source_type:options.recipeList?'recipe':'manual',status:'draft',estimated_total:'50.00',items:[]};
+ const otherList={...oldList,id:17,source_type:'manual',estimated_total:'70.00'};
  const result={id:30,family_group_id:8,source_type:'meal_plan',status:'draft',estimated_total:'2450.01',items:[]};
  const plan=id=>({id,family_group_id:8,period_type:'daily',start_date:'2026-09-25',end_date:'2026-09-25',status:'draft',items:[]});
  w.HTMLElement.prototype.scrollIntoView=function(){};w.confirm=()=>true;
  w.CCPage={register:(n,f)=>{mount=f;},onDispose:f=>disposers.push(f)};
  w.CCApi={request:(url,config={})=>{
   const p=new URL(url,'https://qa.invalid').pathname;calls.push({url,method:config.method||'GET',body:config.body?clone(config.body):null});
+  if(options.recipeList&&config.method==='PATCH'&&p.endsWith('/shopping-lists/16')){Object.assign(oldList,config.body);return Promise.resolve({data:clone(oldList)});}
   if(config.method){const d=deferred();posts.push({url,body:config.body?clone(config.body):null,resolve:()=>{generated=true;d.resolve({data:clone(result)});},reject:d.reject});return d.promise;}
   if(p==='/api/v1/family-groups')return Promise.resolve({data:[{id:8,name:'Hogar QA'},{id:9,name:'Otro hogar QA'}]});
   if(p.endsWith('/shopping-list-preview')){preview=deferred();return preview.promise;}
@@ -92,4 +93,23 @@ test('pending manual item mutation prevents either generator from sending a POST
  const h=await fixture('lists');t.after(h.close);const form=h.w.document.querySelector('[data-shopping-list-item-form]');
  form.elements.free_text_name.value='QA';form.elements.quantity.value='1';form.requestSubmit();h.generate('menu');h.generate('history');
  assert.equal(h.posts.length,1);assert.ok(h.posts[0].url.endsWith('/shopping-lists/16/items'));
+});
+
+
+test('recipe source uses real markup to filter and cancel while preserving its generated origin',async t=>{
+ const h=await fixture('lists',{recipeList:true});t.after(h.close);const d=h.w.document;
+ const filter=d.querySelector('[data-shopping-list-source]');
+ assert.equal(filter.querySelector('option[value="recipe"]')?.textContent,'Receta','recipe must be a supported filter');
+ assert.match(d.querySelector('[data-shopping-list-body]').textContent,/Receta/);assert.match(h.detail().textContent,/Receta/);
+ filter.value='recipe';filter.dispatchEvent(new h.w.Event('change',{bubbles:true}));await settle();
+ assert.ok(h.calls.some(c=>c.method==='GET'&&new URL(c.url,'https://qa.invalid').searchParams.get('source_type')==='recipe'));
+ d.querySelector('[data-shopping-list-edit="16"]').click();
+ const form=d.querySelector('[data-shopping-list-form]'),source=form.elements.source_type;
+ assert.equal(source.value,'recipe');assert.equal(source.disabled,true);assert.equal(source.selectedOptions[0].textContent,'Receta');assert.equal(source.selectedOptions[0].hidden,false);
+ d.querySelector('[data-shopping-list-edit="17"]').click();assert.equal(source.value,'manual');assert.equal(source.disabled,false,'editing manual must not inherit read-only origin');
+ d.querySelector('[data-shopping-list-edit="16"]').click();d.querySelector('[data-shopping-list-reset]').click();
+ assert.equal(form.elements.id.value,'');assert.equal(source.value,'manual');assert.equal(source.disabled,false);assert.equal(source.querySelector('[value="recipe"]').disabled,true);assert.equal(source.querySelector('[value="recipe"]').hidden,true);
+ d.querySelector('[data-shopping-list-edit="16"]').click();form.elements.status.value='cancelled';form.requestSubmit();await settle();
+ const writes=h.calls.filter(c=>c.method!=='GET');assert.equal(writes.length,1);assert.equal(writes[0].method,'PATCH');assert.ok(writes[0].url.endsWith('/shopping-lists/16'));assert.deepEqual(writes[0].body,{status:'cancelled'});
+ assert.match(h.detail().textContent,/Receta/);assert.match(h.detail().textContent,/Cancelada/);assert.equal(source.value,'manual');assert.equal(source.disabled,false);
 });
