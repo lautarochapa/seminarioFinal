@@ -13,7 +13,6 @@
         sources: [],
         jobs: [],
         products: [],
-        ingredients: [],
         brands: [],
         categories: [],
         selectedIds: {},
@@ -169,8 +168,6 @@
         renderSelect(qs('[data-candidates-source]', root), state.sources, 'Todas las fuentes', entityLabel);
         renderSelect(qs('[data-candidates-job]', root), state.jobs, 'Todas las ejecuciones', jobLabel);
         renderSelect(qs('[data-candidate-product]', root), state.products, 'Producto', productLabel);
-        renderSelect(qs('[data-candidate-ingredient]', root), state.ingredients, 'Ingrediente', entityLabel);
-        renderSelect(qs('[data-candidate-create-ingredient]', root), state.ingredients, 'Ingrediente opcional', entityLabel);
         renderSelect(qs('[data-candidate-brand]', root), state.brands, 'Marca opcional', entityLabel);
         renderSelect(qs('[data-candidate-category]', root), state.categories, 'Categoria opcional', categoryLabel);
     }
@@ -180,16 +177,14 @@
             window.CCApi.request(endpoint('/admin/scraping/sources?per_page=100')),
             window.CCApi.request(endpoint('/admin/scraping/jobs?per_page=50')),
             window.CCApi.request(endpoint('/admin/products?per_page=100&status=active&sort=name&order=asc')),
-            window.CCApi.request(endpoint('/admin/ingredients?per_page=100&status=active&sort=name&order=asc')),
             window.CCApi.request(endpoint('/brands?per_page=100&sort=name&order=asc')),
             window.CCApi.request(endpoint('/product-categories')),
         ]).then(function (responses) {
             state.sources = responses[0].data || [];
             state.jobs = responses[1].data || [];
             state.products = responses[2].data || [];
-            state.ingredients = responses[3].data || [];
-            state.brands = responses[4].data || [];
-            state.categories = flattenTree(responses[5].data || []);
+            state.brands = responses[3].data || [];
+            state.categories = flattenTree(responses[4].data || []);
             renderLookups(root);
         }).catch(function (error) {
             showMessage(root, 'danger', errorMessage(error));
@@ -303,6 +298,9 @@
     }
 
     function loadCandidate(root, id) {
+        state.selected = null;
+        qs('[data-candidate-actions]', root).style.display = 'none';
+        ingredientPickers(root).forEach(function (picker) { picker.reset(); });
         qs('[data-candidate-detail]', root).innerHTML = '<p class="muted">Cargando detalle...</p>';
         if (window.CCUI) { window.CCUI.reveal(qs('[data-candidate-detail]', root)); }
         return window.CCApi.request(endpoint('/admin/scraping/product-candidates/' + encodeURIComponent(id)))
@@ -333,13 +331,25 @@
 
     function setFormDefaults(root, candidate) {
         var enrichment = candidate.enrichment || { detected: {}, suggested: {} };
+        var suggested = enrichment.suggested || {};
+        var ingredient = candidate.suggested_ingredient || null;
+        var ingredientId = candidate.suggested_ingredient_id || suggested.ingredient_id;
+        if (!ingredient && ingredientId) {
+            ingredient = { id: ingredientId, name: suggested.ingredient_name || ('Ingrediente #' + ingredientId) };
+        }
         var createForm = qs('[data-candidate-create-product-form]', root);
         createForm.elements.name.value = candidate.raw_name || '';
         qs('[data-candidate-product]', root).value = candidate.suggested_product_id || '';
-        qs('[data-candidate-ingredient]', root).value = candidate.suggested_ingredient_id || '';
-        qs('[data-candidate-create-ingredient]', root).value = candidate.suggested_ingredient_id || enrichment.suggested.ingredient_id || '';
-        qs('[data-candidate-brand]', root).value = enrichment.suggested.brand_id || '';
-        qs('[data-candidate-category]', root).value = enrichment.suggested.category_id || '';
+        ingredientPickers(root).forEach(function (picker) { picker.setSelected(ingredient); });
+        qs('[data-candidate-brand]', root).value = suggested.brand_id || '';
+        qs('[data-candidate-category]', root).value = suggested.category_id || '';
+    }
+
+    function ingredientPickers(root) {
+        return ['[data-candidate-ingredient]', '[data-candidate-create-ingredient]'].map(function (selector) {
+            var select = qs(selector, root);
+            return select.ccIngredientPicker || window.CCIngredientPicker.attach(select);
+        });
     }
 
     function renderDetail(root, candidate) {
@@ -670,6 +680,7 @@
         if (!root || !window.CCApi) {
             return;
         }
+        ingredientPickers(root);
         bind(root);
         loadLookups(root).then(function () {
             loadCandidates(root, 1);

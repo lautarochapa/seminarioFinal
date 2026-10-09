@@ -27,6 +27,7 @@
     <script src="{{ asset('js/admin-food-tags.js') }}?v={{ file_exists(public_path('js/admin-food-tags.js')) ? filemtime(public_path('js/admin-food-tags.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-brands.js') }}?v={{ file_exists(public_path('js/admin-brands.js')) ? filemtime(public_path('js/admin-brands.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-product-categories.js') }}?v={{ file_exists(public_path('js/admin-product-categories.js')) ? filemtime(public_path('js/admin-product-categories.js')) : time() }}" defer></script>
+    <script src="{{ asset('js/admin-ingredient-picker.js') }}?v={{ file_exists(public_path('js/admin-ingredient-picker.js')) ? filemtime(public_path('js/admin-ingredient-picker.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-products.js') }}?v={{ file_exists(public_path('js/admin-products.js')) ? filemtime(public_path('js/admin-products.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-product-requests.js') }}?v={{ file_exists(public_path('js/admin-product-requests.js')) ? filemtime(public_path('js/admin-product-requests.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-barcodes.js') }}?v={{ file_exists(public_path('js/admin-barcodes.js')) ? filemtime(public_path('js/admin-barcodes.js')) : time() }}" defer></script>

@@ -39,7 +39,7 @@ async function fixture(screen, request) {
     w.CCApi = { request };
     w.confirm = () => true;
     await new Promise(resolve => w.document.addEventListener('DOMContentLoaded', resolve, { once: true }));
-    for (const script of ['admin-labels', 'panel-ui', 'admin-panel-ui', 'admin-' + screen]) w.eval(read('public/js/' + script + '.js'));
+    for (const script of ['admin-labels', 'panel-ui', 'admin-panel-ui', 'admin-ingredient-picker', 'admin-' + screen]) w.eval(read('public/js/' + script + '.js'));
     w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
     await flush();
     assert.deepEqual(errors, [], 'No initialization exceptions');

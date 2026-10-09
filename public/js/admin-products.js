@@ -9,7 +9,6 @@
         products: [],
         brands: [],
         categories: [],
-        ingredients: [],
         units: [],
         page: 1,
         lastPage: 1,
@@ -80,13 +79,11 @@
         return Promise.all([
             window.CCApi.request(endpoint('/brands?per_page=100&sort=name&order=asc')),
             window.CCApi.request(endpoint('/product-categories')),
-            window.CCApi.request(endpoint('/admin/ingredients?per_page=100&status=active&sort=name&order=asc')),
             window.CCApi.request(endpoint('/units?per_page=100&sort=name&order=asc')),
         ]).then(function (responses) {
             state.brands = responses[0].data || [];
             state.categories = flattenTree(responses[1].data || []);
-            state.ingredients = responses[2].data || [];
-            state.units = responses[3].data || [];
+            state.units = responses[2].data || [];
             renderLookups(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -107,7 +104,6 @@
     function renderLookups(root) {
         renderSelects(root, ['[data-products-brand]', '[data-product-brand-select]'], state.brands, ['Marca', 'Marca']);
         renderSelects(root, ['[data-products-category]', '[data-product-category-select]'], state.categories, ['Categoria', 'Categoria']);
-        renderSelects(root, ['[data-products-ingredient]', '[data-product-ingredient-select]'], state.ingredients, ['Ingrediente', 'Ingrediente principal']);
         renderSelects(root, ['[data-product-unit-select]', '[data-product-package-unit-select]'], state.units, ['Unidad', 'Unidad de paquete'], unitLabel);
     }
 
@@ -229,6 +225,9 @@
     function resetForm(root) {
         var form = qs('[data-product-form]', root);
         form.reset();
+        if (form.elements.ingredient_id.ccIngredientPicker) {
+            form.elements.ingredient_id.ccIngredientPicker.reset();
+        }
         form.elements.id.value = '';
         form.elements.status.value = 'active';
         qs('[data-product-form-title]', root).textContent = 'Nuevo producto';
@@ -240,7 +239,10 @@
         form.elements.name.value = product.name || '';
         form.elements.brand_id.value = product.brand_id || '';
         form.elements.category_id.value = product.category_id || '';
-        form.elements.ingredient_id.value = product.ingredient_id || '';
+        form.elements.ingredient_id.ccIngredientPicker.setSelected(product.ingredient_id ? {
+            id: product.ingredient_id,
+            name: product.ingredient ? product.ingredient.name : 'Ingrediente #' + product.ingredient_id,
+        } : null);
         form.elements.barcode.value = product.barcode || '';
         form.elements.net_quantity.value = product.net_quantity || '';
         form.elements.default_unit_id.value = product.default_unit_id || '';
@@ -543,6 +545,8 @@
             return;
         }
 
+        window.CCIngredientPicker.attach(qs('[data-products-ingredient]', root));
+        window.CCIngredientPicker.attach(qs('[data-product-ingredient-select]', root));
         bind(root);
         resetForm(root);
         fetchLookups(root).then(function () {

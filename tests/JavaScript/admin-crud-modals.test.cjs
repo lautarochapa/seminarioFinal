@@ -55,6 +55,7 @@ async function fixture(name, overrides = {}) {
     w.eval(read('public/js/admin-labels.js'));
     w.eval(read('public/js/panel-ui.js'));
     w.eval(read('public/js/admin-panel-ui.js'));
+    w.eval(read('public/js/admin-ingredient-picker.js'));
     w.eval(read('public/js/admin-' + name + '.js'));
     w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
     await flush();
