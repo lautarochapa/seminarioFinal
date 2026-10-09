@@ -5,7 +5,8 @@ const { JSDOM } = require(require.resolve('jsdom', { paths: [path.join(__dirname
 const shared = fs.readFileSync(path.join(__dirname, '../../public/js/panel-ui.js'), 'utf8');
 const adapter = fs.readFileSync(path.join(__dirname, '../../public/js/admin-panel-ui.js'), 'utf8');
 const blade = fs.readFileSync(path.join(__dirname, '../../resources/views/web/admin-screen.blade.php'), 'utf8');
-const branches = [...blade.matchAll(/@(?:if|elseif)\(\$screenKey === '([^']+)'\)/g)];
+// Dashboard is a server-rendered summary, covered by admin-dashboard.test.cjs.
+const branches = [...blade.matchAll(/@(?:if|elseif)\(\$screenKey === '([^']+)'\)/g)].filter(branch => branch[1] !== 'dashboard');
 
 function boot(html, screen, hash = '') {
     const dom = new JSDOM('<body><button id="return-focus">Volver</button><section class="hero"><a href="#" data-screen-primary-action>Crear</a><a href="#" data-screen-secondary-action>Secundaria</a></section><div data-admin-ui data-admin-screen="' + screen + '">' + html + '</div></body>', { url: 'http://localhost/admin-web/' + screen + hash, runScripts: 'outside-only' });

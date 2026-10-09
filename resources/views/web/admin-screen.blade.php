@@ -3,6 +3,9 @@
 @section('title', $screen['title'].' - Admin CC Control')
 
 @section('content')
+    @if($screenKey === 'dashboard')
+        @include('web.admin-dashboard')
+    @else
     <section class="hero">
         <div>
             <div class="module">{{ $screen['module'] }}</div>
@@ -3150,4 +3153,5 @@ Preparación:
     </section>
     @endif
     </div>
+    @endif
 @endsection

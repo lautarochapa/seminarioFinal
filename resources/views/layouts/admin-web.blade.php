@@ -115,6 +115,9 @@
     </style>
     <link href="{{ asset('css/panel-ui.css') }}?v={{ filemtime(public_path('css/panel-ui.css')) }}" rel="stylesheet">
     <link href="{{ asset('css/admin-panel-ui.css') }}?v={{ filemtime(public_path('css/admin-panel-ui.css')) }}" rel="stylesheet">
+    @if(($screenKey ?? '') === 'dashboard')
+        <link href="{{ asset('css/admin-dashboard.css') }}?v={{ filemtime(public_path('css/admin-dashboard.css')) }}" rel="stylesheet">
+    @endif
 </head>
 <body>
 @include('partials.site-header')

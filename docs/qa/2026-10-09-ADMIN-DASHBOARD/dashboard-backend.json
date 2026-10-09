@@ -1,0 +1,2689 @@
+{
+    "result": "PASS",
+    "database": "isolated qa-admin/qa.sqlite",
+    "checks": 662,
+    "failures": [],
+    "roles": {
+        "catalog_admin": {
+            "sections": [
+                "catalog",
+                "pending",
+                "scraping",
+                "catalog-configuration"
+            ],
+            "cards": 29,
+            "count_queries": 28
+        },
+        "recipe_admin": {
+            "sections": [
+                "recipes",
+                "pending",
+                "scraping"
+            ],
+            "cards": 10,
+            "count_queries": 9
+        },
+        "super_admin": {
+            "sections": [
+                "catalog",
+                "recipes",
+                "pending",
+                "scraping",
+                "catalog-configuration",
+                "administration"
+            ],
+            "cards": 42,
+            "count_queries": 40
+        }
+    },
+    "results": [
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open products",
+            "pass": true
+        },
+        {
+            "name": "products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open ingredients",
+            "pass": true
+        },
+        {
+            "name": "ingredients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open supermarkets",
+            "pass": true
+        },
+        {
+            "name": "supermarkets is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open branches",
+            "pass": true
+        },
+        {
+            "name": "branches is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open published_products",
+            "pass": true
+        },
+        {
+            "name": "published_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open brands",
+            "pass": true
+        },
+        {
+            "name": "brands is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_categories",
+            "pass": true
+        },
+        {
+            "name": "product_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open ingredient_categories",
+            "pass": true
+        },
+        {
+            "name": "ingredient_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open supermarket_products",
+            "pass": true
+        },
+        {
+            "name": "supermarket_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open prices",
+            "pass": true
+        },
+        {
+            "name": "prices is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open barcodes",
+            "pass": true
+        },
+        {
+            "name": "barcodes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open cities",
+            "pass": true
+        },
+        {
+            "name": "cities is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open products_pending_review",
+            "pass": true
+        },
+        {
+            "name": "products_pending_review is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_requests_pending",
+            "pass": true
+        },
+        {
+            "name": "product_requests_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_reports_open",
+            "pass": true
+        },
+        {
+            "name": "product_reports_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open price_refresh_pending",
+            "pass": true
+        },
+        {
+            "name": "price_refresh_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_alerts_open",
+            "pass": true
+        },
+        {
+            "name": "product_alerts_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_errors_total",
+            "pass": true
+        },
+        {
+            "name": "product_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open units",
+            "pass": true
+        },
+        {
+            "name": "units is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open conversions",
+            "pass": true
+        },
+        {
+            "name": "conversions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open equivalences",
+            "pass": true
+        },
+        {
+            "name": "equivalences is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open nutrients",
+            "pass": true
+        },
+        {
+            "name": "nutrients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open food_tags",
+            "pass": true
+        },
+        {
+            "name": "food_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open objectives",
+            "pass": true
+        },
+        {
+            "name": "objectives is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open allergies",
+            "pass": true
+        },
+        {
+            "name": "allergies is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open health_conditions",
+            "pass": true
+        },
+        {
+            "name": "health_conditions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open dietary_restrictions",
+            "pass": true
+        },
+        {
+            "name": "dietary_restrictions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open official_recipes",
+            "pass": true
+        },
+        {
+            "name": "official_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open imported_recipes",
+            "pass": true
+        },
+        {
+            "name": "imported_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_categories",
+            "pass": true
+        },
+        {
+            "name": "recipe_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_tags",
+            "pass": true
+        },
+        {
+            "name": "recipe_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open meal_types",
+            "pass": true
+        },
+        {
+            "name": "meal_types is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipes_pending_completion",
+            "pass": true
+        },
+        {
+            "name": "recipes_pending_completion is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_imports_failed",
+            "pass": true
+        },
+        {
+            "name": "recipe_imports_failed is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_errors_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open products",
+            "pass": true
+        },
+        {
+            "name": "products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open ingredients",
+            "pass": true
+        },
+        {
+            "name": "ingredients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open supermarkets",
+            "pass": true
+        },
+        {
+            "name": "supermarkets is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open branches",
+            "pass": true
+        },
+        {
+            "name": "branches is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open published_products",
+            "pass": true
+        },
+        {
+            "name": "published_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open brands",
+            "pass": true
+        },
+        {
+            "name": "brands is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_categories",
+            "pass": true
+        },
+        {
+            "name": "product_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open ingredient_categories",
+            "pass": true
+        },
+        {
+            "name": "ingredient_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open supermarket_products",
+            "pass": true
+        },
+        {
+            "name": "supermarket_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open prices",
+            "pass": true
+        },
+        {
+            "name": "prices is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open barcodes",
+            "pass": true
+        },
+        {
+            "name": "barcodes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open cities",
+            "pass": true
+        },
+        {
+            "name": "cities is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open official_recipes",
+            "pass": true
+        },
+        {
+            "name": "official_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open imported_recipes",
+            "pass": true
+        },
+        {
+            "name": "imported_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_categories",
+            "pass": true
+        },
+        {
+            "name": "recipe_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_tags",
+            "pass": true
+        },
+        {
+            "name": "recipe_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open meal_types",
+            "pass": true
+        },
+        {
+            "name": "meal_types is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open products_pending_review",
+            "pass": true
+        },
+        {
+            "name": "products_pending_review is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_requests_pending",
+            "pass": true
+        },
+        {
+            "name": "product_requests_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_reports_open",
+            "pass": true
+        },
+        {
+            "name": "product_reports_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open price_refresh_pending",
+            "pass": true
+        },
+        {
+            "name": "price_refresh_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipes_pending_completion",
+            "pass": true
+        },
+        {
+            "name": "recipes_pending_completion is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_imports_failed",
+            "pass": true
+        },
+        {
+            "name": "recipe_imports_failed is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_alerts_open",
+            "pass": true
+        },
+        {
+            "name": "product_alerts_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_errors_total",
+            "pass": true
+        },
+        {
+            "name": "product_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_alerts_open",
+            "pass": true
+        },
+        {
+            "name": "recipe_alerts_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_errors_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open units",
+            "pass": true
+        },
+        {
+            "name": "units is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open conversions",
+            "pass": true
+        },
+        {
+            "name": "conversions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open equivalences",
+            "pass": true
+        },
+        {
+            "name": "equivalences is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open nutrients",
+            "pass": true
+        },
+        {
+            "name": "nutrients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open food_tags",
+            "pass": true
+        },
+        {
+            "name": "food_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open objectives",
+            "pass": true
+        },
+        {
+            "name": "objectives is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open allergies",
+            "pass": true
+        },
+        {
+            "name": "allergies is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open health_conditions",
+            "pass": true
+        },
+        {
+            "name": "health_conditions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open dietary_restrictions",
+            "pass": true
+        },
+        {
+            "name": "dietary_restrictions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open users",
+            "pass": true
+        },
+        {
+            "name": "users is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open roles",
+            "pass": true
+        },
+        {
+            "name": "roles is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open products",
+            "pass": true
+        },
+        {
+            "name": "products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open ingredients",
+            "pass": true
+        },
+        {
+            "name": "ingredients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open supermarkets",
+            "pass": true
+        },
+        {
+            "name": "supermarkets is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open branches",
+            "pass": true
+        },
+        {
+            "name": "branches is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open published_products",
+            "pass": true
+        },
+        {
+            "name": "published_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open brands",
+            "pass": true
+        },
+        {
+            "name": "brands is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_categories",
+            "pass": true
+        },
+        {
+            "name": "product_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open ingredient_categories",
+            "pass": true
+        },
+        {
+            "name": "ingredient_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open supermarket_products",
+            "pass": true
+        },
+        {
+            "name": "supermarket_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open prices",
+            "pass": true
+        },
+        {
+            "name": "prices is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open barcodes",
+            "pass": true
+        },
+        {
+            "name": "barcodes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open cities",
+            "pass": true
+        },
+        {
+            "name": "cities is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open products_pending_review",
+            "pass": true
+        },
+        {
+            "name": "products_pending_review is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_requests_pending",
+            "pass": true
+        },
+        {
+            "name": "product_requests_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_reports_open",
+            "pass": true
+        },
+        {
+            "name": "product_reports_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open price_refresh_pending",
+            "pass": true
+        },
+        {
+            "name": "price_refresh_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_alerts_open",
+            "pass": true
+        },
+        {
+            "name": "product_alerts_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open product_errors_total",
+            "pass": true
+        },
+        {
+            "name": "product_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open units",
+            "pass": true
+        },
+        {
+            "name": "units is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open conversions",
+            "pass": true
+        },
+        {
+            "name": "conversions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open equivalences",
+            "pass": true
+        },
+        {
+            "name": "equivalences is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open nutrients",
+            "pass": true
+        },
+        {
+            "name": "nutrients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open food_tags",
+            "pass": true
+        },
+        {
+            "name": "food_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open objectives",
+            "pass": true
+        },
+        {
+            "name": "objectives is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open allergies",
+            "pass": true
+        },
+        {
+            "name": "allergies is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open health_conditions",
+            "pass": true
+        },
+        {
+            "name": "health_conditions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_catalog_admin can open dietary_restrictions",
+            "pass": true
+        },
+        {
+            "name": "dietary_restrictions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin products has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin published_products has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin ingredients has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin cities has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin supermarkets has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin branches has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin supermarket_products has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin prices has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin products_pending_review has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin product_requests_pending has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin product_reports_open has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin price_refresh_pending has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin product_jobs_active has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin product_jobs_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin product_alerts_open has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin product_errors_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin never queries retired modules",
+            "pass": true
+        },
+        {
+            "name": "catalog administrator does not count recipes or accounts",
+            "pass": true
+        },
+        {
+            "name": "catalog administrator cannot see recipe scraping activity",
+            "pass": true
+        },
+        {
+            "name": "requested quantities come first",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin controller bypasses global stats",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open official_recipes",
+            "pass": true
+        },
+        {
+            "name": "official_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open imported_recipes",
+            "pass": true
+        },
+        {
+            "name": "imported_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_categories",
+            "pass": true
+        },
+        {
+            "name": "recipe_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_tags",
+            "pass": true
+        },
+        {
+            "name": "recipe_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open meal_types",
+            "pass": true
+        },
+        {
+            "name": "meal_types is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipes_pending_completion",
+            "pass": true
+        },
+        {
+            "name": "recipes_pending_completion is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_imports_failed",
+            "pass": true
+        },
+        {
+            "name": "recipe_imports_failed is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_recipe_admin can open recipe_errors_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin official_recipes has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin imported_recipes has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin recipes_pending_completion has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin recipe_imports_failed has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin recipe_jobs_active has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin recipe_jobs_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin recipe_errors_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin never queries retired modules",
+            "pass": true
+        },
+        {
+            "name": "recipe administrator does not count catalog or accounts",
+            "pass": true
+        },
+        {
+            "name": "recipe administrator cannot see product scraping activity",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin controller bypasses global stats",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open products",
+            "pass": true
+        },
+        {
+            "name": "products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open ingredients",
+            "pass": true
+        },
+        {
+            "name": "ingredients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open supermarkets",
+            "pass": true
+        },
+        {
+            "name": "supermarkets is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open branches",
+            "pass": true
+        },
+        {
+            "name": "branches is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open published_products",
+            "pass": true
+        },
+        {
+            "name": "published_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open brands",
+            "pass": true
+        },
+        {
+            "name": "brands is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_categories",
+            "pass": true
+        },
+        {
+            "name": "product_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open ingredient_categories",
+            "pass": true
+        },
+        {
+            "name": "ingredient_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open supermarket_products",
+            "pass": true
+        },
+        {
+            "name": "supermarket_products is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open prices",
+            "pass": true
+        },
+        {
+            "name": "prices is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open barcodes",
+            "pass": true
+        },
+        {
+            "name": "barcodes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open cities",
+            "pass": true
+        },
+        {
+            "name": "cities is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open official_recipes",
+            "pass": true
+        },
+        {
+            "name": "official_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open imported_recipes",
+            "pass": true
+        },
+        {
+            "name": "imported_recipes is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_categories",
+            "pass": true
+        },
+        {
+            "name": "recipe_categories is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_tags",
+            "pass": true
+        },
+        {
+            "name": "recipe_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open meal_types",
+            "pass": true
+        },
+        {
+            "name": "meal_types is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open products_pending_review",
+            "pass": true
+        },
+        {
+            "name": "products_pending_review is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_requests_pending",
+            "pass": true
+        },
+        {
+            "name": "product_requests_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_reports_open",
+            "pass": true
+        },
+        {
+            "name": "product_reports_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open price_refresh_pending",
+            "pass": true
+        },
+        {
+            "name": "price_refresh_pending is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipes_pending_completion",
+            "pass": true
+        },
+        {
+            "name": "recipes_pending_completion is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_imports_failed",
+            "pass": true
+        },
+        {
+            "name": "recipe_imports_failed is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "product_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_alerts_open",
+            "pass": true
+        },
+        {
+            "name": "product_alerts_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open product_errors_total",
+            "pass": true
+        },
+        {
+            "name": "product_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_jobs_active",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_active is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_jobs_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_jobs_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_alerts_open",
+            "pass": true
+        },
+        {
+            "name": "recipe_alerts_open is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open recipe_errors_total",
+            "pass": true
+        },
+        {
+            "name": "recipe_errors_total is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open units",
+            "pass": true
+        },
+        {
+            "name": "units is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open conversions",
+            "pass": true
+        },
+        {
+            "name": "conversions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open equivalences",
+            "pass": true
+        },
+        {
+            "name": "equivalences is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open nutrients",
+            "pass": true
+        },
+        {
+            "name": "nutrients is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open food_tags",
+            "pass": true
+        },
+        {
+            "name": "food_tags is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open objectives",
+            "pass": true
+        },
+        {
+            "name": "objectives is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open allergies",
+            "pass": true
+        },
+        {
+            "name": "allergies is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open health_conditions",
+            "pass": true
+        },
+        {
+            "name": "health_conditions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open dietary_restrictions",
+            "pass": true
+        },
+        {
+            "name": "dietary_restrictions is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin has no empty sections",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open users",
+            "pass": true
+        },
+        {
+            "name": "users is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "local_super_admin can open roles",
+            "pass": true
+        },
+        {
+            "name": "roles is an explicit non-negative integer",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "dashboard query is read-only",
+            "pass": true
+        },
+        {
+            "name": "super_admin products has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin published_products has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin ingredients has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin cities has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin supermarkets has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin branches has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin supermarket_products has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin prices has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin official_recipes has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin imported_recipes has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin products_pending_review has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin product_requests_pending has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin product_reports_open has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin price_refresh_pending has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin recipes_pending_completion has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin recipe_imports_failed has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin product_jobs_active has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin product_jobs_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin product_alerts_open has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin product_errors_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin recipe_jobs_active has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin recipe_jobs_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin recipe_alerts_open has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin recipe_errors_total has correct state/soft-delete/type count",
+            "pass": true
+        },
+        {
+            "name": "super_admin never queries retired modules",
+            "pass": true
+        },
+        {
+            "name": "super_admin controller bypasses global stats",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "controller dashboard has no writes or stale-job reconciliation",
+            "pass": true
+        },
+        {
+            "name": "other screens only query requested statistics",
+            "pass": true
+        },
+        {
+            "name": "non-dashboard screen does not compute dashboard",
+            "pass": true
+        },
+        {
+            "name": "no destinations means no sections and no queries",
+            "pass": true
+        },
+        {
+            "name": "old pending recipe job stays pending: read does not reconcile it",
+            "pass": true
+        },
+        {
+            "name": "all SQLite tables unchanged after fixture rollback",
+            "pass": true
+        }
+    ]
+}

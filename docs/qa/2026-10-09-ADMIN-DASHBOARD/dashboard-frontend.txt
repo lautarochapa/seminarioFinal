@@ -1,0 +1,32 @@
+Dashboard admin: frontend verification
+Recorded from the completed execution (tool output chunk 4cfce2). No tests were rerun to create this record.
+Working directory: C:\Users\lauta\OneDrive\Documentos\GitHub\seminarioFinal\.runtime\admin-ui-20261009
+
+Reproduction commands (PowerShell):
+$env:NODE_PATH='C:\Users\lauta\Documents\GitHub\seminarioFinal\.runtime\roles-phase1\mobile\node_modules'
+$env:PHP_BINARY='C:\Users\lauta\Documents\GitHub\seminarioFinal\.runtime\php8229\php.exe'
+& 'C:\Users\lauta\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' --test tests\JavaScript\admin-dashboard.test.cjs
+& 'C:\Users\lauta\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' tests\Smoke\admin-panel-ui.cjs
+
+Runtime scope:
+- PHP helper compiles the real admin-screen content branch and the dashboard partial using BladeCompiler.
+- It requires vendor/autoload.php, never bootstrap/app.php, .env, DB, routes, migrations or seeders.
+- Included view is restricted to web.admin-dashboard. Values are synthetic test data.
+- Paths derive from __DIR__; compilation uses compileString and does not write compiled views.
+- JSDOM runs only the explicit panel-ui and admin-panel-ui scripts, with external resources disabled by default.
+- A failing API stub ensures these scripts do not request dashboard counts.
+- No browser-layout claim: responsive rendering and real role data remain for the parent browser/backend QA.
+
+Completed output:
+PASS real dashboard branch shows precise counts and all sections without the old metrics or tabs (758.2686ms)
+PASS view renders only the sections and destination links provided by the permission-filtered contract (333.5377ms)
+PASS empty permissions state has no invented counts, actions or placeholder cards (567.7142ms)
+PASS labels and descriptions are escaped and a missing destination never becomes a fake action (275.8485ms)
+tests 4; pass 4; fail 0; cancelled 0; skipped 0; todo 0; duration_ms 11454.176
+
+Admin adapter smoke:
+PASS 39 admin screen branches / 44 original forms.
+Dashboard is explicitly excluded from the CRUD branch smoke and covered by the real-branch tests above.
+The smoke preserves form ownership and handlers, modal validation/focus/cancel, native tab keyboard navigation and audit hash restoration.
+
+Final read-only review: helper isolation confirmed; git diff --check PASS.

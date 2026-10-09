@@ -1,0 +1,46 @@
+{
+  "result": "PASS",
+  "date": "2026-10-09",
+  "source": "8289341e2c53d5ad5c57551fe8b1eeda3db7d63f",
+  "scope": "Admin dashboard backend",
+  "checks": 662,
+  "evidence": "dashboard-backend.json",
+  "php": [
+    {
+      "file": "app/Http/Controllers/AdminWebScreenController.php",
+      "lint": "PASS",
+      "sha256": "7A0E1401E81948C674A5FD5E11CBB7DB181184D26B17D29ED592D222DFC9C52D"
+    },
+    {
+      "file": "app/Services/Admin/AdminDashboardService.php",
+      "lint": "PASS",
+      "sha256": "7AEEE264B50FB6FFCBE06346C3CBE679776787EC68092A98EBED5E2D496C048A"
+    },
+    {
+      "file": "tests/Smoke/admin-dashboard.php",
+      "lint": "PASS",
+      "sha256": "B51C97C8424F4298483DDA741C27FBAF625475FFDD798D447BDA8399273C74C0"
+    }
+  ],
+  "command": "php -d extension=php_pdo_sqlite.dll -d extension=php_sqlite3.dll tests/Smoke/admin-dashboard.php",
+  "contract": "dashboard.sections[{key,title,description,cards:[{key,label,value:int,description,url}]}]",
+  "coverage": [
+    "Three existing synthetic administrator roles",
+    "State-specific pending counts and soft-delete exclusions",
+    "Official vs personal recipes",
+    "Published products vs all registered products",
+    "Product and recipe scraping scopes; no stale-job reconciliation",
+    "Permission checked before each count and valid destination links",
+    "Read-only SQL for service/controller",
+    "Other screens only count requested metric keys",
+    "All SQLite table fingerprints unchanged after rollback"
+  ],
+  "historical_dashboard": "Previously showed total scraping_jobs, scraped_product_candidates, scraping_alerts, scraping_errors without status or job_type; labels Listo/PostgreSQL/ABM were placeholders, not live health checks",
+  "limits": [
+    "No production DB, network, scraping, or real accounts",
+    "SQLite fixture smoke, not PHPUnit/PostgreSQL performance/concurrency testing",
+    "UI render and route regression handled separately by root/QA",
+    "Scraping alert/error cards count records associated with jobs of the permitted type; unassigned rows excluded"
+  ],
+  "status": "App changes frozen; no commit/push by backend agent"
+}

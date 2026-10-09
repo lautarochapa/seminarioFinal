@@ -54,7 +54,10 @@ class AdminWebScreenController extends Controller
             'screenKey' => $screen,
             'screen' => $screens[$screen],
             'screens' => $screens,
-            'stats' => $this->stats(),
+            'stats' => $screen === 'dashboard' ? [] : $this->stats($screens[$screen]['metrics']),
+            'dashboard' => $screen === 'dashboard'
+                ? app(\App\Services\Admin\AdminDashboardService::class)->build(request()->user(), $screens)
+                : ['sections' => []],
         ]);
     }
 
@@ -63,51 +66,59 @@ class AdminWebScreenController extends Controller
         return $this->index('dashboard');
     }
 
-    private function stats()
+    private function stats(array $keys)
     {
-        return [
-            'users' => User::count(),
-            'roles' => Role::count(),
-            'permissions' => Permission::count(),
-            'ingredients' => Ingredient::count(),
-            'ingredient_categories' => IngredientCategory::count(),
-            'nutrients' => Nutrient::count(),
-            'objectives' => Objective::count(),
-            'allergies' => \App\Allergy::count(),
-            'health_conditions' => \App\HealthCondition::count(),
-            'dietary_restrictions' => \App\DietaryRestriction::count(),
-            'units' => UnitMeasure::count(),
-            'conversions' => UnitConversion::count(),
-            'products' => Product::count(),
-            'product_requests' => ProductRequest::count(),
-            'product_categories' => ProductCategory::count(),
-            'brands' => Brand::count(),
-            'barcodes' => ProductBarcode::count(),
-            'supermarkets' => SupermarketChain::count(),
-            'branches' => SupermarketBranch::count(),
-            'supermarket_products' => SupermarketProduct::count(),
-            'prices' => SupermarketProductPrice::count(),
-            'price_refresh_requests' => PriceRefreshRequest::count(),
-            'scraping_jobs' => ScrapingJob::count(),
-            'scraped_products' => ScrapedProductCandidate::count(),
-            'scraping_alerts' => ScrapingAlert::count(),
-            'scraping_errors' => ScrapingError::count(),
-            'recipes' => Recipe::count(),
-            'imported_recipes' => ImportedRecipeCandidate::count(),
-            'recipe_tags' => RecipeTag::count(),
-            'food_tags' => FoodTag::count(),
-            'audit_logs' => AuditLog::count(),
-            'settings' => SystemSetting::count(),
-            'feature_flags' => FeatureFlag::count(),
-            'thesis_documents' => ThesisDocument::count(),
-            'demo_scenarios' => DemoScenario::count(),
+        $models = [
+            'users' => User::class,
+            'roles' => Role::class,
+            'permissions' => Permission::class,
+            'ingredients' => Ingredient::class,
+            'ingredient_categories' => IngredientCategory::class,
+            'nutrients' => Nutrient::class,
+            'objectives' => Objective::class,
+            'allergies' => \App\Allergy::class,
+            'health_conditions' => \App\HealthCondition::class,
+            'dietary_restrictions' => \App\DietaryRestriction::class,
+            'units' => UnitMeasure::class,
+            'conversions' => UnitConversion::class,
+            'products' => Product::class,
+            'product_requests' => ProductRequest::class,
+            'product_categories' => ProductCategory::class,
+            'brands' => Brand::class,
+            'barcodes' => ProductBarcode::class,
+            'supermarkets' => SupermarketChain::class,
+            'branches' => SupermarketBranch::class,
+            'supermarket_products' => SupermarketProduct::class,
+            'prices' => SupermarketProductPrice::class,
+            'price_refresh_requests' => PriceRefreshRequest::class,
+            'scraping_jobs' => ScrapingJob::class,
+            'scraped_products' => ScrapedProductCandidate::class,
+            'scraping_alerts' => ScrapingAlert::class,
+            'scraping_errors' => ScrapingError::class,
+            'recipes' => Recipe::class,
+            'imported_recipes' => ImportedRecipeCandidate::class,
+            'recipe_tags' => RecipeTag::class,
+            'food_tags' => FoodTag::class,
+            'audit_logs' => AuditLog::class,
+            'settings' => SystemSetting::class,
+            'feature_flags' => FeatureFlag::class,
+            'thesis_documents' => ThesisDocument::class,
+            'demo_scenarios' => DemoScenario::class,
         ];
+        $stats = [];
+        foreach (array_unique($keys) as $key) {
+            if (isset($models[$key])) {
+                $model = $models[$key];
+                $stats[$key] = $model::count();
+            }
+        }
+        return $stats;
     }
 
     private function screens()
     {
         return [
-            'dashboard' => ['title' => 'Dashboard admin', 'module' => 'Reportes admin', 'description' => 'Pendientes, scraping, validaciones, errores.', 'primary' => 'Ver pendientes', 'secondary' => 'Revisar errores', 'metrics' => ['scraping_jobs', 'scraped_products', 'scraping_alerts', 'scraping_errors'], 'panels' => ['Pendientes', 'Scraping', 'Validaciones', 'Errores']],
+            'dashboard' => ['title' => 'Resumen de administración', 'module' => 'Administración', 'description' => 'Cantidades del catálogo, pendientes y actividad de los módulos a los que tenés acceso.', 'primary' => '', 'secondary' => '', 'metrics' => [], 'panels' => []],
             'users' => ['title' => 'Usuarios', 'module' => 'Usuarios, roles', 'description' => 'ABM usuarios.', 'primary' => 'Nuevo usuario', 'secondary' => 'Exportar', 'metrics' => ['users', 'roles'], 'panels' => ['Listado', 'Roles asignados', 'Estado', 'Actividad']],
             'roles-permissions' => ['title' => 'Roles y permisos', 'module' => 'Seguridad', 'description' => 'Gestion de permisos.', 'primary' => 'Nuevo rol', 'secondary' => 'Editar permisos', 'metrics' => ['roles', 'permissions'], 'panels' => ['Roles', 'Permisos', 'Matriz', 'Auditoria']],
             'objectives' => ['title' => 'Objetivos', 'module' => 'Perfil y salud', 'description' => 'ABM de objetivos configurables para usuarios.', 'primary' => 'Nuevo objetivo', 'secondary' => 'Ver catalogo', 'metrics' => ['objectives'], 'panels' => ['Catalogo', 'Estado', 'Descripciones', 'Uso']],
