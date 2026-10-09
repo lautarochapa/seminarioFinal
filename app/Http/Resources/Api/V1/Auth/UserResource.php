@@ -24,7 +24,9 @@ class UserResource extends JsonResource
                     return ['code' => $role->code, 'name' => $role->name];
                 });
             }),
-            'permissions'       => $this->permissions()->pluck('code')->values(),
+            'permissions'       => $this->permissions()
+                ->whereNotIn('permissions.code', \App\Services\Auth\RolePolicy::RETIRED_COMMERCE_PERMISSIONS)
+                ->pluck('code')->values(),
             'created_at'        => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }

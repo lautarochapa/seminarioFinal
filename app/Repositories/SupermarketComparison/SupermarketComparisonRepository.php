@@ -22,7 +22,7 @@ class SupermarketComparisonRepository
 
     public function latestPriceForBranch(int $branchId, int $productId, int $unitId): ?SupermarketProductPrice
     {
-        return SupermarketProductPrice::with(['promotion', 'supermarketProduct'])
+        return SupermarketProductPrice::with(['supermarketProduct'])
             ->where('status', 'active')
             ->whereHas('supermarketProduct', function ($query) use ($branchId, $productId) {
                 $query->where('supermarket_branch_id', $branchId)

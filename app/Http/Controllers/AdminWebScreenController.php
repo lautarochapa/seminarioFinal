@@ -11,14 +11,12 @@ use App\Ingredient;
 use App\IngredientCategory;
 use App\Nutrient;
 use App\Objective;
-use App\PaymentMethod;
 use App\Permission;
 use App\PriceRefreshRequest;
 use App\Product;
 use App\ProductBarcode;
 use App\ProductCategory;
 use App\ProductRequest;
-use App\Promotion;
 use App\Recipe;
 use App\RecipeTag;
 use App\Role;
@@ -89,8 +87,6 @@ class AdminWebScreenController extends Controller
             'branches' => SupermarketBranch::count(),
             'supermarket_products' => SupermarketProduct::count(),
             'prices' => SupermarketProductPrice::count(),
-            'promotions' => Promotion::count(),
-            'payment_methods' => PaymentMethod::count(),
             'price_refresh_requests' => PriceRefreshRequest::count(),
             'scraping_jobs' => ScrapingJob::count(),
             'scraped_products' => ScrapedProductCandidate::count(),
@@ -130,9 +126,7 @@ class AdminWebScreenController extends Controller
             'supermarkets' => ['title' => 'Supermercados', 'module' => 'Supermercados', 'description' => 'ABM cadenas.', 'primary' => 'Nueva cadena', 'secondary' => 'Editar', 'metrics' => ['supermarkets'], 'panels' => ['Cadenas', 'Sitios', 'Estado', 'Scraping']],
             'branches' => ['title' => 'Sucursales', 'module' => 'Supermercados, mapa', 'description' => 'ABM sucursales Bariloche.', 'primary' => 'Nueva sucursal', 'secondary' => 'Ver mapa', 'metrics' => ['branches'], 'panels' => ['Sucursales', 'Direccion', 'Mapa', 'Delivery/Pickup']],
             'supermarket-products' => ['title' => 'Productos por supermercado', 'module' => 'Supermercados', 'description' => 'Mapeo entre productos internos y publicaciones por sucursal.', 'primary' => 'Nuevo mapeo', 'secondary' => 'Comparar precios', 'metrics' => ['supermarket_products', 'prices'], 'panels' => ['Mapeos', 'Sucursales', 'Precios', 'Scraping'], 'permission' => 'catalog.manage'],
-            'prices' => ['title' => 'Precios', 'module' => 'Supermercados', 'description' => 'Precios por producto/super.', 'primary' => 'Cargar precio', 'secondary' => 'Historial', 'metrics' => ['prices', 'products'], 'panels' => ['Actuales', 'Historial', 'Promociones', 'Validacion']],
-            'promotions' => ['title' => 'Promociones', 'module' => 'Supermercados', 'description' => 'Descuentos y metodos de pago.', 'primary' => 'Nueva promocion', 'secondary' => 'Metodos de pago', 'metrics' => ['promotions'], 'panels' => ['Promociones', 'Vigencia', 'Pago', 'Sucursales']],
-            'payment-methods' => ['title' => 'Metodos de pago', 'module' => 'Supermercados', 'description' => 'Catalogo de tarjetas, billeteras, efectivo y otros medios usados por promociones.', 'primary' => 'Nuevo metodo', 'secondary' => 'Ver usuarios', 'metrics' => ['payment_methods'], 'panels' => ['Catalogo', 'Tipos', 'Emisores', 'Usuarios'], 'permission' => 'catalog.manage'],
+            'prices' => ['title' => 'Precios', 'module' => 'Supermercados', 'description' => 'Precios por producto/super.', 'primary' => 'Cargar precio', 'secondary' => 'Historial', 'metrics' => ['prices', 'products'], 'panels' => ['Actuales', 'Historial', 'Validacion']],
             'supermarket-scraping' => ['title' => 'Scraping supermercados', 'module' => 'Scraping', 'description' => 'Ejecutar scraping, ver jobs y logs.', 'primary' => 'Ejecutar scraping', 'secondary' => 'Ver logs', 'metrics' => ['scraping_jobs', 'scraping_errors'], 'panels' => ['Jobs', 'Logs', 'Parametros', 'Resultados']],
             'scraped-products' => ['title' => 'Productos scrapeados pendientes', 'module' => 'Scraping', 'description' => 'Validar, mapear, crear productos.', 'primary' => 'Validar seleccion', 'secondary' => 'Crear producto', 'metrics' => ['scraped_products'], 'panels' => ['Pendientes', 'Matches', 'Crear producto', 'Descartar'], 'permission' => 'catalog.manage'],
             'price-refresh-requests' => ['title' => 'Solicitudes de refresh de precio', 'module' => 'Scraping', 'description' => 'Usuarios reportan precios desactualizados para revisar o disparar scraping puntual.', 'primary' => 'Procesar pendientes', 'secondary' => 'Ver historial', 'metrics' => ['price_refresh_requests', 'scraping_jobs'], 'panels' => ['Pendientes', 'Procesadas', 'Productos', 'Scraping'], 'permission' => 'scraping.manage'],

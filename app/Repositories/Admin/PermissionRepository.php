@@ -9,7 +9,7 @@ class PermissionRepository
 {
     public function paginate(array $filters): LengthAwarePaginator
     {
-        $query = Permission::query();
+        $query = Permission::whereNotIn('code', \App\Services\Auth\RolePolicy::RETIRED_COMMERCE_PERMISSIONS);
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);

@@ -13,7 +13,7 @@ class UpdatePurchaseRequest extends FormRequest
         return [
             'purchase_date'          => 'sometimes|date',
             'supermarket_branch_id'  => 'sometimes|nullable|integer|exists:supermarket_branches,id',
-            'payment_method_id'      => 'sometimes|nullable|integer|exists:payment_methods,id',
+            'payment_method_id'      => ['sometimes', 'nullable', new \App\Rules\RetiredCommerceAssociation],
             'shopping_list_id'       => 'sometimes|nullable|integer|exists:shopping_lists,id',
             'estimated_total'        => 'sometimes|nullable|numeric|min:0',
             'items'                  => 'sometimes|array|min:1',

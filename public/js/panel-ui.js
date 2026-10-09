@@ -252,7 +252,7 @@
             [['Mi cocina', '/web/stock'], ['Catálogo', '/web/catalog'], ['Escáner', '/web/barcode-scanner'], ['Reportes', '/web/reports']],
             [['Mi perfil', '/web/profile-objectives'], ['Notificaciones', '/web/notifications'], ['Suplementos', '/web/supplements'], ['Puesta en marcha', '/web/onboarding']],
             [['Recetas', '/web/recipes'], ['Buscar', '/web/recipe-search'], ['Sugerencias', '/web/recipe-suggestions'], ['Favoritas', '/web/recipe-favorites']],
-            [['Listas', '/web/shopping-list'], ['Compra en curso', '/web/shopping-session'], ['Historial', '/web/purchases'], ['Supermercados', '/web/supermarkets'], ['Sucursales', '/web/branches'], ['Medios de pago', '/web/payment-methods']]
+            [['Listas', '/web/shopping-list'], ['Compra en curso', '/web/shopping-session'], ['Historial', '/web/purchases'], ['Supermercados', '/web/supermarkets'], ['Sucursales', '/web/branches']]
         ];
         groups.forEach(function (links) {
             if (!links.some(function (link) { return link[1] === path; })) { return; }

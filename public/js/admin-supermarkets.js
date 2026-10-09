@@ -174,7 +174,7 @@
             .catch(function (err) {
                 var apiErr = ((err.payload || {}).error) || {};
                 if (err.status === 409) {
-                    showMessage(root, 'danger', apiErr.message || 'La cadena tiene sucursales, precios o promociones activas y no puede desactivarse.');
+                    showMessage(root, 'danger', apiErr.message || 'La cadena tiene registros vinculados y no puede desactivarse.');
                 } else {
                     showMessage(root, 'danger', apiErr.message || 'Error al desactivar la cadena.');
                 }

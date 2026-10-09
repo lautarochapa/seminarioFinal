@@ -191,7 +191,7 @@ class SupermarketComparisonTest extends TestCase
             ->assertJsonPath('data.branches.0.missing_count', 1);
     }
 
-    public function test_promotions_are_reported()
+    public function test_historical_promotions_are_preserved_but_not_applied_or_reported()
     {
         [$user, $group, $list, $item, $product] = $this->context();
         $branch = $this->branch('Carrefour', 'carrefour');
@@ -205,12 +205,16 @@ class SupermarketComparisonTest extends TestCase
             'valid_to' => now()->addDay(),
             'status' => 'active',
         ]);
-        $this->price($product, $branch, 100, 'ARS', $promotion);
+        $price = $this->price($product, $branch, 100, 'ARS', $promotion);
 
         $this->actingAs($user)
             ->getJson('/api/v1/family-groups/'.$group->id.'/shopping-lists/'.$list->id.'/compare-supermarkets')
             ->assertStatus(200)
-            ->assertJsonPath('data.branches.0.promotions.0.name', 'Promo');
+            ->assertJsonPath('data.branches.0.promotions', [])
+            ->assertJsonPath('data.branches.0.total', 200);
+
+        $this->assertEquals($promotion->id, $price->fresh()->promotion_id);
+        $this->assertEquals('active', $promotion->fresh()->status);
     }
 
     public function test_incompatible_units_are_missing()

@@ -120,42 +120,7 @@ Route::post('admin/products/{id}/images', [\App\Http\Controllers\Api\V1\Products
 Route::delete('admin/products/{id}/images/{imageId}', [\App\Http\Controllers\Api\V1\Products\AdminProductImageController::class, 'destroy'])
     ->middleware('permission:catalog.manage');
 
-// Payment methods — admin, catalog and user
-Route::get('admin/payment-methods', [\App\Http\Controllers\Api\V1\PaymentMethods\AdminPaymentMethodController::class, 'index'])
-    ->middleware('permission:catalog.manage');
-Route::post('admin/payment-methods', [\App\Http\Controllers\Api\V1\PaymentMethods\AdminPaymentMethodController::class, 'store'])
-    ->middleware('permission:catalog.manage');
-Route::patch('admin/payment-methods/{id}/restore', [\App\Http\Controllers\Api\V1\PaymentMethods\AdminPaymentMethodController::class, 'restore'])
-    ->middleware('permission:catalog.manage');
-Route::get('admin/payment-methods/{id}', [\App\Http\Controllers\Api\V1\PaymentMethods\AdminPaymentMethodController::class, 'show'])
-    ->middleware('permission:catalog.manage');
-Route::patch('admin/payment-methods/{id}', [\App\Http\Controllers\Api\V1\PaymentMethods\AdminPaymentMethodController::class, 'update'])
-    ->middleware('permission:catalog.manage');
-Route::delete('admin/payment-methods/{id}', [\App\Http\Controllers\Api\V1\PaymentMethods\AdminPaymentMethodController::class, 'destroy'])
-    ->middleware('permission:catalog.manage');
-
-Route::get('payment-methods', [\App\Http\Controllers\Api\V1\PaymentMethods\PaymentMethodCatalogController::class, 'index']);
-
-Route::get('users/me/payment-methods',      [\App\Http\Controllers\Api\V1\PaymentMethods\UserPaymentMethodController::class, 'index']);
-Route::post('users/me/payment-methods',     [\App\Http\Controllers\Api\V1\PaymentMethods\UserPaymentMethodController::class, 'store']);
-Route::delete('users/me/payment-methods/{id}', [\App\Http\Controllers\Api\V1\PaymentMethods\UserPaymentMethodController::class, 'destroy']);
-
-// Promotions — admin and catalog
-Route::get('admin/promotions', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'index'])
-    ->middleware('permission:catalog.manage');
-Route::post('admin/promotions', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'store'])
-    ->middleware('permission:catalog.manage');
-Route::patch('admin/promotions/{id}/restore', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'restore'])
-    ->middleware('permission:catalog.manage');
-Route::get('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'show'])
-    ->middleware('permission:catalog.manage');
-Route::patch('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'update'])
-    ->middleware('permission:catalog.manage');
-Route::delete('admin/promotions/{id}', [\App\Http\Controllers\Api\V1\Promotions\AdminPromotionController::class, 'destroy'])
-    ->middleware('permission:catalog.manage');
-
-Route::get('supermarket-branches/{id}/promotions', [\App\Http\Controllers\Api\V1\Promotions\BranchPromotionController::class, 'index']);
-Route::get('promotions', [\App\Http\Controllers\Api\V1\Promotions\PromotionCatalogController::class, 'index']);
+// Promotions and payment methods are retired. Historical data is retained.
 
 // Supermarket products — admin and catalog
 Route::get('admin/supermarket-products', [\App\Http\Controllers\Api\V1\SupermarketProducts\AdminSupermarketProductController::class, 'index'])

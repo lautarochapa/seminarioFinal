@@ -4,6 +4,7 @@ export interface Purchase {
   shopping_list_id: number | null;
   supermarket_branch_id: number | null;
   user_id: number;
+  /** Historical response field; new purchases do not associate payment methods. */
   payment_method_id: number | null;
   purchase_date: string | null;
   estimated_total: number | null;
@@ -38,7 +39,6 @@ export interface PurchaseCreateItem {
 export interface PurchaseCreateRequest {
   purchase_date: string;
   supermarket_branch_id?: number | null;
-  payment_method_id?: number | null;
   shopping_list_id?: number | null;
   estimated_total?: number | null;
   items: PurchaseCreateItem[];
@@ -47,7 +47,6 @@ export interface PurchaseCreateRequest {
 export interface PurchaseUpdateRequest {
   purchase_date?: string;
   supermarket_branch_id?: number | null;
-  payment_method_id?: number | null;
   estimated_total?: number | null;
   actual_total?: number | null;
   status?: string;

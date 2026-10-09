@@ -108,48 +108,6 @@ export interface PriceHistoryFilters {
   per_page?: number;
 }
 
-export interface Promotion {
-  id: number;
-  supermarket_chain_id: number | null;
-  supermarket_branch_id: number | null;
-  name: string;
-  description: string | null;
-  discount_type: string;
-  discount_value: number | string | null;
-  valid_from: string | null;
-  valid_to: string | null;
-  day_of_week: string | number | null;
-  requires_payment_method: boolean;
-  status: string;
-  chain?: Pick<SupermarketChain, 'id' | 'name'> | null;
-  branch?: Pick<SupermarketBranch, 'id' | 'name' | 'address'> | null;
-  payment_methods?: { id: number; name: string; type: string }[];
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string | null;
-}
-
-export interface PromotionFilters {
-  chain_id?: number;
-  branch_id?: number;
-  product_id?: number;
-  payment_method_id?: number;
-  day?: number;
-  active?: boolean;
-  page?: number;
-  per_page?: number;
-}
-
-export interface PaymentMethod {
-  id: number;
-  name: string;
-  type: string;
-  issuer: string | null;
-  status: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
 export interface Notification {
   id: number;
   type: string;

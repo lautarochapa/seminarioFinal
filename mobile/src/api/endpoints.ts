@@ -86,12 +86,9 @@ import type {
   CurrentPrice,
   Notification,
   NotificationPreferences,
-  PaymentMethod,
   PriceComparison,
   PriceHistoryEntry,
   PriceHistoryFilters,
-  Promotion,
-  PromotionFilters,
   ReportPeriod,
   SupermarketBranch,
   SupermarketChain,
@@ -543,9 +540,6 @@ export const branchesApi = {
     const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
     return apiClient.get<PaginatedResponse<SupermarketProduct>>(`/api/v1/supermarket-branches/${id}/products${qs}`);
   },
-  promotions(id: number): Promise<ApiResponse<Promotion[]>> {
-    return apiClient.get<ApiResponse<Promotion[]>>(`/api/v1/supermarket-branches/${id}/promotions`);
-  },
 };
 
 export const pricesApi = {
@@ -570,28 +564,9 @@ export const pricesApi = {
   },
 };
 
-export const promotionsApi = {
-  byBranch(branchId: number): Promise<ApiResponse<Promotion[]>> {
-    return branchesApi.promotions(branchId);
-  },
-  global(filters?: PromotionFilters): Promise<PaginatedResponse<Promotion>> {
-    const qs = toQueryString({ per_page: 20, ...filters } as Record<string, unknown>);
-    return apiClient.get<PaginatedResponse<Promotion>>(`/api/v1/promotions${qs}`);
-  },
-};
-
 export const recipeShoppingListApi = {
   generate(groupId: number, recipeId: number, payload?: RecipeShoppingListRequest): Promise<ApiResponse<RecipeShoppingListResult>> {
     return apiClient.post<ApiResponse<RecipeShoppingListResult>>(`/api/v1/family-groups/${groupId}/recipes/${recipeId}/shopping-list`, payload ?? {});
-  },
-};
-
-export const paymentMethodsApi = {
-  list(): Promise<ApiResponse<PaymentMethod[]>> {
-    return apiClient.get<ApiResponse<PaymentMethod[]>>('/api/v1/payment-methods');
-  },
-  userMethods(): Promise<ApiResponse<PaymentMethod[]>> {
-    return apiClient.get<ApiResponse<PaymentMethod[]>>('/api/v1/users/me/payment-methods');
   },
 };
 

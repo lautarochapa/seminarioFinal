@@ -8,11 +8,9 @@ import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { PriceCard } from '@/components/PriceCard';
-import { PromotionCard } from '@/components/PromotionCard';
 import { ServiceBadge } from '@/components/ServiceBadge';
 import { useBranchDetail } from '@/hooks/useBranchDetail';
 import { usePaginatedRetailList } from '@/hooks/useRetailList';
-import { usePromotions } from '@/hooks/usePromotions';
 import { branchesApi } from '@/api/endpoints';
 import { friendlyMessage } from '@/utils/errorParser';
 import { goBackOrHome } from '@/utils/navigation';
@@ -28,7 +26,6 @@ export function BranchDetailScreen() {
     (filters) => branchesApi.products(branchId, filters),
     { page: 1 },
   );
-  const promotions = usePromotions(Number.isFinite(branchId) ? branchId : null);
 
   if (loading) {
     return <View style={styles.fill}><AppHeader title="Sucursal" showBack onBack={goBackOrHome} /><LoadingScreen message="Cargando sucursal..." /></View>;
@@ -53,11 +50,6 @@ export function BranchDetailScreen() {
           <Text style={styles.meta}>Coordenadas: {branch.latitude ?? 's/d'}, {branch.longitude ?? 's/d'}</Text>
           <AppButton title="Como llegar" onPress={() => Linking.openURL(mapsUrl(branch))} fullWidth />
         </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Promociones</Text>
-        </View>
-        {promotions.data.length === 0 ? <EmptyState icon="ticket-percent-outline" message="No hay promociones vigentes para esta sucursal." /> : promotions.data.map((item) => <PromotionCard key={item.id} item={item} />)}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Productos y precios</Text>

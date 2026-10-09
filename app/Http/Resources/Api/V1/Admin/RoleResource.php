@@ -15,7 +15,9 @@ class RoleResource extends JsonResource
             'description' => $this->description,
             'status'      => $this->status,
             'permissions' => $this->whenLoaded('permissions', function () {
-                return $this->permissions->map(function ($perm) {
+                return $this->permissions->reject(function ($perm) {
+                    return in_array($perm->code, \App\Services\Auth\RolePolicy::RETIRED_COMMERCE_PERMISSIONS, true);
+                })->values()->map(function ($perm) {
                     return [
                         'id'     => $perm->id,
                         'code'   => $perm->code,

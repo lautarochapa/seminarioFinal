@@ -1,0 +1,79 @@
+{
+  "result": "PASS",
+  "created_at_utc": "2026-10-09T17:01:26.3947690Z",
+  "scope": "Web retirement of promotions and payment methods",
+  "tests": {
+    "focused_batches": [
+      {
+        "result": "PASS",
+        "tests": 35,
+        "files": [
+          "tests/JavaScript/retired-commerce-surfaces.test.cjs",
+          "tests/JavaScript/admin-crud-modals.test.cjs",
+          "tests/JavaScript/navbar-menu.test.cjs"
+        ]
+      },
+      {
+        "result": "PASS",
+        "tests": 8,
+        "files": [
+          "tests/JavaScript/retired-commerce-consumers.test.cjs"
+        ]
+      }
+    ],
+    "total": 43,
+    "initial_retirement_regression": {
+      "result": "EXPECTED_RED",
+      "tests": 7,
+      "failed": 7
+    },
+    "admin_template_smoke": {
+      "result": "PASS",
+      "forms": 44,
+      "branches": 39
+    },
+    "user_template_smoke": {
+      "result": "PASS",
+      "screens": 8
+    },
+    "syntax": "PASS",
+    "diff_check": "PASS"
+  },
+  "rendered_routes": {
+    "result": "PASS",
+    "requests": 117,
+    "screens": 39,
+    "roles": {
+      "super_admin": 39,
+      "catalog_admin": 24,
+      "recipe_admin": 9
+    },
+    "report": ".runtime/qa-admin/routes-report.json"
+  },
+  "rendered_dom": {
+    "result": "PASS",
+    "screens": 39,
+    "forms": 40.0,
+    "inventory": "routes-report.role_screens.super_admin",
+    "report": ".runtime/qa-admin/dom-rendered-report.json"
+  },
+  "coverage": [
+    "Real Blade navigation for superadmin, catalog and user permission scopes",
+    "Retired editors and executable assets removed",
+    "Shopping and history navigation preserved",
+    "Branch details retain products and location without promotion requests",
+    "Comparison accepts canonical and legacy responses without promotion adjustments",
+    "Best-price badge requires known complete coverage",
+    "Optimization uses server totals, labels priced articles only and handles partial/empty/null totals",
+    "Remaining catalog CRUD and original form handlers preserved",
+    "Canonical monetary values preserve and display server currency without conversion",
+    "Best-price badge is withheld across mixed or unknown currencies",
+    "Mixed-currency null combined total is explicitly not comparable; individual amounts remain visible"
+  ],
+  "limitations": [
+    "DOM tests use JSDOM and API stubs; no production requests",
+    "Route rendering used guarded local SQLite only, after backend released it",
+    "Current combined response has no complete-list coverage metadata; UI states priced-articles-only",
+    "Historical purchase data and totals were not modified by web changes"
+  ]
+}

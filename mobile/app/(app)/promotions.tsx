@@ -1,3 +1,6 @@
-import { PromotionsScreen } from '@/screens/PromotionsScreen';
+import { Redirect } from 'expo-router';
 
-export default PromotionsScreen;
+// Keep old links navigable after retiring this module, without loading its API.
+export default function RetiredPromotionsRoute() {
+  return <Redirect href="/(app)/branches" />;
+}

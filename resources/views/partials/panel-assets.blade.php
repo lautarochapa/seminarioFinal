@@ -5,7 +5,7 @@
     $screenAssets = [
         'onboarding' => ['user-onboarding'], 'catalog' => ['user-catalog'],
         'barcode-scanner' => ['user-barcode'], 'supermarkets' => ['user-supermarkets'],
-        'branches' => ['user-branches'], 'payment-methods' => ['user-payment-methods'],
+        'branches' => ['user-branches'],
         'recipe-favorites' => ['user-recipe-favorites'], 'recipe-search' => ['user-recipe-search'],
         'recipe-suggestions' => ['user-recipe-suggestions'], 'notifications' => ['user-notifications'],
         'reports' => ['user-reports'], 'supplements' => ['user-supplements'],

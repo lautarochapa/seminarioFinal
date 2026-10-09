@@ -45,8 +45,6 @@
     <script src="{{ asset('js/admin-recipe-import-text.js') }}?v={{ file_exists(public_path('js/admin-recipe-import-text.js')) ? filemtime(public_path('js/admin-recipe-import-text.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-recipe-import-candidates.js') }}?v={{ file_exists(public_path('js/admin-recipe-import-candidates.js')) ? filemtime(public_path('js/admin-recipe-import-candidates.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-supermarket-products.js') }}?v={{ file_exists(public_path('js/admin-supermarket-products.js')) ? filemtime(public_path('js/admin-supermarket-products.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/admin-promotions.js') }}?v={{ file_exists(public_path('js/admin-promotions.js')) ? filemtime(public_path('js/admin-promotions.js')) : time() }}" defer></script>
-    <script src="{{ asset('js/admin-payment-methods.js') }}?v={{ file_exists(public_path('js/admin-payment-methods.js')) ? filemtime(public_path('js/admin-payment-methods.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-supermarket-scraping.js') }}?v={{ file_exists(public_path('js/admin-supermarket-scraping.js')) ? filemtime(public_path('js/admin-supermarket-scraping.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-recipe-scraping.js') }}?v={{ file_exists(public_path('js/admin-recipe-scraping.js')) ? filemtime(public_path('js/admin-recipe-scraping.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-scraped-products.js') }}?v={{ file_exists(public_path('js/admin-scraped-products.js')) ? filemtime(public_path('js/admin-scraped-products.js')) : time() }}" defer></script>

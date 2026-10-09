@@ -8,6 +8,7 @@ class RolePolicy
 {
     const RETIRED = ['teacher', 'dietologist', 'system_jobs', 'supermarket_admin'];
     const CURRENT = ['user', 'catalog_admin', 'recipe_admin', 'super_admin'];
+    const RETIRED_COMMERCE_PERMISSIONS = ['web.admin.promotions', 'web.admin.payment-methods', 'web.user.payment-methods'];
 
     public static function retiredPermission(string $code): bool
     {
@@ -16,7 +17,7 @@ class RolePolicy
                 return true;
             }
         }
-        return in_array($code, ['jobs.run', 'web.user.professional-permissions', 'web.admin.thesis-docs', 'web.admin.demo-scenarios'], true);
+        return in_array($code, array_merge(['jobs.run', 'web.user.professional-permissions', 'web.admin.thesis-docs', 'web.admin.demo-scenarios'], self::RETIRED_COMMERCE_PERMISSIONS), true);
     }
 
     public static function synchronize(): void
@@ -50,7 +51,7 @@ class RolePolicy
                 'dashboard', 'ingredients', 'ingredient-categories', 'nutrients', 'units-conversions',
                 'equivalences', 'products', 'brands', 'barcodes', 'scraped-products', 'objectives',
                 'health-preferences', 'product-requests', 'product-reports', 'cities', 'supermarkets',
-                'branches', 'prices', 'promotions', 'supermarket-scraping', 'scraping-alerts',
+                'branches', 'prices', 'supermarket-scraping', 'scraping-alerts',
             ];
             $recipeScreens = [
                 'dashboard', 'official-recipes', 'imported-recipes', 'recipe-scraping',

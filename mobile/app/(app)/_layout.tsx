@@ -58,8 +58,9 @@ export default function AppLayout() {
       <Tabs.Screen name="branches" options={{ ...hidden, title: 'Sucursales' }} />
       <Tabs.Screen name="branches/[id]" options={{ ...hidden, title: 'Detalle de sucursal' }} />
       <Tabs.Screen name="price-comparison" options={{ ...hidden, title: 'Comparacion de precios' }} />
-      <Tabs.Screen name="promotions" options={{ ...hidden, title: 'Promociones' }} />
-      <Tabs.Screen name="payment-methods" options={{ ...hidden, title: 'Metodos de pago' }} />
+      {/* Compatibility redirects stay hidden so they cannot become automatic tabs. */}
+      <Tabs.Screen name="promotions" options={hidden} />
+      <Tabs.Screen name="payment-methods" options={hidden} />
       <Tabs.Screen name="notifications" options={{ ...hidden, title: 'Notificaciones' }} />
       <Tabs.Screen name="reports" options={{ ...hidden, title: 'Reportes' }} />
       <Tabs.Screen name="settings" options={{ ...hidden, title: 'Ajustes' }} />

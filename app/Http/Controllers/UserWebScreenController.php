@@ -50,7 +50,7 @@ class UserWebScreenController extends Controller
                 'meal_plans' => 'Planes de comidas', 'shopping_lists' => 'Listas de compras',
                 'purchases' => 'Compras', 'budgets' => 'Presupuestos',
                 'report_exports' => 'Reportes exportados', 'objectives' => 'Objetivos',
-                'professional_links' => 'Profesionales vinculados', 'payment_methods' => 'Metodos de pago',
+                'professional_links' => 'Profesionales vinculados',
             ],
         ])->header('Cache-Control', 'no-store, private');
     }
@@ -82,7 +82,6 @@ class UserWebScreenController extends Controller
             'report_exports' => ReportExport::where('user_id', $userId),
             'objectives' => UserObjective::where('user_id', $userId),
             'professional_links' => ProfessionalUserLink::where('user_id', $userId),
-            'payment_methods' => \App\UserPaymentMethod::where('user_id', $userId)->where('status', 'active'),
         ];
         $stats = [];
         foreach ($keys as $key) {
@@ -261,16 +260,6 @@ class UserWebScreenController extends Controller
                 'secondary' => 'Actualizar objetivos',
                 'metrics' => ['objectives'],
                 'panels' => ['Datos personales', 'Objetivos', 'Restricciones', 'Prioridades'],
-            ],
-            'payment-methods' => [
-                'title' => 'Metodos de pago',
-                'module' => 'Promociones',
-                'description' => 'Elegí los metodos que usas para que el sistema pueda mostrar promociones compatibles.',
-                'primary' => 'Agregar metodo',
-                'secondary' => 'Ver promociones',
-                'metrics' => ['payment_methods'],
-                'panels' => ['Catalogo', 'Mis metodos', 'Promociones', 'Seguridad'],
-                'permission' => 'web.user.profile-objectives',
             ],
             'professional-permissions' => [
                 'title' => 'Permisos dietologo',

@@ -1,0 +1,82 @@
+[
+  {
+    "path": "app/Http/Controllers/AdminWebScreenController.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Http/Controllers/UserWebScreenController.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Http/Requests/Api/V1/Purchases/CreatePurchaseRequest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Http/Requests/Api/V1/Purchases/UpdatePurchaseRequest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Http/Requests/Api/V1/SupermarketPrices/StorePriceRequest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Http/Resources/Api/V1/Admin/RoleResource.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Http/Resources/Api/V1/Auth/UserResource.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Repositories/Admin/PermissionRepository.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Repositories/SupermarketComparison/SupermarketComparisonRepository.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Rules/RetiredCommerceAssociation.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Services/Auth/RolePolicy.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Services/Purchases/PurchaseService.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Services/SupermarketComparison/SupermarketComparisonService.php",
+    "status": "PASS"
+  },
+  {
+    "path": "app/Services/SupermarketProducts/SupermarketProductService.php",
+    "status": "PASS"
+  },
+  {
+    "path": "routes/api/catalog.php",
+    "status": "PASS"
+  },
+  {
+    "path": "tests/Feature/Api/V1/PaymentMethods/PaymentMethodsTest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "tests/Feature/Api/V1/Promotions/PromotionsTest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "tests/Feature/Api/V1/SupermarketComparison/SupermarketComparisonTest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "tests/Feature/WebUserScreensRouteTest.php",
+    "status": "PASS"
+  },
+  {
+    "path": "tests/Smoke/retired-commerce.php",
+    "status": "PASS"
+  }
+]

@@ -40,10 +40,11 @@ class PurchaseService
     public function create(int $groupId, int $userId, array $data, string $ip, string $ua): Purchase
     {
         $this->groupRepo->findOrFailForUser($groupId, $userId);
+        $this->assertNoPaymentMethod($data);
 
         return DB::transaction(function () use ($groupId, $userId, $data, $ip, $ua) {
             $items = $data['items'] ?? [];
-            unset($data['items']);
+            unset($data['items'], $data['payment_method_id']);
 
             $purchase = $this->repo->create(array_merge($data, [
                 'family_group_id' => $groupId,
@@ -77,6 +78,7 @@ class PurchaseService
     {
         $this->groupRepo->findOrFailForUser($groupId, $userId);
         $purchase = $this->repo->findForGroup($groupId, $purchaseId);
+        $this->assertNoPaymentMethod($data);
 
         if (!in_array($purchase->status, self::EDITABLE_STATUSES)) {
             throw new PurchaseException('PURCHASE_NOT_EDITABLE', 'La compra no puede modificarse en su estado actual.', 409);
@@ -85,7 +87,8 @@ class PurchaseService
         return DB::transaction(function () use ($purchase, $userId, $data, $ip, $ua) {
             $old = $purchase->only(['purchase_date', 'supermarket_branch_id', 'payment_method_id', 'estimated_total']);
 
-            $allowed = ['purchase_date', 'supermarket_branch_id', 'payment_method_id', 'estimated_total', 'shopping_list_id'];
+            // Historical payment links are retained, never replaced or cleared by editing.
+            $allowed = ['purchase_date', 'supermarket_branch_id', 'estimated_total', 'shopping_list_id'];
             $filtered = array_filter(
                 array_intersect_key($data, array_flip($allowed)),
                 function ($v) { return $v !== null; }
@@ -112,6 +115,13 @@ class PurchaseService
 
             return $updated->load(['items.product', 'items.unit', 'branch', 'paymentMethod']);
         });
+    }
+
+    private function assertNoPaymentMethod(array $data): void
+    {
+        if (isset($data['payment_method_id'])) {
+            throw new PurchaseException('PAYMENT_METHODS_RETIRED', 'Los métodos de pago fueron retirados.', 422);
+        }
     }
 
     public function cancel(int $groupId, int $purchaseId, int $userId, string $ip, string $ua): Purchase

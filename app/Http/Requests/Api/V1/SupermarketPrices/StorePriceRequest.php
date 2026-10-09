@@ -17,6 +17,7 @@ class StorePriceRequest extends FormRequest
             'price'       => ['required', 'numeric', 'min:0.01'],
             'currency'    => ['required', 'string', 'in:ARS,USD,EUR'],
             'captured_at' => ['nullable', 'date', 'before_or_equal:now'],
+            'promotion_id' => ['nullable', new \App\Rules\RetiredCommerceAssociation],
         ];
     }
 }

@@ -7,9 +7,14 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
-    function fmt(val) {
+    function currencyCode(currency) {
+        return currency === null || currency === undefined ? '' : String(currency).trim().toUpperCase();
+    }
+
+    function fmt(val, currency) {
         var n = parseFloat(val);
-        return isNaN(n) ? '-' : '$' + n.toFixed(2);
+        var code = currencyCode(currency);
+        return isNaN(n) ? '-' : '$' + n.toFixed(2) + (code ? ' ' + escapeHtml(code) : '');
     }
 
     function coverageBadge(found, total) {
@@ -19,27 +24,47 @@
         return '<span style="color:' + color + ';font-size:11px;font-weight:700">' + found + '/' + total + ' ítems (' + pct + '%)</span>';
     }
 
+    function hasCompleteCoverage(result, itemsTotal) {
+        var found = Number(result.items_found);
+        var missing = Number(result.items_not_found);
+        return found > 0 && result.items_not_found !== null && result.items_not_found !== undefined &&
+            missing === 0 && (!itemsTotal || found >= Number(itemsTotal));
+    }
+
     function renderCompareResults(data) {
-        var results = data.results || [];
+        var canonical = Array.isArray(data.branches);
+        var results = canonical ? data.branches.map(function (row) {
+            return {
+                branch: row.branch,
+                supermarket_name: row.branch && row.branch.chain,
+                supermarket_id: row.branch && row.branch.id,
+                total: row.total,
+                currency: row.currency,
+                items_found: Number(row.found_count) || 0,
+                items_not_found: row.missing_count === null || row.missing_count === undefined ? null : Number(row.missing_count),
+            };
+        }) : (data.results || []);
         if (!results.length) {
             return '<p style="font-size:13px;color:#66746b;margin:0">No se encontraron precios en ningún supermercado para esta lista.</p>';
         }
 
         var itemsTotal = data.items_total || 0;
 
-        // Find minimum total for highlighting best option
+        // Complete quotes must share a currency to have a comparable best price.
+        var completeQuotes = results.filter(function (r) { return hasCompleteCoverage(r, itemsTotal); });
+        var currencies = completeQuotes.map(function (r) { return currencyCode(r.currency); });
+        var comparable = currencies.length > 0 && (!canonical || currencies[0] !== '') &&
+            currencies.every(function (currency) { return currency === currencies[0]; });
         var minTotal = null;
-        results.forEach(function (r) {
+        completeQuotes.forEach(function (r) {
             var t = parseFloat(r.total);
-            if (!isNaN(t) && (minTotal === null || t < minTotal)) { minTotal = t; }
+            if (comparable && !isNaN(t) && (minTotal === null || t < minTotal)) { minTotal = t; }
         });
 
         return results.map(function (r) {
-            var isBest = minTotal !== null && parseFloat(r.total) === minTotal;
+            var isBest = hasCompleteCoverage(r, itemsTotal) && minTotal !== null && parseFloat(r.total) === minTotal;
             var borderStyle = isBest ? 'border:2px solid #04ac85;' : 'border:1px solid #dde6df;';
             var headerBg = isBest ? 'background:#e7f7f2;' : 'background:#fafdfb;';
-            var discount = parseFloat(r.promotions_discount);
-            var hasDiscount = !isNaN(discount) && discount > 0;
             var branchName = r.branch ? (r.branch.name || r.branch.address || ('Sucursal #' + r.branch.id)) : null;
 
             return '<div style="' + borderStyle + 'border-radius:8px;margin-bottom:10px;overflow:hidden">' +
@@ -55,24 +80,54 @@
                 '<span style="color:#66746b">Cobertura</span>' +
                 coverageBadge(r.items_found || 0, itemsTotal || (r.items_found + r.items_not_found)) +
                 '</div>' +
-                (hasDiscount
-                    ? '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">' +
-                      '<span style="color:#66746b">Subtotal</span><span>' + fmt(r.subtotal) + '</span></div>' +
-                      '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;color:#2a7a2a">' +
-                      '<span>Descuentos/promos</span><span>-' + fmt(r.promotions_discount) + '</span></div>'
-                    : '') +
                 '<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;margin-top:4px">' +
-                '<span>Total</span><span style="color:' + (isBest ? '#04ac85' : '#24252a') + '">' + fmt(r.total) + '</span>' +
+                '<span>Total</span><span style="color:' + (isBest ? '#04ac85' : '#24252a') + '">' + fmt(r.total, r.currency) + '</span>' +
                 '</div>' +
                 '</div>' +
                 '</div>';
         }).join('');
     }
 
+    function normalizeOptimization(data) {
+        if (!data.combined || Array.isArray(data.routes)) { return data; }
+
+        // The API supplies item and overall totals, but no branch subtotal.
+        var routes = [];
+        (data.combined.items || []).forEach(function (item) {
+            var branch = item.branch || {};
+            var route = routes.find(function (entry) { return entry.branch_id === branch.id; });
+            if (!route) {
+                route = {
+                    branch_id: branch.id,
+                    supermarket_name: [branch.chain, branch.name].filter(Boolean).join(' · ') || ('Sucursal #' + branch.id),
+                    items: [],
+                };
+                routes.push(route);
+            }
+            route.items.push({
+                item_id: item.item_id,
+                product_name: item.product && item.product.name,
+                price: item.total,
+                currency: item.currency,
+            });
+        });
+
+        return {
+            strategy: routes.length > 1 ? 'split' : (routes.length ? 'cheapest_single' : ''),
+            routes: routes,
+            savings: data.estimated_savings,
+            total: data.combined.total,
+            currency: data.combined.currency,
+            pricedItemsOnly: true,
+        };
+    }
+
     function renderOptimizeResults(data) {
         if (!data) {
             return '<p style="font-size:13px;color:#66746b;margin:0">Sin resultado de optimización.</p>';
         }
+
+        data = normalizeOptimization(data);
 
         var strategy = data.strategy || '';
         var strategyLabel = strategy === 'split' ? 'Compra dividida' : strategy === 'cheapest_single' ? 'Un solo supermercado' : strategy;
@@ -81,10 +136,19 @@
         var hasSavings = !isNaN(savings) && savings > 0;
 
         var html = '';
+        if (data.pricedItemsOnly) {
+            html += '<p style="font-size:12px;color:#66746b;margin:0 0 10px">' +
+                (routes.length
+                    ? 'Incluye únicamente artículos con precio. Revisá la cobertura de cada sucursal en la comparación.'
+                    : 'No hay artículos con precio para optimizar.') + '</p>';
+            if (routes.length && data.total === null) {
+                html += '<p style="font-size:12px;color:#b35c00;margin:0 0 10px">No hay un total comparable para estos artículos.</p>';
+            }
+        }
         if (strategyLabel) {
             html += '<div style="margin-bottom:10px">' +
                 '<span style="background:#e7f3ff;color:#1a5fb4;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700">' + escapeHtml(strategyLabel) + '</span>' +
-                (hasSavings ? '<span style="font-size:12px;color:#2a7a2a;margin-left:8px;font-weight:700">Ahorro estimado: ' + fmt(savings) + '</span>' : '') +
+                (hasSavings ? '<span style="font-size:12px;color:#2a7a2a;margin-left:8px;font-weight:700">Ahorro estimado: ' + fmt(savings, data.currency) + '</span>' : '') +
                 '</div>';
         }
 
@@ -93,14 +157,15 @@
             html += '<div style="border:1px solid #dde6df;border-radius:6px;margin-bottom:8px;overflow:hidden">' +
                 '<div style="background:#fafdfb;padding:8px 12px;display:flex;justify-content:space-between;align-items:center">' +
                 '<span style="font-size:13px;font-weight:700">' + escapeHtml(route.supermarket_name || 'Supermercado') + '</span>' +
-                '<span style="font-size:13px;font-weight:900">' + fmt(route.subtotal) + '</span>' +
+                (route.subtotal !== null && route.subtotal !== undefined
+                    ? '<span style="font-size:13px;font-weight:900">' + fmt(route.subtotal, route.currency) + '</span>' : '') +
                 '</div>';
             if (items.length) {
                 html += '<div style="padding:6px 12px">' +
                     items.map(function (item) {
                         return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #f0f0f0">' +
                             '<span>' + escapeHtml(item.item_name || item.product_name || ('Item #' + item.item_id)) + '</span>' +
-                            '<span style="color:#66746b">' + fmt(item.price) + '</span>' +
+                            '<span style="color:#66746b">' + fmt(item.price, item.currency) + '</span>' +
                             '</div>';
                     }).join('') +
                     '</div>';
@@ -108,8 +173,9 @@
             html += '</div>';
         });
 
-        if (data.total !== null && data.total !== undefined) {
-            html += '<div style="text-align:right;font-size:15px;font-weight:900;padding-top:6px">Total optimizado: <span style="color:#04ac85">' + fmt(data.total) + '</span></div>';
+        if (data.total !== null && data.total !== undefined && (!data.pricedItemsOnly || routes.length)) {
+            var totalLabel = data.pricedItemsOnly ? 'Total de artículos con precio' : 'Total optimizado';
+            html += '<div style="text-align:right;font-size:15px;font-weight:900;padding-top:6px">' + totalLabel + ': <span style="color:#04ac85">' + fmt(data.total, data.currency) + '</span></div>';
         }
 
         return html;

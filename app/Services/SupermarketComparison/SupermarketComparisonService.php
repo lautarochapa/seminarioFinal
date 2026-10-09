@@ -32,7 +32,6 @@ class SupermarketComparisonService
         foreach ($this->comparison->activeBranches() as $branch) {
             $found = [];
             $missing = [];
-            $promotions = [];
             $total = 0.0;
             $currency = null;
             $lastPriceAt = null;
@@ -62,8 +61,7 @@ class SupermarketComparisonService
                 }
                 $currency = $currency ?: $price->currency;
                 $lineTotal = $unitPrice * (float) $item->quantity;
-                $effectiveLineTotal = $this->applyPromotion($lineTotal, $price->promotion);
-                $total += $effectiveLineTotal;
+                $total += $lineTotal;
                 $lastPriceAt = $price->scraped_at;
 
                 $found[] = [
@@ -74,16 +72,10 @@ class SupermarketComparisonService
                     ],
                     'quantity' => $item->quantity,
                     'unit_price' => $unitPrice,
-                    'total' => round($effectiveLineTotal, 2),
+                    'total' => round($lineTotal, 2),
                     'currency' => $price->currency,
                 ];
 
-                if ($price->promotion) {
-                    $promotions[$price->promotion->id] = [
-                        'id' => $price->promotion->id,
-                        'name' => $price->promotion->name,
-                    ];
-                }
             }
 
             $branches[] = [
@@ -99,7 +91,8 @@ class SupermarketComparisonService
                 'coverage' => $items->count() > 0 ? count($found) / $items->count() : 0,
                 'items' => $found,
                 'missing_items' => $missing,
-                'promotions' => array_values($promotions),
+                // Retain the response shape for older clients; historical promotions are ignored.
+                'promotions' => [],
                 'last_price_at' => optional($lastPriceAt)->toIso8601String(),
             ];
         }
@@ -166,28 +159,6 @@ class SupermarketComparisonService
             'currency' => $currency,
             'items' => $items,
         ];
-    }
-
-    private function applyPromotion(float $lineTotal, $promotion): float
-    {
-        if (!$promotion || $promotion->status !== 'active') {
-            return $lineTotal;
-        }
-
-        $now = now();
-        if (($promotion->valid_from && $promotion->valid_from->gt($now)) || ($promotion->valid_to && $promotion->valid_to->lt($now))) {
-            return $lineTotal;
-        }
-
-        if ($promotion->discount_type === 'percent') {
-            return max(0, $lineTotal * (1 - ((float) $promotion->discount_value / 100)));
-        }
-
-        if ($promotion->discount_type === 'fixed') {
-            return max(0, $lineTotal - (float) $promotion->discount_value);
-        }
-
-        return $lineTotal;
     }
 
     private function missingItem($item): array

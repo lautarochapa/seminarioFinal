@@ -13,7 +13,7 @@ class CreatePurchaseRequest extends FormRequest
         return [
             'purchase_date'          => 'required|date',
             'supermarket_branch_id'  => 'nullable|integer|exists:supermarket_branches,id',
-            'payment_method_id'      => 'nullable|integer|exists:payment_methods,id',
+            'payment_method_id'      => ['nullable', new \App\Rules\RetiredCommerceAssociation],
             'shopping_list_id'       => 'nullable|integer|exists:shopping_lists,id',
             'estimated_total'        => 'nullable|numeric|min:0',
             'items'                  => 'required|array|min:1',

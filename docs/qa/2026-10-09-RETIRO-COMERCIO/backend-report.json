@@ -1,0 +1,660 @@
+{
+    "result": "PASS",
+    "database": "isolated qa-admin/qa.sqlite",
+    "checks": 163,
+    "failures": [],
+    "results": [
+        {
+            "name": "0 GET admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 POST admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 PATCH admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 DELETE admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 PATCH admin/payment-methods/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 POST users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 DELETE users/me/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 POST admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 PATCH admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 DELETE admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 PATCH admin/promotions/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "0 GET supermarket-branches/1/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin POST admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin PATCH admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin DELETE admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin PATCH admin/payment-methods/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin POST users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin DELETE users/me/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin POST admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin PATCH admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin DELETE admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin PATCH admin/promotions/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin GET supermarket-branches/1/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin /admin-web/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin /admin-web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin /web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin POST admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin PATCH admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin DELETE admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin PATCH admin/payment-methods/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin POST users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin DELETE users/me/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin POST admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin PATCH admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin DELETE admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin PATCH admin/promotions/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin GET supermarket-branches/1/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin /admin-web/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin /admin-web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin /web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin POST admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin PATCH admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin DELETE admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin PATCH admin/payment-methods/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin POST users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin DELETE users/me/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin POST admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin PATCH admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin DELETE admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin PATCH admin/promotions/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin GET supermarket-branches/1/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin /admin-web/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin /admin-web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "super_admin /web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user POST admin/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user PATCH admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user DELETE admin/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user PATCH admin/payment-methods/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user POST users/me/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user DELETE users/me/payment-methods/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user POST admin/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user PATCH admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user DELETE admin/promotions/1 is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user PATCH admin/promotions/1/restore is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user GET supermarket-branches/1/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user /admin-web/promotions is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user /admin-web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "user /web/payment-methods is retired (HTTP 404)",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin keeps catalog.manage",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin cannot use retired promotion permission",
+            "pass": true
+        },
+        {
+            "name": "catalog_admin retains catalog API (HTTP 200)",
+            "pass": true
+        },
+        {
+            "name": "super_admin keeps catalog.manage",
+            "pass": true
+        },
+        {
+            "name": "super_admin cannot use retired promotion permission",
+            "pass": true
+        },
+        {
+            "name": "super_admin retains catalog API (HTTP 200)",
+            "pass": true
+        },
+        {
+            "name": "recipe_admin remains outside catalog.manage",
+            "pass": true
+        },
+        {
+            "name": "permission catalog excludes exactly the three retired codes across pagination",
+            "pass": true
+        },
+        {
+            "name": "web.admin.promotions hidden from permission catalog and exposed user/role assignments",
+            "pass": true
+        },
+        {
+            "name": "web.admin.promotions historical assignment preserved",
+            "pass": true
+        },
+        {
+            "name": "web.admin.payment-methods hidden from permission catalog and exposed user/role assignments",
+            "pass": true
+        },
+        {
+            "name": "web.admin.payment-methods historical assignment preserved",
+            "pass": true
+        },
+        {
+            "name": "web.user.payment-methods hidden from permission catalog and exposed user/role assignments",
+            "pass": true
+        },
+        {
+            "name": "web.user.payment-methods historical assignment preserved",
+            "pass": true
+        },
+        {
+            "name": "catalog.manage remains exposed for catalog administrator",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 0",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 1",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 2",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 3",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 4",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 5",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\CreatePurchaseRequest association validation case 6",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 0",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 1",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 2",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 3",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 4",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 5",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\Purchases\\UpdatePurchaseRequest association validation case 6",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 0",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 1",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 2",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 3",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 4",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 5",
+            "pass": true
+        },
+        {
+            "name": "App\\Http\\Requests\\Api\\V1\\SupermarketPrices\\StorePriceRequest association validation case 6",
+            "pass": true
+        },
+        {
+            "name": "percent historical discount cannot alter comparison total",
+            "pass": true
+        },
+        {
+            "name": "percent comparison returns empty compatible promotions array",
+            "pass": true
+        },
+        {
+            "name": "percent optimization uses undiscounted prices",
+            "pass": true
+        },
+        {
+            "name": "fixed historical discount cannot alter comparison total",
+            "pass": true
+        },
+        {
+            "name": "fixed comparison returns empty compatible promotions array",
+            "pass": true
+        },
+        {
+            "name": "fixed optimization uses undiscounted prices",
+            "pass": true
+        },
+        {
+            "name": "price API rejects new promotion association",
+            "pass": true
+        },
+        {
+            "name": "rejected price leaves previous historical row unchanged",
+            "pass": true
+        },
+        {
+            "name": "price service blocks association before closing historical price",
+            "pass": true
+        },
+        {
+            "name": "price API accepts legacy null association",
+            "pass": true
+        },
+        {
+            "name": "new price has no promotion",
+            "pass": true
+        },
+        {
+            "name": "historical price keeps promotion FK after price rollover",
+            "pass": true
+        },
+        {
+            "name": "purchase API rejects new payment association",
+            "pass": true
+        },
+        {
+            "name": "purchase API rejects reassigning even the historic method",
+            "pass": true
+        },
+        {
+            "name": "purchase update accepts absent/null while preserving historical FK",
+            "pass": true
+        },
+        {
+            "name": "purchase update accepts absent/null while preserving historical FK",
+            "pass": true
+        },
+        {
+            "name": "purchase create with absent/null retains ordinary total and no method",
+            "pass": true
+        },
+        {
+            "name": "purchase create with absent/null retains ordinary total and no method",
+            "pass": true
+        },
+        {
+            "name": "purchase create service rejects association without changing historic FK",
+            "pass": true
+        },
+        {
+            "name": "purchase update service rejects association without changing historic FK",
+            "pass": true
+        },
+        {
+            "name": "historical promotion unchanged",
+            "pass": true
+        },
+        {
+            "name": "historical payment method unchanged",
+            "pass": true
+        },
+        {
+            "name": "historical user payment link unchanged",
+            "pass": true
+        },
+        {
+            "name": "historical promotion payment link retained",
+            "pass": true
+        },
+        {
+            "name": "all local fixture tables and role assignments unchanged after rollback",
+            "pass": true
+        }
+    ]
+}

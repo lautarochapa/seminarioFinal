@@ -180,6 +180,9 @@ class SupermarketProductService
     public function addPrice(int $actorId, int $id, array $data, string $ip, string $userAgent)
     {
         $sp = $this->repo->findOrFail($id);
+        if (isset($data['promotion_id'])) {
+            throw new IngredientException('PROMOTIONS_RETIRED', 'Las promociones fueron retiradas.', 422);
+        }
 
         if ($sp->status !== 'active') {
             throw new IngredientException('SUPERMARKET_PRODUCT_NOT_FOUND', 'El mapeo no esta activo.', 404);

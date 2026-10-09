@@ -19,7 +19,6 @@ class WebUserScreensRouteTest extends TestCase
 
     // Maps screenKey → permission code (only those with non-default permissions)
     private $customPermissions = [
-        'payment-methods' => 'web.user.profile-objectives',
     ];
 
     // Screens that fall back to the generic dashboard panel (no dedicated section)
@@ -42,7 +41,6 @@ class WebUserScreensRouteTest extends TestCase
         'reports'                 => ['data-*' => 'data-user-reports'],
         'family-group'            => ['data-*' => 'data-family-groups'],
         'profile-objectives'      => ['data-*' => 'data-user-profile'],
-        'payment-methods'         => ['data-*' => 'data-user-payment-methods'],
         'catalog'                 => ['data-*' => 'data-user-catalog'],
         'barcode-scanner'         => ['data-*' => 'data-user-barcode'],
         'supermarkets'            => ['data-*' => 'data-user-supermarkets'],
@@ -154,15 +152,14 @@ class WebUserScreensRouteTest extends TestCase
         $this->assertScreenOk('profile-objectives', 'data-user-profile');
     }
 
-    public function test_payment_methods_returns_200_with_correct_section()
+    public function test_payment_methods_is_retired_even_with_profile_permission()
     {
         $user = factory(User::class)->create();
         $this->grantPermission($user, 'web.user.profile-objectives');
 
         $response = $this->actingAs($user)->get('/web/payment-methods');
 
-        $response->assertStatus(200);
-        $response->assertSee('data-user-payment-methods', false);
+        $response->assertStatus(404);
     }
 
     public function test_professional_permissions_is_not_available_in_this_phase()

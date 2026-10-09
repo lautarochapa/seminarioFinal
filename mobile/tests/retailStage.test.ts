@@ -29,8 +29,6 @@ describe('retail mobile stage', () => {
       'app/(app)/branches.tsx',
       'app/(app)/branches/[id].tsx',
       'app/(app)/price-comparison.tsx',
-      'app/(app)/promotions.tsx',
-      'app/(app)/payment-methods.tsx',
       'app/(app)/notifications.tsx',
       'app/(app)/reports.tsx',
     ].forEach((file) => expect(fs.existsSync(path.join(root, file))).toBe(true));
@@ -47,8 +45,6 @@ describe('retail mobile stage', () => {
       'supermarketsApi',
       'branchesApi',
       'pricesApi',
-      'promotionsApi',
-      'paymentMethodsApi',
       'notificationsApi',
       'reportsApi',
     ].forEach((name) => expect(endpoints).toContain(`export const ${name}`));
@@ -60,8 +56,6 @@ describe('retail mobile stage', () => {
       'useNearbyBranches',
       'usePriceComparison',
       'usePriceHistory',
-      'usePromotions',
-      'usePaymentMethods',
       'useNotifications',
       'useNotificationPreferences',
       'useReports',
@@ -81,9 +75,12 @@ describe('retail mobile stage', () => {
     expect(endpoints).not.toContain('No hay endpoint publico de historial de precios.');
   });
 
-  it('exposes the global promotions endpoint', () => {
+  it('does not expose retired retail endpoints or discoverable tabs', () => {
     const endpoints = read('src/api/endpoints.ts');
-    expect(endpoints).toContain("apiClient.get<PaginatedResponse<Promotion>>(`/api/v1/promotions");
-    expect(fs.existsSync(path.join(root, 'src/hooks/useGlobalPromotions.ts'))).toBe(true);
+    expect(endpoints).not.toMatch(/promotions|payment-methods|promotionsApi|paymentMethodsApi/);
+    const layout = read('app/(app)/_layout.tsx');
+    expect(layout).toContain('<Tabs.Screen name="promotions" options={hidden} />');
+    expect(layout).toContain('<Tabs.Screen name="payment-methods" options={hidden} />');
+    expect(layout).not.toMatch(/title: '(Promociones|Metodos de pago)'/);
   });
 });

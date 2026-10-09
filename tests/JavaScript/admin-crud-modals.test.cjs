@@ -15,7 +15,6 @@ const entity = {
     factor: 1, quantity: 1, amount_per_100g: 5, sort_order: 1, net_quantity: 1000,
     external_sku: 'qa-sku', product_id: 7, supermarket_chain_id: 7, supermarket_branch_id: 7,
     city_id: 7, address: 'Dirección de ejemplo', country: 'Argentina', province: 'Río Negro',
-    discount_type: 'percentage', discount_value: 10, valid_from: '2026-10-01T00:00:00Z', valid_to: '2026-11-01T00:00:00Z',
     children: [], tags: [], images: [], product: { id: 7, name: 'Producto QA' },
     chain: { id: 7, name: 'Cadena QA' }, city: { id: 7, name: 'Ciudad QA' },
     branch: { id: 7, name: 'Sucursal QA', chain: { id: 7, name: 'Cadena QA' } },
@@ -25,7 +24,7 @@ const configs = [
     ['ingredient-equivalences', 'equivalence'], ['ingredients', 'ingredient'], ['meal-types', 'meal-type'],
     ['nutrients', 'nutrient'], ['product-categories', 'product-category'], ['recipe-categories', 'recipe-category'],
     ['recipe-tags', 'recipe-tag'], ['units', 'unit'], ['units', 'conversion'], ['cities', 'cities'], ['branches', 'branches'],
-    ['supermarkets', 'supermarkets'], ['payment-methods', 'payment-method'], ['promotions', 'promotion'],
+    ['supermarkets', 'supermarkets'],
     ['products', 'product'], ['supermarket-products', 'sp'],
 ];
 async function fixture(name, overrides = {}) {
