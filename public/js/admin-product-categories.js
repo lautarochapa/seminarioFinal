@@ -8,6 +8,8 @@
     var state = {
         categories: [],
         tree: [],
+        flatTree: [],
+        meta: {},
         page: 1,
         lastPage: 1,
     };
@@ -58,9 +60,18 @@
         showMessage(root, 'danger', apiError.message || error.message || 'No se pudo completar la operacion.');
     }
 
-    function categoryNameById(id) {
+    function categoryNameById(id, parent) {
         if (!id) {
             return '-';
+        }
+        var treeCategory = state.flatTree.find(function (item) {
+            return String(item.id) === String(id);
+        });
+        if (treeCategory) {
+            return treeCategory.path;
+        }
+        if (parent && String(parent.id) === String(id) && parent.name) {
+            return parent.name;
         }
         var category = state.categories.find(function (item) {
             return String(item.id) === String(id);
@@ -68,8 +79,22 @@
         return category ? category.name : '#' + id;
     }
 
-    function option(label, value) {
-        return '<option value="' + escapeHtml(value) + '">' + escapeHtml(label) + '</option>';
+    function option(label, value, disabled) {
+        return '<option value="' + escapeHtml(value) + '"' + (disabled ? ' disabled' : '') + '>' + escapeHtml(label) + '</option>';
+    }
+
+    function flattenTree(nodes, names, ancestorIds) {
+        var rows = [];
+        nodes.forEach(function (category) {
+            var id = String(category.id);
+            if (ancestorIds.indexOf(id) !== -1) {
+                return;
+            }
+            var path = names.concat([category.name]);
+            rows.push({ id: category.id, path: path.join(' > '), ancestorIds: ancestorIds });
+            rows = rows.concat(flattenTree(category.children || [], path, ancestorIds.concat([id])));
+        });
+        return rows;
     }
 
     function fetchCategories(root, page) {
@@ -93,8 +118,9 @@
         return window.CCApi.request(endpoint('/admin/product-categories?' + params.toString()))
             .then(function (response) {
                 state.categories = response.data || [];
+                state.meta = response.meta || {};
                 state.lastPage = response.meta && response.meta.last_page ? response.meta.last_page : 1;
-                renderCategories(root, response.meta || {});
+                renderCategories(root, state.meta);
                 renderParentOptions(root);
             }).catch(function (error) {
                 handleError(root, error);
@@ -124,7 +150,7 @@
 
             return '<tr>' +
                 '<td><strong>' + escapeHtml(category.name) + '</strong></td>' +
-                '<td>' + escapeHtml(categoryNameById(category.parent_id)) + '</td>' +
+                '<td>' + escapeHtml(categoryNameById(category.parent_id, category.parent)) + '</td>' +
                 '<td>' + escapeHtml(category.description) + '</td>' +
                 '<td>' + escapeHtml(category.children_count) + '</td>' +
                 '<td>' + escapeHtml(category.products_count) + '</td>' +
@@ -134,18 +160,22 @@
         }).join('');
     }
 
-    function renderParentOptions(root) {
+    function renderParentOptions(root, selectedId) {
         var select = qs('[data-product-category-parent]', root);
         var form = qs('[data-product-category-form]', root);
-        var current = select.value;
-        var editingId = form.elements.id.value;
-        var activeCategories = state.categories.filter(function (category) {
-            return category.status === 'active' && String(category.id) !== String(editingId);
+        var current = selectedId === undefined ? select.value : String(selectedId || '');
+        var editingId = String(form.elements.id.value);
+        var activeCategories = state.flatTree.filter(function (category) {
+            return String(category.id) !== editingId && category.ancestorIds.indexOf(editingId) === -1;
         });
 
         select.innerHTML = '<option value="">Categoria raiz</option>' + activeCategories.map(function (category) {
-            return option(category.name, category.id);
+            return option(category.path, category.id);
         }).join('');
+        if (current && !activeCategories.some(function (category) { return String(category.id) === current; })) {
+            var editingCategory = state.categories.find(function (category) { return String(category.id) === editingId; });
+            select.insertAdjacentHTML('beforeend', option(categoryNameById(current, editingCategory && editingCategory.parent) + ' (no disponible)', current, true));
+        }
         select.value = current;
     }
 
@@ -153,7 +183,10 @@
         return window.CCApi.request(endpoint('/product-categories'))
             .then(function (response) {
                 state.tree = response.data || [];
+                state.flatTree = flattenTree(state.tree, [], []);
                 renderTree(root);
+                renderParentOptions(root);
+                renderCategories(root, state.meta);
             }).catch(function (error) {
                 handleError(root, error);
             });
@@ -181,10 +214,14 @@
         Array.from(new FormData(form).entries()).forEach(function (entry) {
             var key = entry[0];
             var value = typeof entry[1] === 'string' ? entry[1].trim() : entry[1];
+            if (key === 'parent_id') {
+                data[key] = value === '' ? null : parseInt(value, 10);
+                return;
+            }
             if (key === 'id' || value === '') {
                 return;
             }
-            data[key] = key === 'parent_id' ? parseInt(value, 10) : value;
+            data[key] = value;
         });
         return data;
     }
@@ -195,24 +232,27 @@
         form.elements.id.value = '';
         form.elements.status.value = 'active';
         qs('[data-product-category-form-title]', root).textContent = 'Nueva categoria';
-        renderParentOptions(root);
+        renderParentOptions(root, '');
     }
 
     function fillForm(root, category) {
         var form = qs('[data-product-category-form]', root);
         form.elements.id.value = category.id;
         form.elements.name.value = category.name || '';
-        form.elements.parent_id.value = category.parent_id || '';
         form.elements.description.value = category.description || '';
         form.elements.status.value = category.status || 'active';
         qs('[data-product-category-form-title]', root).textContent = 'Editar categoria #' + category.id;
-        renderParentOptions(root);
-        form.elements.parent_id.value = category.parent_id || '';
+        renderParentOptions(root, category.parent_id);
         if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveCategory(root, form) {
         clearMessage(root);
+        var parentOption = form.elements.parent_id.selectedOptions[0];
+        if (!parentOption || parentOption.disabled) {
+            showMessage(root, 'danger', 'La categoria padre seleccionada no esta disponible. Elegi otra categoria o Categoria raiz.');
+            return Promise.resolve();
+        }
         var id = form.elements.id.value;
         var method = id ? 'PATCH' : 'POST';
         var path = id ? '/admin/product-categories/' + encodeURIComponent(id) : '/admin/product-categories';
@@ -267,7 +307,7 @@
 
     function bind(root) {
         qs('[data-product-categories-refresh]', root).addEventListener('click', function () {
-            fetchCategories(root, 1);
+            Promise.all([fetchCategories(root, 1), fetchTree(root)]);
         });
         qs('[data-product-categories-tree-refresh]', root).addEventListener('click', function () {
             fetchTree(root);
