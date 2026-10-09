@@ -42,9 +42,9 @@ checkMobileVersion(!empty($json['trace_id']) && $response->headers->get('X-Trace
 checkMobileVersion(strpos($response->headers->get('Cache-Control'), 'no-store') !== false, 'No cachear una version antigua.');
 checkMobileVersion(count($response->headers->getCookies()) === 0, 'La consulta no debe crear cookies de sesion.');
 
-config(['mobile.android.version' => '1.0.10', 'mobile.android.build' => 11]);
+config(['mobile.android.version' => '1.0.11', 'mobile.android.build' => 12]);
 $next = json_decode($request()->getContent(), true);
-checkMobileVersion($next['data']['version'] === '1.0.10' && $next['data']['build'] === 11, 'La respuesta no refleja la nueva release configurada.');
+checkMobileVersion($next['data']['version'] === '1.0.11' && $next['data']['build'] === 12, 'La respuesta no refleja la nueva release configurada.');
 
 foreach ([
     ['download_url', null], ['download_url', 'http://example.test/app.apk'],

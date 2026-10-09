@@ -1,0 +1,150 @@
+{
+  "at": "2026-10-09T17:05:09.957Z",
+  "sourceCommit": "7d949d7feaffa22468e500b298cccabb63b18ccf",
+  "authentication": "none",
+  "mutations": 0,
+  "checks": 22,
+  "result": "PASS",
+  "results": [
+    {
+      "url": "https://cocinacomidacontrol.com.ar/js/panel-ui.js",
+      "status": 200,
+      "expected": "23e6c276d954354da42aa19295915771865baf47171b19adac0ec63fc551f30c",
+      "actual": "23e6c276d954354da42aa19295915771865baf47171b19adac0ec63fc551f30c",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/js/admin-supermarkets.js",
+      "status": 200,
+      "expected": "e14851c700f7957b3f7e2ddfc0be7bfbe2c571d5a8e8ce95da9f20e49d7b9ed7",
+      "actual": "e14851c700f7957b3f7e2ddfc0be7bfbe2c571d5a8e8ce95da9f20e49d7b9ed7",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/js/shopping-compare.js",
+      "status": 200,
+      "expected": "722d373d0d321d375d0a942d3870ae8733b5c7d796a307ab4b537a05b495c8e3",
+      "actual": "722d373d0d321d375d0a942d3870ae8733b5c7d796a307ab4b537a05b495c8e3",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/js/user-branches.js",
+      "status": 200,
+      "expected": "9e3f2408b4aa1152f89f06abca8331fa77fb69ab9b026b650404271f435951ed",
+      "actual": "9e3f2408b4aa1152f89f06abca8331fa77fb69ab9b026b650404271f435951ed",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/healthz",
+      "status": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/api/v1/promotions",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/api/v1/payment-methods",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/api/v1/admin/promotions",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/api/v1/admin/payment-methods",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/api/v1/users/me/payment-methods",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.com.ar/api/v1/supermarket-branches/1/promotions",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/js/panel-ui.js",
+      "status": 200,
+      "expected": "23e6c276d954354da42aa19295915771865baf47171b19adac0ec63fc551f30c",
+      "actual": "23e6c276d954354da42aa19295915771865baf47171b19adac0ec63fc551f30c",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/js/admin-supermarkets.js",
+      "status": 200,
+      "expected": "e14851c700f7957b3f7e2ddfc0be7bfbe2c571d5a8e8ce95da9f20e49d7b9ed7",
+      "actual": "e14851c700f7957b3f7e2ddfc0be7bfbe2c571d5a8e8ce95da9f20e49d7b9ed7",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/js/shopping-compare.js",
+      "status": 200,
+      "expected": "722d373d0d321d375d0a942d3870ae8733b5c7d796a307ab4b537a05b495c8e3",
+      "actual": "722d373d0d321d375d0a942d3870ae8733b5c7d796a307ab4b537a05b495c8e3",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/js/user-branches.js",
+      "status": 200,
+      "expected": "9e3f2408b4aa1152f89f06abca8331fa77fb69ab9b026b650404271f435951ed",
+      "actual": "9e3f2408b4aa1152f89f06abca8331fa77fb69ab9b026b650404271f435951ed",
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/healthz",
+      "status": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/api/v1/promotions",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/api/v1/payment-methods",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/api/v1/admin/promotions",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/api/v1/admin/payment-methods",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/api/v1/users/me/payment-methods",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "url": "https://cocinacomidacontrol.onrender.com/api/v1/supermarket-branches/1/promotions",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    }
+  ]
+}

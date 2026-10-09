@@ -6,19 +6,16 @@ en Expo. El binario no se incluye en Git ni en la imagen Docker de Render.
 
 ## Version publicada
 
-Release `android-v1.0.7-8` publicada y descargada anonimamente el 23/09/2026.
-La landing y la API de version en Render anuncian esta misma APK.
-[Registro de release](ANDROID-1.0.7.md).
+Release `android-v1.0.10-11` publicada y descargada anonimamente el 09/10/2026.
+[Registro de release](ANDROID-1.0.10.md).
 
-- Version: 1.0.7, compilacion 8, version de prueba.
-- Archivo: `CocinaComidaControl-1.0.7-8.apk`.
-- Tamano: 129114783 bytes.
-- SHA-256: `5d29dbba7d6756bafac4fdca8fd7d5d71903ba1de140ce0dadbed0f27edda585`.
-- EAS Build: `4b67bba9-6f74-47e8-8ea1-6e01d05634a8`.
-- Firma valida e igual a 1.0.6, mismo paquete, no debug y bundle standalone.
-- Descarga anonima completa, integridad y publicacion web verificadas.
-- La instalacion y comprobacion fisica de esta APK se realizan en el Samsung.
-- Las APK anteriores se conservan como respaldo; no desinstalar para actualizar.
+- Version: 1.0.10, compilacion 11, version de prueba.
+- Archivo: `CocinaComidaControl-1.0.10-11.apk`; 128741927 bytes.
+- SHA-256: `7f1fa7afd043d1800fd510390a8593e6cdde9bda2ddf4351cd9c4174e57b9ff3`.
+- EAS Build: `edabaa87-787f-44f4-95d6-0d1d04a1a43e`.
+- Retira promociones y metodos de pago. Firma valida e igual a1.0.9, mismo paquete, no debug y bundle standalone.
+- Descarga anonima completa e integridad verificadas; instalacion fisica en Samsung pendiente.
+- Instalar como actualizacion sin desinstalar. Las APK anteriores se conservan.
 
 ## Antecedente: build 1.0.2 (no contiene los ultimos arreglos)
 
