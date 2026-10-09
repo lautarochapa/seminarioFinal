@@ -2989,6 +2989,11 @@
                         <select class="form-control" name="ingredient_id" data-import-candidates-ingredient required>
                             <option value="">Ingrediente del catálogo</option>
                         </select>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center">
+                            <input type="checkbox" name="free_quantity" data-import-candidates-free-quantity>
+                            A gusto / cantidad necesaria
+                        </label>
+                        <p class="muted" style="font-size:12px;margin:0">Sin descuento de Mi cocina ni faltantes en compras.</p>
                         <select class="form-control" name="unit_id" data-import-candidates-unit required>
                             <option value="">Unidad</option>
                         </select>

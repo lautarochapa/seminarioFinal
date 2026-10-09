@@ -13,6 +13,30 @@ class RecipeIngredient extends Model
         'is_optional' => 'boolean',
     ];
 
+    public static function validQuantity($quantity, $isOptional): bool
+    {
+        if (!is_numeric($quantity) || !is_finite((float) $quantity)) {
+            return false;
+        }
+        return (float) $quantity >= 0.0001
+            || ((float) $quantity === 0.0 && in_array($isOptional, [true, 1, '1'], true));
+    }
+
+    public function isUnquantified(): bool
+    {
+        return $this->quantity !== null && (float) $this->quantity === 0.0 && $this->is_optional;
+    }
+
+    public function quantityLabel(): ?string
+    {
+        return $this->isUnquantified() ? (trim((string) $this->notes) !== '' ? $this->notes : 'A gusto') : null;
+    }
+
+    public function tracksStock(): bool
+    {
+        return (float) $this->quantity > 0 && !$this->is_optional;
+    }
+
     public function recipe()
     {
         return $this->belongsTo(Recipe::class);

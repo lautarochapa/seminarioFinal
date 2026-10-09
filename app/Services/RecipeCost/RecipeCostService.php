@@ -100,8 +100,13 @@ class RecipeCostService
         $missingPrice = 0;
         $currencies   = [];
         $breakdown    = [];
+        $unquantified = 0;
 
         foreach ($ingredients as $ri) {
+            if ($ri->isUnquantified()) {
+                $unquantified++;
+                continue;
+            }
             $ingredientId = $ri->ingredient_id;
             $ingredient   = $ri->ingredient;
             $recipeQty    = (float) $ri->quantity;
@@ -147,7 +152,7 @@ class RecipeCostService
 
         $servings    = ($recipe->servings !== null && $recipe->servings > 0) ? (int) $recipe->servings : null;
         $perServing  = $servings !== null ? round($totalCost / $servings, 2) : null;
-        $status      = $missingPrice === 0 ? 'complete' : 'partial';
+        $status      = $missingPrice === 0 && $unquantified === 0 ? 'complete' : 'partial';
 
         return [
             'recipe_id'          => $recipe->id,
@@ -158,6 +163,7 @@ class RecipeCostService
             'calculation_status' => $status,
             'calculated_at'      => now()->toIso8601String(),
             'ingredients'        => $breakdown,
+            'unquantified_ingredients_count' => $unquantified,
         ];
     }
 

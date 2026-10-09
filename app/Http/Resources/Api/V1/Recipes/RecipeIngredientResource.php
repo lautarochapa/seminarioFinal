@@ -15,6 +15,8 @@ class RecipeIngredientResource extends JsonResource
                 return $this->ingredient->name ?? null;
             }),
             'quantity'            => $this->quantity,
+            'quantity_label'      => $this->resource->quantityLabel(),
+            'tracks_stock'        => $this->resource->tracksStock(),
             'unit_id'             => $this->unit_id,
             'unit_name'           => $this->whenLoaded('unit', function () {
                 return $this->unit->name ?? null;

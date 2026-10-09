@@ -37,8 +37,8 @@
                 return unitsCache;
             })
             .catch(function () {
-                unitsCache = [];
-                return unitsCache;
+                unitsCache = null;
+                return [];
             });
     }
 
@@ -56,11 +56,41 @@
         return n % 1 === 0 ? String(parseInt(n, 10)) : String(n);
     }
 
+    function isFreeQuantity(ing) {
+        return ing.is_optional === true && ing.quantity !== null && ing.quantity !== '' && Number(ing.quantity) === 0;
+    }
+
+    function freeQuantityControl(name, checked) {
+        return '<label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:6px">' +
+            '<input type="checkbox" ' + name + (checked ? ' checked' : '') + '> A gusto / cantidad necesaria</label>' +
+            '<p class="muted" style="font-size:12px;margin:0 0 8px">Sin descuento de Mi cocina ni faltantes en compras.</p>';
+    }
+
+    function syncFreeQuantity(container, editing) {
+        var free = qs(editing ? '[name=edit_free_quantity]' : '[data-ingr-free-quantity]', container);
+        var enabled = !!(free && free.checked);
+        [editing ? '[name=edit_qty]' : '[data-ingr-qty]', editing ? '[name=edit_unit]' : '[data-ingr-unit]', editing ? '[name=edit_optional]' : '[data-ingr-optional]'].forEach(function (selector) {
+            var control = qs(selector, container);
+            if (control) { control.disabled = enabled; }
+        });
+    }
+
+    function selectedUnit(unitEl, freeQuantity, existingUnitId) {
+        if (freeQuantity) {
+            if (existingUnitId) { return Number(existingUnitId); }
+            var generic = (unitsCache || []).find(function (unit) { return unit.code === 'unit'; });
+            return generic ? Number(generic.id) : null;
+        }
+        if (unitEl && unitEl.value) { return parseInt(unitEl.value, 10); }
+        return null;
+    }
+
     function renderReadRow(ing) {
+        var freeQuantity = isFreeQuantity(ing);
         var qty      = ing.quantity ? formatQty(ing.quantity) + ' ' : '';
         var unitName = ing.unit_name || '';
         var ingName  = ing.ingredient_name || '-';
-        var optBadge = ing.is_optional
+        var optBadge = ing.is_optional && !freeQuantity
             ? ' <span class="muted" style="font-size:11px">(opc.)</span>'
             : '';
         var notesDiv = ing.notes
@@ -76,7 +106,7 @@
 
         return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #edf2ee">' +
             '<div style="flex:1;min-width:0;font-size:13px">' +
-            '<strong>' + escapeHtml(qty + unitName) + '</strong> ' + escapeHtml(ingName) + optBadge +
+            '<strong>' + escapeHtml(freeQuantity ? 'A gusto / cantidad necesaria' : qty + unitName) + '</strong> ' + escapeHtml(ingName) + optBadge +
             notesDiv +
             '</div>' +
             actions +
@@ -85,20 +115,23 @@
 
     function renderEditRow(ing) {
         var ingName = ing.ingredient_name || '-';
+        var freeQuantity = isFreeQuantity(ing);
         return '<div style="background:#f9fafb;border-radius:6px;padding:10px;margin:4px 0;border:1px solid #dde3e8" data-ingr-edit-row="' + ing.id + '">' +
             '<div style="font-size:11px;color:#697681;margin-bottom:7px">Editando: <strong>' + escapeHtml(ingName) + '</strong></div>' +
+            freeQuantityControl('name="edit_free_quantity"', freeQuantity) +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">' +
-            '<input class="form-control" name="edit_qty" type="number" step="0.0001" min="0.0001" value="' + escapeHtml(formatQty(ing.quantity)) + '" placeholder="Cantidad">' +
-            '<select class="form-control" name="edit_unit"><option value="">Unidad</option>' + unitOptions(ing.unit_id) + '</select>' +
+            '<input class="form-control" name="edit_qty" type="number" step="0.0001" min="0.0001" value="' + escapeHtml(freeQuantity ? '' : formatQty(ing.quantity)) + '" placeholder="Cantidad" aria-label="Cantidad"' + (freeQuantity ? ' disabled' : '') + '>' +
+            '<select class="form-control" name="edit_unit" aria-label="Unidad"' + (freeQuantity ? ' disabled' : '') + '><option value="">Unidad</option>' + unitOptions(ing.unit_id) + '</select>' +
             '</div>' +
             '<input class="form-control" name="edit_notes" type="text" value="' + escapeHtml(ing.notes || '') + '" placeholder="Notas (opcional)" style="margin-bottom:6px">' +
             '<label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:8px">' +
-            '<input type="checkbox" name="edit_optional"' + (ing.is_optional ? ' checked' : '') + '> Opcional' +
+            '<input type="checkbox" name="edit_optional"' + (ing.is_optional ? ' checked' : '') + (freeQuantity ? ' disabled' : '') + '> Opcional' +
             '</label>' +
             '<div style="display:flex;gap:6px">' +
             '<button type="button" class="btn-main btn-sm" data-ingr-save="' + ing.id + '">Guardar</button>' +
             '<button type="button" class="btn-ghost btn-sm" data-ingr-cancel>Cancelar</button>' +
             '</div>' +
+            '<div data-ingr-edit-msg role="alert" style="display:none;font-size:12px;margin-top:7px;padding:5px 9px;border-radius:4px"></div>' +
             '</div>';
     }
 
@@ -110,9 +143,10 @@
             '<div data-ingr-fields style="display:none">' +
             '<div style="font-size:12px;color:#697681;margin-bottom:6px">Ingrediente: <strong data-ingr-sel-name></strong> ' +
             '<button type="button" data-ingr-clear class="btn-ghost btn-sm" style="padding:2px 7px;font-size:11px">✕</button></div>' +
+            freeQuantityControl('data-ingr-free-quantity', false) +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">' +
-            '<input class="form-control" data-ingr-qty type="number" step="0.0001" min="0.0001" placeholder="Cantidad">' +
-            '<select class="form-control" data-ingr-unit><option value="">Unidad...</option>' + unitOptions(null) + '</select>' +
+            '<input class="form-control" data-ingr-qty type="number" step="0.0001" min="0.0001" placeholder="Cantidad" aria-label="Cantidad">' +
+            '<select class="form-control" data-ingr-unit aria-label="Unidad"><option value="">Unidad...</option>' + unitOptions(null) + '</select>' +
             '</div>' +
             '<input class="form-control" data-ingr-notes type="text" placeholder="Notas (opcional)" style="margin-bottom:6px">' +
             '<label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:8px">' +
@@ -167,7 +201,7 @@
     // ─── Feedback ───────────────────────────────────────────────────────────────
 
     function showMsg(type, text) {
-        var el = qs('[data-ingr-msg]', state.el);
+        var el = qs('[data-ingr-edit-msg]', state.el) || qs('[data-ingr-msg]', state.el);
         if (!el) { return; }
         el.textContent = text;
         el.style.display = 'block';
@@ -241,6 +275,15 @@
         if (searchEl)  { searchEl.disabled = false; searchEl.value = ''; searchEl.focus(); }
         if (resultsEl) { resultsEl.innerHTML = ''; }
         if (fieldsEl)  { fieldsEl.style.display = 'none'; }
+        ['[data-ingr-qty]', '[data-ingr-unit]', '[data-ingr-notes]'].forEach(function (selector) {
+            var input = qs(selector, state.el);
+            if (input) { input.value = ''; }
+        });
+        ['[data-ingr-free-quantity]', '[data-ingr-optional]'].forEach(function (selector) {
+            var input = qs(selector, state.el);
+            if (input) { input.checked = false; }
+        });
+        syncFreeQuantity(state.el, false);
     }
 
     // ─── CRUD ───────────────────────────────────────────────────────────────────
@@ -252,22 +295,25 @@
         var unitEl  = qs('[data-ingr-unit]', state.el);
         var notesEl = qs('[data-ingr-notes]', state.el);
         var optEl   = qs('[data-ingr-optional]', state.el);
+        var freeEl  = qs('[data-ingr-free-quantity]', state.el);
         var btn     = qs('[data-ingr-submit]', state.el);
 
-        var qty = qtyEl ? parseFloat(qtyEl.value) : 0;
-        if (!qty || qty <= 0) { showMsg('err', 'Ingresá una cantidad válida.'); return; }
-        if (!unitEl || !unitEl.value) { showMsg('err', 'Seleccioná una unidad.'); return; }
+        var freeQuantity = !!(freeEl && freeEl.checked);
+        var qty = freeQuantity ? 0 : (qtyEl ? parseFloat(qtyEl.value) : 0);
+        if (!freeQuantity && (!Number.isFinite(qty) || qty <= 0)) { showMsg('err', 'Ingresá una cantidad válida.'); return; }
+        var unitId = selectedUnit(unitEl, freeQuantity);
+        if (!unitId) { showMsg('err', freeQuantity ? 'No pudimos cargar las unidades. Volvé a abrir la receta e intentá nuevamente.' : 'Seleccioná una unidad.'); return; }
 
         if (btn) { btn.disabled = true; }
 
         var body = {
             ingredient_id: parseInt(state.selectedIngredient.id, 10),
             quantity: qty,
-            unit_id: parseInt(unitEl.value, 10),
+            unit_id: unitId,
         };
         var notes = notesEl ? notesEl.value.trim() : '';
-        if (notes) { body.notes = notes; }
-        if (optEl && optEl.checked) { body.is_optional = true; }
+        if (notes || freeQuantity) { body.notes = notes || 'A gusto / cantidad necesaria'; }
+        if (freeQuantity || (optEl && optEl.checked)) { body.is_optional = true; }
 
         window.CCApi.request(endpoint('/recipes/' + state.recipeId + '/ingredients'), { method: 'POST', body: body })
             .then(function (res) {
@@ -290,17 +336,22 @@
         var unitEl  = rowEl.querySelector('[name=edit_unit]');
         var notesEl = rowEl.querySelector('[name=edit_notes]');
         var optEl   = rowEl.querySelector('[name=edit_optional]');
+        var freeEl  = rowEl.querySelector('[name=edit_free_quantity]');
         var btn     = rowEl.querySelector('[data-ingr-save]');
 
-        var qty = qtyEl ? parseFloat(qtyEl.value) : 0;
-        if (!qty || qty <= 0) { showMsg('err', 'Cantidad inválida.'); return; }
+        var freeQuantity = !!(freeEl && freeEl.checked);
+        var qty = freeQuantity ? 0 : (qtyEl ? parseFloat(qtyEl.value) : 0);
+        if (!freeQuantity && (!Number.isFinite(qty) || qty <= 0)) { showMsg('err', 'Cantidad inválida.'); return; }
+        var original = state.ingredients.find(function (ingredient) { return String(ingredient.id) === String(id); });
+        var unitId = selectedUnit(unitEl, freeQuantity, original && original.unit_id);
+        if (!unitId) { showMsg('err', freeQuantity ? 'No pudimos cargar las unidades. Volvé a abrir la receta e intentá nuevamente.' : 'Seleccioná una unidad.'); return; }
 
         if (btn) { btn.disabled = true; }
 
-        var body = { quantity: qty };
-        if (unitEl && unitEl.value) { body.unit_id = parseInt(unitEl.value, 10); }
-        if (notesEl) { body.notes = notesEl.value.trim() || null; }
-        body.is_optional = optEl ? optEl.checked : false;
+        var body = { quantity: qty, unit_id: unitId };
+        var notes = notesEl ? notesEl.value.trim() : '';
+        body.notes = notes || (freeQuantity ? 'A gusto / cantidad necesaria' : null);
+        body.is_optional = freeQuantity || (optEl ? optEl.checked : false);
 
         window.CCApi.request(endpoint('/recipes/' + state.recipeId + '/ingredients/' + id), { method: 'PATCH', body: body })
             .then(function (res) {
@@ -332,6 +383,10 @@
     // ─── Events ─────────────────────────────────────────────────────────────────
 
     function bindEvents(el) {
+        el.addEventListener('change', function (event) {
+            if (event.target.matches('[data-ingr-free-quantity]')) { syncFreeQuantity(el, false); }
+            if (event.target.matches('[name=edit_free_quantity]')) { syncFreeQuantity(event.target.closest('[data-ingr-edit-row]'), true); }
+        });
         el.addEventListener('click', function (e) {
             if (e.target.closest('[data-ingr-toggle]')) {
                 var wrap = qs('[data-ingr-add-wrap]', el);

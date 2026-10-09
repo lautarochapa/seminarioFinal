@@ -36,6 +36,8 @@ class GlobalCatalogSeeder extends Seeder
 
         $this->say('GlobalCatalog: unidades, conversiones, nutrientes, tipos de comida, ciudad...');
         $this->units     = $this->ensureUnits();
+        $this->call(CulinaryMeasuresSeeder::class);
+        $this->units = DB::table('unit_measures')->pluck('id', 'code')->toArray();
         $this->ensureUnitConversions($this->units);
         $this->nutrients = $this->ensureNutrients($this->units);
         $this->ensureMealTypes();

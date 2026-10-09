@@ -19,4 +19,13 @@ class MapIngredientRequest extends FormRequest
             'notes'            => 'sometimes|nullable|string|max:300',
         ];
     }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->input('quantity') !== null && !\App\RecipeIngredient::validQuantity($this->input('quantity'), $this->input('is_optional', false))) {
+                $validator->errors()->add('quantity', 'La cantidad debe ser positiva; cero requiere un ingrediente opcional sin cantidad fija.');
+            }
+        });
+    }
 }

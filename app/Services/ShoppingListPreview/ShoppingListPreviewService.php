@@ -118,8 +118,8 @@ class ShoppingListPreviewService
      * resolved from the ingredient link and has a known package size. The missing
      * quantity (in the recipe's unit) is converted into a whole number of packages
      * priced in the product's own unit, so the generated list can be compared between
-     * supermarkets. Requirements with no resolvable product are left untouched and keep
-     * their ingredient + recipe-unit fallback.
+     * supermarkets. Without packaging, purchases keep the recipe unit and only whole
+     * pieces (unit) are rounded up; the missing requirement itself stays fractional.
      */
     private function resolvePurchasableProducts(int $groupId, array $items): array
     {
@@ -127,11 +127,12 @@ class ShoppingListPreviewService
             $ingredientId = (int) $item['ingredient']['id'];
             $recipeUnitId = (int) $item['unit']['id'];
             $missingQty   = (float) $item['missing_quantity'];
+            $items[$index]['purchase_quantity'] = \App\Services\ShoppingLists\PurchaseQuantity::withoutPackaging($missingQty, $item['unit']['code'] ?? null);
+            $items[$index]['purchase_unit_id'] = $recipeUnitId;
 
             $product = $this->repo->resolveProductForIngredient($ingredientId, $groupId, $item['specific_product_id'] ?? null);
             if ($product) {
                 $items[$index]['resolved_product_id'] = (int) $product->id;
-                $items[$index]['purchase_quantity'] = $missingQty;
                 $items[$index]['purchase_unit_id'] = $recipeUnitId;
                 $items[$index]['estimated_price'] = null;
             }
@@ -151,7 +152,7 @@ class ShoppingListPreviewService
             $packaging = app(\App\Services\Products\ProductPackagingService::class);
             $purchaseUnitId = $packaging->hasContent($product) ? $packaging->purchaseUnitId($product) : null;
             if ($purchaseUnitId === null) {
-                $items[$index]['purchase_warning'] = 'Sin unidad Paquete activa o contenido valido: se conserva el faltante en su unidad original, sin precio estimado.';
+                $items[$index]['purchase_warning'] = 'Sin unidad Paquete activa o contenido valido: se conserva la unidad original, sin precio estimado.';
                 continue;
             }
 

@@ -120,8 +120,13 @@ class RecipeAvailabilityService
         $maxServings = PHP_INT_MAX;
         $totalReq    = 0;
         $totalAvail  = 0;
+        $unquantified = 0;
 
         foreach ($ingredients as $ri) {
+            if ($ri->isUnquantified()) {
+                $unquantified++;
+                continue;
+            }
             if ($ri->is_optional && !$includeOptional) {
                 continue;
             }
@@ -170,7 +175,7 @@ class RecipeAvailabilityService
         }
 
         if ($maxServings === PHP_INT_MAX) {
-            $maxServings = count($breakdown) > 0 ? $requiredServings : 0;
+            $maxServings = count($breakdown) > 0 || $unquantified > 0 ? $requiredServings : 0;
         }
 
         $overallStatus = $this->overallStatus($maxServings, $requiredServings);
@@ -190,6 +195,7 @@ class RecipeAvailabilityService
             'suggested_servings'     => $suggestedServings,
             'coverage_percentage'    => $coveragePct,
             'ingredients'            => $breakdown,
+            'unquantified_ingredients_count' => $unquantified,
             'required_ingredients_count' => count($breakdown),
             'available_ingredients_count' => count(array_filter($breakdown, function ($item) { return $item['status'] === 'available'; })),
             'missing_ingredients_count' => count(array_filter($breakdown, function ($item) { return $item['status'] !== 'available'; })),

@@ -55,7 +55,7 @@ class RecipeSuggestionsService
 
         $scored = $recipes->map(function ($recipe) use ($expiringIds, $batch) {
             $expiringMatch = collect($recipe->ingredients ?? [])
-                ->filter(fn ($ri) => in_array((int) $ri->ingredient_id, $expiringIds, true))
+                ->filter(fn ($ri) => !$ri->isUnquantified() && in_array((int) $ri->ingredient_id, $expiringIds, true))
                 ->count();
 
             if ($expiringMatch === 0) {
@@ -166,7 +166,7 @@ class RecipeSuggestionsService
                 }
 
                 $expiringMatch = collect($recipe->ingredients ?? [])
-                    ->filter(fn ($ri) => in_array((int) $ri->ingredient_id, $expiringIds, true))
+                    ->filter(fn ($ri) => !$ri->isUnquantified() && in_array((int) $ri->ingredient_id, $expiringIds, true))
                     ->count();
                 if ($expiringMatch > 0) {
                     $score += $expiringMatch;
@@ -199,7 +199,7 @@ class RecipeSuggestionsService
         return $recipes->map(function ($recipe) use ($expiringIds, $batch) {
             $avail = $batch[$recipe->id];
             $expiring = collect($recipe->ingredients ?? [])
-                ->filter(fn ($item) => in_array((int) $item->ingredient_id, $expiringIds, true))
+                ->filter(fn ($item) => !$item->isUnquantified() && in_array((int) $item->ingredient_id, $expiringIds, true))
                 ->count();
 
             return array_merge($this->recipeData($recipe), [

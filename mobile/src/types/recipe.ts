@@ -21,7 +21,7 @@ export interface RecipeIngredient {
   id: number;
   ingredient_id: number;
   ingredient_name: string | null;
-  quantity: number | null;
+  quantity: number | string | null;
   unit_id: number | null;
   unit_name: string | null;
   is_optional: boolean;

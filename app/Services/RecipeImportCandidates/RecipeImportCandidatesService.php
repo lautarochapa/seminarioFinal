@@ -409,6 +409,10 @@ class RecipeImportCandidatesService
         $candidate = $this->findOrFail($id);
         $this->assertNotFinalized($candidate);
 
+        if (isset($input['quantity']) && !\App\RecipeIngredient::validQuantity($input['quantity'], $input['is_optional'] ?? false)) {
+            throw RecipeImportCandidatesException::invalidForApproval('La cantidad debe ser positiva; cero requiere un ingrediente opcional sin cantidad fija.');
+        }
+
         $ingredient = $this->repo->findIngredient((int) $input['ingredient_id']);
         if (!$ingredient) {
             throw RecipeImportCandidatesException::ingredientNotFound();

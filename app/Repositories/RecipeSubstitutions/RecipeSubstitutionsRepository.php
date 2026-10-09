@@ -43,6 +43,7 @@ class RecipeSubstitutionsRepository
             ->join('ingredients as i', 'i.id', '=', 'ri.ingredient_id')
             ->join('unit_measures as u', 'u.id', '=', 'ri.unit_id')
             ->where('ri.recipe_id', $recipeId)
+            ->where('ri.quantity', '>', 0)
             ->whereNull('i.deleted_at')
             ->select(
                 'ri.id as recipe_ingredient_id',

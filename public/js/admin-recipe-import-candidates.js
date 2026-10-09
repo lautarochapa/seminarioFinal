@@ -41,6 +41,18 @@
         return '/api/v1' + path;
     }
 
+    function isFreeQuantity(mapping) {
+        return mapping && mapping.is_optional === true && mapping.quantity !== null && mapping.quantity !== '' && Number(mapping.quantity) === 0;
+    }
+
+    function syncFreeMapping(form) {
+        if (!form || !form.free_quantity) { return; }
+        var free = form.free_quantity.checked;
+        form.quantity.disabled = free;
+        form.unit_id.disabled = free;
+        form.is_optional.disabled = free;
+    }
+
     function request(path, options) {
         if (!window.CCApi || typeof window.CCApi.request !== 'function') {
             return Promise.reject({ status: 500, payload: { error: { message: 'Cliente API no disponible.' } } });
@@ -347,7 +359,7 @@
             var mappedText;
             if (mapping) {
                 badge = lineBadge('auto');
-                mappedText = ' -> ingrediente #' + mapping.ingredient_id + ', unidad #' + mapping.unit_id;
+                mappedText = ' -> ingrediente #' + mapping.ingredient_id + (isFreeQuantity(mapping) ? ', a gusto / cantidad necesaria' : ', unidad #' + mapping.unit_id);
             } else if (suggestion && suggestion.suggested_ingredient_id) {
                 badge = lineBadge('suggested');
                 mappedText = ' -> sin mapear (' + suggestionLabel(suggestion) + ')';
@@ -397,6 +409,8 @@
             map.quantity.value = '';
             map.notes.value = '';
             map.is_optional.checked = false;
+            if (map.free_quantity) { map.free_quantity.checked = false; }
+            syncFreeMapping(map);
             var hint = qs('[data-import-candidates-suggestion]', root);
             if (hint) { hint.textContent = ''; }
         }
@@ -419,15 +433,33 @@
             return;
         }
         var index = form.ingredient_index.value;
+        form.ingredient_id.value = '';
+        form.unit_id.value = '';
+        form.quantity.value = '';
+        form.notes.value = '';
+        form.is_optional.checked = false;
+        if (form.free_quantity) { form.free_quantity.checked = false; }
+        syncFreeMapping(form);
         if (index === '') {
             if (hint) { hint.textContent = ''; }
             return;
         }
         var suggestion = suggestionFor(state.selected, Number(index));
+        var mapping = mappingFor(state.selected, Number(index));
         if (hint) {
             hint.textContent = suggestion
                 ? suggestionLabel(suggestion) + (suggestion.parsed_quantity != null ? ' - cantidad detectada: ' + suggestion.parsed_quantity : '')
                 : '';
+        }
+        if (mapping) {
+            form.ingredient_id.value = String(mapping.ingredient_id);
+            form.unit_id.value = String(mapping.unit_id);
+            form.quantity.value = isFreeQuantity(mapping) || mapping.quantity == null ? '' : String(mapping.quantity);
+            form.notes.value = mapping.notes || '';
+            form.is_optional.checked = !!mapping.is_optional;
+            if (form.free_quantity) { form.free_quantity.checked = !!isFreeQuantity(mapping); }
+            syncFreeMapping(form);
+            return;
         }
         if (suggestion && suggestion.suggested_ingredient_id && !form.ingredient_id.value) {
             form.ingredient_id.value = String(suggestion.suggested_ingredient_id);
@@ -523,15 +555,30 @@
             return;
         }
         clearMessage(root);
+        var freeQuantity = !!(form.free_quantity && form.free_quantity.checked);
+        var unitId = Number(form.unit_id.value);
+        if (freeQuantity) {
+            var originalMapping = mappingFor(state.selected, Number(form.ingredient_index.value));
+            var genericUnit = state.units.find(function (unit) { return unit.code === 'unit'; });
+            unitId = originalMapping && originalMapping.unit_id ? Number(originalMapping.unit_id) : (genericUnit ? Number(genericUnit.id) : 0);
+        }
+        if (!unitId) {
+            showMessage(root, 'danger', freeQuantity ? 'No pudimos cargar las unidades. Actualizá la página e intentá nuevamente.' : 'Seleccioná una unidad.');
+            return;
+        }
+        var notes = form.notes.value.trim();
+        if (freeQuantity && !notes) {
+            notes = ingredientText(rawIngredients(state.selected)[Number(form.ingredient_index.value)] || '') || 'A gusto / cantidad necesaria';
+        }
         request('/admin/recipes/import-candidates/' + encodeURIComponent(form.id.value) + '/map-ingredient', {
             method: 'POST',
             body: {
                 ingredient_index: Number(form.ingredient_index.value),
                 ingredient_id: Number(form.ingredient_id.value),
-                unit_id: Number(form.unit_id.value),
-                quantity: form.quantity.value === '' ? null : Number(form.quantity.value),
-                notes: form.notes.value.trim() || null,
-                is_optional: form.is_optional.checked,
+                unit_id: unitId,
+                quantity: freeQuantity ? 0 : (form.quantity.value === '' ? null : Number(form.quantity.value)),
+                notes: notes || null,
+                is_optional: freeQuantity || form.is_optional.checked,
             },
         }).then(function (payload) {
             showMessage(root, 'success', 'Ingrediente mapeado.');
@@ -719,6 +766,8 @@
             });
         }
         if (mapForm) {
+            var freeQuantity = qs('[data-import-candidates-free-quantity]', mapForm);
+            if (freeQuantity) { freeQuantity.addEventListener('change', function () { syncFreeMapping(mapForm); }); }
             mapForm.addEventListener('submit', function (event) {
                 event.preventDefault();
                 saveMapping(root, mapForm);

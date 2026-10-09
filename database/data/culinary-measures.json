@@ -1,0 +1,346 @@
+{
+  "units": [
+    {
+      "code": "tsp",
+      "name": "Cucharadita",
+      "type": "household",
+      "symbol": "cdta",
+      "status": "active"
+    },
+    {
+      "code": "dessert_spoon",
+      "name": "Cucharada de postre",
+      "type": "household",
+      "symbol": "cda postre",
+      "status": "active"
+    },
+    {
+      "code": "coffee_spoon",
+      "name": "Cucharada de café",
+      "type": "household",
+      "symbol": "cda café",
+      "status": "active"
+    },
+    {
+      "code": "pinch",
+      "name": "Pizca",
+      "type": "household",
+      "symbol": "pizca",
+      "status": "active"
+    },
+    {
+      "code": "splash",
+      "name": "Chorro",
+      "type": "household",
+      "symbol": "chorro",
+      "status": "active"
+    },
+    {
+      "code": "clove",
+      "name": "Diente",
+      "type": "count",
+      "symbol": "diente",
+      "status": "active"
+    },
+    {
+      "code": "sprig",
+      "name": "Rama",
+      "type": "count",
+      "symbol": "rama",
+      "status": "active"
+    },
+    {
+      "code": "bouquet",
+      "name": "Ramo o ramillete",
+      "type": "household",
+      "symbol": "ramo",
+      "status": "active"
+    },
+    {
+      "code": "bunch",
+      "name": "Manojo o atado",
+      "type": "household",
+      "symbol": "manojo",
+      "status": "active"
+    },
+    {
+      "code": "piece",
+      "name": "Pieza",
+      "type": "count",
+      "symbol": "pieza",
+      "status": "active"
+    },
+    {
+      "code": "chunk",
+      "name": "Trozo",
+      "type": "household",
+      "symbol": "trozo",
+      "status": "active"
+    },
+    {
+      "code": "glass",
+      "name": "Vaso",
+      "type": "household",
+      "symbol": "vaso",
+      "status": "active"
+    },
+    {
+      "code": "leaf",
+      "name": "Hoja",
+      "type": "count",
+      "symbol": "hoja",
+      "status": "active"
+    },
+    {
+      "code": "handful",
+      "name": "Puñado",
+      "type": "household",
+      "symbol": "puñado",
+      "status": "active"
+    },
+    {
+      "code": "slice",
+      "name": "Rebanada o loncha",
+      "type": "count",
+      "symbol": "rebanada",
+      "status": "active"
+    },
+    {
+      "code": "head",
+      "name": "Cabeza",
+      "type": "count",
+      "symbol": "cabeza",
+      "status": "active"
+    },
+    {
+      "code": "tablet",
+      "name": "Pastilla",
+      "type": "count",
+      "symbol": "pastilla",
+      "status": "active"
+    },
+    {
+      "code": "cube",
+      "name": "Cubo o cubito",
+      "type": "count",
+      "symbol": "cubo",
+      "status": "active"
+    },
+    {
+      "code": "can",
+      "name": "Lata",
+      "type": "package",
+      "symbol": "lata",
+      "status": "active"
+    },
+    {
+      "code": "jar",
+      "name": "Bote",
+      "type": "package",
+      "symbol": "bote",
+      "status": "active"
+    },
+    {
+      "code": "container_jar",
+      "name": "Tarro",
+      "type": "package",
+      "symbol": "tarro",
+      "status": "active"
+    },
+    {
+      "code": "bottle_jar",
+      "name": "Frasco",
+      "type": "package",
+      "symbol": "frasco",
+      "status": "active"
+    },
+    {
+      "code": "cup_wine",
+      "name": "Copa",
+      "type": "household",
+      "symbol": "copa",
+      "status": "active"
+    },
+    {
+      "code": "bag",
+      "name": "Bolsa",
+      "type": "package",
+      "symbol": "bolsa",
+      "status": "active"
+    },
+    {
+      "code": "measuring_cup",
+      "name": "Cubilete",
+      "type": "household",
+      "symbol": "cubilete",
+      "status": "active"
+    },
+    {
+      "code": "stalk",
+      "name": "Tallo",
+      "type": "count",
+      "symbol": "tallo",
+      "status": "active"
+    },
+    {
+      "code": "bottle",
+      "name": "Botella",
+      "type": "package",
+      "symbol": "botella",
+      "status": "active"
+    },
+    {
+      "code": "round_slice",
+      "name": "Rodaja",
+      "type": "count",
+      "symbol": "rodaja",
+      "status": "active"
+    },
+    {
+      "code": "oz",
+      "name": "Onza",
+      "type": "mass",
+      "symbol": "oz",
+      "status": "active"
+    },
+    {
+      "code": "lb",
+      "name": "Libra",
+      "type": "mass",
+      "symbol": "lb",
+      "status": "active"
+    },
+    {
+      "code": "cc",
+      "name": "Centímetro cúbico",
+      "type": "volume",
+      "symbol": "cc",
+      "status": "active"
+    },
+    {
+      "code": "dl",
+      "name": "Decilitro",
+      "type": "volume",
+      "symbol": "dl",
+      "status": "active"
+    },
+    {
+      "code": "drop",
+      "name": "Gota",
+      "type": "household",
+      "symbol": "gota",
+      "status": "active"
+    },
+    {
+      "code": "sheet",
+      "name": "Lámina",
+      "type": "count",
+      "symbol": "lámina",
+      "status": "active"
+    },
+    {
+      "code": "sachet",
+      "name": "Sobre",
+      "type": "package",
+      "symbol": "sobre",
+      "status": "active"
+    },
+    {
+      "code": "bar",
+      "name": "Barra",
+      "type": "count",
+      "symbol": "barra",
+      "status": "active"
+    },
+    {
+      "code": "block",
+      "name": "Bloque",
+      "type": "count",
+      "symbol": "bloque",
+      "status": "active"
+    },
+    {
+      "code": "tray",
+      "name": "Bandeja",
+      "type": "package",
+      "symbol": "bandeja",
+      "status": "active"
+    },
+    {
+      "code": "wedge",
+      "name": "Gajo",
+      "type": "count",
+      "symbol": "gajo",
+      "status": "active"
+    },
+    {
+      "code": "strand",
+      "name": "Hebra",
+      "type": "count",
+      "symbol": "hebra",
+      "status": "active"
+    },
+    {
+      "code": "measure",
+      "name": "Medida",
+      "type": "household",
+      "symbol": "medida",
+      "status": "active"
+    },
+    {
+      "code": "dash",
+      "name": "Toque",
+      "type": "household",
+      "symbol": "toque",
+      "status": "active"
+    },
+    {
+      "code": "fillet",
+      "name": "Filete",
+      "type": "count",
+      "symbol": "filete",
+      "status": "active"
+    },
+    {
+      "code": "grain",
+      "name": "Grano",
+      "type": "count",
+      "symbol": "grano",
+      "status": "active"
+    },
+    {
+      "code": "spoon",
+      "name": "Cuchara sin especificar",
+      "type": "household",
+      "symbol": "cuchara",
+      "status": "active"
+    }
+  ],
+  "conversions": [
+    {
+      "from_code": "cc",
+      "to_code": "ml",
+      "factor": "1.00000000"
+    },
+    {
+      "from_code": "cc",
+      "to_code": "l",
+      "factor": "0.00100000"
+    },
+    {
+      "from_code": "dl",
+      "to_code": "ml",
+      "factor": "100.00000000"
+    },
+    {
+      "from_code": "dl",
+      "to_code": "l",
+      "factor": "0.10000000"
+    },
+    {
+      "from_code": "dl",
+      "to_code": "cc",
+      "factor": "100.00000000"
+    }
+  ]
+}

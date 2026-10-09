@@ -92,6 +92,11 @@ class RecipeNutritionService
         $total       = 0;
 
         foreach ($ingredients as $ri) {
+            if ($ri->isUnquantified()) {
+                // Unknown quantity contributes no invented value, but the estimate is partial.
+                $incomplete++;
+                continue;
+            }
             $total++;
             $ingredient = $ri->ingredient;
 

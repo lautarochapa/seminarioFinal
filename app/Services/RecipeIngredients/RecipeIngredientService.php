@@ -24,6 +24,8 @@ class RecipeIngredientService
         $recipe = $this->findRecipeOrFail($recipeId);
         $this->assertCanEdit($actor, $recipe);
 
+        $this->assertQuantity($data['quantity'] ?? null, $data['is_optional'] ?? false);
+
         $this->assertActiveIngredient($data['ingredient_id']);
         $this->assertActiveUnit($data['unit_id']);
 
@@ -54,13 +56,13 @@ class RecipeIngredientService
         $recipe = $this->findRecipeOrFail($recipeId);
         $this->assertCanEdit($actor, $recipe);
 
-        $row = $this->repo->findOrFail($recipeId, $id);
-
         if (array_key_exists('unit_id', $data)) {
             $this->assertActiveUnit($data['unit_id']);
         }
 
-        return DB::transaction(function () use ($actor, $row, $data, $ip, $userAgent) {
+        return DB::transaction(function () use ($actor, $recipeId, $id, $data, $ip, $userAgent) {
+            $row = RecipeIngredient::where('recipe_id', $recipeId)->where('id', $id)->lockForUpdate()->firstOrFail();
+            $this->assertQuantity(array_key_exists('quantity', $data) ? $data['quantity'] : $row->quantity, array_key_exists('is_optional', $data) ? $data['is_optional'] : $row->is_optional);
             $old     = $this->auditPayload($row);
             $allowed = ['unit_id', 'quantity', 'specific_product_id', 'notes', 'is_optional', 'sort_order'];
             $row->fill(array_intersect_key($data, array_flip($allowed)));
@@ -103,6 +105,13 @@ class RecipeIngredientService
         }
 
         return $recipe;
+    }
+
+    private function assertQuantity($quantity, $isOptional): void
+    {
+        if (!RecipeIngredient::validQuantity($quantity, $isOptional)) {
+            throw new RecipeIngredientException('RECIPE_INGREDIENT_QUANTITY_INVALID', 'La cantidad debe ser positiva; cero requiere un ingrediente opcional sin cantidad fija.', 422);
+        }
     }
 
     private function assertCanEdit(User $actor, Recipe $recipe)

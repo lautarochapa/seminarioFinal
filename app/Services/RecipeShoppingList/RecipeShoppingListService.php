@@ -128,7 +128,7 @@ class RecipeShoppingListService
                     }
                 }
 
-                $purchaseQuantity = $missingQtyForProduct;
+                $purchaseQuantity = \App\Services\ShoppingLists\PurchaseQuantity::withoutPackaging($missingQtyForProduct, $ri->unit->code);
                 $purchaseUnitId = $unitId;
                 $priceInfo = ['unit_price' => null, 'source' => null, 'updated_at' => null, 'branch_id' => null, 'chain_id' => null];
                 $packages = null;
@@ -398,7 +398,7 @@ class RecipeShoppingListService
         $packaging = app(\App\Services\Products\ProductPackagingService::class);
         $purchaseUnitId = $packaging->hasContent($product) ? $packaging->purchaseUnitId($product) : null;
         if ($purchaseUnitId === null) {
-            return [null, $unitId, 'Sin unidad Paquete activa o contenido valido: se conserva el faltante en su unidad original, sin precio estimado.'];
+            return [null, $unitId, 'Sin unidad Paquete activa o contenido valido: se conserva la unidad original, sin precio estimado.'];
         }
         return [max(1, $packages), $purchaseUnitId, null];
     }

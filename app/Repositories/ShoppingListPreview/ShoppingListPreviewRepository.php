@@ -139,7 +139,7 @@ class ShoppingListPreviewRepository
                 'shopping_list_id' => $list->id,
                 'ingredient_id'    => $hasProduct ? null : $item['ingredient']['id'],
                 'product_id'       => $hasProduct ? $item['resolved_product_id'] : null,
-                'quantity'         => $hasProduct ? $item['purchase_quantity'] : $item['missing_quantity'],
+                'quantity'         => $item['purchase_quantity'] ?? $item['missing_quantity'],
                 'unit_id'          => $hasProduct ? $item['purchase_unit_id'] : $item['unit']['id'],
                 'estimated_price'  => $hasProduct ? ($item['estimated_price'] ?? null) : null,
                 'status'           => 'pending',

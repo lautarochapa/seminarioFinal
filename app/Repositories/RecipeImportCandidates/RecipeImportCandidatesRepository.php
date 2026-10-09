@@ -154,6 +154,9 @@ class RecipeImportCandidatesRepository
                 if (empty($m['ingredient_id']) || empty($m['unit_id'])) {
                     continue;
                 }
+                if (!RecipeIngredient::validQuantity($m['quantity'] ?? null, $m['is_optional'] ?? false)) {
+                    throw \App\Exceptions\RecipeImportCandidates\RecipeImportCandidatesException::invalidForApproval('Hay un ingrediente sin cantidad válida; para cantidades libres se requiere cero y opcional.');
+                }
                 RecipeIngredient::create([
                     'recipe_id'     => $recipe->id,
                     'ingredient_id' => $m['ingredient_id'],
