@@ -108,7 +108,7 @@ class AdminDashboardService
                     $this->card('brands', 'Marcas', $allStates, 'brands', \App\Brand::class),
                     $this->card('product_categories', 'Categorías de productos', $allStates, 'product-categories', \App\ProductCategory::class),
                     $this->card('ingredient_categories', 'Categorías de ingredientes', $allStates, 'ingredient-categories', \App\IngredientCategory::class),
-                    $this->card('supermarket_products', 'Publicaciones en supermercados', 'Vínculos entre productos y sucursales; un producto puede tener varios. Incluye inactivos.', 'supermarket-products', \App\SupermarketProduct::class),
+                    $this->card('supermarket_products', 'Publicaciones en supermercados', 'Publicaciones por cadena o sucursal; un producto puede tener varias. Incluye inactivas.', 'supermarket-products', \App\SupermarketProduct::class),
                     $this->card('prices', 'Precios en el historial', 'Registros de precios guardados; un producto puede tener varios precios históricos.', 'prices', \App\SupermarketProductPrice::class),
                     $this->card('barcodes', 'Códigos de barras', 'Códigos registrados, incluidos los inactivos; no es la cantidad de productos.', 'barcodes', \App\ProductBarcode::class),
                     $this->card('cities', 'Ciudades', $allStates, 'cities', \App\City::class),

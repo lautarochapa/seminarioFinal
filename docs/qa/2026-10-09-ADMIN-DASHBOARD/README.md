@@ -13,7 +13,7 @@ publicado. Sus cuatro tarjetas inferiores repetian textos fijos
 El resumen nuevo utiliza consultas de conteo de solo lectura, filtradas por los
 permisos de acceso a cada pantalla. Los productos, ingredientes, cadenas y
 sucursales aparecen primero. Se distinguen registros totales, productos publicados,
-publicaciones por sucursal, historial de precios, recetas oficiales, importaciones,
+publicaciones por cadena o sucursal, historial de precios, recetas oficiales, importaciones,
 pendientes, actividad de scraping y cuentas/roles. Configuracion del catalogo queda
 en una seccion propia. Cada cifra explica su alcance y enlaza al listado real.
 La navegacion por secciones no oculta cantidades.
@@ -62,4 +62,19 @@ todas las tablas en cada visita.
 
 Los JSON y logs adjuntos preservan el detalle. La fuente de los resultados es la
 copia de trabajo basada en8289341e mas el diff de esta tanda; ese SHA de base no
-identifica por si solo la implementacion nueva. Publicacion online por verificar.
+identifica por si solo la implementacion nueva.
+
+## Primer control online y ajuste de texto
+
+Fuente inicial publicada `c376985557466940cde0c0bfb11b95cf39c18109`.
+09/10/2026 14:44:09ART: CSS SHA256 exacto y salud200 en ambos dominios,4/4PASS.
+La sesion anterior caduco al desplegar y se inicio sesion con la cuenta interna
+Lautaro Catalogo18. Navegador mostro las29 tarjetas, sin cuentas ni recetas, con
+227productos registrados,218publicados,2ingredientes,3cadenas y0sucursales.
+La autenticacion puede actualizar metadata de acceso de esa cuenta; no se
+realizaron ABM ni operaciones de negocio, y no se usaron cuentas docentes.
+
+Este control detecto una imprecision de texto: las217publicaciones pueden
+pertenecer a una cadena sin sucursal asignada. Se aclara "por cadena o sucursal";
+no cambia ninguna consulta ni cantidad. Verificacion final de este texto y
+cierre operativo quedan en el informe canonico de continuidad.
