@@ -10,7 +10,7 @@
     ];
 
     var STATUS_META = {
-        parsed:   { label: 'Parseado',  bg: '#e7f7f2', color: '#04ac85' },
+        parsed:   { label: 'Analizado',  bg: '#e7f7f2', color: '#04ac85' },
         pending:  { label: 'Pendiente', bg: '#f0f4f8', color: '#697681' },
         failed:   { label: 'Falló',     bg: '#f7e7e7', color: '#b33a3a' },
         approved: { label: 'Aprobado',  bg: '#eef2ff', color: '#2f5fc4' },
@@ -213,7 +213,7 @@
                 var candidate = res.data || null;
                 var sm = candidate && STATUS_META[candidate.status];
                 if (candidate && candidate.status === 'failed') {
-                    showMsg('err', 'La URL fue procesada pero no se pudo parsear la receta.');
+                    showMsg('err', 'La URL fue procesada pero no se pudo analizar la receta.');
                 } else {
                     showMsg('ok', 'Receta importada correctamente como <strong>' + escapeHtml(sm ? sm.label : '') + '</strong>.');
                 }

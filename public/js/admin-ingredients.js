@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         ingredients: [],
         categories: [],
@@ -196,7 +200,7 @@
                 '<td>' + escapeHtml(ingredient.category ? ingredient.category.name : '-') + '</td>' +
                 '<td>' + escapeHtml(ingredient.base_unit ? ingredient.base_unit.name : '-') + '</td>' +
                 '<td>' + (flags.length ? flags.map(function (flag) { return '<span class="chip">' + escapeHtml(flag) + '</span>'; }).join(' ') : '-') + '</td>' +
-                '<td>' + escapeHtml(ingredient.status) + ' ' + deleted + '</td>' +
+                '<td>' + escapeHtml(label(ingredient.status)) + ' ' + deleted + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-ingredient-edit="' + ingredient.id + '">Editar</button> <button type="button" class="btn-ghost btn-sm" data-ingredient-view="' + ingredient.id + '">Ver detalle</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');

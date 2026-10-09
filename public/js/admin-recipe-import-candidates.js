@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         page: 1,
         lastPage: 1,
@@ -114,7 +118,7 @@
             color = '#b33a3a';
             bg = '#fdecea';
         }
-        return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:50px;font-size:12px">' + escapeHtml(status) + '</span>';
+        return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:50px;font-size:12px">' + escapeHtml(uiLabel(status)) + '</span>';
     }
 
     function parsed(candidate) {
@@ -404,7 +408,7 @@
             var options = candidate ? rawIngredients(candidate).map(function (item, index) {
                 return option((index + 1) + '. ' + ingredientText(item), index);
             }).join('') : '';
-            indexSelect.innerHTML = '<option value="">Ingrediente parseado</option>' + options;
+            indexSelect.innerHTML = '<option value="">Ingrediente analizado</option>' + options;
         }
     }
 

@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         page: 1,
         lastPage: 1,
@@ -82,7 +86,7 @@
 
     function statusChip(status) {
         var danger = status === 'failed' ? ' danger' : '';
-        return '<span class="chip' + danger + '">' + escapeHtml(status) + '</span>';
+        return '<span class="chip' + danger + '">' + escapeHtml(uiLabel(status)) + '</span>';
     }
 
     function productName(row) {

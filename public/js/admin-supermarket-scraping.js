@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         sources: [],
         chains: [],
@@ -63,13 +67,13 @@
             return 'Sesion vencida. Inicia sesion nuevamente.';
         }
         if (error && error.status === 403) {
-            return 'No tenes permiso para administrar scraping.';
+            return 'No tenés permiso para administrar la importación web.';
         }
         if (error && error.status === 404) {
-            return 'Fuente o job inexistente.';
+            return 'Fuente o ejecución inexistente.';
         }
         if (error && error.status === 409) {
-            return 'Transicion invalida o job ya activo.';
+            return 'Transición inválida o ejecución ya activa.';
         }
         if (error && error.status === 422) {
             return 'Configuracion invalida.';
@@ -108,7 +112,7 @@
             color = '#8a6d3b';
             bg = '#fff7df';
         }
-        return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:50px;font-size:12px">' + escapeHtml(status) + '</span>';
+        return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:50px;font-size:12px">' + escapeHtml(uiLabel(status)) + '</span>';
     }
 
     function branchName(branch) {
@@ -221,7 +225,7 @@
                 : '-';
             return '<tr>' +
                 '<td><strong>' + escapeHtml(source.name) + '</strong><br><span class="muted">' + escapeHtml(source.code) + '</span></td>' +
-                '<td>' + escapeHtml(source.type) + '</td>' +
+                '<td>' + escapeHtml(uiLabel(source.type, 'source')) + '</td>' +
                 '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis">' + url + '</td>' +
                 '<td>' + (source.is_active ? 'Si' : 'No') + '<br>' + statusChip(source.status) + '</td>' +
                 '<td>' + run + '</td>' +
@@ -294,14 +298,14 @@
         button.textContent = 'Ejecutando...';
         window.CCApi.request(endpoint('/admin/scraping/jobs'), { method: 'POST', body: body })
             .then(function (response) {
-                showMessage(root, 'success', 'Job creado.');
+                showMessage(root, 'success', 'Ejecución creada.');
                 if (window.CCUI) { window.CCUI.close(form); }
                 return loadJobs(root, 1).then(function () {
                     loadJobDetail(root, (response.data || response).id);
                 });
             })
             .catch(function (error) {
-                showMessage(root, 'danger', errorMessage(error, 'No se pudo crear el job.'));
+                showMessage(root, 'danger', errorMessage(error, 'No se pudo crear la ejecución.'));
             })
             .then(function () {
                 button.disabled = false;
@@ -322,17 +326,17 @@
         if (status) {
             params.set('status', status);
         }
-        qs('[data-scraping-jobs-body]', root).innerHTML = '<tr><td colspan="6" class="muted">Cargando jobs...</td></tr>';
+        qs('[data-scraping-jobs-body]', root).innerHTML = '<tr><td colspan="6" class="muted">Cargando ejecuciones...</td></tr>';
         return window.CCApi.request(endpoint('/admin/scraping/jobs?' + params.toString()))
             .then(function (response) {
                 var rows = response.data || [];
                 state.jobsLastPage = response.meta ? response.meta.last_page : 1;
                 state.jobsPage = response.meta ? response.meta.current_page : state.jobsPage;
                 renderJobs(root, rows);
-                qs('[data-scraping-job-count]', root).textContent = (response.meta ? response.meta.total : rows.length) + ' jobs';
+                qs('[data-scraping-job-count]', root).textContent = (response.meta ? response.meta.total : rows.length) + ' ejecuciones';
                 qs('[data-scraping-jobs-page]', root).textContent = 'Pagina ' + state.jobsPage + ' de ' + state.jobsLastPage;
             }).catch(function (error) {
-                showMessage(root, 'danger', errorMessage(error, 'No se pudieron cargar jobs.'));
+                showMessage(root, 'danger', errorMessage(error, 'No se pudieron cargar las ejecuciones.'));
                 qs('[data-scraping-jobs-body]', root).innerHTML = '<tr><td colspan="6" class="muted">Error al cargar.</td></tr>';
             });
     }
@@ -340,12 +344,12 @@
     function renderJobs(root, rows) {
         var body = qs('[data-scraping-jobs-body]', root);
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="6" class="muted">No hay jobs.</td></tr>';
+            body.innerHTML = '<tr><td colspan="6" class="muted">No hay ejecuciones.</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (job) {
             return '<tr>' +
-                '<td><strong>#' + job.id + '</strong><br><span class="muted">' + escapeHtml(job.job_type) + '</span></td>' +
+                '<td><strong>#' + job.id + '</strong><br><span class="muted">' + escapeHtml(uiLabel(job.job_type, 'source')) + '</span></td>' +
                 '<td>' + escapeHtml(job.source ? job.source.name : job.source_id) + '</td>' +
                 '<td>' + statusChip(job.status) + '</td>' +
                 '<td>Encontrados: ' + escapeHtml(job.total_found) + '<br>Pendientes: ' + escapeHtml(job.total_pending_review) + '</td>' +
@@ -358,10 +362,10 @@
     function jobActions(job) {
         var actions = '<button type="button" class="btn-ghost btn-sm" data-scraping-job-detail-btn="' + job.id + '">Detalle</button> ';
         if (job.status === 'failed' || job.status === 'cancelled') {
-            actions += '<button type="button" class="btn-ghost btn-sm" data-scraping-job-retry="' + job.id + '">Retry</button> ';
+            actions += '<button type="button" class="btn-ghost btn-sm" data-scraping-job-retry="' + job.id + '">Reintentar</button> ';
         }
         if (job.status === 'pending' || job.status === 'running') {
-            actions += '<button type="button" class="btn-ghost btn-sm" style="color:var(--danger)" data-scraping-job-cancel="' + job.id + '">Cancel</button>';
+            actions += '<button type="button" class="btn-ghost btn-sm" style="color:var(--danger)" data-scraping-job-cancel="' + job.id + '">Cancelar</button>';
         }
         return actions;
     }
@@ -381,7 +385,7 @@
             })
             .catch(function (error) {
                 stopPolling();
-                showMessage(root, 'danger', errorMessage(error, 'No se pudo cargar el job.'));
+                showMessage(root, 'danger', errorMessage(error, 'No se pudo cargar la ejecución.'));
                 qs('[data-scraping-job-detail]', root).innerHTML = '<p class="muted">Error al cargar detalle.</p>';
             });
     }
@@ -390,14 +394,14 @@
         var params = job.parameters ? JSON.stringify(job.parameters, null, 2) : '{}';
         var error = job.error_message ? '<div class="alert alert-danger" style="display:block">' + escapeHtml(job.error_message) + '</div>' : '';
         var dryRun = job.parameters && job.parameters.dry_run
-            ? '<div class="alert alert-warning" style="display:block">DRY RUN: esta corrida no persiste candidatos, productos ni precios.</div>'
+            ? '<div class="alert alert-warning" style="display:block">Simulación: esta ejecución no guarda candidatos, productos ni precios.</div>'
             : '';
         var searchTerm = job.parameters && job.parameters.search_term
             ? '<div class="table-line"><span class="muted">Buscar producto</span><strong>' + escapeHtml(job.parameters.search_term) + '</strong></div>'
             : '';
         qs('[data-scraping-job-detail]', root).innerHTML =
             dryRun + error +
-            '<div class="table-line"><span class="muted">Job</span><strong>#' + escapeHtml(job.id) + '</strong></div>' +
+            '<div class="table-line"><span class="muted">Ejecución</span><strong>#' + escapeHtml(job.id) + '</strong></div>' +
             '<div class="table-line"><span class="muted">Fuente</span><strong>' + escapeHtml(job.source ? job.source.name : job.source_id) + '</strong></div>' +
             searchTerm +
             '<div class="table-line"><span class="muted">Estado</span><strong>' + statusChip(job.status) + '</strong></div>' +
@@ -417,43 +421,43 @@
         if (level) {
             params.set('level', level);
         }
-        qs('[data-scraping-job-logs]', root).innerHTML = '<p class="muted">Cargando logs...</p>';
+        qs('[data-scraping-job-logs]', root).innerHTML = '<p class="muted">Cargando registros...</p>';
         return window.CCApi.request(endpoint('/admin/scraping/jobs/' + encodeURIComponent(id) + '/logs?' + params.toString()))
             .then(function (response) {
                 var logs = response.data || [];
                 if (!logs.length) {
-                    qs('[data-scraping-job-logs]', root).innerHTML = '<p class="muted">Logs vacios.</p>';
+                    qs('[data-scraping-job-logs]', root).innerHTML = '<p class="muted">No hay registros.</p>';
                     return;
                 }
                 qs('[data-scraping-job-logs]', root).innerHTML = logs.map(function (log) {
                     var context = log.context ? '<pre class="audit-json" style="max-width:none;margin-top:6px">' + escapeHtml(JSON.stringify(log.context, null, 2)) + '</pre>' : '';
                     return '<div style="border-bottom:1px solid #edf1f4;padding:8px 0">' +
-                        '<strong>' + escapeHtml(log.level) + '</strong> <span class="muted">' + escapeHtml(dateLabel(log.created_at)) + '</span><br>' +
+                        '<strong>' + escapeHtml(uiLabel(log.level, 'severity')) + '</strong> <span class="muted">' + escapeHtml(dateLabel(log.created_at)) + '</span><br>' +
                         '<span>' + escapeHtml(log.message) + '</span>' + context +
                         '</div>';
                 }).join('');
             })
             .catch(function (error) {
-                showMessage(root, 'danger', errorMessage(error, 'No se pudieron cargar logs.'));
-                qs('[data-scraping-job-logs]', root).innerHTML = '<p class="muted">Error al cargar logs.</p>';
+                showMessage(root, 'danger', errorMessage(error, 'No se pudieron cargar los registros.'));
+                qs('[data-scraping-job-logs]', root).innerHTML = '<p class="muted">Error al cargar los registros.</p>';
             });
     }
 
     function retryJob(root, id) {
         window.CCApi.request(endpoint('/admin/scraping/jobs/' + encodeURIComponent(id) + '/retry'), { method: 'POST' })
             .then(function (response) {
-                showMessage(root, 'success', 'Job reintentado.');
+                showMessage(root, 'success', 'Ejecución reintentada.');
                 return loadJobs(root, 1).then(function () {
                     loadJobDetail(root, (response.data || response).id);
                 });
             })
             .catch(function (error) {
-                showMessage(root, 'danger', errorMessage(error, 'No se pudo reintentar el job.'));
+                showMessage(root, 'danger', errorMessage(error, 'No se pudo reintentar la ejecución.'));
             });
     }
 
     function cancelJob(root, id) {
-        if (!window.confirm('Cancelar este job de scraping?')) {
+        if (!window.confirm('¿Cancelar esta ejecución de importación web?')) {
             return;
         }
         window.CCApi.request(endpoint('/admin/scraping/jobs/' + encodeURIComponent(id) + '/cancel'), { method: 'POST' })
@@ -464,7 +468,7 @@
                 });
             })
             .catch(function (error) {
-                showMessage(root, 'danger', errorMessage(error, 'No se pudo cancelar el job.'));
+                showMessage(root, 'danger', errorMessage(error, 'No se pudo cancelar la ejecución.'));
             });
     }
 

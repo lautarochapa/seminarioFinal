@@ -181,7 +181,7 @@
             '<div class="line"><span>Marca</span><strong>' + escapeHtml(product.brand && product.brand.name) + '</strong></div>' +
             '<div class="line"><span>Categoria</span><strong>' + escapeHtml(product.category && product.category.name) + '</strong></div>' +
             '<div class="line"><span>Ingrediente</span><strong>' + escapeHtml(product.ingredient && product.ingredient.name) + '</strong></div>' +
-            '<div class="line"><span>Barcode</span><strong>' + escapeHtml(product.barcode) + '</strong></div>';
+            '<div class="line"><span>Código de barras</span><strong>' + escapeHtml(product.barcode) + '</strong></div>';
     }
 
     function createBarcode(root, form) {
@@ -198,7 +198,7 @@
             showMessage(root, 'success', 'Codigo agregado.');
             if (window.CCUI) { window.CCUI.close(form); }
             target.innerHTML =
-                '<div class="line"><span>ID barcode</span><strong>' + escapeHtml(response.data.id) + '</strong></div>' +
+                '<div class="line"><span>ID del código de barras</span><strong>' + escapeHtml(response.data.id) + '</strong></div>' +
                 '<div class="line"><span>Producto</span><strong>#' + escapeHtml(response.data.product_id) + '</strong></div>' +
                 '<div class="line"><span>Codigo</span><strong>' + escapeHtml(response.data.barcode) + '</strong></div>';
             return fetchProducts(root);

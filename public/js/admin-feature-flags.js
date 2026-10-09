@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         flags: [],
         loading: false,
@@ -45,7 +49,7 @@
         general: 'General',
         ai:      'Inteligencia artificial',
         mail:    'Correo',
-        scraping:'Scraping',
+        scraping:'Importación web',
     };
 
     function flagCardHtml(f) {
@@ -79,15 +83,15 @@
     function renderFlags(root) {
         var container = qs('[data-ff-container]', root);
         var countEl   = qs('[data-ff-count]', root);
-        if (countEl) { countEl.textContent = state.flags.length + ' flag' + (state.flags.length !== 1 ? 's' : ''); }
+        if (countEl) { countEl.textContent = state.flags.length + ' funci' + (state.flags.length !== 1 ? 'ones' : 'ón'); }
         if (!container) { return; }
 
         if (state.loading) {
-            container.innerHTML = '<p class="muted" style="text-align:center;padding:32px 0">Cargando feature flags...</p>';
+            container.innerHTML = '<p class="muted" style="text-align:center;padding:32px 0">Cargando funciones...</p>';
             return;
         }
         if (!state.flags.length) {
-            container.innerHTML = '<p class="muted" style="text-align:center;padding:32px 0">No hay feature flags definidos.</p>';
+            container.innerHTML = '<p class="muted" style="text-align:center;padding:32px 0">No hay funciones definidas.</p>';
             return;
         }
 
@@ -96,7 +100,7 @@
 
         Object.keys(groups).sort().forEach(function (group) {
             var items     = groups[group];
-            var groupLabel = GROUP_LABELS[group] || (group.charAt(0).toUpperCase() + group.slice(1));
+            var groupLabel = GROUP_LABELS[group] || uiLabel(group, 'settingGroup');
 
             html += '<div style="margin-bottom:22px">' +
                 '<div style="font-size:11px;font-weight:900;color:#697681;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #edf1f4">' +

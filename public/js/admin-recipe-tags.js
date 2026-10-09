@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         tags: [],
         page: 1,
@@ -115,14 +119,14 @@
         var page    = qs('[data-recipe-tags-page]', root);
 
         if (counter) {
-            counter.textContent = (meta.total || state.tags.length) + ' tags';
+            counter.textContent = (meta.total || state.tags.length) + ' etiquetas';
         }
         if (page) {
             page.textContent = 'Pagina ' + (meta.current_page || state.page) + ' de ' + (meta.last_page || state.lastPage);
         }
 
         if (!state.tags.length) {
-            body.innerHTML = '<tr><td colspan="6" class="muted">No hay tags cargados.</td></tr>';
+            body.innerHTML = '<tr><td colspan="6" class="muted">No hay etiquetas cargadas.</td></tr>';
             return;
         }
 
@@ -134,9 +138,9 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(tag.code) + '</strong></td>' +
                 '<td>' + escapeHtml(tag.name) + '</td>' +
-                '<td>' + escapeHtml(tag.type) + '</td>' +
+                '<td>' + escapeHtml(uiLabel(tag.type, 'recipe_tag_type')) + '</td>' +
                 '<td>' + escapeHtml(tag.description) + '</td>' +
-                '<td>' + escapeHtml(tag.status) + '</td>' +
+                '<td>' + escapeHtml(uiLabel(tag.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-recipe-tag-edit="' + tag.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
@@ -151,21 +155,21 @@
         }
 
         if (!tags.length) {
-            target.innerHTML = '<span class="muted">No hay tags activos.</span>';
+            target.innerHTML = '<span class="muted">No hay etiquetas activas.</span>';
             return;
         }
 
         target.innerHTML = tags.map(function (tag) {
-            return '<span class="chip" title="' + escapeHtml(tag.type || '') + '">' +
+            return '<span class="chip" title="' + escapeHtml(uiLabel(tag.type || '', 'recipe_tag_type')) + '">' +
                 escapeHtml(tag.name) +
-                (tag.type ? ' <span class="muted">· ' + escapeHtml(tag.type) + '</span>' : '') +
+                (tag.type ? ' <span class="muted">· ' + escapeHtml(uiLabel(tag.type, 'recipe_tag_type')) + '</span>' : '') +
                 '</span>';
         }).join(' ');
     }
 
     function fillForm(root, tag) {
         var form = qs('[data-recipe-tag-form]', root);
-        qs('[data-recipe-tag-form-title]', root).textContent = 'Editar tag #' + tag.id;
+        qs('[data-recipe-tag-form-title]', root).textContent = 'Editar etiqueta #' + tag.id;
         form.elements.id.value          = tag.id;
         form.elements.code.value        = tag.code || '';
         form.elements.name.value        = tag.name || '';
@@ -180,7 +184,7 @@
         form.reset();
         form.elements.id.value     = '';
         form.elements.status.value = 'active';
-        qs('[data-recipe-tag-form-title]', root).textContent = 'Nuevo tag';
+        qs('[data-recipe-tag-form-title]', root).textContent = 'Nueva etiqueta';
     }
 
     function bind(root) {
@@ -227,7 +231,7 @@
 
             window.CCApi.request(endpoint(path), { method: method, body: buildPayload(form) })
                 .then(function () {
-                    showMessage(root, 'success', id ? 'Tag actualizado correctamente.' : 'Tag creado correctamente.');
+                    showMessage(root, 'success', id ? 'Etiqueta actualizada correctamente.' : 'Etiqueta creada correctamente.');
                     if (window.CCUI) { window.CCUI.close(form); }
                     resetForm(root);
                     return Promise.all([fetchTags(root, state.page), fetchCatalog(root)]);
@@ -249,10 +253,10 @@
             }
 
             if (deleteId) {
-                if (!window.confirm('¿Desactivar este tag? Las recetas que lo usan lo perderán.')) { return; }
+                if (!window.confirm('¿Desactivar esta etiqueta? Las recetas que lo usan lo perderán.')) { return; }
                 window.CCApi.request(endpoint('/admin/recipe-tags/' + deleteId), { method: 'DELETE' })
                     .then(function () {
-                        showMessage(root, 'success', 'Tag desactivado correctamente.');
+                        showMessage(root, 'success', 'Etiqueta desactivada correctamente.');
                         return Promise.all([fetchTags(root, state.page), fetchCatalog(root)]);
                     })
                     .catch(function (error) { handleError(root, error); });
@@ -261,7 +265,7 @@
             if (restoreId) {
                 window.CCApi.request(endpoint('/admin/recipe-tags/' + restoreId + '/restore'), { method: 'PATCH' })
                     .then(function () {
-                        showMessage(root, 'success', 'Tag activado correctamente.');
+                        showMessage(root, 'success', 'Etiqueta activada correctamente.');
                         return Promise.all([fetchTags(root, state.page), fetchCatalog(root)]);
                     })
                     .catch(function (error) { handleError(root, error); });

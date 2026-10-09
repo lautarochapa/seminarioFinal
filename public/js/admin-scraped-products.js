@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         page: 1,
         lastPage: 1,
@@ -105,16 +109,16 @@
 
     function statusChip(status) {
         var danger = status === 'rejected' ? ' danger' : '';
-        return '<span class="chip' + danger + '">' + escapeHtml(status) + '</span>';
+        return '<span class="chip' + danger + '">' + escapeHtml(uiLabel(status)) + '</span>';
     }
 
     function sourceTypeChip(source) {
         if (!source) { return ''; }
         var type = source.type || '';
         if (type === 'web_scraper') {
-            return '<span class="chip" style="background:#e7f0ff;color:#2f80ed;font-size:11px">REAL</span>';
+            return '<span class="chip" style="background:#e7f0ff;color:#2f80ed;font-size:11px">Importación web</span>';
         }
-        return '<span class="chip" style="background:#f5f5f5;color:#888;font-size:11px">' + escapeHtml(type || 'otro') + '</span>';
+        return '<span class="chip" style="background:#f5f5f5;color:#888;font-size:11px">' + escapeHtml(uiLabel(type || 'otro', 'source')) + '</span>';
     }
 
     function money(value) {
@@ -158,12 +162,12 @@
         if (!job) {
             return '-';
         }
-        return 'Job #' + job.id + (job.status ? ' (' + job.status + ')' : '');
+        return 'Ejecución #' + job.id + (job.status ? ' (' + uiLabel(job.status) + ')' : '');
     }
 
     function renderLookups(root) {
         renderSelect(qs('[data-candidates-source]', root), state.sources, 'Todas las fuentes', entityLabel);
-        renderSelect(qs('[data-candidates-job]', root), state.jobs, 'Todos los jobs', jobLabel);
+        renderSelect(qs('[data-candidates-job]', root), state.jobs, 'Todas las ejecuciones', jobLabel);
         renderSelect(qs('[data-candidate-product]', root), state.products, 'Producto', productLabel);
         renderSelect(qs('[data-candidate-ingredient]', root), state.ingredients, 'Ingrediente', entityLabel);
         renderSelect(qs('[data-candidate-create-ingredient]', root), state.ingredients, 'Ingrediente opcional', entityLabel);
@@ -281,7 +285,7 @@
             return '<tr>' +
                 '<td>' + checkbox + '</td>' +
                 '<td><strong>' + escapeHtml(candidate.raw_name) + '</strong><br><span class="muted">' + escapeHtml(candidate.raw_brand || 'Sin marca') + '</span><br><span class="muted">' + safeLink(candidate.raw_product_url, candidate.external_product_id || 'Ver origen') + '</span></td>' +
-                '<td>' + escapeHtml(candidate.source ? candidate.source.name : candidate.source_id) + ' ' + sourceTypeChip(candidate.source) + '<br><span class="muted">Job #' + escapeHtml(candidate.scraping_job_id) + '</span></td>' +
+                '<td>' + escapeHtml(candidate.source ? candidate.source.name : candidate.source_id) + ' ' + sourceTypeChip(candidate.source) + '<br><span class="muted">Ejecución #' + escapeHtml(candidate.scraping_job_id) + '</span></td>' +
                 '<td>' + escapeHtml(money(candidate.raw_price)) + '<br><span class="muted">' + escapeHtml(candidate.raw_unit_price) + '</span></td>' +
                 '<td>' + statusChip(candidate.review_status) + '</td>' +
                 '<td>' + readinessBadgeSmall(candidate) + '</td>' +
@@ -370,7 +374,7 @@
         var sourceCategory = detected.source_category || {};
         var sourceCategoryLine = sourceCategory.path
             ? fieldLine('Categoria origen Carrefour', sourceCategory.path, 'auto')
-            : fieldLine('Categoria origen Carrefour', 'Sin dato de categoria en el scraping', 'unresolved');
+            : fieldLine('Categoria origen Carrefour', 'Sin dato de categoría en la importación web', 'unresolved');
         var systemCategoryLine = suggested.category_id
             ? fieldLine('Categoria del sistema', suggested.category_name, 'suggested')
             : fieldLine('Categoria del sistema', 'Sin determinar', 'unresolved');
@@ -388,7 +392,7 @@
             fieldLine('Precio', money(detected.price), detected.price !== null && detected.price !== undefined ? 'auto' : null) +
             fieldLine('SKU externo', detected.external_product_id, 'auto') +
             fieldLine('Fuente', candidate.source ? candidate.source.name : candidate.source_id, null) +
-            fieldLine('Estado', candidate.review_status, null) +
+            fieldLine('Estado', uiLabel(candidate.review_status), null) +
             fieldLine('Producto interno', candidate.suggested_product ? productLabel(candidate.suggested_product) : 'Sin producto', null) +
             fieldLine(
                 'Ingrediente',

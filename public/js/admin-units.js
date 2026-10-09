@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         units: [],
         publicUnits: [],
@@ -190,9 +194,9 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(unit.code) + '</strong></td>' +
                 '<td>' + escapeHtml(unit.name) + '</td>' +
-                '<td>' + escapeHtml(unit.type) + '</td>' +
+                '<td>' + escapeHtml(label(unit.type, 'unit_type')) + '</td>' +
                 '<td>' + escapeHtml(unit.symbol) + '</td>' +
-                '<td>' + escapeHtml(unit.status) + '</td>' +
+                '<td>' + escapeHtml(label(unit.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-unit-edit="' + unit.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
@@ -348,7 +352,7 @@
                 '<td>' + escapeHtml(conversion.ingredient ? conversion.ingredient.name : 'General') + '</td>' +
                 '<td><strong>' + escapeHtml(conversion.factor) + '</strong></td>' +
                 '<td>' + escapeHtml(conversion.notes) + '</td>' +
-                '<td>' + escapeHtml(conversion.status) + '</td>' +
+                '<td>' + escapeHtml(label(conversion.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-conversion-edit="' + conversion.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
@@ -483,7 +487,7 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(unit.code) + '</strong></td>' +
                 '<td>' + escapeHtml(unit.name) + '</td>' +
-                '<td>' + escapeHtml(unit.type) + '</td>' +
+                '<td>' + escapeHtml(label(unit.type, 'unit_type')) + '</td>' +
                 '<td>' + escapeHtml(unit.symbol) + '</td>' +
                 '</tr>';
         }).join('');

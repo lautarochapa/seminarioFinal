@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         mappings: [],
         products: [],
@@ -236,7 +240,7 @@
                 '<td>' + escapeHtml(branchName(row.branch)) + '</td>' +
                 '<td><strong>' + escapeHtml(row.external_sku) + '</strong><br><span class="muted">' + escapeHtml(row.source_name) + '</span>' + linkHtml(row.source_url) + '</td>' +
                 '<td>' + currentPrice(row) + '</td>' +
-                '<td>' + escapeHtml(row.status) + '</td>' +
+                '<td>' + escapeHtml(label(row.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-sp-edit="' + row.id + '">Editar</button> <button type="button" class="btn-ghost btn-sm" data-sp-prices-row="' + row.id + '">Precios</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
@@ -370,7 +374,7 @@
         target.innerHTML =
             '<div class="line"><span>Precio actual</span><strong>' + escapeHtml(current.currency || 'ARS') + ' ' + escapeHtml(current.price) + '</strong></div>' +
             '<div class="line"><span>Fecha</span><span>' + escapeHtml(dateLabel(current.captured_at || current.valid_from || current.created_at)) + '</span></div>' +
-            '<div class="line"><span>Origen</span><span>' + escapeHtml(current.source) + '</span></div>';
+            '<div class="line"><span>Origen</span><span>' + escapeHtml(label(current.source, 'price_source')) + '</span></div>';
     }
 
     function renderPriceHistory(root, rows, meta) {
@@ -388,9 +392,9 @@
                 return '<tr>' +
                     '<td><strong>' + escapeHtml(price.currency || 'ARS') + ' ' + escapeHtml(price.price) + '</strong></td>' +
                     '<td>' + escapeHtml(dateLabel(price.captured_at || price.created_at)) + '</td>' +
-                    '<td>' + escapeHtml(price.source) + '</td>' +
+                    '<td>' + escapeHtml(label(price.source, 'price_source')) + '</td>' +
                     '<td>' + escapeHtml(validity) + '</td>' +
-                    '<td>' + escapeHtml(price.status) + '</td>' +
+                    '<td>' + escapeHtml(label(price.status)) + '</td>' +
                     '</tr>';
             }).join('') + '</tbody></table></div>';
     }

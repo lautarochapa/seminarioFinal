@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         ingredients: [],
         equivalences: [],
@@ -167,7 +171,7 @@
                 '<td>' + escapeHtml(equivalence.equivalence_type) + '</td>' +
                 '<td><strong>' + escapeHtml(equivalence.conversion_factor) + '</strong></td>' +
                 '<td>' + escapeHtml(equivalence.reason) + '</td>' +
-                '<td>' + escapeHtml(equivalence.status) + '</td>' +
+                '<td>' + escapeHtml(label(equivalence.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-equivalence-edit="' + equivalence.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');

@@ -168,7 +168,7 @@
         }
 
         detailEl.innerHTML =
-            '<div style="display:inline-block;background:#e7f7f2;color:#04ac85;border-radius:4px;padding:3px 9px;font-size:12px;font-weight:700;margin-bottom:10px">Parseado</div>' +
+            '<div style="display:inline-block;background:#e7f7f2;color:#04ac85;border-radius:4px;padding:3px 9px;font-size:12px;font-weight:700;margin-bottom:10px">Analizado</div>' +
             '<h2 style="font-size:16px;font-weight:900;margin:0 0 4px">' +
             escapeHtml(candidate.raw_title || parsed.name || 'Sin título') +
             '</h2>' +
@@ -220,7 +220,7 @@
         })
             .then(function (res) {
                 state.loading = false;
-                if (btn) { btn.disabled = false; btn.textContent = 'Parsear receta'; }
+                if (btn) { btn.disabled = false; btn.textContent = 'Analizar receta'; }
 
                 var candidate = res.data || null;
                 var parsed    = candidate && candidate.parsed_recipe_json || {};
@@ -239,7 +239,7 @@
             })
             .catch(function (err) {
                 state.loading = false;
-                if (btn) { btn.disabled = false; btn.textContent = 'Parsear receta'; }
+                if (btn) { btn.disabled = false; btn.textContent = 'Analizar receta'; }
 
                 var code = err && err.payload && err.payload.error && err.payload.error.code;
                 if (code === 'RECIPE_IMPORT_DUPLICATE') {

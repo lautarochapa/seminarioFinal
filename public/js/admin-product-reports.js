@@ -201,7 +201,7 @@
             '<div class="table-line"><span class="muted">Estado</span>'              + statusChip(report.status) + '</div>' +
             '<div class="table-line"><span class="muted">Descripción</span><span style="font-size:13px">' + escapeHtml(report.description || 'Sin descripción') + '</span></div>' +
             '<div class="table-line"><span class="muted">Usuario</span><strong>'     + escapeHtml(userName) + '</strong></div>' +
-            '<div class="table-line"><span class="muted">Email</span><span style="font-size:12px;font-family:monospace">' + escapeHtml(userEmail) + '</span></div>' +
+            '<div class="table-line"><span class="muted">Correo electrónico</span><span style="font-size:12px;font-family:monospace">' + escapeHtml(userEmail) + '</span></div>' +
             '<div class="table-line"><span class="muted">Fecha</span><strong>'       + escapeHtml(formatDate(report.created_at)) + '</strong></div>' +
             (report.resolved_at
                 ? '<div class="table-line"><span class="muted">Resuelto por</span><strong>' + escapeHtml(resolverName) + '</strong></div>' +

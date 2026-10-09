@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         objectives: [],
     };
@@ -102,7 +106,7 @@
                 '<td><strong>' + escapeHtml(objective.code) + '</strong></td>' +
                 '<td>' + escapeHtml(objective.name) + '</td>' +
                 '<td>' + escapeHtml(objective.description) + '</td>' +
-                '<td>' + escapeHtml(objective.status) + ' ' + deleted + '</td>' +
+                '<td>' + escapeHtml(label(objective.status)) + ' ' + deleted + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-objective-edit="' + objective.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');

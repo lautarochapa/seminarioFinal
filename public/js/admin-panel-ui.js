@@ -19,13 +19,27 @@
             return title ? title.textContent.trim() : fallback;
         }
         function labelFields(element) {
-            var names = { id: 'Identificador', name: 'Nombre', lastname: 'Apellido', email: 'Email', password: 'Contraseña', password_confirmation: 'Confirmar contraseña',
+            var names = { id: 'Identificador', name: 'Nombre', lastname: 'Apellido', email: 'Correo electrónico', password: 'Contraseña', password_confirmation: 'Confirmar contraseña',
                 code: 'Código', status: 'Estado', type: 'Tipo', symbol: 'Símbolo', description: 'Descripción', notes: 'Notas', barcode: 'Código de barras',
                 brand_id: 'Marca', category_id: 'Categoría', ingredient_id: 'Ingrediente', product_id: 'Producto', unit_id: 'Unidad', default_unit_id: 'Unidad base',
                 net_quantity: 'Contenido neto', package_unit_id: 'Unidad del contenido', amount: 'Cantidad', quantity: 'Cantidad', price: 'Precio', currency: 'Moneda',
                 from_unit_id: 'Unidad de origen', to_unit_id: 'Unidad de destino', factor: 'Factor de conversión', parent_id: 'Categoría superior', image_url: 'URL de imagen',
                 image: 'Archivo de imagen', reason: 'Motivo', title: 'Título', content: 'Contenido', source_url: 'URL de origen', external_product_id: 'Producto externo',
-                external_sku: 'SKU externo', supermarket_chain_id: 'Supermercado', supermarket_branch_id: 'Sucursal', source_id: 'Fuente', city_id: 'Ciudad' };
+                external_sku: 'SKU externo', supermarket_chain_id: 'Supermercado', supermarket_branch_id: 'Sucursal', source_id: 'Fuente', city_id: 'Ciudad',
+                address: 'Dirección', amount_per_100g: 'Cantidad por cada 100 g', amount_per_serving: 'Cantidad por porción', barcode_id: 'Código de barras',
+                base_unit_id: 'Unidad base', base_url: 'URL base', captured_at: 'Fecha del precio', category: 'Categoría', conversion_factor: 'Factor de conversión',
+                cook_time_minutes: 'Tiempo de cocción (minutos)', country: 'País', delay_ms: 'Pausa entre solicitudes (milisegundos)',
+                delivery_available: 'Envío disponible', demo_user_id: 'Usuario de demostración', difficulty: 'Dificultad', dry_run: 'Simulación sin guardar',
+                equivalence_type: 'Tipo de equivalencia', ingredient_index: 'Posición del ingrediente', is_active: 'Activo', is_generic: 'Genérico',
+                is_official: 'Oficial', is_optional: 'Opcional', is_preparation: 'Preparación', is_primary: 'Principal', is_public: 'Público', is_supplement: 'Suplemento',
+                last_scraped_at: 'Última importación', latitude: 'Latitud', longitude: 'Longitud', max_pages: 'Máximo de páginas', max_products: 'Máximo de productos',
+                nutrient_id: 'Nutriente', opening_hours: 'Horarios de atención', order_level: 'Nivel de orden', order: 'Orden', pickup_available: 'Retiro disponible',
+                prep_time_minutes: 'Tiempo de preparación (minutos)', province: 'Provincia', raw_description: 'Descripción original', raw_image_url: 'URL de la imagen original',
+                raw_ingredients_json: 'Ingredientes originales (JSON)', raw_steps_json: 'Pasos originales (JSON)', raw_title: 'Título original',
+                resolution_notes: 'Notas de resolución', review_notes: 'Notas de revisión', route: 'Ruta', search_term: 'Término de búsqueda',
+                serving_size: 'Tamaño de la porción', servings: 'Porciones', sort_order: 'Orden', source_author: 'Autor original', source_ingredient_id: 'Ingrediente de origen',
+                source_name: 'Nombre de la fuente', source_site: 'Sitio de origen', source_type: 'Tipo de fuente', source: 'Origen', target_ingredient_id: 'Ingrediente de destino',
+                url: 'URL', version_number: 'Número de versión', version: 'Versión', website_url: 'Sitio web' };
             all('input:not([type="hidden"]),select,textarea', element).forEach(function (field) {
                 if ((field.labels && field.labels.length) || field.hasAttribute('aria-label') || field.hasAttribute('aria-labelledby')) { return; }
                 var previous = field.previousElementSibling;

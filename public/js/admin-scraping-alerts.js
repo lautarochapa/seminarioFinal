@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         page: 1,
         lastPage: 1,
@@ -60,7 +64,7 @@
             return 'Sesion vencida. Inicia sesion nuevamente.';
         }
         if (error && error.status === 403) {
-            return 'Solo super admin puede gestionar alertas de scraping.';
+            return 'No tenés permiso para gestionar alertas de importación web.';
         }
         if (error && error.status === 404) {
             return 'La alerta solicitada no existe.';
@@ -80,7 +84,7 @@
 
     function statusChip(status) {
         var danger = status === 'open' ? ' danger' : '';
-        return '<span class="chip' + danger + '">' + escapeHtml(status) + '</span>';
+        return '<span class="chip' + danger + '">' + escapeHtml(uiLabel(status)) + '</span>';
     }
 
     function dateLabel(value) {
@@ -156,7 +160,7 @@
         }
         return items.map(function (item) {
             var label = item[keyName] || item.source_name || item.date || 'Sin dato';
-            return renderLine(label, item.count);
+            return renderLine(keyName === 'severity' ? uiLabel(label, 'severity') : label, item.count);
         }).join('');
     }
 
@@ -166,7 +170,7 @@
             renderLine('Total alertas', report.total_alerts || 0) +
             renderLine('Abiertas', status.open || 0) +
             renderLine('Resueltas', status.resolved || 0) +
-            renderLine('Jobs fallidos', report.failed_jobs || 0);
+            renderLine('Ejecuciones fallidas', report.failed_jobs || 0);
         qs('[data-scraping-alerts-severity]', root).innerHTML = renderPairs(report.by_severity, 'severity', 'Sin alertas por severidad.');
         qs('[data-scraping-alerts-source-report]', root).innerHTML = renderPairs(report.by_source, 'source_name', 'Sin alertas por fuente.');
         qs('[data-scraping-alerts-evolution]', root).innerHTML = renderPairs(report.evolution || report.by_date, 'date', 'Sin evolucion disponible.');
@@ -204,10 +208,10 @@
             var canResolve = alert.status === 'open';
             var resolver = alert.resolver ? (alert.resolver.name + ' / ' + alert.resolver.email) : '-';
             return '<tr>' +
-                '<td><strong>' + escapeHtml(alert.alert_type) + '</strong><br><span class="muted">' + escapeHtml(alert.message) + '</span><br><span class="muted">' + escapeHtml(dateLabel(alert.created_at)) + '</span></td>' +
+                '<td><strong>' + escapeHtml(uiLabel(alert.alert_type, 'alertType')) + '</strong><br><span class="muted">' + escapeHtml(alert.message) + '</span><br><span class="muted">' + escapeHtml(dateLabel(alert.created_at)) + '</span></td>' +
                 '<td>' + escapeHtml(sourceName(alert)) + '</td>' +
-                '<td>#' + escapeHtml(alert.scraping_job_id) + '<br><span class="muted">' + escapeHtml(alert.job ? alert.job.status : '-') + '</span></td>' +
-                '<td>' + escapeHtml(alert.severity) + '</td>' +
+                '<td>#' + escapeHtml(alert.scraping_job_id) + '<br><span class="muted">' + escapeHtml(uiLabel(alert.job ? alert.job.status : '-')) + '</span></td>' +
+                '<td>' + escapeHtml(uiLabel(alert.severity, 'severity')) + '</td>' +
                 '<td>' + statusChip(alert.status) + '</td>' +
                 '<td><span class="muted">' + escapeHtml(resolver) + '</span><br><span class="muted">' + escapeHtml(dateLabel(alert.resolved_at)) + '</span></td>' +
                 '<td><button type="button" class="btn-ghost btn-sm" data-alert-view="' + alert.id + '">Detalle</button> ' +
@@ -229,11 +233,11 @@
         }
         qs('[data-alert-detail]', root).innerHTML =
             renderLine('ID', '#' + alert.id) +
-            renderLine('Tipo', alert.alert_type) +
-            renderLine('Severidad', alert.severity) +
-            renderLine('Estado', alert.status) +
+            renderLine('Tipo', uiLabel(alert.alert_type, 'alertType')) +
+            renderLine('Severidad', uiLabel(alert.severity, 'severity')) +
+            renderLine('Estado', uiLabel(alert.status)) +
             renderLine('Fuente', sourceName(alert)) +
-            renderLine('Job', alert.scraping_job_id || '-') +
+            renderLine('Ejecución', alert.scraping_job_id || '-') +
             '<div style="margin-top:10px"><strong>Mensaje</strong><p class="muted">' + escapeHtml(alert.message) + '</p></div>';
         qs('[data-alert-resolve-form]', root).style.display = alert.status === 'open' ? 'block' : 'none';
         if (window.CCUI) { window.CCUI.reveal(qs('[data-alert-detail]', root)); }

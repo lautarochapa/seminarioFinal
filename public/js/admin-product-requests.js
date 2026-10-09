@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         requests: [],
         brands: [],
@@ -150,7 +154,7 @@
                 '<td><strong>' + escapeHtml(item.name) + '</strong><br><span class="muted">' + escapeHtml(item.brand) + ' ' + escapeHtml(item.presentation) + '</span></td>' +
                 '<td>' + escapeHtml(requester) + '</td>' +
                 '<td>' + escapeHtml(item.barcode) + '</td>' +
-                '<td>' + escapeHtml(item.status) + '</td>' +
+                '<td>' + escapeHtml(label(item.status)) + '</td>' +
                 '<td>' + escapeHtml(item.created_at) + '</td>' +
                 '<td>' + actions + '</td>' +
                 '</tr>';
@@ -172,7 +176,7 @@
             '<div class="line"><span>Marca solicitada</span><strong>' + escapeHtml(item.brand) + '</strong></div>' +
             '<div class="line"><span>Presentacion</span><strong>' + escapeHtml(item.presentation) + '</strong></div>' +
             '<div class="line"><span>Comentario</span><strong>' + escapeHtml(item.comment) + '</strong></div>' +
-            '<div class="line"><span>Origen</span><strong>' + escapeHtml(item.source) + '</strong></div>';
+            '<div class="line"><span>Origen</span><strong>' + escapeHtml(label(item.source, 'product_request_source')) + '</strong></div>';
         if (window.CCUI) { window.CCUI.reveal(form); }
     }
 

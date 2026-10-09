@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         categories: [],
         page: 1,
@@ -139,7 +143,7 @@
                 (cat.description ? '<br><span class="muted">' + escapeHtml(cat.description) + '</span>' : '') +
                 '</td>' +
                 '<td>' + escapeHtml(parent) + '</td>' +
-                '<td>' + escapeHtml(cat.status) + ' ' + deleted + '</td>' +
+                '<td>' + escapeHtml(uiLabel(cat.status)) + ' ' + deleted + '</td>' +
                 '<td>' + escapeHtml(recipes) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-recipe-category-edit="' + cat.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';

@@ -132,7 +132,7 @@ class AdminDashboardService
                     $this->card('recipes_pending_completion', 'Importaciones de recetas por completar', 'Pendientes, analizadas o aprobadas que aún no se convirtieron en una receta. Excluye fallidas y rechazadas.', 'imported-recipes', \App\ImportedRecipeCandidate::class, ['status' => ['pending', 'parsed', 'approved']]),
                     $this->card('recipe_imports_failed', 'Importaciones de recetas con error', 'Importaciones cuyo procesamiento terminó con error.', 'imported-recipes', \App\ImportedRecipeCandidate::class, ['status' => 'failed']),
                 ]],
-            ['key' => 'scraping', 'title' => 'Actividad de scraping',
+            ['key' => 'scraping', 'title' => 'Actividad de importación web',
                 'description' => 'Actividad registrada por módulo. Estos números no verifican que una tienda esté disponible ni ejecutan consultas externas.',
                 'cards' => $this->scrapingCards()],
             ['key' => 'catalog-configuration', 'title' => 'Configuración del catálogo',

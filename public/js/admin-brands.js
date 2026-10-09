@@ -1,6 +1,10 @@
 ﻿(function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         brands: [],
         publicBrands: [],
@@ -106,7 +110,7 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(brand.name) + '</strong></td>' +
                 '<td>' + escapeHtml(brand.normalized_name) + '</td>' +
-                '<td>' + escapeHtml(brand.status) + '</td>' +
+                '<td>' + escapeHtml(label(brand.status)) + '</td>' +
                 '<td>' + escapeHtml(brand.updated_at) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-brand-edit="' + brand.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';

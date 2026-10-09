@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         flag: null,
         flagLoading: false,
@@ -34,7 +38,7 @@
             return;
         }
         if (!state.flag) {
-            panel.innerHTML = '<p class="muted" style="text-align:center;padding:16px 0">No se pudo obtener el estado del flag.</p>';
+            panel.innerHTML = '<p class="muted" style="text-align:center;padding:16px 0">No se pudo obtener el estado de la función.</p>';
             return;
         }
 
@@ -53,7 +57,7 @@
             '<span style="font-size:22px">' + dot + '</span>' +
             '<div>' +
             '<div style="font-size:18px;font-weight:900;color:' + color + '">' + (enabled ? 'Activo' : 'Inactivo') + '</div>' +
-            '<div style="font-size:12px;color:#697681">Flag: <code>' + escapeHtml(f.key) + '</code></div>' +
+            '<div style="font-size:12px;color:#697681">Función: <code>' + escapeHtml(f.key) + '</code></div>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -62,13 +66,13 @@
 
             '<div style="background:#f9fbfb;border:1px solid #edf1f4;border-radius:8px;padding:10px 12px">' +
             '<div style="font-size:10px;font-weight:700;color:#697681;text-transform:uppercase;margin-bottom:3px">Proveedor actual</div>' +
-            '<div style="font-size:13px;font-weight:700">FakeAiSuggestionProvider</div>' +
-            '<div style="font-size:11px;color:#697681;margin-top:2px">Respuestas simuladas para MVP</div>' +
+            '<div style="font-size:13px;font-weight:700">Proveedor simulado</div>' +
+            '<div style="font-size:11px;color:#697681;margin-top:2px">Respuestas simuladas para la versión inicial</div>' +
             '</div>' +
 
             '<div style="background:#f9fbfb;border:1px solid #edf1f4;border-radius:8px;padding:10px 12px">' +
             '<div style="font-size:10px;font-weight:700;color:#697681;text-transform:uppercase;margin-bottom:3px">Interfaz</div>' +
-            '<div style="font-size:13px;font-weight:700">AiSuggestionProviderInterface</div>' +
+            '<div style="font-size:13px;font-weight:700">Interfaz de sugerencias</div>' +
             '<div style="font-size:11px;color:#697681;margin-top:2px">Intercambiable por proveedor real</div>' +
             '</div>' +
 
@@ -76,8 +80,8 @@
 
             (!enabled
                 ? '<div style="background:#fff9e6;border:1px solid #f0d060;border-radius:8px;padding:10px 14px;width:100%;margin-top:8px;font-size:13px;color:#7a6010">' +
-                  '⚠ El módulo de IA está <strong>desactivado</strong>. Los tests de sugerencias devolverán 503. ' +
-                  '<a href="' + escapeHtml(window.location.pathname.replace('ai-foundation', 'feature-flags')) + '" style="color:#7a6010;font-weight:700">Activar desde Feature flags →</a>' +
+                  '⚠ El módulo de IA está <strong>desactivado</strong>. Las pruebas de sugerencias devolverán el error 503. ' +
+                  '<a href="' + escapeHtml(window.location.pathname.replace('ai-foundation', 'feature-flags')) + '" style="color:#7a6010;font-weight:700">Activar desde Funciones →</a>' +
                   '</div>'
                 : '') +
 
@@ -112,20 +116,20 @@
 
         var disabledNotice = !enabled
             ? '<div style="background:#fff9e6;border:1px solid #f0d060;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7a6010">' +
-              '⚠ El flag de IA está desactivado — el test devolverá error 503.</div>'
+              '⚠ La función de IA está desactivada — la prueba devolverá el error 503.</div>'
             : '';
 
         var resultHtml = '';
         if (state.testing) {
-            resultHtml = '<div data-ai-test-result style="padding:12px;background:#f9fbfb;border:1px solid #edf1f4;border-radius:8px;font-size:13px;color:#697681;text-align:center">Consultando provider...</div>';
+            resultHtml = '<div data-ai-test-result style="padding:12px;background:#f9fbfb;border:1px solid #edf1f4;border-radius:8px;font-size:13px;color:#697681;text-align:center">Consultando proveedor...</div>';
         } else if (state.testResult) {
             var r = state.testResult;
             var conf = r.confidence != null ? Math.round(r.confidence * 100) + '%' : '-';
             resultHtml =
                 '<div data-ai-test-result style="margin-top:12px;padding:14px;background:#e7f7f2;border:1px solid rgba(4,172,133,.3);border-radius:8px">' +
-                '<div style="font-size:10px;font-weight:700;color:#04ac85;text-transform:uppercase;margin-bottom:8px">Respuesta del provider</div>' +
+                '<div style="font-size:10px;font-weight:700;color:#04ac85;text-transform:uppercase;margin-bottom:8px">Respuesta del proveedor</div>' +
                 '<div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px">' +
-                '<span style="color:#697681;font-weight:700">Provider</span><span><code>' + escapeHtml(r.provider || '-') + '</code></span>' +
+                '<span style="color:#697681;font-weight:700">Proveedor</span><span><code>' + escapeHtml(uiLabel(r.provider || '-', 'provider')) + '</code></span>' +
                 '<span style="color:#697681;font-weight:700">Confianza</span><span>' + escapeHtml(conf) + '</span>' +
                 '<span style="color:#697681;font-weight:700">Sugerencia</span><span style="font-style:italic">"' + escapeHtml(r.suggestion || '') + '"</span>' +
                 '</div>' +
@@ -193,12 +197,12 @@
         panel.innerHTML =
             '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">' +
 
-            archCard('Interfaz de provider', 'AiSuggestionProviderInterface', 'Contrato único para cualquier proveedor de IA (OpenAI, Gemini, local, etc.).',  '🔌') +
-            archCard('Provider MVP',          'FakeAiSuggestionProvider',      'Devuelve sugerencias simuladas. Se reemplaza sin tocar el Service.',              '🧪') +
-            archCard('Service de orquestación','AiFoundationService',          'Verifica el flag, llama al provider y registra en AuditLog.',                    '⚙') +
-            archCard('Guard de flag',          'module.ai (FeatureFlag)',       'Si está desactivado el service lanza AI_FEATURE_DISABLED (503).',                '🔒') +
+            archCard('Interfaz del proveedor', 'AiSuggestionProviderInterface', 'Contrato único para cualquier proveedor de IA (OpenAI, Gemini, local, etc.).',  '🔌') +
+            archCard('Proveedor de la versión inicial',          'FakeAiSuggestionProvider',      'Devuelve sugerencias simuladas. Se reemplaza sin modificar el servicio.',              '🧪') +
+            archCard('Servicio de coordinación','AiFoundationService',          'Verifica la función, llama al proveedor y registra la auditoría.',                    '⚙') +
+            archCard('Control de activación',          'module.ai (FeatureFlag)',       'Si está desactivada, el servicio devuelve AI_FEATURE_DISABLED (503).',                '🔒') +
             archCard('Auditoría',              'AuditLog: ai.test_suggestion',  'Cada llamada queda registrada con actor, contexto y proveedor usado.',           '📋') +
-            archCard('Extensión futura',       'Real AI provider',              'Implementar AiSuggestionProviderInterface y registrar en el ServiceProvider.',   '🚀') +
+            archCard('Extensión futura',       'Proveedor real de IA',              'Implementar AiSuggestionProviderInterface y registrar en el ServiceProvider.',   '🚀') +
 
             '</div>';
     }

@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         auditPage: 1,
         auditLastPage: 1,
@@ -186,8 +190,8 @@
             return '<tr>' +
                 '<td>' + escapeHtml(formatDate(item.created_at)) + '</td>' +
                 '<td>' + escapeHtml(user) + '</td>' +
-                '<td><strong>' + escapeHtml(item.action) + '</strong></td>' +
-                '<td>' + escapeHtml(item.resource) + '<br><span class="muted">#' + escapeHtml(item.resource_id) + '</span></td>' +
+                '<td><strong>' + escapeHtml(uiLabel(item.action, 'action')) + '</strong></td>' +
+                '<td>' + escapeHtml(uiLabel(item.resource, 'resource')) + '<br><span class="muted">#' + escapeHtml(item.resource_id) + '</span></td>' +
                 '<td>' + formatJson(item.before) + '</td>' +
                 '<td>' + formatJson(item.after) + '</td>' +
                 '<td>' + escapeHtml(item.ip) + '</td>' +
@@ -218,7 +222,7 @@
                 '<td><strong>' + escapeHtml(item.email) + '</strong></td>' +
                 '<td>' + escapeHtml(user) + '</td>' +
                 '<td>' + result + '</td>' +
-                '<td>' + escapeHtml(item.failure_reason) + '</td>' +
+                '<td>' + escapeHtml(uiLabel(item.failure_reason, 'failureReason')) + '</td>' +
                 '<td>' + escapeHtml(item.ip) + '</td>' +
                 '<td>' + escapeHtml(item.user_agent) + '</td>' +
                 '</tr>';
@@ -241,7 +245,7 @@
             return '<tr>' +
                 '<td>' + escapeHtml(formatDate(item.created_at)) + '</td>' +
                 '<td>' + escapeHtml(user) + '</td>' +
-                '<td><strong>' + escapeHtml(item.action) + '</strong></td>' +
+                '<td><strong>' + escapeHtml(uiLabel(item.action, 'action')) + '</strong></td>' +
                 '<td>' + formatJson(item.before) + '</td>' +
                 '<td>' + formatJson(item.after) + '</td>' +
                 '<td>' + escapeHtml(item.ip) + '</td>' +

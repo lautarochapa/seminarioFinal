@@ -1,6 +1,6 @@
 @extends('layouts.admin-web')
 
-@section('title', $screen['title'].' - Admin CC Control')
+@section('title', $screen['title'].' - Administración CC Control')
 
 @section('content')
     @if($screenKey === 'dashboard')
@@ -22,7 +22,7 @@
         @foreach($screen['metrics'] as $metric)
             <article class="metric">
                 <strong @if($screenKey === 'products' && $metric === 'products') data-products-summary-count @endif>{{ $stats[$metric] ?? 0 }}</strong>
-                <span>{{ str_replace('_', ' ', $metric) }}</span>
+                <span>{{ $metricLabels[$metric] ?? 'Registros' }}</span>
             </article>
         @endforeach
     </section>
@@ -34,7 +34,7 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-users-search placeholder="Buscar por nombre, email o usuario">
+                        <input class="form-control" type="search" data-users-search placeholder="Buscar por nombre, correo o usuario">
                         <label class="muted" style="display:flex;gap:6px;align-items:center;margin:0">
                             <input type="checkbox" data-users-deleted> incluir eliminados
                         </label>
@@ -46,7 +46,7 @@
                             <thead>
                                 <tr>
                                     <th>Usuario</th>
-                                    <th>Username</th>
+                                    <th>Nombre de usuario</th>
                                     <th>Estado</th>
                                     <th>Roles</th>
                                     <th>Asignar rol</th>
@@ -65,9 +65,9 @@
                     <form class="rbac-form" data-user-create-form>
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
                         <input class="form-control" name="lastname" type="text" placeholder="Apellido">
-                        <input class="form-control" name="email" type="email" placeholder="Email" required>
-                        <input class="form-control" name="password" type="password" placeholder="Password" required>
-                        <input class="form-control" name="password_confirmation" type="password" placeholder="Confirmar password" required>
+                        <input class="form-control" name="email" type="email" placeholder="Correo electrónico" required>
+                        <input class="form-control" name="password" type="password" placeholder="Contraseña" required>
+                        <input class="form-control" name="password_confirmation" type="password" placeholder="Confirmar contraseña" required>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -110,7 +110,7 @@
                     <form class="rbac-form" data-role-create-form>
                         <input class="form-control" name="code" type="text" placeholder="codigo_ejemplo" required>
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <button type="submit" class="btn-main">Crear rol</button>
                     </form>
 
@@ -126,7 +126,7 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-objectives-search placeholder="Buscar por codigo o nombre">
+                        <input class="form-control" type="search" data-objectives-search placeholder="Buscar por código o nombre">
                         <label class="muted" style="display:flex;gap:6px;align-items:center;margin:0">
                             <input type="checkbox" data-objectives-deleted> incluir eliminados
                         </label>
@@ -137,9 +137,9 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
-                                    <th>Descripcion</th>
+                                    <th>Descripción</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -157,7 +157,7 @@
                         <input type="hidden" name="id">
                         <input class="form-control" name="code" type="text" placeholder="bajar_peso" required>
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -173,7 +173,7 @@
     @elseif($screenKey === 'health-preferences')
         <section data-admin-health-preferences>
             <div class="alert" data-health-preferences-message style="display:none"></div>
-            <div class="audit-tabs" role="tablist" aria-label="Catalogos de salud">
+            <div class="audit-tabs" role="tablist" aria-label="Catálogos de salud">
                 <button type="button" class="audit-tab active" data-health-tab="dietary-restrictions">Restricciones alimentarias</button>
                 <button type="button" class="audit-tab" data-health-tab="health-conditions">Condiciones de salud</button>
                 <button type="button" class="audit-tab" data-health-tab="allergies">Alergias</button>
@@ -182,7 +182,7 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-health-search placeholder="Buscar por codigo o nombre">
+                        <input class="form-control" type="search" data-health-search placeholder="Buscar por código o nombre">
                         <label class="muted" style="display:flex;gap:6px;align-items:center;margin:0">
                             <input type="checkbox" data-health-deleted> incluir eliminados
                         </label>
@@ -193,27 +193,27 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
-                                    <th>Descripcion</th>
+                                    <th>Descripción</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-health-body>
-                                <tr><td colspan="5" class="muted">Cargando catalogo...</td></tr>
+                                <tr><td colspan="5" class="muted">Cargando catálogo...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-health-form-title>Nuevo item</h2>
+                    <h2 data-health-form-title>Nuevo elemento</h2>
                     <form class="rbac-form" data-health-form>
                         <input type="hidden" name="id">
                         <input class="form-control" name="code" type="text" placeholder="sin_gluten" required>
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -234,7 +234,7 @@
                     <div class="admin-tools">
                         <input class="form-control" type="search" data-ingredients-search placeholder="Buscar arroz, leche, tomate...">
                         <select class="form-control" data-ingredients-category>
-                            <option value="">Todas las categorias</option>
+                            <option value="">Todas las categorías</option>
                         </select>
                         <select class="form-control" data-ingredients-status>
                             <option value="">Todos</option>
@@ -243,7 +243,7 @@
                         </select>
                         <select class="form-control" data-ingredients-kind>
                             <option value="">Todos los tipos</option>
-                            <option value="is_generic">Genericos</option>
+                            <option value="is_generic">Genéricos</option>
                             <option value="is_preparation">Preparaciones</option>
                             <option value="is_supplement">Suplementos</option>
                         </select>
@@ -255,9 +255,9 @@
                             <thead>
                                 <tr>
                                     <th>Ingrediente</th>
-                                    <th>Categoria</th>
+                                    <th>Categoría</th>
                                     <th>Unidad base</th>
-                                    <th>Flags</th>
+                                    <th>Características</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -269,7 +269,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-ingredients-prev>Anterior</button>
-                        <span class="muted" data-ingredients-page>Pagina 1</span>
+                        <span class="muted" data-ingredients-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-ingredients-next>Siguiente</button>
                     </div>
                 </article>
@@ -279,15 +279,15 @@
                     <form class="rbac-form" data-ingredient-form>
                         <input type="hidden" name="id">
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="category_id" data-ingredient-category-select>
-                            <option value="">Sin categoria</option>
+                            <option value="">Sin categoría</option>
                         </select>
                         <select class="form-control" name="base_unit_id" data-ingredient-unit-select>
                             <option value="">Sin unidad base</option>
                         </select>
-                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_generic"> Generico</label>
-                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_preparation"> Preparacion</label>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_generic"> Genérico</label>
+                        <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_preparation"> Preparación</label>
                         <label class="muted" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="is_supplement"> Suplemento</label>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
@@ -310,11 +310,11 @@
             <section class="grid" style="margin-top:14px">
                 <article class="panel">
                     <div class="admin-tools">
-                        <h2 style="margin:0">Buscador publico</h2>
-                        <input class="form-control" type="search" data-ingredient-public-search placeholder="Buscar catalogo activo">
+                        <h2 style="margin:0">Buscador público</h2>
+                        <input class="form-control" type="search" data-ingredient-public-search placeholder="Buscar catálogo activo">
                         <button type="button" class="btn-ghost" data-ingredient-public-refresh>Buscar</button>
                     </div>
-                    <div data-ingredient-public-results class="muted">Buscá ingredientes activos para ver detalle, nutricion y equivalencias.</div>
+                    <div data-ingredient-public-results class="muted">Buscá ingredientes activos para ver detalle, nutrición y equivalencias.</div>
                 </article>
 
                 <article class="panel">
@@ -348,20 +348,20 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-ingredient-categories-search placeholder="Buscar por codigo, nombre o descripcion">
+                        <input class="form-control" type="search" data-ingredient-categories-search placeholder="Buscar por código, nombre o descripción">
                         <select class="form-control" data-ingredient-categories-status>
                             <option value="">Todos los estados</option>
                             <option value="active">Activas</option>
                             <option value="inactive">Inactivas</option>
                         </select>
                         <button type="button" class="btn-ghost" data-ingredient-categories-refresh>Actualizar</button>
-                        <span class="chip" data-ingredient-categories-count>0 categorias</span>
+                        <span class="chip" data-ingredient-categories-count>0 categorías</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Categoria</th>
+                                    <th>Categoría</th>
                                     <th>Padre</th>
                                     <th>Orden</th>
                                     <th>Estado</th>
@@ -370,26 +370,26 @@
                                 </tr>
                             </thead>
                             <tbody data-ingredient-categories-body>
-                                <tr><td colspan="6" class="muted">Cargando categorias...</td></tr>
+                                <tr><td colspan="6" class="muted">Cargando categorías...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-ingredient-categories-prev>Anterior</button>
-                        <span class="muted" data-ingredient-categories-page>Pagina 1</span>
+                        <span class="muted" data-ingredient-categories-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-ingredient-categories-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-ingredient-category-form-title>Nueva categoria</h2>
+                    <h2 data-ingredient-category-form-title>Nueva categoría</h2>
                     <form class="rbac-form" data-ingredient-category-form>
                         <input type="hidden" name="id">
                         <input class="form-control" name="code" type="text" placeholder="verduras">
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="parent_id" data-ingredient-category-parent>
-                            <option value="">Sin categoria padre</option>
+                            <option value="">Sin categoría padre</option>
                         </select>
                         <input class="form-control" name="sort_order" type="number" min="0" step="1" placeholder="Orden">
                         <select class="form-control" name="status">
@@ -397,12 +397,12 @@
                             <option value="inactive">Inactiva</option>
                         </select>
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
-                            <button type="submit" class="btn-main">Guardar categoria</button>
+                            <button type="submit" class="btn-main">Guardar categoría</button>
                             <button type="button" class="btn-ghost" data-ingredient-category-reset>Limpiar</button>
                         </div>
                     </form>
 
-                    <h2 style="margin-top:18px">Restaurar categoria</h2>
+                    <h2 style="margin-top:18px">Restaurar categoría</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="number" min="1" data-ingredient-category-restore-id placeholder="ID eliminado">
                         <button type="button" class="btn-ghost" data-ingredient-category-restore-submit>Restaurar</button>
@@ -412,10 +412,10 @@
 
             <article class="panel" style="margin-top:14px">
                 <div class="admin-tools">
-                    <h2 style="margin:0">Arbol de categorias activo</h2>
-                    <button type="button" class="btn-ghost" data-ingredient-categories-tree-refresh>Actualizar arbol</button>
+                    <h2 style="margin:0">Árbol de categorías activo</h2>
+                    <button type="button" class="btn-ghost" data-ingredient-categories-tree-refresh>Actualizar árbol</button>
                 </div>
-                <div data-ingredient-categories-tree class="muted">Cargando arbol...</div>
+                <div data-ingredient-categories-tree class="muted">Cargando árbol...</div>
             </article>
         </section>
     @elseif($screenKey === 'nutrients')
@@ -424,7 +424,7 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-nutrients-search placeholder="Buscar calorias, proteinas, sodio...">
+                        <input class="form-control" type="search" data-nutrients-search placeholder="Buscar calorías, proteínas, sodio...">
                         <select class="form-control" data-nutrients-unit>
                             <option value="">Todas las unidades</option>
                         </select>
@@ -440,10 +440,10 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
                                     <th>Unidad</th>
-                                    <th>Descripcion</th>
+                                    <th>Descripción</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -455,7 +455,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-nutrients-prev>Anterior</button>
-                        <span class="muted" data-nutrients-page>Pagina 1</span>
+                        <span class="muted" data-nutrients-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-nutrients-next>Siguiente</button>
                     </div>
                 </article>
@@ -464,12 +464,12 @@
                     <h2 data-nutrient-form-title>Nuevo nutriente</h2>
                     <form class="rbac-form" data-nutrient-form>
                         <input type="hidden" name="id">
-                        <input class="form-control" name="code" type="text" placeholder="proteinas" required>
+                        <input class="form-control" name="code" type="text" placeholder="proteínas" required>
                         <input class="form-control" name="name" type="text" placeholder="Nombre" required>
                         <select class="form-control" name="unit_id" data-nutrient-unit-select required>
                             <option value="">Unidad</option>
                         </select>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -539,8 +539,8 @@
                             <option value="">Nutriente</option>
                         </select>
                         <input class="form-control" name="amount_per_100g" type="number" min="0" step="0.0001" placeholder="Cantidad cada 100g">
-                        <input class="form-control" name="amount_per_serving" type="number" min="0" step="0.0001" placeholder="Cantidad por porcion">
-                        <input class="form-control" name="serving_size" type="number" min="0" step="0.0001" placeholder="Tamano porcion">
+                        <input class="form-control" name="amount_per_serving" type="number" min="0" step="0.0001" placeholder="Cantidad por porción">
+                        <input class="form-control" name="serving_size" type="number" min="0" step="0.0001" placeholder="Tamaño porción">
                         <input class="form-control" name="source" type="text" placeholder="Fuente">
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
@@ -580,51 +580,51 @@
                             <option value="inactive">Inactivos</option>
                         </select>
                         <button type="button" class="btn-ghost" data-food-tags-refresh>Actualizar</button>
-                        <span class="chip" data-food-tags-count>0 tags</span>
+                        <span class="chip" data-food-tags-count>0 etiquetas</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
                                     <th>Tipo</th>
-                                    <th>Descripcion</th>
+                                    <th>Descripción</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-food-tags-body>
-                                <tr><td colspan="6" class="muted">Cargando tags...</td></tr>
+                                <tr><td colspan="6" class="muted">Cargando etiquetas...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-food-tags-prev>Anterior</button>
-                        <span class="muted" data-food-tags-page>Pagina 1</span>
+                        <span class="muted" data-food-tags-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-food-tags-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-food-tag-form-title>Nuevo tag alimentario</h2>
+                    <h2 data-food-tag-form-title>Nueva etiqueta alimentaria</h2>
                     <form class="rbac-form" data-food-tag-form>
                         <input type="hidden" name="id">
-                        <input class="form-control" name="code" type="text" placeholder="low_sodium" required>
+                        <input class="form-control" name="code" type="text" placeholder="Código de la etiqueta" required>
                         <input class="form-control" name="name" type="text" placeholder="Bajo sodio" required>
                         <input class="form-control" name="type" type="text" placeholder="dieta, salud, advertencia">
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion funcional"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción funcional"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
                         </select>
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
-                            <button type="submit" class="btn-main">Guardar tag</button>
+                            <button type="submit" class="btn-main">Guardar etiqueta</button>
                             <button type="button" class="btn-ghost" data-food-tag-reset>Limpiar</button>
                         </div>
                     </form>
 
-                    <h2 style="margin-top:18px">Restaurar tag</h2>
+                    <h2 style="margin-top:18px">Restaurar etiqueta</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="number" min="1" data-food-tag-restore-id placeholder="ID inactivo">
                         <button type="button" class="btn-ghost" data-food-tag-restore-submit>Restaurar</button>
@@ -634,10 +634,10 @@
 
             <article class="panel" style="margin-top:14px">
                 <div class="admin-tools">
-                    <h2 style="margin:0">Catalogo publico</h2>
-                    <input class="form-control" type="search" data-food-tags-public-search placeholder="Buscar tags activos">
+                    <h2 style="margin:0">Catálogo público</h2>
+                    <input class="form-control" type="search" data-food-tags-public-search placeholder="Buscar etiquetas activas">
                     <button type="button" class="btn-ghost" data-food-tags-public-refresh>Consultar</button>
-                    <span class="chip" data-food-tags-public-count>0 tags activos</span>
+                    <span class="chip" data-food-tags-public-count>0 etiquetas activas</span>
                 </div>
                 <div data-food-tags-public-results class="chips"></div>
             </article>
@@ -661,7 +661,7 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
                                     <th>Orden</th>
                                     <th>Estado</th>
@@ -675,7 +675,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-meal-types-prev>Anterior</button>
-                        <span class="muted" data-meal-types-page>Pagina 1</span>
+                        <span class="muted" data-meal-types-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-meal-types-next>Siguiente</button>
                     </div>
                 </article>
@@ -707,7 +707,7 @@
 
             <article class="panel" style="margin-top:14px">
                 <div class="admin-tools">
-                    <h2 style="margin:0">Catalogo activo</h2>
+                    <h2 style="margin:0">Catálogo activo</h2>
                     <button type="button" class="btn-ghost" data-meal-types-public-refresh>Consultar</button>
                     <span class="chip" data-meal-types-public-count>0 tipos activos</span>
                 </div>
@@ -747,7 +747,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-brands-prev>Anterior</button>
-                        <span class="muted" data-brands-page>Pagina 1</span>
+                        <span class="muted" data-brands-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-brands-next>Siguiente</button>
                     </div>
                 </article>
@@ -777,7 +777,7 @@
 
             <article class="panel" style="margin-top:14px">
                 <div class="admin-tools">
-                    <h2 style="margin:0">Catalogo publico</h2>
+                    <h2 style="margin:0">Catálogo público</h2>
                     <input class="form-control" type="search" data-brands-public-search placeholder="Buscar marcas activas">
                     <button type="button" class="btn-ghost" data-brands-public-refresh>Consultar</button>
                     <span class="chip" data-brands-public-count>0 marcas activas</span>
@@ -791,14 +791,14 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-product-categories-search placeholder="Buscar almacen, lacteos...">
+                        <input class="form-control" type="search" data-product-categories-search placeholder="Buscar almacén, lácteos...">
                         <select class="form-control" data-product-categories-status>
                             <option value="">Todas</option>
                             <option value="active">Activas</option>
                             <option value="inactive">Inactivas</option>
                         </select>
                         <button type="button" class="btn-ghost" data-product-categories-refresh>Actualizar</button>
-                        <span class="chip" data-product-categories-count>0 categorias</span>
+                        <span class="chip" data-product-categories-count>0 categorías</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
@@ -806,7 +806,7 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Padre</th>
-                                    <th>Descripcion</th>
+                                    <th>Descripción</th>
                                     <th>Hijos</th>
                                     <th>Productos</th>
                                     <th>Estado</th>
@@ -814,37 +814,37 @@
                                 </tr>
                             </thead>
                             <tbody data-product-categories-body>
-                                <tr><td colspan="7" class="muted">Cargando categorias...</td></tr>
+                                <tr><td colspan="7" class="muted">Cargando categorías...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-product-categories-prev>Anterior</button>
-                        <span class="muted" data-product-categories-page>Pagina 1</span>
+                        <span class="muted" data-product-categories-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-product-categories-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-product-category-form-title>Nueva categoria</h2>
+                    <h2 data-product-category-form-title>Nueva categoría</h2>
                     <form class="rbac-form" data-product-category-form>
                         <input type="hidden" name="id">
                         <input class="form-control" name="name" type="text" placeholder="Almacen" required>
                         <select class="form-control" name="parent_id" data-product-category-parent>
-                            <option value="">Categoria raiz</option>
+                            <option value="">Categoría raiz</option>
                         </select>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activa</option>
                             <option value="inactive">Inactiva</option>
                         </select>
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
-                            <button type="submit" class="btn-main">Guardar categoria</button>
+                            <button type="submit" class="btn-main">Guardar categoría</button>
                             <button type="button" class="btn-ghost" data-product-category-reset>Limpiar</button>
                         </div>
                     </form>
 
-                    <h2 style="margin-top:18px">Restaurar categoria</h2>
+                    <h2 style="margin-top:18px">Restaurar categoría</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="number" min="1" data-product-category-restore-id placeholder="ID eliminada">
                         <button type="button" class="btn-ghost" data-product-category-restore-submit>Restaurar</button>
@@ -854,10 +854,10 @@
 
             <article class="panel" style="margin-top:14px">
                 <div class="admin-tools">
-                    <h2 style="margin:0">Catalogo activo</h2>
-                    <button type="button" class="btn-ghost" data-product-categories-tree-refresh>Actualizar arbol</button>
+                    <h2 style="margin:0">Catálogo activo</h2>
+                    <button type="button" class="btn-ghost" data-product-categories-tree-refresh>Actualizar árbol</button>
                 </div>
-                <div data-product-categories-tree class="muted">Cargando arbol de categorias...</div>
+                <div data-product-categories-tree class="muted">Cargando árbol de categorías...</div>
             </article>
         </section>
     @elseif($screenKey === 'products')
@@ -866,12 +866,12 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-products-search placeholder="Buscar arroz, barcode o marca">
+                        <input class="form-control" type="search" data-products-search placeholder="Buscar arroz, código de barras o marca">
                         <select class="form-control" data-products-brand>
                             <option value="">Marca</option>
                         </select>
                         <select class="form-control" data-products-category>
-                            <option value="">Categoria</option>
+                            <option value="">Categoría</option>
                         </select>
                         <select class="form-control" data-products-ingredient>
                             <option value="">Ingrediente</option>
@@ -890,9 +890,9 @@
                                 <tr>
                                     <th>Producto</th>
                                     <th>Marca</th>
-                                    <th>Categoria</th>
+                                    <th>Categoría</th>
                                     <th>Ingrediente</th>
-                                    <th>Barcode</th>
+                                    <th>Código de barras</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -904,7 +904,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-products-prev>Anterior</button>
-                        <span class="muted" data-products-page>Pagina 1</span>
+                        <span class="muted" data-products-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-products-next>Siguiente</button>
                     </div>
                 </article>
@@ -918,12 +918,12 @@
                             <option value="">Marca</option>
                         </select>
                         <select class="form-control" name="category_id" data-product-category-select>
-                            <option value="">Categoria</option>
+                            <option value="">Categoría</option>
                         </select>
                         <select class="form-control" name="ingredient_id" data-product-ingredient-select>
                             <option value="">Ingrediente principal</option>
                         </select>
-                        <input class="form-control" name="barcode" type="text" placeholder="Codigo de barras">
+                        <input class="form-control" name="barcode" type="text" placeholder="Código de barras">
                         <input class="form-control" name="net_quantity" type="number" min="0" step="0.0001" placeholder="Cantidad neta">
                         <select class="form-control" name="default_unit_id" data-product-unit-select>
                             <option value="">Unidad</option>
@@ -931,7 +931,7 @@
                         <select class="form-control" name="package_unit_id" data-product-package-unit-select>
                             <option value="">Unidad de paquete</option>
                         </select>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Descripcion"></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Descripción"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -952,7 +952,7 @@
 
             <section class="grid" style="margin-top:14px">
                 <article class="panel">
-                    <h2>Detalle publico</h2>
+                    <h2>Detalle público</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="number" min="1" data-product-detail-id placeholder="ID producto">
                         <button type="button" class="btn-ghost" data-product-detail-refresh>Ver detalle</button>
@@ -960,7 +960,7 @@
                     <div data-product-detail class="muted">Selecciona un producto.</div>
                 </article>
                 <article class="panel">
-                    <h2>Nutricion</h2>
+                    <h2>Nutrición</h2>
                     <div data-product-nutrition class="muted">Sin producto seleccionado.</div>
                 </article>
                 <article class="panel">
@@ -976,8 +976,8 @@
                     <form class="rbac-form" data-product-image-form enctype="multipart/form-data">
                         <input class="form-control" type="number" min="1" name="product_id" data-product-image-product-id placeholder="ID producto" required>
                         <input class="form-control" type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp">
-                        <input class="form-control" type="url" name="url" placeholder="URL de imagen scraping/manual">
-                        <input class="form-control" type="text" name="source" placeholder="Origen. Ej: manual, scraping">
+                        <input class="form-control" type="url" name="url" placeholder="Dirección web de la imagen">
+                        <input class="form-control" type="text" name="source" placeholder="Origen de la imagen">
                         <label class="muted" style="display:flex;gap:8px;align-items:center;margin-bottom:9px">
                             <input type="checkbox" name="is_primary" value="1"> Principal
                         </label>
@@ -993,7 +993,7 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-product-requests-search placeholder="Buscar nombre, marca o barcode">
+                        <input class="form-control" type="search" data-product-requests-search placeholder="Buscar nombre, marca o código de barras">
                         <select class="form-control" data-product-requests-status>
                             <option value="pending">Pendientes</option>
                             <option value="approved">Aprobadas</option>
@@ -1009,7 +1009,7 @@
                                 <tr>
                                     <th>Solicitud</th>
                                     <th>Solicitante</th>
-                                    <th>Barcode</th>
+                                    <th>Código de barras</th>
                                     <th>Estado</th>
                                     <th>Fecha</th>
                                     <th>Acciones</th>
@@ -1022,7 +1022,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-product-requests-prev>Anterior</button>
-                        <span class="muted" data-product-requests-page>Pagina 1</span>
+                        <span class="muted" data-product-requests-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-product-requests-next>Siguiente</button>
                     </div>
                 </article>
@@ -1037,12 +1037,12 @@
                             <option value="">Marca</option>
                         </select>
                         <select class="form-control" name="category_id" data-product-request-category>
-                            <option value="">Categoria</option>
+                            <option value="">Categoría</option>
                         </select>
                         <select class="form-control" name="ingredient_id" data-product-request-ingredient>
                             <option value="">Ingrediente principal</option>
                         </select>
-                        <input class="form-control" name="barcode" type="text" placeholder="Codigo de barras">
+                        <input class="form-control" name="barcode" type="text" placeholder="Código de barras">
                         <input class="form-control" name="net_quantity" type="number" min="0" step="0.0001" placeholder="Cantidad neta">
                         <select class="form-control" name="default_unit_id" data-product-request-unit required>
                             <option value="">Unidad base *</option>
@@ -1050,8 +1050,8 @@
                         <select class="form-control" name="package_unit_id" data-product-request-package-unit>
                             <option value="">Unidad de paquete</option>
                         </select>
-                        <textarea class="form-control" name="description" rows="3" placeholder="Descripcion"></textarea>
-                        <textarea class="form-control" name="review_notes" rows="2" placeholder="Notas de revision"></textarea>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripción"></textarea>
+                        <textarea class="form-control" name="review_notes" rows="2" placeholder="Notas de revisión"></textarea>
                         <select class="form-control" name="status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -1069,7 +1069,7 @@
             <div class="alert" data-barcodes-message style="display:none"></div>
             <div class="grid">
                 <article class="panel">
-                    <h2>Busqueda por codigo</h2>
+                    <h2>Busqueda por código</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="text" inputmode="numeric" data-barcode-search-code placeholder="7791234567890">
                         <button type="button" class="btn-main" data-barcode-search-submit>Buscar</button>
@@ -1078,33 +1078,33 @@
                     </div>
                     <video data-barcode-video playsinline muted style="display:none;width:100%;max-height:260px;background:#111;border-radius:8px;margin-bottom:10px"></video>
                     <div data-barcode-camera-status class="muted" style="margin-bottom:10px">La camara se activa solo al presionar usar camara.</div>
-                    <div data-barcode-search-result class="muted">Escanea o ingresa un codigo para buscar el producto asociado.</div>
+                    <div data-barcode-search-result class="muted">Escanea o ingresa un código para buscar el producto asociado.</div>
                     <div class="admin-tools" data-barcode-next-actions style="display:none;margin-top:10px">
-                        <a class="btn-ghost" href="{{ url('/web/stock') }}">Continuar a stock</a>
+                        <a class="btn-ghost" href="{{ url('/web/stock') }}">Continuar a Mi cocina</a>
                         <a class="btn-ghost" href="{{ url('/web/shopping-list') }}">Continuar a compras</a>
                     </div>
                 </article>
 
                 <article class="panel">
-                    <h2>Alta de barcode</h2>
+                    <h2>Alta de código de barras</h2>
                     <form class="rbac-form" data-barcode-create-form>
                         <select class="form-control" name="product_id" data-barcode-product-select required>
                             <option value="">Producto</option>
                         </select>
-                        <input class="form-control" name="barcode" type="text" inputmode="numeric" placeholder="Codigo de barras" required>
-                        <button type="submit" class="btn-main">Agregar codigo</button>
+                        <input class="form-control" name="barcode" type="text" inputmode="numeric" placeholder="Código de barras" required>
+                        <button type="submit" class="btn-main">Agregar código</button>
                     </form>
-                    <div data-barcode-created-result class="muted" style="margin-top:10px">El ID generado se muestra aca para poder desactivar el codigo si hace falta.</div>
+                    <div data-barcode-created-result class="muted" style="margin-top:10px">El ID generado se muestra aca para poder desactivar el código si hace falta.</div>
                 </article>
 
                 <article class="panel">
-                    <h2>Baja de barcode</h2>
+                    <h2>Baja de código de barras</h2>
                     <form class="rbac-form" data-barcode-delete-form>
                         <select class="form-control" name="product_id" data-barcode-delete-product-select required>
                             <option value="">Producto</option>
                         </select>
-                        <input class="form-control" name="barcode_id" type="number" min="1" placeholder="ID barcode" required>
-                        <button type="submit" class="btn-ghost">Desactivar codigo</button>
+                        <input class="form-control" name="barcode_id" type="number" min="1" placeholder="ID del código de barras" required>
+                        <button type="submit" class="btn-ghost">Desactivar código</button>
                     </form>
                 </article>
 
@@ -1131,7 +1131,7 @@
                         <select class="form-control" data-equivalences-target>
                             <option value="">Ingrediente destino</option>
                         </select>
-                        <input class="form-control" type="text" data-equivalences-type placeholder="Tipo. Ej: replacement">
+                        <input class="form-control" type="text" data-equivalences-type placeholder="Tipo de equivalencia">
                         <select class="form-control" data-equivalences-status>
                             <option value="">Todos</option>
                             <option value="active">Activas</option>
@@ -1160,7 +1160,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-equivalences-prev>Anterior</button>
-                        <span class="muted" data-equivalences-page>Pagina 1</span>
+                        <span class="muted" data-equivalences-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-equivalences-next>Siguiente</button>
                     </div>
                 </article>
@@ -1175,7 +1175,7 @@
                         <select class="form-control" name="target_ingredient_id" data-equivalence-target-select required>
                             <option value="">Ingrediente destino</option>
                         </select>
-                        <input class="form-control" name="equivalence_type" type="text" placeholder="replacement">
+                        <input class="form-control" name="equivalence_type" type="text" placeholder="Código del tipo de equivalencia">
                         <input class="form-control" name="conversion_factor" type="number" min="0.00000001" step="0.0001" placeholder="Factor" required>
                         <textarea class="form-control" name="reason" rows="4" placeholder="Motivo o criterio"></textarea>
                         <select class="form-control" name="status">
@@ -1214,7 +1214,7 @@
             <div class="audit-tabs" role="tablist" aria-label="Unidades y conversiones">
                 <button type="button" class="audit-tab active" data-units-tab="units">Unidades</button>
                 <button type="button" class="audit-tab" data-units-tab="conversions">Conversiones</button>
-                <button type="button" class="audit-tab" data-units-tab="catalog">Catalogo publico</button>
+                <button type="button" class="audit-tab" data-units-tab="catalog">Catálogo público</button>
             </div>
 
             <section data-units-panel="units">
@@ -1227,7 +1227,7 @@
                                 <option value="mass">Masa</option>
                                 <option value="volume">Volumen</option>
                                 <option value="count">Conteo</option>
-                                <option value="household">Domestica</option>
+                                <option value="household">Doméstica</option>
                                 <option value="package">Paquete</option>
                             </select>
                             <select class="form-control" data-units-status>
@@ -1242,10 +1242,10 @@
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>Codigo</th>
+                                        <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Tipo</th>
-                                        <th>Simbolo</th>
+                                        <th>Símbolo</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -1257,7 +1257,7 @@
                         </div>
                         <div class="audit-pagination">
                             <button type="button" class="btn-ghost btn-sm" data-units-prev>Anterior</button>
-                            <span class="muted" data-units-page>Pagina 1</span>
+                            <span class="muted" data-units-page>Página 1</span>
                             <button type="button" class="btn-ghost btn-sm" data-units-next>Siguiente</button>
                         </div>
                     </article>
@@ -1273,7 +1273,7 @@
                                 <option value="mass">Masa</option>
                                 <option value="volume">Volumen</option>
                                 <option value="count">Conteo</option>
-                                <option value="household">Domestica</option>
+                                <option value="household">Doméstica</option>
                                 <option value="package">Paquete</option>
                             </select>
                             <input class="form-control" name="symbol" type="text" placeholder="kg">
@@ -1338,13 +1338,13 @@
                         </div>
                         <div class="audit-pagination">
                             <button type="button" class="btn-ghost btn-sm" data-conversions-prev>Anterior</button>
-                            <span class="muted" data-conversions-page>Pagina 1</span>
+                            <span class="muted" data-conversions-page>Página 1</span>
                             <button type="button" class="btn-ghost btn-sm" data-conversions-next>Siguiente</button>
                         </div>
                     </article>
 
                     <aside class="panel">
-                        <h2 data-conversion-form-title>Nueva conversion</h2>
+                        <h2 data-conversion-form-title>Nueva conversión</h2>
                         <form class="rbac-form" data-conversion-form>
                             <input type="hidden" name="id">
                             <select class="form-control" name="from_unit_id" data-conversion-from-select required>
@@ -1354,7 +1354,7 @@
                                 <option value="">Unidad destino</option>
                             </select>
                             <select class="form-control" name="ingredient_id" data-conversion-ingredient-select>
-                                <option value="">Conversion general</option>
+                                <option value="">Conversión general</option>
                             </select>
                             <input class="form-control" name="factor" type="number" min="0.00000001" step="0.00000001" placeholder="Factor" required>
                             <textarea class="form-control" name="notes" rows="4" placeholder="Notas"></textarea>
@@ -1363,12 +1363,12 @@
                                 <option value="inactive">Inactiva</option>
                             </select>
                             <div style="display:flex;gap:8px;flex-wrap:wrap">
-                                <button type="submit" class="btn-main">Guardar conversion</button>
+                                <button type="submit" class="btn-main">Guardar conversión</button>
                                 <button type="button" class="btn-ghost" data-conversion-reset>Limpiar</button>
                             </div>
                         </form>
 
-                        <h2 style="margin-top:18px">Restaurar conversion</h2>
+                        <h2 style="margin-top:18px">Restaurar conversión</h2>
                         <div class="admin-tools">
                             <input class="form-control" type="number" min="1" data-conversion-restore-id placeholder="ID inactiva">
                             <button type="button" class="btn-ghost" data-conversion-restore-submit>Restaurar</button>
@@ -1381,21 +1381,21 @@
                 <article class="panel">
                     <div class="admin-tools">
                         <input class="form-control" type="search" data-units-public-search placeholder="Buscar unidades activas">
-                        <button type="button" class="btn-ghost" data-units-public-refresh>Actualizar catalogo</button>
+                        <button type="button" class="btn-ghost" data-units-public-refresh>Actualizar catálogo</button>
                         <span class="chip" data-units-public-count>0 unidades activas</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
                                     <th>Tipo</th>
-                                    <th>Simbolo</th>
+                                    <th>Símbolo</th>
                                 </tr>
                             </thead>
                             <tbody data-units-public-body>
-                                <tr><td colspan="4" class="muted">Cargando catalogo publico...</td></tr>
+                                <tr><td colspan="4" class="muted">Cargando catálogo público...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1645,7 +1645,7 @@
         <section data-admin-audit>
             <div class="alert" data-audit-message style="display:none"></div>
 
-            <div class="audit-tabs" role="tablist" aria-label="Auditoria">
+            <div class="audit-tabs" role="tablist" aria-label="Auditoría">
                 <button type="button" class="audit-tab active" data-audit-tab="audit">Cambios</button>
                 <button type="button" class="audit-tab" data-audit-tab="login">Accesos</button>
                 <button type="button" class="audit-tab" data-audit-tab="resource">Por recurso</button>
@@ -1653,7 +1653,7 @@
 
             <article class="panel" data-audit-panel="audit">
                 <div class="admin-tools">
-                    <input class="form-control" type="search" data-audit-search placeholder="Buscar accion, entidad o usuario">
+                    <input class="form-control" type="search" data-audit-search placeholder="Buscar acción, entidad o usuario">
                     <input class="form-control" type="text" data-audit-resource placeholder="Recurso. Ej: users">
                     <input class="form-control" type="number" min="1" data-audit-user placeholder="ID usuario">
                     <input class="form-control" type="date" data-audit-from>
@@ -1667,7 +1667,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Usuario</th>
-                                <th>Accion</th>
+                                <th>Acción</th>
                                 <th>Recurso</th>
                                 <th>Antes</th>
                                 <th>Despues</th>
@@ -1681,14 +1681,14 @@
                 </div>
                 <div class="audit-pagination">
                     <button type="button" class="btn-ghost btn-sm" data-audit-prev>Anterior</button>
-                    <span class="muted" data-audit-page>Pagina 1</span>
+                    <span class="muted" data-audit-page>Página 1</span>
                     <button type="button" class="btn-ghost btn-sm" data-audit-next>Siguiente</button>
                 </div>
             </article>
 
             <article class="panel" data-audit-panel="login" style="display:none">
                 <div class="admin-tools">
-                    <input class="form-control" type="search" data-login-search placeholder="Buscar email o IP">
+                    <input class="form-control" type="search" data-login-search placeholder="Buscar correo o IP">
                     <select class="form-control" data-login-success>
                         <option value="">Todos</option>
                         <option value="1">Exitosos</option>
@@ -1704,7 +1704,7 @@
                         <thead>
                             <tr>
                                 <th>Fecha</th>
-                                <th>Email</th>
+                                <th>Correo electrónico</th>
                                 <th>Usuario</th>
                                 <th>Resultado</th>
                                 <th>Motivo</th>
@@ -1719,7 +1719,7 @@
                 </div>
                 <div class="audit-pagination">
                     <button type="button" class="btn-ghost btn-sm" data-login-prev>Anterior</button>
-                    <span class="muted" data-login-page>Pagina 1</span>
+                    <span class="muted" data-login-page>Página 1</span>
                     <button type="button" class="btn-ghost btn-sm" data-login-next>Siguiente</button>
                 </div>
             </article>
@@ -1737,7 +1737,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Usuario</th>
-                                <th>Accion</th>
+                                <th>Acción</th>
                                 <th>Antes</th>
                                 <th>Despues</th>
                                 <th>IP</th>
@@ -1789,7 +1789,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-branches-prev>Anterior</button>
-                        <span class="muted" data-branches-page>Pagina 1 de 1</span>
+                        <span class="muted" data-branches-page>Página 1 de 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-branches-next>Siguiente</button>
                     </div>
                 </article>
@@ -1881,7 +1881,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-supermarkets-prev>Anterior</button>
-                        <span class="muted" data-supermarkets-page>Pagina 1 de 1</span>
+                        <span class="muted" data-supermarkets-page>Página 1 de 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-supermarkets-next>Siguiente</button>
                     </div>
                 </article>
@@ -1949,13 +1949,13 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-sp-prev>Anterior</button>
-                        <span class="muted" data-sp-page>Pagina 1</span>
+                        <span class="muted" data-sp-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-sp-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-sp-form-title>Nuevo mapeo</h2>
+                    <h2 data-sp-form-title>Nueva vinculación</h2>
                     <form class="rbac-form" data-sp-form>
                         <input type="hidden" name="id">
                         <select class="form-control" name="product_id" data-sp-product-select required>
@@ -1969,7 +1969,7 @@
                         </select>
                         <input class="form-control" name="external_sku" type="text" placeholder="SKU externo">
                         <input class="form-control" name="source_url" type="url" placeholder="URL externa">
-                        <input class="form-control" name="source_name" type="text" placeholder="Referencia scrapeada">
+                        <input class="form-control" name="source_name" type="text" placeholder="Referencia de la publicación">
                         <input class="form-control" name="last_scraped_at" type="datetime-local">
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
                             <button type="submit" class="btn-main" data-sp-submit>Guardar mapeo</button>
@@ -1999,7 +1999,7 @@
                     <div data-sp-price-history class="muted">Selecciona un mapeo.</div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-sp-price-prev>Anterior</button>
-                        <span class="muted" data-sp-price-page>Pagina 1</span>
+                        <span class="muted" data-sp-price-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-sp-price-next>Siguiente</button>
                     </div>
                 </article>
@@ -2017,7 +2017,7 @@
                     <div data-sp-branch-products class="muted">Selecciona una sucursal.</div>
                 </article>
                 <article class="panel">
-                    <h2>Comparacion de precios</h2>
+                    <h2>Comparación de precios</h2>
                     <div class="admin-tools">
                         <select class="form-control" data-sp-price-product>
                             <option value="">Producto</option>
@@ -2043,7 +2043,7 @@
             <div class="alert" data-scraped-products-message style="display:none"></div>
             <div class="rbac-layout">
                 <article class="panel" style="min-width:0">
-                    <h2>Candidatos scrapeados</h2>
+                    <h2>Productos importados por revisar</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="search" data-candidates-search placeholder="Buscar nombre, SKU o URL">
                         <select class="form-control" data-candidates-status>
@@ -2058,31 +2058,31 @@
                             <option value="">Todas las fuentes</option>
                         </select>
                         <select class="form-control" data-candidates-job>
-                            <option value="">Todos los jobs</option>
+                            <option value="">Todas las ejecuciones</option>
                         </select>
                         <select class="form-control" data-candidates-readiness>
                             <option value="">Todos</option>
                             <option value="ready">Listos para aprobar</option>
-                            <option value="review">Requieren revision</option>
+                            <option value="review">Requieren revisión</option>
                         </select>
                         <button type="button" class="btn-ghost" data-candidates-refresh>Actualizar</button>
                         <span class="chip" data-candidates-count>0 candidatos</span>
                     </div>
                     <div class="admin-tools" style="margin-top:8px">
                         <button type="button" class="btn-main" data-candidates-bulk-approve disabled>Aprobar seleccion (0)</button>
-                        <p class="muted" style="margin:0;font-size:13px">Solo se procesan candidatos pendientes; los que requieren revision se omiten y se reportan al finalizar.</p>
+                        <p class="muted" style="margin:0;font-size:13px">Solo se procesan candidatos pendientes; los que requieren revisión se omiten y se reportan al finalizar.</p>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
                                     <th><input type="checkbox" data-candidates-select-all title="Seleccionar todos los visibles"></th>
-                                    <th>Producto scrapeado</th>
+                                    <th>Producto importado</th>
                                     <th>Fuente</th>
                                     <th>Precio</th>
                                     <th>Estado</th>
                                     <th>Listo</th>
-                                    <th>Match</th>
+                                    <th>Coincidencia</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -2093,13 +2093,13 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-candidates-prev>Anterior</button>
-                        <span class="muted" data-candidates-page>Pagina 1</span>
+                        <span class="muted" data-candidates-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-candidates-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2>Detalle y revision</h2>
+                    <h2>Detalle y revisión</h2>
                     <div data-candidate-detail class="muted">Selecciona un candidato.</div>
 
                     <div data-candidate-actions style="display:none">
@@ -2110,7 +2110,7 @@
                                 <option value="">Marca opcional</option>
                             </select>
                             <select class="form-control" name="category_id" data-candidate-category>
-                                <option value="">Categoria opcional</option>
+                                <option value="">Categoría opcional</option>
                             </select>
                             <select class="form-control" name="ingredient_id" data-candidate-create-ingredient>
                                 <option value="">Ingrediente opcional</option>
@@ -2120,7 +2120,7 @@
                                 <button type="submit" class="btn-ghost">Crear producto (sin aprobar)</button>
                             </div>
                         </form>
-                        <p class="muted" style="font-size:13px">Los campos ya vienen precargados con lo detectado o sugerido por el scraping. Corregilos solo si es necesario antes de aprobar.</p>
+                        <p class="muted" style="font-size:13px">Los campos ya contienen los datos detectados o sugeridos durante la importación web. Corregilos solo si es necesario antes de aprobar.</p>
 
                         <div class="admin-tools" style="margin-top:12px">
                             <button type="button" class="btn-main" data-candidate-approve>Aprobar (producto ya asociado)</button>
@@ -2160,40 +2160,40 @@
             <div class="alert" data-recipe-scraping-message style="display:none"></div>
             <div class="rbac-layout">
                 <article class="panel" style="min-width:0" data-recipe-scraping-jobs-section>
-                    <h2>Jobs Cookpad</h2>
+                    <h2>Ejecuciones de Cookpad</h2>
                     <div class="admin-tools">
                         <select class="form-control" data-recipe-scraping-status>
                             <option value="">Todos los estados</option>
                             <option value="pending">Pendientes</option>
-                            <option value="running">En ejecucion</option>
+                            <option value="running">En ejecución</option>
                             <option value="completed">Completados</option>
                             <option value="failed">Fallidos</option>
                             <option value="cancelled">Cancelados</option>
                         </select>
                         <button type="button" class="btn-ghost" data-recipe-scraping-refresh>Actualizar</button>
-                        <span class="chip" data-recipe-scraping-count>0 jobs</span>
+                        <span class="chip" data-recipe-scraping-count>0 ejecuciones</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Job</th>
+                                    <th>Ejecución</th>
                                     <th>Fuente</th>
                                     <th>Estado</th>
-                                    <th>Parametros</th>
+                                    <th>Parámetros</th>
                                     <th>Resumen</th>
                                     <th>Fechas</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-recipe-scraping-jobs-body>
-                                <tr><td colspan="7" class="muted">Cargando jobs...</td></tr>
+                                <tr><td colspan="7" class="muted">Cargando ejecuciones...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-recipe-scraping-prev>Anterior</button>
-                        <span class="muted" data-recipe-scraping-page>Pagina 1</span>
+                        <span class="muted" data-recipe-scraping-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-recipe-scraping-next>Siguiente</button>
                     </div>
                 </article>
@@ -2201,23 +2201,23 @@
                 <aside class="panel">
                     <h2>Ejecutar Cookpad</h2>
                     <form class="rbac-form" data-recipe-scraping-form>
-                        <label class="muted" for="recipe-scraping-max-pages">Paginas maximas</label>
+                        <label class="muted" for="recipe-scraping-max-pages">Páginas máximas</label>
                         <input id="recipe-scraping-max-pages" class="form-control" name="max_pages" type="number" min="1" max="50" value="1" required>
                         <label class="muted" for="recipe-scraping-search-term">Buscar recetas (opcional)</label>
                         <input id="recipe-scraping-search-term" class="form-control" name="search_term" type="text" maxlength="100" placeholder="Ej: arroz, pollo, milanesa">
                         <button type="submit" class="btn-main" data-recipe-scraping-submit>Ejecutar Cookpad</button>
-                        <p class="muted" data-recipe-scraping-active-hint style="display:none;color:var(--danger)">Ya hay un scraping de recetas en ejecucion. Espera a que termine antes de lanzar otro.</p>
+                        <p class="muted" data-recipe-scraping-active-hint style="display:none;color:var(--danger)">Ya hay una importación web de recetas en ejecución. Esperá a que termine antes de iniciar otra.</p>
                     </form>
                     <div class="line"><span>Fuente</span><strong>Cookpad Argentina</strong></div>
-                    <div class="line"><span>Estado inicial</span><strong>pending</strong></div>
-                    <p class="muted" style="margin-top:12px">El backend crea o reutiliza la fuente Cookpad y encola el job. Los resultados se revisan en las pantallas de importacion y recetas existentes.</p>
+                    <div class="line"><span>Estado inicial</span><strong>Pendiente</strong></div>
+                    <p class="muted" style="margin-top:12px">Se prepara la fuente Cookpad y se programa la ejecución. Los resultados se revisan en las pantallas de importación y recetas existentes.</p>
                 </aside>
             </div>
 
             <section class="grid" style="margin-top:14px">
                 <article class="panel" style="grid-column:1 / -1">
-                    <h2>Detalle del job</h2>
-                    <div data-recipe-scraping-detail class="muted">Selecciona un job.</div>
+                    <h2>Detalle de la ejecución</h2>
+                    <div data-recipe-scraping-detail class="muted">Seleccioná una ejecución.</div>
                 </article>
             </section>
         </section>
@@ -2261,9 +2261,9 @@
                         <input class="form-control" name="code" type="text" placeholder="carrefour_bariloche" required>
                         <input class="form-control" name="name" type="text" placeholder="Carrefour Bariloche" required>
                         <select class="form-control" name="type">
-                            <option value="web_scraper">Web scraper</option>
-                            <option value="api">API</option>
-                            <option value="feed">Feed</option>
+                            <option value="web_scraper">Importación web</option>
+                            <option value="api">Interfaz de datos (API)</option>
+                            <option value="feed">Fuente de datos</option>
                         </select>
                         <input class="form-control" name="base_url" type="url" placeholder="https://..." required>
                         <select class="form-control" name="city_id" data-scraping-source-city>
@@ -2280,7 +2280,7 @@
 
             <section class="grid" style="margin-top:14px">
                 <article class="panel">
-                    <h2>Ejecutar scraping</h2>
+                    <h2>Iniciar importación web</h2>
                     <form class="rbac-form" data-scraping-job-form>
                         <select class="form-control" name="source_id" data-scraping-job-source required>
                             <option value="">Fuente</option>
@@ -2295,19 +2295,19 @@
                             Buscar producto (opcional)
                             <input class="form-control" name="search_term" type="search" maxlength="120" placeholder="Ej: arroz, tomate, 7790580146115">
                         </label>
-                        <input class="form-control" name="max_pages" type="number" min="1" max="50" placeholder="Max paginas (QA: 1)">
-                        <input class="form-control" name="max_products" type="number" min="1" max="3000" placeholder="Max productos (QA: 10)">
-                        <input class="form-control" name="delay_ms" type="number" min="0" max="60000" step="500" placeholder="Delay entre requests ms (QA: 5000)">
+                        <input class="form-control" name="max_pages" type="number" min="1" max="50" placeholder="Máximo de páginas (prueba: 1)">
+                        <input class="form-control" name="max_products" type="number" min="1" max="3000" placeholder="Máximo de productos (prueba: 10)">
+                        <input class="form-control" name="delay_ms" type="number" min="0" max="60000" step="500" placeholder="Espera entre solicitudes en ms (prueba: 5000)">
                         <label class="muted" style="display:flex;gap:8px;align-items:center">
                             <input type="checkbox" name="dry_run" value="1">
-                            Dry run (no persiste nada)
+                            Simulación (sin guardar productos)
                         </label>
                         <button type="submit" class="btn-main" data-scraping-job-submit>Ejecutar</button>
                     </form>
                 </article>
 
                 <article class="panel" style="grid-column:1 / -1">
-                    <h2>Jobs</h2>
+                    <h2>Ejecuciones</h2>
                     <div class="admin-tools">
                         <select class="form-control" data-scraping-job-filter-source>
                             <option value="">Todas las fuentes</option>
@@ -2315,20 +2315,20 @@
                         <select class="form-control" data-scraping-job-filter-status>
                             <option value="">Todos los estados</option>
                             <option value="pending">Pendiente</option>
-                            <option value="running">En ejecucion</option>
-                            <option value="cancel_requested">Cancel solicitado</option>
+                            <option value="running">En ejecución</option>
+                            <option value="cancel_requested">Cancelación solicitada</option>
                             <option value="cancelled">Cancelado</option>
                             <option value="completed">Completado</option>
                             <option value="failed">Fallido</option>
                         </select>
                         <button type="button" class="btn-ghost" data-scraping-job-refresh>Actualizar</button>
-                        <span class="chip" data-scraping-job-count>0 jobs</span>
+                        <span class="chip" data-scraping-job-count>0 ejecuciones</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Job</th>
+                                    <th>Ejecución</th>
                                     <th>Fuente</th>
                                     <th>Estado</th>
                                     <th>Resumen</th>
@@ -2337,13 +2337,13 @@
                                 </tr>
                             </thead>
                             <tbody data-scraping-jobs-body>
-                                <tr><td colspan="6" class="muted">Cargando jobs...</td></tr>
+                                <tr><td colspan="6" class="muted">Cargando ejecuciones...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-scraping-jobs-prev>Anterior</button>
-                        <span class="muted" data-scraping-jobs-page>Pagina 1</span>
+                        <span class="muted" data-scraping-jobs-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-scraping-jobs-next>Siguiente</button>
                     </div>
                 </article>
@@ -2351,22 +2351,22 @@
 
             <section class="grid" style="margin-top:14px">
                 <article class="panel" style="grid-column:1 / -1">
-                    <h2>Detalle del job</h2>
-                    <div data-scraping-job-detail class="muted">Selecciona un job.</div>
+                    <h2>Detalle de la ejecución</h2>
+                    <div data-scraping-job-detail class="muted">Seleccioná una ejecución.</div>
                 </article>
                 <article class="panel" style="grid-column:1 / -1">
                     <div class="admin-tools">
-                        <h2 style="margin:0">Logs</h2>
+                        <h2 style="margin:0">Registros</h2>
                         <select class="form-control" data-scraping-log-level>
                             <option value="">Todos los niveles</option>
-                            <option value="debug">Debug</option>
-                            <option value="info">Info</option>
-                            <option value="warning">Warning</option>
+                            <option value="debug">Depuración</option>
+                            <option value="info">Información</option>
+                            <option value="warning">Advertencia</option>
                             <option value="error">Error</option>
                         </select>
-                        <button type="button" class="btn-ghost" data-scraping-logs-refresh>Actualizar logs</button>
+                        <button type="button" class="btn-ghost" data-scraping-logs-refresh>Actualizar registros</button>
                     </div>
-                    <div data-scraping-job-logs class="muted">Selecciona un job para ver logs.</div>
+                    <div data-scraping-job-logs class="muted">Seleccioná una ejecución para ver los registros.</div>
                 </article>
             </section>
         </section>
@@ -2375,7 +2375,7 @@
             <div class="alert" data-price-refresh-message style="display:none"></div>
             <div class="rbac-layout">
                 <article class="panel" style="min-width:0">
-                    <h2>Solicitudes de actualizacion de precio</h2>
+                    <h2>Solicitudes de actualización de precio</h2>
                     <div class="admin-tools">
                         <select class="form-control" data-price-refresh-status>
                             <option value="">Todos los estados</option>
@@ -2411,7 +2411,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-price-refresh-prev>Anterior</button>
-                        <span class="muted" data-price-refresh-page>Pagina 1</span>
+                        <span class="muted" data-price-refresh-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-price-refresh-next>Siguiente</button>
                     </div>
                 </article>
@@ -2440,14 +2440,14 @@
                     <div data-scraping-alerts-source-report class="muted">Cargando...</div>
                 </article>
                 <article class="panel">
-                    <h2>Evolucion</h2>
+                    <h2>Evolución</h2>
                     <div data-scraping-alerts-evolution class="muted">Cargando...</div>
                 </article>
             </section>
 
             <div class="rbac-layout">
                 <article class="panel" style="min-width:0">
-                    <h2>Alertas de scraping</h2>
+                    <h2>Alertas de importación web</h2>
                     <div class="admin-tools">
                         <select class="form-control" data-alerts-status>
                             <option value="">Todos los estados</option>
@@ -2459,19 +2459,19 @@
                             <option value="low">Baja</option>
                             <option value="medium">Media</option>
                             <option value="high">Alta</option>
-                            <option value="critical">Critica</option>
+                            <option value="critical">Crítica</option>
                         </select>
                         <select class="form-control" data-alerts-type>
                             <option value="">Todos los tipos</option>
-                            <option value="parser_error">Parser error</option>
-                            <option value="network_error">Network error</option>
+                            <option value="parser_error">Error al interpretar datos</option>
+                            <option value="network_error">Error de conexión</option>
                             <option value="product_not_found">Producto no encontrado</option>
                             <option value="price_error">Error de precio</option>
                         </select>
                         <select class="form-control" data-alerts-source>
                             <option value="">Todas las fuentes</option>
                         </select>
-                        <input class="form-control" type="number" min="1" data-alerts-job placeholder="Job ID">
+                        <input class="form-control" type="number" min="1" data-alerts-job placeholder="ID de ejecución">
                         <input class="form-control" type="date" data-alerts-from>
                         <input class="form-control" type="date" data-alerts-to>
                         <button type="button" class="btn-ghost" data-alerts-refresh>Actualizar</button>
@@ -2483,10 +2483,10 @@
                                 <tr>
                                     <th>Alerta</th>
                                     <th>Fuente</th>
-                                    <th>Job</th>
+                                    <th>Ejecución</th>
                                     <th>Severidad</th>
                                     <th>Estado</th>
-                                    <th>Resolucion</th>
+                                    <th>Resolución</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -2497,7 +2497,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-alerts-prev>Anterior</button>
-                        <span class="muted" data-alerts-page>Pagina 1</span>
+                        <span class="muted" data-alerts-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-alerts-next>Siguiente</button>
                     </div>
                 </article>
@@ -2506,7 +2506,7 @@
                     <h2>Resolver alerta</h2>
                     <div data-alert-detail class="muted">Selecciona una alerta abierta.</div>
                     <form class="rbac-form" data-alert-resolve-form style="display:none;margin-top:14px">
-                        <textarea class="form-control" name="resolution_notes" rows="4" maxlength="1000" placeholder="Notas opcionales de resolucion"></textarea>
+                        <textarea class="form-control" name="resolution_notes" rows="4" maxlength="1000" placeholder="Notas opcionales de resolución"></textarea>
                         <button type="submit" class="btn-main">Marcar como resuelta</button>
                     </form>
                 </aside>
@@ -2545,7 +2545,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-cities-prev>Anterior</button>
-                        <span class="muted" data-cities-page>Pagina 1 de 1</span>
+                        <span class="muted" data-cities-page>Página 1 de 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-cities-next>Siguiente</button>
                     </div>
                 </article>
@@ -2626,7 +2626,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-reports-prev>Anterior</button>
-                        <span class="muted" data-reports-page>Pagina 1</span>
+                        <span class="muted" data-reports-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-reports-next>Siguiente</button>
                     </div>
                 </article>
@@ -2643,7 +2643,7 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-recipe-tags-search placeholder="Buscar por codigo, nombre o descripcion">
+                        <input class="form-control" type="search" data-recipe-tags-search placeholder="Buscar por código, nombre o descripción">
                         <select class="form-control" data-recipe-tags-type>
                             <option value="">Todos los tipos</option>
                             <option value="diet">Dieta</option>
@@ -2658,39 +2658,39 @@
                             <option value="inactive">Inactivos</option>
                         </select>
                         <button type="button" class="btn-ghost" data-recipe-tags-refresh>Actualizar</button>
-                        <span class="chip" data-recipe-tags-count>0 tags</span>
+                        <span class="chip" data-recipe-tags-count>0 etiquetas</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Codigo</th>
+                                    <th>Código</th>
                                     <th>Nombre</th>
                                     <th>Tipo</th>
-                                    <th>Descripcion</th>
+                                    <th>Descripción</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-recipe-tags-body>
-                                <tr><td colspan="6" class="muted">Cargando tags...</td></tr>
+                                <tr><td colspan="6" class="muted">Cargando etiquetas...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-recipe-tags-prev>Anterior</button>
-                        <span class="muted" data-recipe-tags-page>Pagina 1</span>
+                        <span class="muted" data-recipe-tags-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-recipe-tags-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-recipe-tag-form-title>Nuevo tag</h2>
+                    <h2 data-recipe-tag-form-title>Nueva etiqueta</h2>
                     <form class="rbac-form" data-recipe-tag-form>
                         <input type="hidden" name="id">
                         <input class="form-control" name="code" type="text" placeholder="ej: vegana, baja_sodio, alta_proteina">
                         <input class="form-control" name="name" type="text" placeholder="Nombre (ej: Vegana, Baja en sodio)" required>
-                        <textarea class="form-control" name="description" rows="3" placeholder="Descripcion opcional"></textarea>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripción opcional"></textarea>
                         <select class="form-control" name="type">
                             <option value="">Sin tipo</option>
                             <option value="diet">Dieta</option>
@@ -2704,14 +2704,14 @@
                             <option value="inactive">Inactivo</option>
                         </select>
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
-                            <button type="submit" class="btn-main">Guardar tag</button>
+                            <button type="submit" class="btn-main">Guardar etiqueta</button>
                             <button type="button" class="btn-ghost" data-recipe-tag-reset>Limpiar</button>
                         </div>
                     </form>
 
-                    <h2 style="margin-top:18px">Vista catalogo</h2>
+                    <h2 style="margin-top:18px">Vista catálogo</h2>
                     <div class="admin-tools">
-                        <button type="button" class="btn-ghost" data-recipe-tags-catalog-refresh>Actualizar catalogo</button>
+                        <button type="button" class="btn-ghost" data-recipe-tags-catalog-refresh>Actualizar catálogo</button>
                         <span class="chip" data-recipe-tags-catalog-count>0 activos</span>
                     </div>
                     <div data-recipe-tags-catalog class="muted" style="margin-top:8px">Cargando...</div>
@@ -2724,58 +2724,58 @@
             <div class="rbac-layout">
                 <article class="panel">
                     <div class="admin-tools">
-                        <input class="form-control" type="search" data-recipe-categories-search placeholder="Buscar por nombre o descripcion">
+                        <input class="form-control" type="search" data-recipe-categories-search placeholder="Buscar por nombre o descripción">
                         <select class="form-control" data-recipe-categories-status>
                             <option value="">Todos los estados</option>
                             <option value="active">Activas</option>
                             <option value="inactive">Inactivas</option>
                         </select>
                         <button type="button" class="btn-ghost" data-recipe-categories-refresh>Actualizar</button>
-                        <span class="chip" data-recipe-categories-count>0 categorias</span>
+                        <span class="chip" data-recipe-categories-count>0 categorías</span>
                     </div>
                     <div style="overflow:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
-                                    <th>Categoria padre</th>
+                                    <th>Categoría padre</th>
                                     <th>Estado</th>
                                     <th>Recetas</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-recipe-categories-body>
-                                <tr><td colspan="5" class="muted">Cargando categorias...</td></tr>
+                                <tr><td colspan="5" class="muted">Cargando categorías...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-recipe-categories-prev>Anterior</button>
-                        <span class="muted" data-recipe-categories-page>Pagina 1</span>
+                        <span class="muted" data-recipe-categories-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-recipe-categories-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2 data-recipe-category-form-title>Nueva categoria</h2>
+                    <h2 data-recipe-category-form-title>Nueva categoría</h2>
                     <form class="rbac-form" data-recipe-category-form>
                         <input type="hidden" name="id">
                         <input class="form-control" name="name" type="text" placeholder="Nombre (ej: Desayuno, Almuerzo, Saludable)" required>
-                        <textarea class="form-control" name="description" rows="3" placeholder="Descripcion opcional"></textarea>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Descripción opcional"></textarea>
                         <select class="form-control" name="parent_id" data-recipe-category-parent>
-                            <option value="">Sin categoria padre</option>
+                            <option value="">Sin categoría padre</option>
                         </select>
                         <select class="form-control" name="status">
                             <option value="active">Activa</option>
                             <option value="inactive">Inactiva</option>
                         </select>
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
-                            <button type="submit" class="btn-main">Guardar categoria</button>
+                            <button type="submit" class="btn-main">Guardar categoría</button>
                             <button type="button" class="btn-ghost" data-recipe-category-reset>Limpiar</button>
                         </div>
                     </form>
 
-                    <h2 style="margin-top:18px">Restaurar categoria</h2>
+                    <h2 style="margin-top:18px">Restaurar categoría</h2>
                     <div class="admin-tools">
                         <input class="form-control" type="number" min="1" data-recipe-category-restore-id placeholder="ID eliminado">
                         <button type="button" class="btn-ghost" data-recipe-category-restore-submit>Restaurar</button>
@@ -2785,10 +2785,10 @@
 
             <article class="panel" style="margin-top:14px">
                 <div class="admin-tools">
-                    <h2 style="margin:0">Arbol de categorias activo</h2>
-                    <button type="button" class="btn-ghost" data-recipe-categories-tree-refresh>Actualizar arbol</button>
+                    <h2 style="margin:0">Árbol de categorías activo</h2>
+                    <button type="button" class="btn-ghost" data-recipe-categories-tree-refresh>Actualizar árbol</button>
                 </div>
-                <div data-recipe-categories-tree class="muted">Cargando arbol...</div>
+                <div data-recipe-categories-tree class="muted">Cargando árbol...</div>
             </article>
         </section>
     @elseif($screenKey === 'official-recipes')
@@ -2824,7 +2824,7 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Fuente</th>
-                                    <th>Categoria</th>
+                                    <th>Categoría</th>
                                     <th>Estado</th>
                                     <th>Contenido</th>
                                     <th>Acciones</th>
@@ -2837,7 +2837,7 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-recipes-adm-prev>Anterior</button>
-                        <span class="muted" data-recipes-adm-page>Pagina 1</span>
+                        <span class="muted" data-recipes-adm-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-recipes-adm-next>Siguiente</button>
                     </div>
                 </article>
@@ -2857,7 +2857,7 @@
                         <form data-recipes-adm-form style="display:flex;flex-direction:column;gap:7px">
                             <input type="hidden" name="id">
                             <input class="form-control" name="name" type="text" placeholder="Nombre *" required>
-                            <textarea class="form-control" name="description" rows="2" placeholder="Descripcion"></textarea>
+                            <textarea class="form-control" name="description" rows="2" placeholder="Descripción"></textarea>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
                                 <input class="form-control" name="servings" type="number" min="1" max="9999" placeholder="Porciones">
                                 <select class="form-control" name="difficulty">
@@ -2869,10 +2869,10 @@
                             </div>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
                                 <input class="form-control" name="prep_time_minutes" type="number" min="0" max="9999" placeholder="Prep. (min)">
-                                <input class="form-control" name="cook_time_minutes" type="number" min="0" max="9999" placeholder="Coccion (min)">
+                                <input class="form-control" name="cook_time_minutes" type="number" min="0" max="9999" placeholder="Cocción (min)">
                             </div>
                             <select class="form-control" name="category_id" data-recipes-adm-form-category>
-                                <option value="">Sin categoria</option>
+                                <option value="">Sin categoría</option>
                             </select>
                             <select class="form-control" name="status">
                                 <option value="active">Activa</option>
@@ -2891,7 +2891,7 @@
                                 <input type="checkbox" name="is_official" value="1"> Marcar como oficial
                             </label>
                             <label style="display:flex;align-items:center;gap:8px;font-size:14px">
-                                <input type="checkbox" name="is_public" value="1"> Hacer publica
+                                <input type="checkbox" name="is_public" value="1"> Hacer pública
                             </label>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
                                 <button type="submit" class="btn-main">Guardar receta</button>
@@ -2917,7 +2917,7 @@
                         <select class="form-control" data-import-candidates-status>
                             <option value="">Todos los estados</option>
                             <option value="pending">Pendientes</option>
-                            <option value="parsed">Parseadas</option>
+                            <option value="parsed">Analizadas</option>
                             <option value="approved">Aprobadas</option>
                             <option value="rejected">Rechazadas</option>
                             <option value="recipe_created">Receta creada</option>
@@ -2949,33 +2949,33 @@
                     </div>
                     <div class="audit-pagination">
                         <button type="button" class="btn-ghost btn-sm" data-import-candidates-prev>Anterior</button>
-                        <span class="muted" data-import-candidates-page>Pagina 1</span>
+                        <span class="muted" data-import-candidates-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-import-candidates-next>Siguiente</button>
                     </div>
                 </article>
 
                 <aside class="panel">
-                    <h2>Detalle y revision</h2>
+                    <h2>Detalle y revisión</h2>
                     <div data-import-candidates-detail class="muted">Selecciona una candidata.</div>
                 </aside>
             </div>
 
             <section class="grid" style="margin-top:14px">
                 <article class="panel" style="grid-column:1 / -1">
-                    <h2>Editar parseo</h2>
+                    <h2>Editar datos interpretados</h2>
                     <form class="rbac-form" data-import-candidates-edit-form>
                         <input type="hidden" name="id">
-                        <input class="form-control" name="raw_title" type="text" placeholder="Titulo">
-                        <textarea class="form-control" name="raw_description" rows="2" placeholder="Descripcion"></textarea>
+                        <input class="form-control" name="raw_title" type="text" placeholder="Título">
+                        <textarea class="form-control" name="raw_description" rows="2" placeholder="Descripción"></textarea>
                         <input class="form-control" name="raw_image_url" type="url" placeholder="URL imagen">
-                        <textarea class="form-control" name="raw_ingredients_json" rows="5" placeholder="Ingredientes, uno por linea"></textarea>
-                        <textarea class="form-control" name="raw_steps_json" rows="5" placeholder="Pasos, uno por linea"></textarea>
-                        <button type="submit" class="btn-main">Guardar parseo</button>
+                        <textarea class="form-control" name="raw_ingredients_json" rows="5" placeholder="Ingredientes, uno por línea"></textarea>
+                        <textarea class="form-control" name="raw_steps_json" rows="5" placeholder="Pasos, uno por línea"></textarea>
+                            <button type="submit" class="btn-main">Guardar datos interpretados</button>
                     </form>
                 </article>
 
                 <article class="panel">
-                    <h2>Mapear ingrediente</h2>
+                    <h2>Vincular ingrediente</h2>
                     <div class="admin-tools" style="justify-content:flex-start;margin-bottom:10px">
                         <button type="button" class="btn-main" data-import-candidates-apply-suggestions>Aplicar mapeos sugeridos</button>
                         <button type="button" class="btn-ghost" data-import-candidates-recalculate>Recalcular sugerencias</button>
@@ -2983,11 +2983,11 @@
                     <form class="rbac-form" data-import-candidates-map-form>
                         <input type="hidden" name="id">
                         <select class="form-control" name="ingredient_index" data-import-candidates-ingredient-index required>
-                            <option value="">Ingrediente parseado</option>
+                            <option value="">Ingrediente interpretado</option>
                         </select>
                         <div class="muted" data-import-candidates-suggestion style="font-size:12px"></div>
                         <select class="form-control" name="ingredient_id" data-import-candidates-ingredient required>
-                            <option value="">Ingrediente del catalogo</option>
+                            <option value="">Ingrediente del catálogo</option>
                         </select>
                         <select class="form-control" name="unit_id" data-import-candidates-unit required>
                             <option value="">Unidad</option>
@@ -3027,7 +3027,7 @@
                         style="width:100%;box-sizing:border-box;font-family:monospace;font-size:13px;resize:vertical"
                         placeholder="Tarta de manzana&#10;&#10;Ingredientes:&#10;- 3 manzanas&#10;- 200g de harina&#10;- 2 huevos&#10;&#10;Preparación:&#10;1. Pelar y cortar las manzanas.&#10;2. Mezclar la harina con los huevos.&#10;3. Armar la tarta y hornear 30 min a 180°C."></textarea>
                     <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
-                        <button type="button" class="btn-main" data-importtxt-btn>Parsear receta</button>
+                        <button type="button" class="btn-main" data-importtxt-btn>Analizar receta</button>
                         <button type="button" class="btn-ghost btn-sm" data-importtxt-clear>Limpiar</button>
                         <span class="muted" data-importtxt-chars style="font-size:12px">0 / 20000</span>
                     </div>
@@ -3049,7 +3049,7 @@ Preparación:
                 </article>
             </div>
             <aside class="panel" data-importtxt-detail style="align-self:start">
-                <p class="muted" style="font-size:13px">El resultado del parseo aparecerá aquí.</p>
+                <p class="muted" style="font-size:13px">El resultado del análisis aparecerá aquí.</p>
             </aside>
         </section>
 
@@ -3071,7 +3071,7 @@ Preparación:
                 </article>
             </div>
             <aside class="panel" data-import-detail style="align-self:start">
-                <p class="muted" style="font-size:13px">Pegá una URL para ver el resultado del parseo.</p>
+                <p class="muted" style="font-size:13px">Pegá una dirección web para ver los datos de la receta.</p>
             </aside>
         </section>
 
@@ -3081,7 +3081,7 @@ Preparación:
 
                 {{-- Estado del flag --}}
                 <div class="panel" style="padding:16px">
-                    <h2 style="font-size:15px;margin:0 0 12px">Estado del módulo IA</h2>
+                    <h2 style="font-size:15px;margin:0 0 12px">Estado del módulo de inteligencia artificial</h2>
                     <div data-ai-flag-panel>
                         <p class="muted" style="text-align:center;padding:16px 0">Verificando...</p>
                     </div>
@@ -3089,7 +3089,7 @@ Preparación:
 
                 {{-- Test provider --}}
                 <div class="panel" style="padding:16px">
-                    <h2 style="font-size:15px;margin:0 0 12px">Test de sugerencia <span style="font-size:11px;font-weight:400;color:#697681">(POST /admin/ai/test-suggestion)</span></h2>
+                    <h2 style="font-size:15px;margin:0 0 12px">Prueba de sugerencia <span style="font-size:11px;font-weight:400;color:#697681">(POST /admin/ai/test-suggestion)</span></h2>
                     <div data-ai-test-panel>
                         <p class="muted" style="font-size:13px">Cargando...</p>
                     </div>
@@ -3107,14 +3107,14 @@ Preparación:
         <section data-admin-feature-flags>
             <div class="panel" style="padding:14px;margin-bottom:14px">
                 <div style="display:flex;align-items:center;gap:10px">
-                    <h2 style="margin:0;font-size:15px">Feature flags del sistema</h2>
-                    <span class="chip" data-ff-count>0 flags</span>
+                    <h2 style="margin:0;font-size:15px">Funciones del sistema</h2>
+                    <span class="chip" data-ff-count>0 funciones</span>
                     <button type="button" class="btn-ghost" data-ff-refresh style="margin-left:auto">Actualizar</button>
                 </div>
             </div>
             <div class="alert" data-ff-message style="display:none;margin-bottom:12px"></div>
             <div data-ff-container>
-                <p class="muted" style="text-align:center;padding:32px 0">Cargando feature flags...</p>
+                <p class="muted" style="text-align:center;padding:32px 0">Cargando funciones...</p>
             </div>
         </section>
 
@@ -3128,7 +3128,7 @@ Preparación:
                     <span style="flex:1"></span>
                     <div style="display:flex;align-items:center;gap:8px">
                         <button type="button" class="btn-ghost btn-sm" data-settings-prev>Anterior</button>
-                        <span class="muted" data-settings-page>Pagina 1</span>
+                        <span class="muted" data-settings-page>Página 1</span>
                         <button type="button" class="btn-ghost btn-sm" data-settings-next>Siguiente</button>
                     </div>
                 </div>
@@ -3146,7 +3146,7 @@ Preparación:
                 <h2>{{ $panel }}</h2>
                 <div class="line"><span class="muted">Estado</span><strong>Listo</strong></div>
                 <div class="line"><span class="muted">Origen</span><strong>PostgreSQL</strong></div>
-                <div class="line"><span class="muted">Accion</span><strong>ABM</strong></div>
+                <div class="line"><span class="muted">Acción</span><strong>Administración</strong></div>
                 <span class="chip">{{ $screen['module'] }}</span>
             </article>
         @endforeach

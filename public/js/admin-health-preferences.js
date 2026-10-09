@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         currentType: 'dietary-restrictions',
         items: [],
@@ -88,11 +92,11 @@
         var body = qs('[data-health-body]', root);
         var counter = qs('[data-health-count]', root);
         if (counter) {
-            counter.textContent = (meta.total || state.items.length) + ' items';
+            counter.textContent = (meta.total || state.items.length) + ' elementos';
         }
 
         if (!state.items.length) {
-            body.innerHTML = '<tr><td colspan="5" class="muted">No hay items cargados.</td></tr>';
+            body.innerHTML = '<tr><td colspan="5" class="muted">No hay elementos cargados.</td></tr>';
             return;
         }
 
@@ -106,7 +110,7 @@
                 '<td><strong>' + escapeHtml(item.code) + '</strong></td>' +
                 '<td>' + escapeHtml(item.name) + '</td>' +
                 '<td>' + escapeHtml(item.description) + '</td>' +
-                '<td>' + escapeHtml(item.status) + ' ' + deleted + '</td>' +
+                '<td>' + escapeHtml(label(item.status)) + ' ' + deleted + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-health-edit="' + item.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
@@ -117,7 +121,7 @@
         qsa('[data-health-tab]', root).forEach(function (button) {
             button.classList.toggle('active', button.getAttribute('data-health-tab') === type);
         });
-        qs('[data-health-form-title]', root).textContent = 'Nuevo item';
+        qs('[data-health-form-title]', root).textContent = 'Nuevo elemento';
         qs('[data-health-form]', root).reset();
         fetchItems(root);
     }
@@ -145,7 +149,7 @@
         qs('[data-health-reset]', root).addEventListener('click', function () {
             form.reset();
             form.elements.id.value = '';
-            title.textContent = 'Nuevo item';
+            title.textContent = 'Nuevo elemento';
         });
 
         form.addEventListener('submit', function (event) {
@@ -160,7 +164,7 @@
                 .then(function () {
                     form.reset();
                     form.elements.id.value = '';
-                    title.textContent = 'Nuevo item';
+                    title.textContent = 'Nuevo elemento';
                     showMessage(root, 'success', id ? 'Item actualizado correctamente.' : 'Item creado correctamente.');
                     if (window.CCUI) { window.CCUI.close(form); }
                     return fetchItems(root);
@@ -183,7 +187,7 @@
                 form.elements.name.value = item.name || '';
                 form.elements.description.value = item.description || '';
                 form.elements.status.value = item.status || 'active';
-                title.textContent = 'Editar item';
+                title.textContent = 'Editar elemento';
                 if (window.CCUI) { window.CCUI.reveal(form); }
             }
 

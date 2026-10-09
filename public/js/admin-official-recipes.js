@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         recipes: [],
         categories: [],
@@ -154,7 +158,7 @@
             var officialBadge = r.is_official ? '<span class="chip" style="font-size:11px">✓ Oficial</span>' : '';
             var verifiedBadge = r.is_verified ? '<span style="background:#e8f0fe;color:#2f80ed;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:900">✓ Verif.</span>' : '';
             var categoryName = (r.category && r.category.name) ? r.category.name : '-';
-            var content = (r.ingredients_count || 0) + ' ing. / ' + (r.tags_count || 0) + ' tags';
+            var content = (r.ingredients_count || 0) + ' ing. / ' + (r.tags_count || 0) + ' etiquetas';
             var sourceLabel = SOURCE_LABELS[r.source_type] || text(r.source_type);
 
             var actions = r.deleted_at
@@ -169,7 +173,7 @@
                 '</td>' +
                 '<td>' + escapeHtml(sourceLabel) + '</td>' +
                 '<td>' + escapeHtml(categoryName) + '</td>' +
-                '<td>' + escapeHtml(r.status) + '</td>' +
+                '<td>' + escapeHtml(uiLabel(r.status)) + '</td>' +
                 '<td>' + escapeHtml(content) + '</td>' +
                 '<td>' +
                 '<button type="button" class="btn-ghost btn-sm" data-recipe-adm-show="' + r.id + '" style="margin-right:4px">Ver</button>' +
@@ -244,9 +248,9 @@
             (badgesHtml ? '<div style="margin-bottom:10px">' + badgesHtml + '</div>' : '') +
             '<div class="line"><span class="muted">Fuente</span><strong>' + escapeHtml(sourceLabel) + '</strong></div>' +
             (r.category ? '<div class="line"><span class="muted">Categoria</span><strong>' + escapeHtml(r.category.name) + '</strong></div>' : '') +
-            '<div class="line"><span class="muted">Estado</span><strong>' + escapeHtml(r.status) + '</strong></div>' +
+            '<div class="line"><span class="muted">Estado</span><strong>' + escapeHtml(uiLabel(r.status)) + '</strong></div>' +
             (ownerName !== '-' ? '<div class="line"><span class="muted">Autor</span><strong>' + escapeHtml(ownerName) + '</strong></div>' : '') +
-            (r.difficulty ? '<div class="line"><span class="muted">Dificultad</span><strong>' + escapeHtml(r.difficulty) + '</strong></div>' : '') +
+            (r.difficulty ? '<div class="line"><span class="muted">Dificultad</span><strong>' + escapeHtml(uiLabel(r.difficulty, 'difficulty')) + '</strong></div>' : '') +
             (r.servings ? '<div class="line"><span class="muted">Porciones</span><strong>' + escapeHtml(r.servings) + '</strong></div>' : '') +
             (r.prep_time_minutes ? '<div class="line"><span class="muted">Preparacion</span><strong>' + escapeHtml(formatMinutes(r.prep_time_minutes)) + '</strong></div>' : '') +
             (r.cook_time_minutes ? '<div class="line"><span class="muted">Coccion</span><strong>' + escapeHtml(formatMinutes(r.cook_time_minutes)) + '</strong></div>' : '') +

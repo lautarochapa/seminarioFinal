@@ -1,18 +1,19 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="es-AR">
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="ccc-auth" content="session">
     <meta name="turbo-visit-control" content="reload">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Admin CC Control')</title>
+    <title>@yield('title', 'Administración CC Control')</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLcE=" crossorigin="" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
     <script src="{{ asset('js/panel-menu.js') }}?v={{ filemtime(public_path('js/panel-menu.js')) }}" defer></script>
     <script src="{{ asset('js/panel-ui.js') }}?v={{ filemtime(public_path('js/panel-ui.js')) }}" defer></script>
+    <script src="{{ asset('js/admin-labels.js') }}?v={{ filemtime(public_path('js/admin-labels.js')) }}" defer></script>
     <script src="{{ asset('js/admin-panel-ui.js') }}?v={{ filemtime(public_path('js/admin-panel-ui.js')) }}" defer></script>
     <script src="{{ asset('js/admin-rbac.js') }}?v={{ filemtime(public_path('js/admin-rbac.js')) }}" defer></script>
     <script src="{{ asset('js/admin-audit.js') }}?v={{ file_exists(public_path('js/admin-audit.js')) ? filemtime(public_path('js/admin-audit.js')) : time() }}" defer></script>

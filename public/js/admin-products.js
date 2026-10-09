@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         products: [],
         brands: [],
@@ -194,7 +198,7 @@
                 '<td>' + escapeHtml(entityName(product.category)) + '</td>' +
                 '<td>' + escapeHtml(entityName(product.ingredient)) + '</td>' +
                 '<td>' + escapeHtml(product.barcode) + '</td>' +
-                '<td>' + escapeHtml(product.status) + '</td>' +
+                '<td>' + escapeHtml(label(product.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-product-edit="' + product.id + '">Editar</button> ' +
                 '<button type="button" class="btn-ghost btn-sm" data-product-view="' + product.id + '">Detalle</button> ' + action + '</td>' +
                 '</tr>';
@@ -341,7 +345,7 @@
             '<div class="line"><span>Categoria</span><strong>' + escapeHtml(entityName(product.category)) + '</strong></div>' +
             '<div class="line"><span>Ingrediente</span><strong>' + escapeHtml(entityName(product.ingredient)) + '</strong></div>' +
             '<div class="line"><span>Cantidad</span><strong>' + escapeHtml(product.net_quantity) + ' ' + escapeHtml(product.unit && product.unit.symbol) + '</strong></div>' +
-            '<div class="line"><span>Barcode</span><strong>' + escapeHtml(product.barcode) + '</strong></div>' +
+            '<div class="line"><span>Código de barras</span><strong>' + escapeHtml(product.barcode) + '</strong></div>' +
             '<p class="muted">' + escapeHtml(product.description) + '</p>';
     }
 
@@ -368,7 +372,7 @@
         target.innerHTML = rows.map(function (row) {
             var source = row.supermarket_product || {};
             var chain = source.chain || {};
-            return '<div class="line"><span>' + escapeHtml(chain.name || source.source_name || row.source) + '</span><strong>' +
+            return '<div class="line"><span>' + escapeHtml(chain.name || source.source_name || label(row.source, 'price_source')) + '</span><strong>' +
                 escapeHtml(row.currency) + ' ' + escapeHtml(row.price) + '</strong></div>';
         }).join('');
     }
@@ -398,7 +402,7 @@
             return '<div class="line" style="align-items:center">' +
                 '<span style="display:flex;gap:10px;align-items:center;min-width:0">' +
                 '<img src="' + escapeHtml(image.image_url) + '" alt="Imagen producto" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #edf1f4">' +
-                '<span><strong>' + escapeHtml(image.source || 'manual') + '</strong><br><span class="muted">' + (image.is_primary ? 'Principal' : 'Secundaria') + '</span></span>' +
+                '<span><strong>' + escapeHtml(image.source || 'Manual') + '</strong><br><span class="muted">' + (image.is_primary ? 'Principal' : 'Secundaria') + '</span></span>' +
                 '</span>' +
                 '<button type="button" class="btn-ghost btn-sm" data-product-image-delete="' + escapeHtml(image.product_id) + ':' + escapeHtml(image.id) + '">Eliminar</button>' +
                 '</div>';

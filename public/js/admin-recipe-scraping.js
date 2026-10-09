@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         page: 1,
         lastPage: 1,
@@ -62,16 +66,16 @@
             return 'Sesion vencida. Inicia sesion nuevamente.';
         }
         if (error && error.status === 403) {
-            return 'No tenes permiso para scraping de recetas.';
+            return 'No tenés permiso para importar recetas desde la web.';
         }
         if (error && error.status === 404) {
-            return 'Job inexistente.';
+            return 'Ejecución inexistente.';
         }
         if (error && error.status === 409) {
-            return 'Ya existe un job activo o la accion no es valida.';
+            return 'Ya existe una ejecución activa o la acción no es válida.';
         }
         if (error && error.status === 422) {
-            return 'La configuracion del job no es valida.';
+            return 'La configuración de la ejecución no es válida.';
         }
         return fallback || 'No se pudo completar la operacion.';
     }
@@ -103,7 +107,7 @@
             color = '#8a6d3b';
             bg = '#fff7df';
         }
-        return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:50px;font-size:12px">' + escapeHtml(status) + '</span>';
+        return '<span style="background:' + bg + ';color:' + color + ';padding:2px 8px;border-radius:50px;font-size:12px">' + escapeHtml(uiLabel(status)) + '</span>';
     }
 
     function getCollection(payload) {
@@ -161,20 +165,20 @@
             return;
         }
         if (!jobs.length) {
-            body.innerHTML = '<tr><td colspan="7" class="muted">No hay jobs para los filtros seleccionados.</td></tr>';
+            body.innerHTML = '<tr><td colspan="7" class="muted">No hay ejecuciones para los filtros seleccionados.</td></tr>';
             return;
         }
         body.innerHTML = jobs.map(function (job) {
             var canRetry = job.status === 'failed' || job.status === 'cancelled';
             return '<tr>' +
-                '<td>#' + escapeHtml(job.id) + '<br><span class="muted">' + escapeHtml(job.job_type) + '</span></td>' +
+                '<td>#' + escapeHtml(job.id) + '<br><span class="muted">' + escapeHtml(uiLabel(job.job_type, 'source')) + '</span></td>' +
                 '<td>' + escapeHtml(sourceName(job)) + '</td>' +
                 '<td>' + statusChip(job.status) + '</td>' +
                 '<td>' + paramsLabel(job) + '</td>' +
                 '<td>' + summary(job) + '</td>' +
                 '<td><span class="muted">Creado</span><br>' + escapeHtml(dateLabel(job.created_at)) + '<br><span class="muted">Fin</span><br>' + escapeHtml(dateLabel(job.finished_at)) + '</td>' +
                 '<td><button type="button" class="btn-ghost btn-sm" data-recipe-scraping-show="' + escapeHtml(job.id) + '">Ver</button> ' +
-                (canRetry ? '<button type="button" class="btn-main btn-sm" data-recipe-scraping-retry="' + escapeHtml(job.id) + '">Retry</button>' : '') +
+                (canRetry ? '<button type="button" class="btn-main btn-sm" data-recipe-scraping-retry="' + escapeHtml(job.id) + '">Reintentar</button>' : '') +
                 '</td>' +
                 '</tr>';
         }).join('');
@@ -189,7 +193,7 @@
         var prev = qs('[data-recipe-scraping-prev]', root);
         var next = qs('[data-recipe-scraping-next]', root);
         if (count) {
-            count.textContent = (meta.total || 0) + ' jobs';
+            count.textContent = (meta.total || 0) + ' ejecuciones';
         }
         if (page) {
             page.textContent = 'Pagina ' + state.page + ' de ' + state.lastPage;
@@ -209,7 +213,7 @@
         }
         if (!job) {
             el.className = 'muted';
-            el.textContent = 'Selecciona un job.';
+            el.textContent = 'Seleccioná una ejecución.';
             return;
         }
         el.className = '';
@@ -224,7 +228,7 @@
             '<div class="line"><span>Inicio</span><strong>' + escapeHtml(dateLabel(job.started_at)) + '</strong></div>' +
             '<div class="line"><span>Fin</span><strong>' + escapeHtml(dateLabel(job.finished_at)) + '</strong></div>' +
             '<div class="line"><span>Error</span><strong>' + escapeHtml(job.error_message) + '</strong></div>' +
-            '<p class="muted" style="margin-top:12px">No hay endpoint especifico de logs para scraping de recetas. El detalle muestra el estado, parametros, totales y error controlado del job.</p>';
+            '<p class="muted" style="margin-top:12px">El detalle muestra el estado, los parámetros, los totales y los errores de la ejecución de importación de recetas.</p>';
     }
 
     function buildQuery(root) {
@@ -271,7 +275,7 @@
     function loadJobs(root) {
         var body = qs('[data-recipe-scraping-jobs-body]', root);
         if (body) {
-            body.innerHTML = '<tr><td colspan="7" class="muted">Cargando jobs...</td></tr>';
+            body.innerHTML = '<tr><td colspan="7" class="muted">Cargando ejecuciones...</td></tr>';
         }
         var statusFilter = qs('[data-recipe-scraping-status]', root);
         return request('/admin/recipes/scraping/jobs?' + buildQuery(root))
@@ -319,7 +323,7 @@
             method: 'POST',
             body: body,
         }).then(function (payload) {
-            showMessage(root, 'success', 'Job Cookpad encolado.');
+            showMessage(root, 'success', 'Ejecución de Cookpad encolada.');
             if (window.CCUI) { window.CCUI.close(form); }
             if (payload.data && payload.data.id) {
                 state.selectedJobId = payload.data.id;
@@ -342,7 +346,7 @@
         return request('/admin/recipes/scraping/jobs/' + encodeURIComponent(id) + '/retry', {
             method: 'POST',
         }).then(function (payload) {
-            showMessage(root, 'success', 'Retry encolado.');
+            showMessage(root, 'success', 'Reintento encolado.');
             if (payload.data && payload.data.id) {
                 state.selectedJobId = payload.data.id;
                 renderDetail(root, payload.data);

@@ -1,6 +1,10 @@
 ﻿(function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         nutrients: [],
         units: [],
@@ -223,7 +227,7 @@
                 '<td>' + escapeHtml(nutrient.name) + '</td>' +
                 '<td>' + escapeHtml(unitLabel(nutrient.unit)) + '</td>' +
                 '<td>' + escapeHtml(nutrient.description) + '</td>' +
-                '<td>' + escapeHtml(nutrient.status) + '</td>' +
+                '<td>' + escapeHtml(label(nutrient.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-nutrient-edit="' + nutrient.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');

@@ -1,6 +1,10 @@
 ﻿(function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         categories: [],
         tree: [],
@@ -167,7 +171,7 @@
                 '<td><strong>' + escapeHtml(category.name) + '</strong><br><span class="muted">' + escapeHtml(category.code) + '</span><br><span class="muted">' + escapeHtml(category.description) + '</span></td>' +
                 '<td>' + escapeHtml(parent) + '</td>' +
                 '<td>' + escapeHtml(category.sort_order) + '</td>' +
-                '<td>' + escapeHtml(category.status) + ' ' + deleted + '</td>' +
+                '<td>' + escapeHtml(label(category.status)) + ' ' + deleted + '</td>' +
                 '<td>' + escapeHtml(usage) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-ingredient-category-edit="' + category.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';

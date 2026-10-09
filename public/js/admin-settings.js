@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         settings: [],
         loading: false,
@@ -47,7 +51,7 @@
         var val = setting.value;
         if (val === null || val === undefined) { return '<span class="muted">—</span>'; }
         if (isRedacted(val)) {
-            return '<span style="font-size:12px;color:#b33a3a;letter-spacing:1px">🔒 REDACTED</span>';
+            return '<span style="font-size:12px;color:#b33a3a;letter-spacing:1px">🔒 Valor oculto</span>';
         }
         if (setting.type === 'boolean') {
             var boolVal = val === true || val === 'true' || val === 1 || val === '1';
@@ -129,7 +133,7 @@
         Object.keys(groups).sort().forEach(function (group) {
             var items = groups[group];
             html += '<div style="margin-bottom:18px">' +
-                '<div style="font-size:11px;font-weight:900;color:#697681;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding:4px 0;border-bottom:1px solid #edf1f4">' + escapeHtml(group) + '</div>' +
+                '<div style="font-size:11px;font-weight:900;color:#697681;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding:4px 0;border-bottom:1px solid #edf1f4">' + escapeHtml(uiLabel(group, 'settingGroup')) + '</div>' +
                 '<table class="admin-table"><thead><tr>' +
                 '<th style="width:22%">Clave</th>' +
                 '<th style="width:8%">Tipo</th>' +

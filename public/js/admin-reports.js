@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         activeReport: 'users-active',
         dateFrom: '',
@@ -13,7 +17,7 @@
         { key: 'users-active',            label: 'Usuarios activos',        icon: '👤' },
         { key: 'products-pending-review',  label: 'Productos por revisar',   icon: '📦' },
         { key: 'recipes-pending-review',   label: 'Recetas por revisar',     icon: '🍳' },
-        { key: 'scraping-errors',          label: 'Errores scraping',        icon: '⚠' },
+        { key: 'scraping-errors',          label: 'Errores de importación web',        icon: '⚠' },
         { key: 'price-variations',         label: 'Variación de precios',    icon: '📈' },
         { key: 'most-used-recipes',        label: 'Recetas más usadas',      icon: '🏆' },
         { key: 'supermarket-price-status', label: 'Estado precios supermercado', icon: '🏪' },
@@ -23,7 +27,7 @@
         'users-active': [
             { key: 'user_id',       label: 'ID' },
             { key: 'name',          label: 'Nombre' },
-            { key: 'email',         label: 'Email' },
+            { key: 'email',         label: 'Correo electrónico' },
             { key: 'role',          label: 'Rol' },
             { key: 'last_login_at', label: 'Último acceso' },
             { key: 'actions_count', label: 'Acciones',   fmt: 'int' },
@@ -68,15 +72,15 @@
             { key: 'category',     label: 'Categoría' },
             { key: 'times_cooked', label: 'Veces cocinada', fmt: 'int' },
             { key: 'unique_users', label: 'Usuarios únicos', fmt: 'int' },
-            { key: 'avg_rating',   label: 'Rating prom.',   fmt: 'num' },
+            { key: 'avg_rating',   label: 'Valoración promedio',   fmt: 'num' },
         ],
         'supermarket-price-status': [
             { key: 'supermarket',     label: 'Supermercado' },
             { key: 'branch',          label: 'Sucursal' },
             { key: 'products_total',  label: 'Productos',      fmt: 'int' },
-            { key: 'prices_ok',       label: 'Precios ok',     fmt: 'int' },
+            { key: 'prices_ok',       label: 'Precios vigentes',     fmt: 'int' },
             { key: 'prices_outdated', label: 'Desactualizados', fmt: 'int' },
-            { key: 'last_scraped_at', label: 'Último scraping' },
+            { key: 'last_scraped_at', label: 'Última importación web' },
             { key: 'freshness_pct',   label: 'Frescura %',     fmt: 'pct' },
         ],
     };
@@ -152,7 +156,7 @@
                 var disp = typeof val === 'number'
                     ? (Number.isInteger(val) ? fmtInt(val) : fmt(val))
                     : escapeHtml(String(val));
-                var label = k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+                var label = uiLabel(k, 'reportMetric');
                 return '<div class="metric"><strong>' + disp + '</strong><span>' + escapeHtml(label) + '</span></div>';
             }).join('') +
             '</div>';
@@ -186,7 +190,7 @@
 
         if (!cols.length && rows.length) {
             cols = Object.keys(rows[0]).slice(0, 8).map(function (k) {
-                return { key: k, label: k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }) };
+                return { key: k, label: uiLabel(k, 'reportMetric') };
             });
         }
 
@@ -202,6 +206,10 @@
                     return '<tr>' + cols.map(function (c) {
                         var raw = row[c.key];
                         var style = cellStyle(c, raw);
+                        if (c.key === 'status') { raw = uiLabel(raw); }
+                        if (c.key === 'role') { raw = uiLabel(raw, 'role'); }
+                        if (c.key === 'source') { raw = uiLabel(raw, 'source'); }
+                        if (c.key === 'error_type') { raw = uiLabel(raw, 'alertType'); }
                         return '<td' + (style ? ' style="' + style + '"' : '') + '>' + fmtCell(raw, c.fmt) + '</td>';
                     }).join('') + '</tr>';
                 }).join('') +

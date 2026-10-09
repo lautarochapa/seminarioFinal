@@ -1,6 +1,10 @@
 ﻿(function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         tags: [],
         publicTags: [],
@@ -110,9 +114,9 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(tag.code) + '</strong></td>' +
                 '<td>' + escapeHtml(tag.name) + '</td>' +
-                '<td>' + escapeHtml(tag.type) + '</td>' +
+                '<td>' + escapeHtml(label(tag.type, 'food_tag_type')) + '</td>' +
                 '<td>' + escapeHtml(tag.description) + '</td>' +
-                '<td>' + escapeHtml(tag.status) + '</td>' +
+                '<td>' + escapeHtml(label(tag.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-food-tag-edit="' + tag.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');
@@ -151,7 +155,7 @@
         }
 
         target.innerHTML = state.publicTags.map(function (tag) {
-            return '<span class="chip">' + escapeHtml(tag.name) + (tag.type ? ' · ' + escapeHtml(tag.type) : '') + '</span>';
+            return '<span class="chip">' + escapeHtml(tag.name) + (tag.type ? ' · ' + escapeHtml(label(tag.type, 'food_tag_type')) : '') + '</span>';
         }).join('');
     }
 

@@ -22,7 +22,7 @@ function visible(element) {
 // Use the repository's real feature markup and scripts. No generated HTML,
 // Laravel environment, database, credentials or network are required.
 async function fixture(screen, request) {
-    const feature = template.window.document.querySelector('[data-admin-' + screen + ']');
+    const feature = template.window.document.querySelector(screen === 'rbac' ? '[data-rbac-roles]' : '[data-admin-' + screen + ']');
     assert.ok(feature, 'Real feature markup exists: ' + screen);
     const dom = new JSDOM('<main data-admin-ui data-admin-screen="' + screen + '">' + feature.outerHTML + '</main>', {
         url: 'https://qa.invalid/admin-web/' + screen,
@@ -39,7 +39,7 @@ async function fixture(screen, request) {
     w.CCApi = { request };
     w.confirm = () => true;
     await new Promise(resolve => w.document.addEventListener('DOMContentLoaded', resolve, { once: true }));
-    for (const script of ['panel-ui', 'admin-panel-ui', 'admin-' + screen]) w.eval(read('public/js/' + script + '.js'));
+    for (const script of ['admin-labels', 'panel-ui', 'admin-panel-ui', 'admin-' + screen]) w.eval(read('public/js/' + script + '.js'));
     w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
     await flush();
     assert.deepEqual(errors, [], 'No initialization exceptions');
@@ -56,6 +56,7 @@ test('settings: redacted secrets have no editor and cannot be opened through the
     });
     try {
         assert.equal(f.d.querySelectorAll('[data-settings-edit]').length, 0);
+        assert.match(f.d.querySelector('[data-settings-container]').textContent, /Valor oculto/);
         const syntheticAction = f.d.createElement('button');
         syntheticAction.setAttribute('data-settings-edit', 'service.secret');
         f.d.querySelector('[data-admin-settings]').appendChild(syntheticAction);
@@ -228,6 +229,156 @@ test('health preferences: modal editing preserves the selected native catalog ta
         await flush();
         assert.equal(dialog.open, false);
         assert.equal(tab.getAttribute('aria-selected'), 'true');
+        assert.deepEqual(f.errors, []);
+    } finally { f.dom.window.close(); }
+});
+
+test('roles: translated permission labels preserve permission IDs and unknown descriptions', async () => {
+    const permissions = [
+        { id: 12, code: 'catalog.manage', description: 'raw English description' },
+        { id: 13, code: 'custom.permission', description: 'Custom <description>' },
+    ];
+    const role = { id: 7, code: 'catalog_admin', name: 'Custom role name', status: 'active', permissions: [permissions[0]] };
+    const requests = [];
+    const f = await fixture('rbac', async (url, options = {}) => {
+        requests.push({ url, options: clone(options) });
+        return { data: url.startsWith('/admin/permissions?') ? permissions : [role], meta: { total: 1 } };
+    });
+    try {
+        const body = f.d.querySelector('[data-roles-body]');
+        assert.match(body.textContent, /Administrador de catálogo/);
+        assert.match(body.textContent, /Custom role name/);
+        assert.match(body.textContent, /Activo/);
+        const select = f.d.querySelector('[data-role-permission-select="7"]');
+        const option = select.querySelector('[value="12"]');
+        assert.equal(option.textContent, 'Administrar catálogo');
+        assert.equal(option.title, 'catalog.manage');
+        assert.equal(select.querySelector('[value="13"]').textContent, 'Custom <description>');
+        assert.equal(body.querySelector('.chip').title, 'catalog.manage');
+        select.value = '12';
+        f.d.querySelector('[data-assign-role-permission="7"]').click();
+        await flush();
+        assert.deepEqual(requests.filter(request => request.options.method), [{
+            url: '/admin/roles/7/permissions', options: { method: 'POST', body: { permission_id: '12' } },
+        }]);
+        assert.deepEqual(f.errors, []);
+    } finally { f.dom.window.close(); }
+});
+
+test('recipe tags: translated type and status do not alter editor values or PATCH payloads', async () => {
+    const tag = { id: 7, code: 'low_sodium', name: 'Custom English name', type: 'diet', status: 'active', description: 'Original <text>' };
+    const requests = [];
+    const f = await fixture('recipe-tags', async (url, options = {}) => {
+        requests.push({ url, options: clone(options) });
+        return { data: [tag], meta: { total: 1, current_page: 1, last_page: 1 } };
+    });
+    try {
+        const body = f.d.querySelector('[data-recipe-tags-body]');
+        assert.match(body.textContent, /Dieta/);
+        assert.match(body.textContent, /Activo/);
+        assert.match(body.textContent, /Custom English name/);
+        assert.match(body.textContent, /Original <text>/);
+        f.d.querySelector('[data-recipe-tag-edit="7"]').click();
+        const form = f.d.querySelector('[data-recipe-tag-form]');
+        assert.equal(form.elements.type.value, 'diet');
+        assert.equal(form.elements.status.value, 'active');
+        form.dispatchEvent(new f.w.Event('submit', { bubbles: true, cancelable: true }));
+        await flush();
+        const writes = requests.filter(request => request.options.method);
+        assert.equal(writes.length, 1);
+        assert.equal(writes[0].url, '/api/v1/admin/recipe-tags/7');
+        assert.equal(writes[0].options.method, 'PATCH');
+        assert.deepEqual(writes[0].options.body, { code: 'low_sodium', name: tag.name, type: 'diet', status: 'active', description: tag.description });
+        assert.deepEqual(f.errors, []);
+    } finally { f.dom.window.close(); }
+});
+
+test('recipe scraping: translated executions preserve the raw status filter and retry endpoint', async () => {
+    const job = { id: 24, job_type: 'recipe_scraping', status: 'failed', source: { name: 'Custom source name' }, parameters: { max_pages: 2 } };
+    const requests = [];
+    const f = await fixture('recipe-scraping', async (url, options = {}) => {
+        requests.push({ url, options: clone(options) });
+        return { data: url.includes('?') ? [job] : job, meta: { total: 1, current_page: 1, last_page: 1 } };
+    });
+    try {
+        const body = f.d.querySelector('[data-recipe-scraping-jobs-body]');
+        assert.match(body.textContent, /Importación de recetas/);
+        assert.match(body.textContent, /Fallido/);
+        assert.match(body.textContent, /Custom source name/);
+        const filter = f.d.querySelector('[data-recipe-scraping-status]');
+        filter.value = 'failed';
+        filter.dispatchEvent(new f.w.Event('change', { bubbles: true }));
+        await flush();
+        assert.equal(new URL(requests.at(-1).url, 'https://qa.invalid').searchParams.get('status'), 'failed');
+        const retry = f.d.querySelector('[data-recipe-scraping-retry="24"]');
+        assert.equal(retry.textContent, 'Reintentar');
+        retry.click();
+        await flush();
+        const writes = requests.filter(request => request.options.method);
+        assert.equal(writes.length, 1);
+        assert.equal(writes[0].url, '/api/v1/admin/recipes/scraping/jobs/24/retry');
+        assert.equal(writes[0].options.method, 'POST');
+        assert.deepEqual(f.errors, []);
+    } finally { f.dom.window.close(); }
+});
+
+test('audit: translated actions and resources preserve original audit JSON and user content', async () => {
+    const event = { id: 8, action: 'recipe.created', resource: 'recipes', resource_id: 19, before: { status: 'active', note: 'running <custom>' }, after: { status: 'inactive' }, user: { name: 'English user name', email: 'qa@example.invalid' } };
+    const f = await fixture('audit', async () => ({ data: [event], meta: { total: 1, current_page: 1, last_page: 1 } }));
+    try {
+        const body = f.d.querySelector('[data-audit-body]');
+        assert.match(body.textContent, /Crear receta/);
+        assert.match(body.textContent, /Recetas/);
+        assert.match(body.textContent, /English user name/);
+        const details = body.querySelectorAll('pre');
+        assert.deepEqual(JSON.parse(details[0].textContent), event.before);
+        assert.deepEqual(JSON.parse(details[1].textContent), event.after);
+        assert.deepEqual(f.errors, []);
+    } finally { f.dom.window.close(); }
+});
+
+test('scraping alerts: detail labels match the list while raw alert messages and severity filters remain intact', async () => {
+    const alert = { id: 5, alert_type: 'rate_limited', severity: 'high', status: 'open', scraping_job_id: 24, message: 'Raw provider message <429>', source: { name: 'Original source' }, job: { status: 'failed' } };
+    const requests = [];
+    const f = await fixture('scraping-alerts', async (url, options = {}) => {
+        requests.push({ url, options: clone(options) });
+        return { data: url.includes('/sources?') ? [] : url.includes('/reports/') ? { by_severity: [{ severity: 'high', count: 1 }] } : [alert], meta: { total: 1, current_page: 1, last_page: 1 } };
+    });
+    try {
+        f.d.querySelector('[data-alert-view="5"]').click();
+        const detail = f.d.querySelector('[data-alert-detail]');
+        assert.match(detail.textContent, /Límite de solicitudes alcanzado/);
+        assert.match(detail.textContent, /Alta/);
+        assert.match(detail.textContent, /Abierto/);
+        assert.match(detail.textContent, /Ejecución/);
+        assert.match(detail.textContent, /Raw provider message <429>/);
+        const filter = f.d.querySelector('[data-alerts-severity]');
+        filter.value = 'high';
+        filter.dispatchEvent(new f.w.Event('change', { bubbles: true }));
+        await flush();
+        assert.ok(requests.slice(-2).every(request => new URL(request.url, 'https://qa.invalid').searchParams.get('severity') === 'high'));
+        assert.ok(requests.every(request => !request.options.method));
+        assert.deepEqual(f.errors, []);
+    } finally { f.dom.window.close(); }
+});
+
+test('reports: translated metrics and coded cells preserve free text and report API identifiers', async () => {
+    const requests = [];
+    const f = await fixture('reports', async (url, options = {}) => {
+        requests.push({ url, options: clone(options) });
+        return { summary: { total_logins: 2 }, rows: [{ user_id: 9, name: 'Original English name', email: 'qa@example.invalid', role: 'catalog_admin', status: 'active', actions_count: 2 }] };
+    });
+    try {
+        f.d.querySelector('[data-admin-report-generate]').click();
+        await flush();
+        const content = f.d.querySelector('[data-admin-report-content]');
+        assert.match(content.textContent, /Accesos registrados/);
+        assert.match(content.textContent, /Administrador de catálogo/);
+        assert.match(content.textContent, /Activo/);
+        assert.match(content.textContent, /Original English name/);
+        assert.equal(requests.length, 1);
+        assert.equal(requests[0].url, '/api/v1/admin/reports/users-active');
+        assert.equal(requests[0].options.method, undefined);
         assert.deepEqual(f.errors, []);
     } finally { f.dom.window.close(); }
 });

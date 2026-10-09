@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function label(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : text(value);
+    }
+
     var state = {
         mealTypes: [],
         catalog: [],
@@ -130,7 +134,7 @@
                 '<td><strong>' + escapeHtml(item.code) + '</strong></td>' +
                 '<td>' + escapeHtml(item.name) + '</td>' +
                 '<td>' + escapeHtml(item.sort_order) + '</td>' +
-                '<td>' + escapeHtml(item.status) + '</td>' +
+                '<td>' + escapeHtml(label(item.status)) + '</td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-meal-type-edit="' + item.id + '">Editar</button> ' + action + '</td>' +
                 '</tr>';
         }).join('');

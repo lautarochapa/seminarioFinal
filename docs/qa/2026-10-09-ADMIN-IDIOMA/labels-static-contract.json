@@ -1,0 +1,46 @@
+{
+  "baseline": "b43c070c5982c39d4ed6ebcdbdaa130b7133cfa4",
+  "generated_at": "2026-10-09T18:00:09.342Z",
+  "checks": [
+    {
+      "name": "All form values, field names, selectors, hrefs, types and validation attributes remain identical",
+      "pass": true,
+      "count": 1814
+    },
+    {
+      "name": "Retired screen markup unchanged",
+      "pass": true,
+      "count": 14887
+    },
+    {
+      "name": "Screen keys, metric keys and explicit permissions unchanged",
+      "pass": true,
+      "count": 90
+    },
+    {
+      "name": "Navbar destination/permission pairs unchanged",
+      "pass": true,
+      "count": 57
+    }
+  ],
+  "files": [
+    {
+      "file": "resources/views/web/admin-screen.blade.php",
+      "sha256": "4d6fecd6fc408b4ff2fab8d702b01d9d0ffb36f224e22ffbb2e9544f18078c2d"
+    },
+    {
+      "file": "app/Http/Controllers/AdminWebScreenController.php",
+      "sha256": "56060b917f885cd9d609752d401ffdfe14e8a35075405228e4a8f5be539054f0"
+    },
+    {
+      "file": "resources/views/partials/portal-navbar.blade.php",
+      "sha256": "2f04f1a1b8c0cf001bb3809017347fdcaac17d88152fa0b0b40837a5f1f3a909"
+    },
+    {
+      "file": "app/Services/Admin/AdminDashboardService.php",
+      "sha256": "265394dfb2f8bf4529816299ad3ef3f7190203a219e9992ef50d83383bf1cf6d"
+    }
+  ],
+  "no_database": true,
+  "no_network": true
+}

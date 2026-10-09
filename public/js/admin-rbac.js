@@ -1,6 +1,10 @@
 (function (window, document) {
     'use strict';
 
+    function uiLabel(value, group) {
+        return window.CCAdminLabels ? window.CCAdminLabels.get(value, group) : value;
+    }
+
     var state = {
         users: [],
         roles: [],
@@ -54,9 +58,14 @@
             .replace(/'/g, '&#039;');
     }
 
-    function optionList(items, labelFn) {
+    function permissionLabel(permission) {
+        var label = uiLabel(permission.code, 'permission');
+        return label === permission.code ? (permission.description || permission.name || permission.code) : label;
+    }
+
+    function optionList(items, labelFn, titleFn) {
         return items.map(function (item) {
-            return '<option value="' + item.id + '">' + escapeHtml(labelFn(item)) + '</option>';
+            return '<option value="' + item.id + '"' + (titleFn ? ' title="' + escapeHtml(titleFn(item)) + '"' : '') + '>' + escapeHtml(labelFn(item)) + '</option>';
         }).join('');
     }
 
@@ -129,7 +138,7 @@
         qsa('[data-role-select]').forEach(function (select) {
             var current = select.value;
             select.innerHTML = '<option value="">Seleccionar rol</option>' + optionList(state.roles, function (role) {
-                return role.name + ' (' + role.code + ')';
+                return role.name + ' (' + uiLabel(role.code, 'role') + ')';
             });
             select.value = current;
         });
@@ -139,8 +148,8 @@
         qsa('[data-permission-select]').forEach(function (select) {
             var current = select.value;
             select.innerHTML = '<option value="">Seleccionar permiso</option>' + optionList(state.permissions, function (permission) {
-                return permission.code;
-            });
+                return permissionLabel(permission);
+            }, function (permission) { return permission.code; });
             select.value = current;
         });
     }
@@ -154,7 +163,7 @@
 
         body.innerHTML = state.users.map(function (user) {
             var roles = (user.roles || []).map(function (role) {
-                return '<span class="chip">' + escapeHtml(role.code) + '<button type="button" data-remove-user-role data-user-id="' + user.id + '" data-role-id="' + role.id + '">x</button></span>';
+                return '<span class="chip">' + escapeHtml(uiLabel(role.code, 'role')) + '<button type="button" data-remove-user-role data-user-id="' + user.id + '" data-role-id="' + role.id + '">x</button></span>';
             }).join('') || '<span class="muted">Sin roles</span>';
             var deleted = user.deleted_at ? '<span class="chip danger">eliminado</span>' : '';
             var action = user.deleted_at
@@ -164,7 +173,7 @@
             return '<tr>' +
                 '<td><strong>' + escapeHtml(user.name) + '</strong><br><span class="muted">' + escapeHtml(user.email) + '</span></td>' +
                 '<td>' + escapeHtml(user.username || '-') + '</td>' +
-                '<td>' + escapeHtml(user.status) + ' ' + deleted + '</td>' +
+                '<td>' + escapeHtml(uiLabel(user.status)) + ' ' + deleted + '</td>' +
                 '<td class="chips">' + roles + '</td>' +
                 '<td><select class="form-control form-control-sm" data-role-select data-user-role-select="' + user.id + '"></select></td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-assign-user-role="' + user.id + '">Asignar</button> ' + action + '</td>' +
@@ -183,15 +192,15 @@
 
         body.innerHTML = state.roles.map(function (role) {
             var permissions = (role.permissions || []).map(function (permission) {
-                return '<span class="chip">' + escapeHtml(permission.code) + '<button type="button" data-remove-role-permission data-role-id="' + role.id + '" data-permission-id="' + permission.id + '">x</button></span>';
+                return '<span class="chip" title="' + escapeHtml(permission.code) + '">' + escapeHtml(permissionLabel(permission)) + '<button type="button" data-remove-role-permission data-role-id="' + role.id + '" data-permission-id="' + permission.id + '">x</button></span>';
             }).join('') || '<span class="muted">Sin permisos</span>';
             var action = role.status === 'inactive'
                 ? '<button type="button" class="btn-ghost" data-restore-role="' + role.id + '">Activar</button>'
                 : '<button type="button" class="btn-ghost" data-delete-role="' + role.id + '">Desactivar</button>';
 
             return '<tr>' +
-                '<td><strong>' + escapeHtml(role.name) + '</strong><br><span class="muted">' + escapeHtml(role.code) + '</span></td>' +
-                '<td>' + escapeHtml(role.status) + '</td>' +
+                '<td><strong>' + escapeHtml(role.name) + '</strong><br><span class="muted">' + escapeHtml(uiLabel(role.code, 'role')) + '</span></td>' +
+                '<td>' + escapeHtml(uiLabel(role.status)) + '</td>' +
                 '<td class="chips">' + permissions + '</td>' +
                 '<td><select class="form-control form-control-sm" data-permission-select data-role-permission-select="' + role.id + '"></select></td>' +
                 '<td><button type="button" class="btn-main btn-sm" data-assign-role-permission="' + role.id + '">Asignar</button> ' + action + '</td>' +
