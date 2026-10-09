@@ -1,0 +1,44 @@
+✔ brands/brand: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (156.7971ms)
+✔ food-tags/food-tag: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (125.6324ms)
+✔ ingredient-categories/ingredient-category: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (104.9037ms)
+✔ ingredient-equivalences/equivalence: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (72.5754ms)
+✔ ingredients/ingredient: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (84.9189ms)
+✔ meal-types/meal-type: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (59.725ms)
+✔ nutrients/nutrient: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (96.5891ms)
+✔ product-categories/product-category: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (47.0463ms)
+✔ recipe-categories/recipe-category: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (45.5283ms)
+✔ recipe-tags/recipe-tag: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (67.6531ms)
+✔ units/unit: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (109.425ms)
+✔ units/conversion: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (110.9972ms)
+✔ cities/cities: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (43.4193ms)
+✔ branches/branches: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (53.9383ms)
+✔ supermarkets/supermarkets: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (59.9853ms)
+✔ payment-methods/payment-method: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (76.6746ms)
+✔ promotions/promotion: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (231.5391ms)
+✔ products/product: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (153.2827ms)
+✔ supermarket-products/sp: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (163.1417ms)
+✔ barcodes: create modal keeps rejected values, closes on success and primary new clears input (78.3987ms)
+✔ nutrient relation: edit, cancel, new sends POST instead of reusing the previous PATCH target (108.1372ms)
+✔ mapping prices: row action reveals its tab and successful price write closes its form (146.4382ms)
+✔ branch map stays with original form and initializes after the dialog becomes visible (73.2263ms)
+✔ products: row detail action reveals the destination tab (87.01ms)
+✔ ingredients: row detail action reveals the destination tab (70.7508ms)
+✔ settings: redacted secrets have no editor and cannot be opened through the delegated handler (114.9486ms)
+✔ settings: dynamic modal preserves a rejected value, blocks duplicate saves and closes only after success (72.5656ms)
+✔ official recipes: detail, editor dismissal and save keep the correct tab and form visible (205.5585ms)
+✔ recipe-import: failed input remains editable and successful parsing reveals the result tab (62.732ms)
+✔ recipe-import-text: failed input remains editable and successful parsing reveals the result tab (44.4256ms)
+✔ health preferences: modal editing preserves the selected native catalog tab (53.991ms)
+✔ real Blade preserves separate catalog, recipe, user and guest permissions (1078.3329ms)
+✔ administration and account share native controls; current page remains identified (197.2028ms)
+✔ one menu opens at a time and repeated loading or legacy delegated handlers cannot double-toggle (197.8612ms)
+✔ keyboard opens, traverses and closes with focus restoration; tab focus closes previous menu (248.1467ms)
+✔ outside click, navigation lifecycle and logout close without consuming link action (189.5162ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4300.1225

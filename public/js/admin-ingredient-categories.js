@@ -224,6 +224,7 @@
         form.elements.status.value = category.status || 'active';
         renderParentOptions(root);
         form.elements.parent_id.value = category.parent_id || '';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function resetForm(root) {
@@ -298,6 +299,7 @@
                 .then(function () {
                     resetForm(root);
                     showMessage(root, 'success', id ? 'Categoria actualizada correctamente.' : 'Categoria creada correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return fetchCategories(root, state.page);
                 })
                 .then(function () {
@@ -370,7 +372,8 @@
                 resetForm(root);
                 var form = qs('[data-ingredient-category-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

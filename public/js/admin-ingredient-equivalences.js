@@ -214,6 +214,7 @@
         form.elements.reason.value = equivalence.reason || '';
         form.elements.status.value = equivalence.status || 'active';
         qs('[data-equivalence-form-title]', root).textContent = 'Editar equivalencia #' + equivalence.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function save(root, form) {
@@ -227,6 +228,7 @@
             body: payload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Equivalencia actualizada.' : 'Equivalencia creada.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             fetchEquivalences(root);
             fetchPublicEquivalences(root);

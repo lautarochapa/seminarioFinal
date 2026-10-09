@@ -230,6 +230,7 @@
                 .then(function () {
                     form.reset();
                     showMessage(root, 'success', 'Usuario creado correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return loadUsers();
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -284,6 +285,7 @@
                 .then(function () {
                     form.reset();
                     showMessage(root, 'success', 'Rol creado correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return loadCatalogs().then(loadRoles);
                 })
                 .catch(function (error) { handleError(root, error); });

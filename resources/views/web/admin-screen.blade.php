@@ -24,6 +24,7 @@
         @endforeach
     </section>
 
+    <div data-admin-ui data-admin-screen="{{ $screenKey }}" class="admin-workspace">
     @if($screenKey === 'users')
         <section data-rbac-users>
             <div class="alert" data-rbac-message style="display:none"></div>
@@ -3316,4 +3317,5 @@ Preparación:
         @endforeach
     </section>
     @endif
+    </div>
 @endsection

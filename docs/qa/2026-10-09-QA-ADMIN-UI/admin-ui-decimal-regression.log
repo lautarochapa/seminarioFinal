@@ -1,0 +1,29 @@
+✔ recipe cooking sends1.5 without truncation and prevents double submission (195.9087ms)
+✔ recipe comma1,5 becomes JSON1.5; zero/excess precision/out-of-range rejected (41.3685ms)
+✔ recipe server error preserves decimal and ambiguous retry keeps idempotency key (47.749ms)
+✔ recipe late response after disposal never restores removed screen (26.7959ms)
+✔ plan opens accessible modal with decimal portions and no native confirm/prompt (305.5527ms)
+✔ plan accepts comma1,5, rejects invalid portions and blocks pending double click/Escape (220.2497ms)
+✔ plan422 keeps modal/value and allows deliberate correction, not automatic POST (232.2437ms)
+✔ plan ambiguous network error cannot silently resend cooking (219.2252ms)
+✔ plan disposing while pending closes modal and late response does not reopen or refresh next screen (172.1053ms)
+✔ plan HTTP409 blocks further cook POST until page is refreshed (154.904ms)
+✔ plan HTTP500 blocks further cook POST until page is refreshed (160.4846ms)
+✔ plan HTTP503 blocks further cook POST until page is refreshed (143.7685ms)
+✔ plan idle Escape can close and returns focus to its trigger (171.2639ms)
+✔ recipe and plan accept the minimum0.01 and their original maximums (577.6478ms)
+✔ plan without total keeps assigned portions on the server instead of recipe base4 (242.2924ms)
+✔ plan without total allows explicit decimal override and restores the plan option (247.7851ms)
+✔ recipe 503 then409 in progress then retry retains one idempotency key (26.0749ms)
+✔ recipe ambiguous result survives close/reopen via [data-cook-cancel] (31.1628ms)
+✔ recipe ambiguous result survives close/reopen via [data-cook-toggle] (50.9709ms)
+✔ recipe ambiguous payload cannot be changed into a new cooking operation (36.755ms)
+✔ recipe initial422 permits a corrected new payload after definite validation failure (42.9587ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4442.8133

@@ -196,6 +196,7 @@
         }).then(function (response) {
             form.reset();
             showMessage(root, 'success', 'Codigo agregado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             target.innerHTML =
                 '<div class="line"><span>ID barcode</span><strong>' + escapeHtml(response.data.id) + '</strong></div>' +
                 '<div class="line"><span>Producto</span><strong>#' + escapeHtml(response.data.product_id) + '</strong></div>' +
@@ -220,6 +221,7 @@
         }).then(function () {
             form.reset();
             showMessage(root, 'success', 'Codigo desactivado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             return fetchProducts(root);
         }).catch(function (error) {
             handleError(root, error);
@@ -313,6 +315,10 @@
     }
 
     function bind(root) {
+        ['[data-barcode-create-form]', '[data-barcode-delete-form]'].forEach(function (selector) {
+            var form = qs(selector, root);
+            form.addEventListener('cc:form-new', function () { form.reset(); });
+        });
         qs('[data-barcode-search-submit]', root).addEventListener('click', function () {
             searchBarcode(root);
         });
@@ -364,7 +370,9 @@
                 e.preventDefault();
                 var form = qs('[data-barcode-create-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    form.reset();
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

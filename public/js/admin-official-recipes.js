@@ -185,6 +185,7 @@
         switchView(root, 'detail');
         var detailEl = qs('[data-recipes-adm-detail]', root);
         detailEl.innerHTML = '<p class="muted">Cargando...</p>';
+        if (window.CCUI) { window.CCUI.reveal(detailEl); }
 
         window.CCApi.request(endpoint('/admin/recipes/' + recipeId))
             .then(function (r) { renderDetail(root, r.data); })
@@ -335,9 +336,11 @@
         if (recipe && recipe.category_id) {
             form.elements.category_id.value = recipe.category_id;
         }
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function closeForm(root) {
+        if (window.CCUI) { window.CCUI.close(qs('[data-recipes-adm-form]', root)); }
         switchView(root, state.view === 'form' ? 'empty' : state.view);
         switchView(root, 'empty');
         qs('[data-recipes-adm-detail]', root).innerHTML =

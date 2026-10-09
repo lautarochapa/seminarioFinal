@@ -250,6 +250,7 @@
                 form.reset();
                 form.elements.is_active.checked = true;
                 showMessage(root, 'success', 'Fuente creada.');
+                if (window.CCUI) { window.CCUI.close(form); }
                 return loadSources(root);
             })
             .catch(function (error) {
@@ -294,6 +295,7 @@
         window.CCApi.request(endpoint('/admin/scraping/jobs'), { method: 'POST', body: body })
             .then(function (response) {
                 showMessage(root, 'success', 'Job creado.');
+                if (window.CCUI) { window.CCUI.close(form); }
                 return loadJobs(root, 1).then(function () {
                     loadJobDetail(root, (response.data || response).id);
                 });
@@ -368,6 +370,7 @@
         state.selectedJobId = parseInt(id, 10);
         if (!silent) {
             qs('[data-scraping-job-detail]', root).innerHTML = '<p class="muted">Cargando detalle...</p>';
+            if (window.CCUI) { window.CCUI.reveal(qs('[data-scraping-job-detail]', root)); }
         }
         return window.CCApi.request(endpoint('/admin/scraping/jobs/' + encodeURIComponent(id)))
             .then(function (response) {

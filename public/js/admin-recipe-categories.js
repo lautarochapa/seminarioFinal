@@ -191,6 +191,7 @@
         form.elements.status.value = cat.status || 'active';
         renderParentOptions(root);
         form.elements.parent_id.value = cat.parent_id || '';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function resetForm(root) {
@@ -256,6 +257,7 @@
                 .then(function () {
                     resetForm(root);
                     showMessage(root, 'success', id ? 'Categoria actualizada correctamente.' : 'Categoria creada correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return fetchCategories(root, state.page);
                 })
                 .then(function () { return fetchTree(root); })

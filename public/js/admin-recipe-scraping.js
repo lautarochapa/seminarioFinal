@@ -293,6 +293,7 @@
     function loadJob(root, id) {
         state.selectedJobId = id;
         renderDetail(root, null);
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-recipe-scraping-detail]', root)); }
         return request('/admin/recipes/scraping/jobs/' + encodeURIComponent(id))
             .then(function (payload) {
                 renderDetail(root, payload.data);
@@ -319,9 +320,11 @@
             body: body,
         }).then(function (payload) {
             showMessage(root, 'success', 'Job Cookpad encolado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             if (payload.data && payload.data.id) {
                 state.selectedJobId = payload.data.id;
                 renderDetail(root, payload.data);
+                if (window.CCUI) { window.CCUI.reveal(qs('[data-recipe-scraping-detail]', root)); }
             }
             state.page = 1;
             return loadJobs(root);
@@ -409,6 +412,7 @@
                 if (!runForm) {
                     return;
                 }
+                if (window.CCUI) { window.CCUI.reveal(runForm); }
                 runForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 var firstField = runForm.querySelector('input:not([type=hidden])');
                 if (firstField) {
@@ -431,6 +435,7 @@
         if (!section) {
             return;
         }
+        if (window.CCUI) { window.CCUI.reveal(section); }
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         section.classList.add('highlight-focus');
         window.setTimeout(function () {

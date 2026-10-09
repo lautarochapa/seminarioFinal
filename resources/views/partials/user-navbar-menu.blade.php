@@ -4,11 +4,11 @@
         <a class="cta" href="{{ route('login') }}" data-mobile-entry="login">Ingresar</a>
     </div>
 @else
-    <div class="dropdown">
-        <a class="cta dropdown-toggle" href="#" role="button" id="userNavbarMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <div class="dropdown navbar-dropdown navbar-account">
+        <button type="button" class="cta navbar-menu-toggle dropdown-toggle" id="userNavbarMenu" data-toggle="dropdown" aria-controls="userNavbarDropdown" aria-expanded="false" aria-label="Cuenta de {{ Auth::user()->name }}">
             <span class="navbar-user-name" title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="userNavbarMenu">
+        </button>
+        <div class="dropdown-menu navbar-menu" id="userNavbarDropdown" aria-labelledby="userNavbarMenu">
             @if(Auth::user()->hasPermission('web.user.profile-objectives'))
                 <a class="dropdown-item" href="{{ url('/web/profile-objectives') }}">Mi Perfil</a>
             @endif

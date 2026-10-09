@@ -162,6 +162,7 @@
                     form.elements.id.value = '';
                     title.textContent = 'Nuevo item';
                     showMessage(root, 'success', id ? 'Item actualizado correctamente.' : 'Item creado correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return fetchItems(root);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -183,6 +184,7 @@
                 form.elements.description.value = item.description || '';
                 form.elements.status.value = item.status || 'active';
                 title.textContent = 'Editar item';
+                if (window.CCUI) { window.CCUI.reveal(form); }
             }
 
             if (deleteId) {

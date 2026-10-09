@@ -184,6 +184,7 @@
             return;
         }
         renderDetail(root, row);
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-price-refresh-detail]', root)); }
     }
 
     function processRow(root, id) {

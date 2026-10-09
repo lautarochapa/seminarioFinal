@@ -9,9 +9,11 @@
     <title>@yield('title', 'Admin CC Control')</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLcE=" crossorigin="" defer></script>
-    <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/api-client.js') }}?v={{ filemtime(public_path('js/api-client.js')) }}" defer></script>
     <script src="{{ asset('js/auth-api.js') }}?v={{ filemtime(public_path('js/auth-api.js')) }}" defer></script>
+    <script src="{{ asset('js/panel-menu.js') }}?v={{ filemtime(public_path('js/panel-menu.js')) }}" defer></script>
+    <script src="{{ asset('js/panel-ui.js') }}?v={{ filemtime(public_path('js/panel-ui.js')) }}" defer></script>
+    <script src="{{ asset('js/admin-panel-ui.js') }}?v={{ filemtime(public_path('js/admin-panel-ui.js')) }}" defer></script>
     <script src="{{ asset('js/admin-rbac.js') }}?v={{ filemtime(public_path('js/admin-rbac.js')) }}" defer></script>
     <script src="{{ asset('js/admin-audit.js') }}?v={{ file_exists(public_path('js/admin-audit.js')) ? filemtime(public_path('js/admin-audit.js')) : time() }}" defer></script>
     <script src="{{ asset('js/admin-objectives.js') }}?v={{ file_exists(public_path('js/admin-objectives.js')) ? filemtime(public_path('js/admin-objectives.js')) : time() }}" defer></script>
@@ -113,11 +115,13 @@
         @media (max-width: 1100px) { .grid, .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media (max-width: 860px) { .content { padding:14px; } .hero { display:block; } .actions { justify-content:flex-start; margin-top:14px; } .grid,.metrics,.rbac-layout { grid-template-columns:1fr; } .admin-tools .form-control { max-width:100%; flex:1 1 180px; } }
     </style>
+    <link href="{{ asset('css/panel-ui.css') }}?v={{ filemtime(public_path('css/panel-ui.css')) }}" rel="stylesheet">
+    <link href="{{ asset('css/admin-panel-ui.css') }}?v={{ filemtime(public_path('css/admin-panel-ui.css')) }}" rel="stylesheet">
 </head>
 <body>
 @include('partials.site-header')
 <div class="admin-shell">
-    <main class="content">
+    <main class="content" data-admin-panel-page>
         @yield('content')
     </main>
 </div>

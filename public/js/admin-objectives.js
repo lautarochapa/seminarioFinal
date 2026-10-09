@@ -142,6 +142,7 @@
                     form.elements.id.value = '';
                     title.textContent = 'Nuevo objetivo';
                     showMessage(root, 'success', id ? 'Objetivo actualizado correctamente.' : 'Objetivo creado correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return fetchObjectives(root);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -163,6 +164,7 @@
                 form.elements.description.value = objective.description || '';
                 form.elements.status.value = objective.status || 'active';
                 title.textContent = 'Editar objetivo';
+                if (window.CCUI) { window.CCUI.reveal(form); }
             }
 
             if (deleteId) {

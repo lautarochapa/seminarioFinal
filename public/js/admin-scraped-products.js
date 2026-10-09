@@ -300,6 +300,7 @@
 
     function loadCandidate(root, id) {
         qs('[data-candidate-detail]', root).innerHTML = '<p class="muted">Cargando detalle...</p>';
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-candidate-detail]', root)); }
         return window.CCApi.request(endpoint('/admin/scraping/product-candidates/' + encodeURIComponent(id)))
             .then(function (response) {
                 state.selected = response.data;
@@ -427,6 +428,9 @@
             .then(function (response) {
                 showMessage(root, 'success', successMessage);
                 refreshAfterAction(root, response.data);
+                if (window.CCUI && /\/(approve|create-and-approve|reject)$/.test(path)) {
+                    window.CCUI.close(qs('[data-candidate-detail]', root));
+                }
                 return response;
             }).catch(function (error) {
                 showMessage(root, 'danger', errorMessage(error));

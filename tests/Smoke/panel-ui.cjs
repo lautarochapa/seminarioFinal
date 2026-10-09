@@ -25,7 +25,11 @@ for (const [selector, tabCount, modalCount] of cases) {
  w.eval(source); w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
  const tabs = [...w.document.querySelectorAll('[role=tab]')];
  assert.equal(tabs.length, tabCount, selector + ' tabs');
- assert.equal(w.document.querySelectorAll('dialog').length, modalCount, selector + ' dialogs');
+ // Plan cooking owns a native dialog and controller, covered by decimal-cooking.
+ // This smoke exercises the generic modal helper while preserving that dialog.
+ const cookingDialogs = [...w.document.querySelectorAll('[data-meal-plan-cook-dialog]')];
+ assert.equal(cookingDialogs.length, selector === '[data-user-meal-plans]' ? 1 : 0);
+ assert.equal(w.document.querySelectorAll('dialog').length, modalCount + cookingDialogs.length, selector + ' dialogs');
  if (tabCount) {
    tabs[tabCount - 1].click();
    assert.equal(w.document.querySelectorAll('[role=tabpanel]:not([hidden])').length, 1);
@@ -37,6 +41,10 @@ for (const [selector, tabCount, modalCount] of cases) {
  for (const dialog of w.document.querySelectorAll('dialog')) {
    assert.ok(dialog.querySelector('form'), 'Dialog keeps original form: ' + selector);
    assert.ok(dialog.closest(selector), 'Event delegation remains inside feature root');
+   if (dialog.matches('[data-meal-plan-cook-dialog]')) {
+     assert.ok(dialog.querySelector('[data-meal-plan-cook-close]'));
+     continue;
+   }
    const form = dialog.querySelector('form');
    w.CCUI.reveal(form); assert.ok(dialog.open);
    dialog.querySelector('.dialog-close').click(); assert.ok(!dialog.open);

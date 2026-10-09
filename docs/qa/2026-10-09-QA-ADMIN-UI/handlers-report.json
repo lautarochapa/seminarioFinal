@@ -1,0 +1,63 @@
+{
+  "scope": "Real rendered Blade + UI and feature handlers; mocked CCApi, external network blocked",
+  "cases": [
+    {
+      "name": "settings: redacted value has no edit action",
+      "result": "PASS"
+    },
+    {
+      "name": "settings: handler refuses redacted edit even if action injected",
+      "result": "PASS"
+    },
+    {
+      "name": "settings: dynamic editor opens with label, initial value and focus",
+      "result": "PASS"
+    },
+    {
+      "name": "settings: exact PATCH and duplicate submit blocked while saving",
+      "result": "PASS"
+    },
+    {
+      "name": "settings: validation error preserves input, open modal and retry controls",
+      "result": "PASS"
+    },
+    {
+      "name": "settings: success closes modal and refreshes visible setting",
+      "result": "PASS"
+    },
+    {
+      "name": "settings: cancel closes without request and reuses one editor",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: delegated row edit opens moved original form",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: PATCH validation error stays visible and preserves edited values",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: successful edit closes, resets form and reloads table",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: primary action creates through POST and shows new row",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: cancel deletion sends no mutation",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: confirmed delete retains real handler and reloads inactive row",
+      "result": "PASS"
+    },
+    {
+      "name": "brands: restore delegates correctly after modal restructuring",
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "result": "PASS"
+}

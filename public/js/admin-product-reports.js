@@ -170,6 +170,7 @@
             return;
         }
         renderDetail(root, detail, report);
+        if (window.CCUI) { window.CCUI.reveal(detail); }
     }
 
     function renderDetail(root, detail, report) {

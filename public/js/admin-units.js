@@ -228,6 +228,7 @@
         form.elements.symbol.value = unit.symbol || '';
         form.elements.status.value = unit.status || 'active';
         qs('[data-unit-form-title]', root).textContent = 'Editar unidad #' + unit.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveUnit(root, form) {
@@ -241,6 +242,7 @@
             body: unitPayload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Unidad actualizada.' : 'Unidad creada.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetUnitForm(root);
             fetchUnits(root);
             fetchPublicUnits(root);
@@ -396,6 +398,7 @@
         form.elements.notes.value = conversion.notes || '';
         form.elements.status.value = conversion.status || 'active';
         qs('[data-conversion-form-title]', root).textContent = 'Editar conversion #' + conversion.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveConversion(root, form) {
@@ -409,6 +412,7 @@
             body: conversionPayload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Conversion actualizada.' : 'Conversion creada.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetConversionForm(root);
             fetchConversions(root);
         }).catch(function (error) {

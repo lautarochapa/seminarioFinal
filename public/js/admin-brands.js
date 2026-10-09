@@ -177,6 +177,7 @@
         form.elements.name.value = brand.name || '';
         form.elements.status.value = brand.status || 'active';
         qs('[data-brand-form-title]', root).textContent = 'Editar marca #' + brand.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveBrand(root, form) {
@@ -190,6 +191,7 @@
             body: payload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Marca actualizada.' : 'Marca creada.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return Promise.all([fetchBrands(root, state.page), fetchPublicBrands(root)]);
         }).catch(function (error) {
@@ -296,7 +298,8 @@
                 resetForm(root);
                 var form = qs('[data-brand-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

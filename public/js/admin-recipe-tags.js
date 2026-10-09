@@ -172,6 +172,7 @@
         form.elements.description.value = tag.description || '';
         form.elements.type.value        = tag.type || '';
         form.elements.status.value      = tag.status || 'active';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function resetForm(root) {
@@ -227,6 +228,7 @@
             window.CCApi.request(endpoint(path), { method: method, body: buildPayload(form) })
                 .then(function () {
                     showMessage(root, 'success', id ? 'Tag actualizado correctamente.' : 'Tag creado correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     resetForm(root);
                     return Promise.all([fetchTags(root, state.page), fetchCatalog(root)]);
                 })

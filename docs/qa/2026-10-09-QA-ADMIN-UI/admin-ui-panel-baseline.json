@@ -1,0 +1,9 @@
+{
+  "commit": "ef3246b",
+  "message": "[data-user-meal-plans] dialogs\n\n5 !== 4\n",
+  "actual": 5,
+  "expected": 4,
+  "operator": "strictEqual",
+  "unchangedTest": true,
+  "explanation": "Published meal-plan cooking dialog exists in user-screen; older smoke only counted four generic dialogs."
+}

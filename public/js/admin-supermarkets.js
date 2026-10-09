@@ -103,6 +103,7 @@
         var form = qs('[data-supermarkets-form]', root);
         form.elements.name.value        = chain.name        || '';
         form.elements.website_url.value = chain.website_url || '';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function resetForm(root) {
@@ -141,6 +142,7 @@
         promise
             .then(function () {
                 showMessage(root, 'success', state.editId ? 'Cadena actualizada correctamente.' : 'Cadena creada correctamente.');
+                if (window.CCUI) { window.CCUI.close(form); }
                 resetForm(root);
                 fetchChains(root, 1);
             })

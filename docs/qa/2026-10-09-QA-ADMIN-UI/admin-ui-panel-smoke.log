@@ -1,0 +1,8 @@
+PASS .workspace-profile: tabs, keyboard, dialogs and original form ownership
+PASS [data-user-stock-locations]: tabs, keyboard, dialogs and original form ownership
+PASS [data-user-meal-plans]: tabs, keyboard, dialogs and original form ownership
+PASS [data-user-shopping-lists]: tabs, keyboard, dialogs and original form ownership
+PASS [data-family-groups]: tabs, keyboard, dialogs and original form ownership
+PASS [data-user-recipes]: tabs, keyboard, dialogs and original form ownership
+PASS [data-user-budget]: tabs, keyboard, dialogs and original form ownership
+PASS [data-user-purchases]: tabs, keyboard, dialogs and original form ownership

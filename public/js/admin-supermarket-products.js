@@ -290,6 +290,7 @@
         qs('[data-sp-form-title]', root).textContent = 'Editar mapeo #' + row.id;
         qs('[data-sp-submit]', root).textContent = 'Guardar cambios';
         selectPriceMapping(root, row);
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function payload(form) {
@@ -320,6 +321,7 @@
             body: payload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Mapeo actualizado.' : 'Mapeo creado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return fetchMappings(root, state.page);
         }).catch(function (error) {
@@ -457,6 +459,7 @@
             body: data,
         }).then(function () {
             showMessage(root, 'success', 'Precio agregado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             form.reset();
             return loadPriceHistory(root, 1).then(function () {
                 return fetchMappings(root, state.page);
@@ -545,6 +548,8 @@
     }
 
     function bind(root) {
+        var priceForm = qs('[data-sp-price-form]', root);
+        priceForm.addEventListener('cc:form-new', function () { priceForm.reset(); });
         qs('[data-sp-refresh]', root).addEventListener('click', function () {
             fetchMappings(root, 1);
         });
@@ -622,6 +627,7 @@
                 var priceId = parseInt(prices.getAttribute('data-sp-prices-row'), 10);
                 var priceRow = state.mappings.find(function (item) { return item.id === priceId; });
                 if (priceRow) {
+                    if (window.CCUI) { window.CCUI.reveal(qs('[data-sp-price-history]', root)); }
                     selectPriceMapping(root, priceRow);
                 }
             }

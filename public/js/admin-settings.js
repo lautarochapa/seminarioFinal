@@ -140,8 +140,6 @@
                 '</tr></thead><tbody>';
 
             items.forEach(function (s) {
-                var isEditing = state.editingKey === s.key;
-                var isSaving  = state.savingKey === s.key;
                 var redacted  = isRedacted(s.value);
                 var typeLabel = TYPE_LABELS[s.type] || s.type || '-';
 
@@ -154,11 +152,7 @@
                 html += '<td><span style="font-size:10px;color:#697681;background:#edf1f4;border-radius:999px;padding:1px 7px">' + escapeHtml(typeLabel) + '</span></td>';
 
                 // Value
-                if (isEditing) {
-                    html += '<td>' + editInputHtml(s) + '</td>';
-                } else {
-                    html += '<td>' + displayValueHtml(s) + '</td>';
-                }
+                html += '<td>' + displayValueHtml(s) + '</td>';
 
                 // Description
                 html += '<td style="font-size:12px;color:#697681">' + escapeHtml(s.description || '') + '</td>';
@@ -171,11 +165,6 @@
                 // Actions
                 if (redacted) {
                     html += '<td><span style="font-size:11px;color:#b33a3a">🔒</span></td>';
-                } else if (isEditing) {
-                    html += '<td style="white-space:nowrap">' +
-                        '<button type="button" class="btn-main btn-sm" style="font-size:11px;margin-right:3px' + (isSaving ? ';opacity:.6' : '') + '" data-settings-save="' + escapeHtml(s.key) + '"' + (isSaving ? ' disabled' : '') + '>' + (isSaving ? '...' : 'Guardar') + '</button>' +
-                        '<button type="button" class="btn-ghost btn-sm" style="font-size:11px" data-settings-cancel>✕</button>' +
-                        '</td>';
                 } else {
                     html += '<td>' +
                         '<button type="button" class="btn-ghost btn-sm" style="font-size:11px" data-settings-edit="' + escapeHtml(s.key) + '">Editar</button>' +
@@ -217,27 +206,61 @@
             });
     }
 
+    function editorForm(root) {
+        var form = qs('[data-settings-edit-form]', root);
+        if (form) { return form; }
+        form = document.createElement('form');
+        form.className = 'rbac-form';
+        form.setAttribute('data-settings-edit-form', '');
+        root.appendChild(form);
+        if (window.CCUI) {
+            var dialog = window.CCUI.modal(root, '[data-settings-edit-form]', 'Editar configuración', { noTrigger: true });
+            dialog.addEventListener('cancel', function (event) { if (state.savingKey) { event.preventDefault(); } });
+            dialog.addEventListener('close', function () { if (!state.savingKey) { state.editingKey = null; } });
+        }
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (state.editingKey) { saveEdit(root, state.editingKey); }
+        });
+        return form;
+    }
+
+    function editorBusy(form, busy) {
+        var dialog = form.closest('dialog');
+        Array.from((dialog || form).querySelectorAll('button')).forEach(function (button) { button.disabled = busy; });
+        form.setAttribute('aria-busy', String(busy));
+    }
+
     function startEdit(root, key) {
         var s = state.settings.find(function (x) { return x.key === key; });
-        if (!s || isRedacted(s.value)) { return; }
+        if (!s || isRedacted(s.value) || state.savingKey) { return; }
+        clearMsg(root);
         state.editingKey = key;
-        renderSettings(root);
-        var row = qs('[data-settings-row="' + key + '"]', root);
-        if (row) {
-            var input = qs('[data-edit-input]', row);
-            if (input) { input.focus(); }
-        }
+        var form = editorForm(root);
+        form.innerHTML = '<p><strong>' + escapeHtml(s.key) + '</strong></p>' +
+            '<p class="muted">' + escapeHtml(s.description || '') + '</p>' +
+            '<label for="admin-setting-value">Valor</label>' + editInputHtml(s) +
+            '<div class="admin-form-actions"><button type="submit" class="btn-main">Guardar cambios</button>' +
+            '<button type="button" class="btn-ghost" data-settings-cancel>Cancelar</button></div>';
+        var input = qs('[data-edit-input]', form);
+        input.id = 'admin-setting-value';
+        editorBusy(form, false);
+        if (window.CCUI) { window.CCUI.reveal(form); }
+        input.focus();
     }
 
     function cancelEdit(root) {
+        if (state.savingKey) { return; }
+        var form = qs('[data-settings-edit-form]', root);
         state.editingKey = null;
-        renderSettings(root);
+        if (window.CCUI) { window.CCUI.close(form); }
     }
 
     function saveEdit(root, key) {
-        var row = qs('[data-settings-row="' + key + '"]', root);
-        if (!row) { return; }
-        var input = qs('[data-edit-input]', row);
+        if (state.savingKey) { return; }
+        var form = qs('[data-settings-edit-form]', root);
+        if (!form) { return; }
+        var input = qs('[data-edit-input]', form);
         if (!input) { return; }
 
         var s = state.settings.find(function (x) { return x.key === key; });
@@ -258,7 +281,7 @@
         }
 
         state.savingKey = key;
-        renderSettings(root);
+        editorBusy(form, true);
 
         window.CCApi.request(endpoint('/api/v1/admin/settings/' + encodeURIComponent(key)), { method: 'PATCH', body: payload })
             .then(function (res) {
@@ -269,12 +292,12 @@
                 state.editingKey = null;
                 renderSettings(root);
                 showMsg(root, 'success', 'Configuración "' + key + '" actualizada.');
+                if (window.CCUI) { window.CCUI.close(form); }
             })
             .catch(function (err) {
                 state.savingKey = null;
-                renderSettings(root);
                 showMsg(root, 'danger', errMsg(err));
-            });
+            }).then(function () { editorBusy(form, false); });
     }
 
     function bind(root) {

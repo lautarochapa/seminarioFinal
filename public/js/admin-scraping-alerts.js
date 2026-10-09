@@ -236,6 +236,7 @@
             renderLine('Job', alert.scraping_job_id || '-') +
             '<div style="margin-top:10px"><strong>Mensaje</strong><p class="muted">' + escapeHtml(alert.message) + '</p></div>';
         qs('[data-alert-resolve-form]', root).style.display = alert.status === 'open' ? 'block' : 'none';
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-alert-detail]', root)); }
         if (openForm && alert.status !== 'open') {
             showMessage(root, 'danger', 'La alerta seleccionada ya no esta abierta.');
         }
@@ -262,6 +263,7 @@
             body: body,
         }).then(function (response) {
             showMessage(root, 'success', 'Alerta resuelta.');
+            if (window.CCUI) { window.CCUI.close(form); }
             state.selected = response.data;
             form.reset();
             loadAlerts(root, state.page);

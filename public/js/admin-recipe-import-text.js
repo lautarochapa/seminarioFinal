@@ -232,6 +232,10 @@
                     showMsg('ok', 'Receta parseada correctamente.');
                 }
                 renderDetail(candidate);
+                if (window.CCUI) {
+                    window.CCUI.close(qs('[data-importtxt-body]'));
+                    window.CCUI.reveal(qs('[data-importtxt-detail]'));
+                }
             })
             .catch(function (err) {
                 state.loading = false;

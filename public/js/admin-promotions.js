@@ -370,6 +370,7 @@
         qs('[data-promotion-form-title]', root).textContent = 'Editar promocion';
         qs('[data-promotion-submit]', root).textContent = 'Guardar cambios';
         updateDynamicFields(root);
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function payload(root) {
@@ -427,6 +428,7 @@
 
         request.then(function () {
             showMessage(root, 'success', id ? 'Promocion actualizada.' : 'Promocion creada.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return fetchPromotions(root, state.page);
         }).catch(function (error) {

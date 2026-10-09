@@ -175,6 +175,7 @@
         form.elements.issuer.value = row.issuer || '';
         qs('[data-payment-method-form-title]', root).textContent = 'Editar metodo';
         qs('[data-payment-method-submit]', root).textContent = 'Guardar cambios';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function payload(root) {
@@ -203,6 +204,7 @@
 
         request.then(function () {
             showMessage(root, 'success', id ? 'Metodo actualizado.' : 'Metodo creado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return fetchMethods(root, state.page);
         }).catch(function (error) {

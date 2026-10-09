@@ -173,6 +173,7 @@
             '<div class="line"><span>Presentacion</span><strong>' + escapeHtml(item.presentation) + '</strong></div>' +
             '<div class="line"><span>Comentario</span><strong>' + escapeHtml(item.comment) + '</strong></div>' +
             '<div class="line"><span>Origen</span><strong>' + escapeHtml(item.source) + '</strong></div>';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function payload(form) {
@@ -209,6 +210,7 @@
         }).then(function () {
             showMessage(root, 'success', 'Solicitud aprobada y producto creado.');
             form.reset();
+            if (window.CCUI) { window.CCUI.close(form); }
             return loadRequests(root, state.page);
         }).catch(function (error) {
             handleError(root, error);
@@ -226,6 +228,7 @@
             body: { review_notes: notes || null },
         }).then(function () {
             showMessage(root, 'success', 'Solicitud rechazada.');
+            if (window.CCUI) { window.CCUI.close(qs('[data-product-request-approve-form]', root)); }
             return loadRequests(root, state.page);
         }).catch(function (error) {
             handleError(root, error);

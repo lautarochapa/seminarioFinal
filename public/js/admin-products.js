@@ -244,6 +244,7 @@
         form.elements.description.value = product.description || '';
         form.elements.status.value = product.status || 'active';
         qs('[data-product-form-title]', root).textContent = 'Editar producto #' + product.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveProduct(root, form) {
@@ -257,6 +258,7 @@
             body: payload(form),
         }).then(function (response) {
             showMessage(root, 'success', id ? 'Producto actualizado.' : 'Producto creado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return fetchProducts(root, state.page).then(function () {
                 if (response.data && response.data.id) {
@@ -304,6 +306,7 @@
     }
 
     function showProductDetails(root, id) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-product-detail]', root)); }
         qs('[data-product-detail-id]', root).value = id;
         var imageProductInput = qs('[data-product-image-product-id]', root);
         if (imageProductInput) {
@@ -437,6 +440,7 @@
             body: data,
         }).then(function () {
             showMessage(root, 'success', 'Imagen cargada.');
+            if (window.CCUI) { window.CCUI.close(form); }
             form.reset();
             form.elements.product_id.value = productId;
             return showProductDetails(root, productId);
@@ -461,6 +465,12 @@
     }
 
     function bind(root) {
+        var imageForm = qs('[data-product-image-form]', root);
+        imageForm.addEventListener('cc:form-new', function () {
+            var productId = imageForm.elements.product_id.value;
+            imageForm.reset();
+            imageForm.elements.product_id.value = productId;
+        });
         qs('[data-products-refresh]', root).addEventListener('click', function () {
             fetchProducts(root, 1);
         });
@@ -542,7 +552,8 @@
                 resetForm(root);
                 var form = qs('[data-product-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

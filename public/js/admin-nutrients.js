@@ -259,6 +259,7 @@
         form.elements.description.value = nutrient.description || '';
         form.elements.status.value = nutrient.status || 'active';
         qs('[data-nutrient-form-title]', root).textContent = 'Editar nutriente #' + nutrient.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveNutrient(root, form) {
@@ -272,6 +273,7 @@
             body: nutrientPayload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Nutriente actualizado.' : 'Nutriente creado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetNutrientForm(root);
             return fetchNutrients(root);
         }).catch(function (error) {
@@ -384,6 +386,7 @@
             body: ingredientNutrientPayload(form, !editNutrientId),
         }).then(function () {
             showMessage(root, 'success', editNutrientId ? 'Valor nutricional actualizado.' : 'Valor nutricional agregado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             form.reset();
             form.dataset.editNutrientId = '';
             form.elements.status.value = 'active';
@@ -406,6 +409,7 @@
         form.elements.amount_per_100g.value = relation.amount_per_100g || '';
         form.elements.source.value = relation.source || '';
         form.elements.status.value = relation.status || 'active';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function fetchProductNutrients(root) {
@@ -458,6 +462,7 @@
             body: productNutrientPayload(form),
         }).then(function () {
             showMessage(root, 'success', 'Valor nutricional de producto agregado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             form.reset();
             form.elements.status.value = 'active';
             fetchProductNutrients(root);
@@ -470,6 +475,11 @@
         var nutrientForm = qs('[data-nutrient-form]', root);
         var ingredientForm = qs('[data-ingredient-nutrient-form]', root);
         var productForm = qs('[data-product-nutrient-form]', root);
+        ingredientForm.addEventListener('cc:form-new', function () {
+            ingredientForm.reset();
+            ingredientForm.dataset.editNutrientId = '';
+        });
+        productForm.addEventListener('cc:form-new', function () { productForm.reset(); });
 
         qs('[data-nutrients-refresh]', root).addEventListener('click', function () {
             fetchNutrients(root, 1);
@@ -567,9 +577,11 @@
         if (primaryBtn) {
             primaryBtn.addEventListener('click', function (e) {
                 e.preventDefault();
+                resetNutrientForm(root);
                 var form = qs('[data-nutrient-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

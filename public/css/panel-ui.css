@@ -4,9 +4,12 @@ body { background:#f5f7f6; --green:#00866b; --muted:#53635d; }
 .hero { background:transparent; border:0; border-radius:0; padding:0 0 24px; border-bottom:1px solid var(--line); margin-bottom:24px; align-items:center; }
 .hero h1 { font-size:30px; }
 .hero .lead { font-size:15px; max-width:700px; line-height:1.6; }
-.btn-main, .btn-secondary-web { border-radius:6px; font:700 14px Nunito,system-ui,sans-serif; padding:10px 16px; min-height:40px; white-space:normal; }
+.btn-main, .btn-secondary-web, .btn-ghost { appearance:none; border:1px solid transparent; border-radius:6px; font:700 14px/1.4 Nunito,system-ui,sans-serif; padding:10px 16px; min-height:40px; white-space:normal; display:inline-flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; cursor:pointer; }
 .btn-main { background:#00866b; color:#fff; }
 .btn-main:hover { background:#006e58; color:#fff; }
+.btn-secondary-web, .btn-ghost { background:#e8efeb; color:#244438; }
+.btn-secondary-web:hover, .btn-ghost:hover { background:#d8e6de; color:#163d2d; text-decoration:none; }
+.btn-main:disabled, .btn-secondary-web:disabled, .btn-ghost:disabled { opacity:.55; cursor:not-allowed; }
 button:focus-visible, a:focus-visible { outline:3px solid #1b8068; outline-offset:3px; }
 .btn-sm { min-height:32px; font-size:13px; padding:6px 10px; }
 .panel-wide { display:block; }

@@ -199,6 +199,7 @@
                     return Array.from(item.attributes).some(function (attr) { return /^data-.*-reset$/.test(attr.name); });
                 });
                 if (reset) { reset.click(); }
+                else { form.dispatchEvent(new window.CustomEvent('cc:form-new')); }
             }
             message.hidden = true;
             reveal(form);

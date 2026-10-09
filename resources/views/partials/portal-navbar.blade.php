@@ -130,13 +130,13 @@
                 <li><a class="{{ $isActive ? 'active' : '' }}" @if($isActive) aria-current="page" @endif href="{{ url($item[1]) }}" data-page-navigation>{{ $userMainLabels[$item[1]] ?? $item[0] }}</a></li>
             @endforeach
         @elseif(count($visibleItems) > 0)
-            <li class="dropdown" data-permission="{{ $menu['permission'] }}">
-                <a href="#" class="dropdown-toggle" role="button" id="portalDropdown{{ $label }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ $label }}
-                </a>
-                <div class="dropdown-menu" aria-labelledby="portalDropdown{{ $label }}" style="max-height:70vh;overflow-y:auto">
+            <li class="dropdown navbar-dropdown" data-permission="{{ $menu['permission'] }}">
+                <button type="button" class="cta navbar-menu-toggle dropdown-toggle {{ request()->is(ltrim($menu['base'], '/')) || request()->is(ltrim($menu['base'], '/').'/*') ? 'active' : '' }}" id="portalDropdown{{ $label }}" data-toggle="dropdown" aria-controls="portalMenu{{ $label }}" aria-expanded="false">
+                    {{ $label === 'Admin' ? 'Administración' : $label }}
+                </button>
+                <div class="dropdown-menu navbar-menu" id="portalMenu{{ $label }}" aria-labelledby="portalDropdown{{ $label }}">
                     @foreach($visibleItems as $item)
-                        <a class="dropdown-item {{ request()->is(ltrim($item[1], '/')) ? 'active' : '' }}" data-permission="{{ $item[2] }}" href="{{ url($item[1]) }}">{{ $label === 'Usuario' ? ($userMainLabels[$item[1]] ?? $item[0]) : $item[0] }}</a>
+                        <a class="dropdown-item {{ request()->is(ltrim($item[1], '/')) ? 'active' : '' }}" @if(request()->is(ltrim($item[1], '/'))) aria-current="page" @endif data-permission="{{ $item[2] }}" href="{{ url($item[1]) }}">{{ $label === 'Usuario' ? ($userMainLabels[$item[1]] ?? $item[0]) : $item[0] }}</a>
                     @endforeach
                 </div>
             </li>

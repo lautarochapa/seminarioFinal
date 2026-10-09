@@ -172,6 +172,7 @@
         form.elements.delivery_available.checked = !!branch.delivery_available;
         form.elements.pickup_available.checked   = !!branch.pickup_available;
 
+        if (window.CCUI) { window.CCUI.reveal(form); }
         if (branch.latitude && branch.longitude) {
             updatePreviewMap(root, parseFloat(branch.latitude), parseFloat(branch.longitude));
         }
@@ -249,6 +250,7 @@
         promise
             .then(function () {
                 showMessage(root, 'success', state.editId ? 'Sucursal actualizada correctamente.' : 'Sucursal creada correctamente.');
+                if (window.CCUI) { window.CCUI.close(form); }
                 resetForm(root);
                 fetchBranches(root, 1);
             })
@@ -316,7 +318,6 @@
             }).addTo(state.previewMap);
             state.previewMarker = window.L.marker([lat, lng]).addTo(state.previewMap);
         } else {
-            state.previewMap.invalidateSize();
             state.previewMap.setView([lat, lng], 15);
             if (state.previewMarker) {
                 state.previewMarker.setLatLng([lat, lng]);
@@ -324,6 +325,7 @@
                 state.previewMarker = window.L.marker([lat, lng]).addTo(state.previewMap);
             }
         }
+        state.previewMap.invalidateSize();
     }
 
     function hidePreviewMap(root) {

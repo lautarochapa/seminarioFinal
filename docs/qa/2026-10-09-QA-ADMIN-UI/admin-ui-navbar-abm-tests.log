@@ -1,0 +1,38 @@
+✔ brands/brand: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (143.8096ms)
+✔ food-tags/food-tag: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (74.9741ms)
+✔ ingredient-categories/ingredient-category: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (80.8295ms)
+✔ ingredient-equivalences/equivalence: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (53.9348ms)
+✔ ingredients/ingredient: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (69.6117ms)
+✔ meal-types/meal-type: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (80.8651ms)
+✔ nutrients/nutrient: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (83.7568ms)
+✔ product-categories/product-category: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (66.6499ms)
+✔ recipe-categories/recipe-category: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (77.8181ms)
+✔ recipe-tags/recipe-tag: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (69.5405ms)
+✔ units/unit: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (129.9418ms)
+✔ units/conversion: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (123.147ms)
+✔ cities/cities: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (51.0334ms)
+✔ branches/branches: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (95.5341ms)
+✔ supermarkets/supermarkets: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (60.886ms)
+✔ payment-methods/payment-method: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (60.1562ms)
+✔ promotions/promotion: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (180.2704ms)
+✔ products/product: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (129.5058ms)
+✔ supermarket-products/sp: real editor opens, retains invalid changes, closes only after persistence and starts a clean new form (88.62ms)
+✔ barcodes: create modal keeps rejected values, closes on success and primary new clears input (56.6242ms)
+✔ nutrient relation: edit, cancel, new sends POST instead of reusing the previous PATCH target (114.9594ms)
+✔ mapping prices: row action reveals its tab and successful price write closes its form (143.2101ms)
+✔ branch map stays with original form and initializes after the dialog becomes visible (81.2595ms)
+✔ products: row detail action reveals the destination tab (137.7728ms)
+✔ ingredients: row detail action reveals the destination tab (96.2608ms)
+✔ real Blade preserves separate catalog, recipe, user and guest permissions (888.3935ms)
+✔ administration and account share native controls; current page remains identified (230.9708ms)
+✔ one menu opens at a time and repeated loading or legacy delegated handlers cannot double-toggle (250.4693ms)
+✔ keyboard opens, traverses and closes with focus restoration; tab focus closes previous menu (248.2265ms)
+✔ outside click, navigation lifecycle and logout close without consuming link action (202.0824ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3684.0811

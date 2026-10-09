@@ -57,7 +57,7 @@
         return '<div style="background:#fff;border:1px solid ' + (enabled ? 'rgba(4,172,133,.35)' : '#dde3e8') + ';border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;' + (isSaving ? 'opacity:.65' : '') + '">' +
 
             // Toggle
-            '<button type="button" data-ff-toggle="' + escapeHtml(f.key) + '" aria-label="' + (enabled ? 'Desactivar' : 'Activar') + '" ' + (isSaving ? 'disabled ' : '') +
+            '<button type="button" role="switch" aria-checked="' + String(enabled) + '" data-ff-toggle="' + escapeHtml(f.key) + '" aria-label="' + escapeHtml(f.name || f.key) + '" ' + (isSaving ? 'disabled ' : '') +
             'style="flex-shrink:0;margin-top:2px;width:42px;height:24px;border-radius:999px;border:none;cursor:' + (isSaving ? 'wait' : 'pointer') + ';' +
             'background:' + toggleBg + ';position:relative;transition:background .18s">' +
             '<span style="position:absolute;top:2px;left:' + dot + ';width:20px;height:20px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.25)"></span>' +
@@ -101,7 +101,7 @@
             html += '<div style="margin-bottom:22px">' +
                 '<div style="font-size:11px;font-weight:900;color:#697681;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #edf1f4">' +
                 escapeHtml(groupLabel) + '</div>' +
-                '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px">';
+                '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:10px">';
 
             items.forEach(function (f) { html += flagCardHtml(f); });
             html += '</div></div>';

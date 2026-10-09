@@ -104,6 +104,7 @@
         form.elements.country.value   = city.country   || '';
         form.elements.latitude.value  = city.latitude  !== null && city.latitude  !== undefined ? city.latitude  : '';
         form.elements.longitude.value = city.longitude !== null && city.longitude !== undefined ? city.longitude : '';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function resetForm(root) {
@@ -146,6 +147,7 @@
         promise
             .then(function () {
                 showMessage(root, 'success', state.editId ? 'Ciudad actualizada correctamente.' : 'Ciudad creada correctamente.');
+                if (window.CCUI) { window.CCUI.close(form); }
                 resetForm(root);
                 fetchCities(root, 1);
             })

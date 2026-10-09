@@ -470,6 +470,7 @@
                 state.selected = payload.data || null;
                 renderDetail(root, state.selected);
                 fillForms(root, state.selected);
+                if (window.CCUI) { window.CCUI.reveal(qs('[data-import-candidates-detail]', root)); }
             })
             .catch(function (error) {
                 showMessage(root, 'danger', messageFrom(error));
@@ -648,6 +649,9 @@
             body: body || {},
         }).then(function (payload) {
             showMessage(root, 'success', action === 'create-recipe' ? 'Receta creada.' : 'Candidata actualizada.');
+            if (window.CCUI && /^(approve|reject|create-recipe)$/.test(action)) {
+                window.CCUI.close(qs('[data-import-candidates-detail]', root));
+            }
             if (payload.data && payload.data.status) {
                 state.selected = payload.data;
                 renderDetail(root, state.selected);

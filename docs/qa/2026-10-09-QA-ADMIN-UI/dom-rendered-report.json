@@ -1,0 +1,294 @@
+{
+  "scope": "Rendered real Blade HTML + actual UI scripts; API handlers not loaded",
+  "screens": [
+    {
+      "screen": "admin-reports",
+      "forms": 0,
+      "tabs": 1,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "ai-foundation",
+      "forms": 0,
+      "tabs": 2,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "audit",
+      "forms": 0,
+      "tabs": 3,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "barcodes",
+      "forms": 2,
+      "tabs": 3,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "branches",
+      "forms": 1,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "brands",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "cities",
+      "forms": 1,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "dashboard",
+      "forms": 0,
+      "tabs": 4,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "equivalences",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "feature-flags",
+      "forms": 0,
+      "tabs": 1,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "food-tags",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "health-preferences",
+      "forms": 1,
+      "tabs": 3,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "imported-recipes",
+      "forms": 3,
+      "tabs": 5,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "ingredient-categories",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "ingredients",
+      "forms": 1,
+      "tabs": 4,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "meal-types",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "nutrients",
+      "forms": 3,
+      "tabs": 3,
+      "dialogs": 4,
+      "result": "PASS"
+    },
+    {
+      "screen": "objectives",
+      "forms": 1,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "official-recipes",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "payment-methods",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "price-refresh-requests",
+      "forms": 0,
+      "tabs": 2,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "prices",
+      "forms": 0,
+      "tabs": 4,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "product-categories",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "product-reports",
+      "forms": 0,
+      "tabs": 2,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "product-requests",
+      "forms": 1,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "products",
+      "forms": 2,
+      "tabs": 6,
+      "dialogs": 3,
+      "result": "PASS"
+    },
+    {
+      "screen": "promotions",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "recipe-categories",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "recipe-import-text",
+      "forms": 0,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "recipe-import",
+      "forms": 0,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "recipe-scraping",
+      "forms": 1,
+      "tabs": 3,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "recipe-tags",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "roles-permissions",
+      "forms": 1,
+      "tabs": 2,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "scraped-products",
+      "forms": 4,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "scraping-alerts",
+      "forms": 1,
+      "tabs": 5,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "settings",
+      "forms": 0,
+      "tabs": 1,
+      "dialogs": 0,
+      "result": "PASS"
+    },
+    {
+      "screen": "supermarket-products",
+      "forms": 2,
+      "tabs": 5,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "supermarket-scraping",
+      "forms": 2,
+      "tabs": 4,
+      "dialogs": 2,
+      "result": "PASS"
+    },
+    {
+      "screen": "supermarkets",
+      "forms": 1,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    },
+    {
+      "screen": "units-conversions",
+      "forms": 2,
+      "tabs": 3,
+      "dialogs": 4,
+      "result": "PASS"
+    },
+    {
+      "screen": "users",
+      "forms": 1,
+      "tabs": 1,
+      "dialogs": 1,
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "result": "PASS"
+}

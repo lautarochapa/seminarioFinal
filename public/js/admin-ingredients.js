@@ -222,6 +222,7 @@
         form.elements.is_supplement.checked = !!ingredient.is_supplement;
         form.elements.status.value = ingredient.status || 'active';
         qs('[data-ingredient-form-title]', root).textContent = 'Editar ingrediente';
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function fetchPublicIngredients(root) {
@@ -255,6 +256,7 @@
     }
 
     function loadPublicDetail(root, id) {
+        if (window.CCUI) { window.CCUI.reveal(qs('[data-ingredient-detail]', root)); }
         return Promise.all([
             window.CCApi.request(endpoint('/ingredients/' + id)),
             window.CCApi.request(endpoint('/ingredients/' + id + '/nutrition')),
@@ -371,6 +373,7 @@
                 .then(function () {
                     resetForm(root);
                     showMessage(root, 'success', id ? 'Ingrediente actualizado correctamente.' : 'Ingrediente creado correctamente.');
+                    if (window.CCUI) { window.CCUI.close(form); }
                     return fetchIngredients(root, state.page);
                 })
                 .catch(function (error) { handleError(root, error); });
@@ -443,7 +446,8 @@
                 resetForm(root);
                 var form = qs('[data-ingredient-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

@@ -185,6 +185,7 @@
         form.elements.description.value = tag.description || '';
         form.elements.status.value = tag.status || 'active';
         qs('[data-food-tag-form-title]', root).textContent = 'Editar tag #' + tag.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveTag(root, form) {
@@ -198,6 +199,7 @@
             body: payload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Tag actualizado.' : 'Tag creado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return Promise.all([fetchTags(root, state.page), fetchPublicTags(root)]);
         }).catch(function (error) {
@@ -304,7 +306,8 @@
                 resetForm(root);
                 var form = qs('[data-food-tag-form]', root);
                 if (form) {
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (window.CCUI) { window.CCUI.reveal(form); }
+                    else { form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     var first = form.querySelector('input:not([type=hidden]),select,textarea');
                     if (first) { first.focus(); }
                 }

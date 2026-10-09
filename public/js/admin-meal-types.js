@@ -187,6 +187,7 @@
         form.elements.sort_order.value = item.sort_order || 0;
         form.elements.status.value = item.status || 'active';
         qs('[data-meal-type-form-title]', root).textContent = 'Editar tipo #' + item.id;
+        if (window.CCUI) { window.CCUI.reveal(form); }
     }
 
     function saveMealType(root, form) {
@@ -200,6 +201,7 @@
             body: payload(form),
         }).then(function () {
             showMessage(root, 'success', id ? 'Tipo actualizado.' : 'Tipo creado.');
+            if (window.CCUI) { window.CCUI.close(form); }
             resetForm(root);
             return Promise.all([fetchMealTypes(root, state.page), fetchCatalog(root)]);
         }).catch(function (error) {

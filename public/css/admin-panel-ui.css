@@ -1,0 +1,35 @@
+/* The administration uses the same page, tabs and dialog surfaces as the user panel. */
+.admin-shell { --accent:#00866b; --soft:#e7f3ed; }
+.admin-shell .hero { align-items:center; }
+.admin-shell .hero .actions { flex-shrink:0; }
+.admin-shell .admin-tools { gap:10px; margin-bottom:20px; }
+.admin-shell .admin-table { background:#fff; border:1px solid #dfe7e2; font-size:14px; }
+.admin-shell .admin-table th { background:#edf3f0; color:#40564b; font-size:12px; }
+.admin-shell .admin-table th, .admin-shell .admin-table td { padding:13px 12px; }
+.admin-shell .admin-table .btn-sm { margin:2px; }
+.admin-shell .rbac-layout,
+.admin-shell .admin-workspace,
+.admin-shell .admin-panel-stack { display:block; }
+.admin-shell .rbac-layout > article.panel,
+.admin-shell .rbac-layout > aside.panel { min-width:0; }
+.admin-shell .rbac-layout > .panel + .panel { margin-top:20px; }
+.admin-shell .rbac-layout[role="tabpanel"] > .panel { background:transparent; border:0; padding:0; min-height:0; }
+.admin-shell .panel[role="tabpanel"] { background:transparent; border:0; padding:0; min-height:0; }
+.admin-shell .panel-tabs { grid-column:1/-1; }
+.admin-shell .panel-tabs + [role="tabpanel"] { min-width:0; }
+.admin-shell .panel-dialog { max-width:880px; }
+.admin-shell .panel-dialog .rbac-form { margin:0; }
+.admin-shell .panel-dialog .form-control { width:100%; max-width:100%; }
+.admin-shell .panel-dialog .panel { min-height:0; }
+.admin-shell .panel-dialog pre { max-width:100%; overflow:auto; }
+.admin-shell .audit-tabs { gap:6px; border-bottom:1px solid #cdd8d2; margin-bottom:24px; }
+.admin-shell .audit-tab { border:0; border-bottom:3px solid transparent; border-radius:0; background:transparent; padding:12px 16px; color:#53635d; }
+.admin-shell .audit-tab.active { background:transparent; border-bottom-color:#00866b; color:#006e58; }
+.admin-shell .audit-tab:hover { background:#eaf3ef; }
+.admin-shell .panel-actions:empty { display:none; }
+.admin-shell .admin-form-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+@media (max-width:960px) {
+    .admin-shell .hero .actions { justify-content:flex-start; }
+    .admin-shell .panel-dialog { padding:20px; }
+    .admin-shell .admin-tools .form-control { max-width:100%; }
+}

@@ -218,6 +218,10 @@
                     showMsg('ok', 'Receta importada correctamente como <strong>' + escapeHtml(sm ? sm.label : '') + '</strong>.');
                 }
                 renderDetail(candidate);
+                if (window.CCUI) {
+                    window.CCUI.close(qs('[data-import-url]'));
+                    window.CCUI.reveal(qs('[data-import-detail]'));
+                }
             })
             .catch(function (err) {
                 state.loading = false;

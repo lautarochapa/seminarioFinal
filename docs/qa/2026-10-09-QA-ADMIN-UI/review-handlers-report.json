@@ -1,0 +1,51 @@
+{
+  "scope": "Independent UI handler review; actual Blade and scripts, mocked API only",
+  "cases": [
+    {
+      "name": "official recipes: detail action selects visible tab",
+      "result": "PASS"
+    },
+    {
+      "name": "official recipes: close restores editor/detail state",
+      "result": "PASS"
+    },
+    {
+      "name": "official recipes: 422 retains editor and input",
+      "result": "PASS"
+    },
+    {
+      "name": "official recipes: save closes editor and reveals loaded detail",
+      "result": "PASS"
+    },
+    {
+      "name": "recipe-import: failed request preserves open input and error",
+      "result": "PASS"
+    },
+    {
+      "name": "recipe-import: successful import closes and reveals result tab",
+      "result": "PASS"
+    },
+    {
+      "name": "recipe-import-text: failed request preserves open input and error",
+      "result": "PASS"
+    },
+    {
+      "name": "recipe-import-text: successful import closes and reveals result tab",
+      "result": "PASS"
+    },
+    {
+      "name": "health: native tab click retains API catalog and ARIA state",
+      "result": "PASS"
+    },
+    {
+      "name": "health: modal editing keeps selected resource and input on failure",
+      "result": "PASS"
+    },
+    {
+      "name": "health: save closes without changing active type",
+      "result": "PASS"
+    }
+  ],
+  "errors": [],
+  "result": "PASS"
+}

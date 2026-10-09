@@ -1,0 +1,953 @@
+{
+    "database": "isolated SQLite",
+    "screens": 41,
+    "results": [
+        {
+            "role": "catalog_admin",
+            "screen": "dashboard",
+            "permission": "web.admin.dashboard",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "users",
+            "permission": "web.admin.users",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "roles-permissions",
+            "permission": "web.admin.roles-permissions",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "objectives",
+            "permission": "web.admin.objectives",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "health-preferences",
+            "permission": "web.admin.health-preferences",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "ingredients",
+            "permission": "web.admin.ingredients",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "ingredient-categories",
+            "permission": "web.admin.ingredient-categories",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "nutrients",
+            "permission": "web.admin.nutrients",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "units-conversions",
+            "permission": "web.admin.units-conversions",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "equivalences",
+            "permission": "web.admin.equivalences",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "food-tags",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "product-categories",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "products",
+            "permission": "web.admin.products",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "product-requests",
+            "permission": "web.admin.product-requests",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "brands",
+            "permission": "web.admin.brands",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "barcodes",
+            "permission": "web.admin.barcodes",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "supermarkets",
+            "permission": "web.admin.supermarkets",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "branches",
+            "permission": "web.admin.branches",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "supermarket-products",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "prices",
+            "permission": "web.admin.prices",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "promotions",
+            "permission": "web.admin.promotions",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "payment-methods",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "supermarket-scraping",
+            "permission": "web.admin.supermarket-scraping",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "scraped-products",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "price-refresh-requests",
+            "permission": "scraping.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "official-recipes",
+            "permission": "web.admin.official-recipes",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "imported-recipes",
+            "permission": "recipes.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "recipe-import",
+            "permission": "web.admin.recipe-import",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "recipe-import-text",
+            "permission": "web.admin.recipe-import-text",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "recipe-scraping",
+            "permission": "web.admin.recipe-scraping",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "meal-types",
+            "permission": "recipes.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "recipe-tags",
+            "permission": "web.admin.recipe-tags",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "scraping-alerts",
+            "permission": "web.admin.scraping-alerts",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "admin-reports",
+            "permission": "web.admin.admin-reports",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "audit",
+            "permission": "web.admin.audit",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "settings",
+            "permission": "web.admin.settings",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "feature-flags",
+            "permission": "web.admin.feature-flags",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "ai-foundation",
+            "permission": "web.admin.ai-foundation",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "product-reports",
+            "permission": "web.admin.product-reports",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "cities",
+            "permission": "web.admin.cities",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "catalog_admin",
+            "screen": "recipe-categories",
+            "permission": "web.admin.recipe-categories",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "dashboard",
+            "permission": "web.admin.dashboard",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "users",
+            "permission": "web.admin.users",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "roles-permissions",
+            "permission": "web.admin.roles-permissions",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "objectives",
+            "permission": "web.admin.objectives",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "health-preferences",
+            "permission": "web.admin.health-preferences",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "ingredients",
+            "permission": "web.admin.ingredients",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "ingredient-categories",
+            "permission": "web.admin.ingredient-categories",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "nutrients",
+            "permission": "web.admin.nutrients",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "units-conversions",
+            "permission": "web.admin.units-conversions",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "equivalences",
+            "permission": "web.admin.equivalences",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "food-tags",
+            "permission": "catalog.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "product-categories",
+            "permission": "catalog.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "products",
+            "permission": "web.admin.products",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "product-requests",
+            "permission": "web.admin.product-requests",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "brands",
+            "permission": "web.admin.brands",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "barcodes",
+            "permission": "web.admin.barcodes",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "supermarkets",
+            "permission": "web.admin.supermarkets",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "branches",
+            "permission": "web.admin.branches",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "supermarket-products",
+            "permission": "catalog.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "prices",
+            "permission": "web.admin.prices",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "promotions",
+            "permission": "web.admin.promotions",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "payment-methods",
+            "permission": "catalog.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "supermarket-scraping",
+            "permission": "web.admin.supermarket-scraping",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "scraped-products",
+            "permission": "catalog.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "price-refresh-requests",
+            "permission": "scraping.manage",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "official-recipes",
+            "permission": "web.admin.official-recipes",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "imported-recipes",
+            "permission": "recipes.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "recipe-import",
+            "permission": "web.admin.recipe-import",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "recipe-import-text",
+            "permission": "web.admin.recipe-import-text",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "recipe-scraping",
+            "permission": "web.admin.recipe-scraping",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "meal-types",
+            "permission": "recipes.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "recipe-tags",
+            "permission": "web.admin.recipe-tags",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "scraping-alerts",
+            "permission": "web.admin.scraping-alerts",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "admin-reports",
+            "permission": "web.admin.admin-reports",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "audit",
+            "permission": "web.admin.audit",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "settings",
+            "permission": "web.admin.settings",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "feature-flags",
+            "permission": "web.admin.feature-flags",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "ai-foundation",
+            "permission": "web.admin.ai-foundation",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "product-reports",
+            "permission": "web.admin.product-reports",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "cities",
+            "permission": "web.admin.cities",
+            "expected": 403,
+            "status": 403
+        },
+        {
+            "role": "recipe_admin",
+            "screen": "recipe-categories",
+            "permission": "web.admin.recipe-categories",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "dashboard",
+            "permission": "web.admin.dashboard",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "users",
+            "permission": "web.admin.users",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "roles-permissions",
+            "permission": "web.admin.roles-permissions",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "objectives",
+            "permission": "web.admin.objectives",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "health-preferences",
+            "permission": "web.admin.health-preferences",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "ingredients",
+            "permission": "web.admin.ingredients",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "ingredient-categories",
+            "permission": "web.admin.ingredient-categories",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "nutrients",
+            "permission": "web.admin.nutrients",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "units-conversions",
+            "permission": "web.admin.units-conversions",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "equivalences",
+            "permission": "web.admin.equivalences",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "food-tags",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "product-categories",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "products",
+            "permission": "web.admin.products",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "product-requests",
+            "permission": "web.admin.product-requests",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "brands",
+            "permission": "web.admin.brands",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "barcodes",
+            "permission": "web.admin.barcodes",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "supermarkets",
+            "permission": "web.admin.supermarkets",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "branches",
+            "permission": "web.admin.branches",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "supermarket-products",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "prices",
+            "permission": "web.admin.prices",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "promotions",
+            "permission": "web.admin.promotions",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "payment-methods",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "supermarket-scraping",
+            "permission": "web.admin.supermarket-scraping",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "scraped-products",
+            "permission": "catalog.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "price-refresh-requests",
+            "permission": "scraping.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "official-recipes",
+            "permission": "web.admin.official-recipes",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "imported-recipes",
+            "permission": "recipes.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "recipe-import",
+            "permission": "web.admin.recipe-import",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "recipe-import-text",
+            "permission": "web.admin.recipe-import-text",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "recipe-scraping",
+            "permission": "web.admin.recipe-scraping",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "meal-types",
+            "permission": "recipes.manage",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "recipe-tags",
+            "permission": "web.admin.recipe-tags",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "scraping-alerts",
+            "permission": "web.admin.scraping-alerts",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "admin-reports",
+            "permission": "web.admin.admin-reports",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "audit",
+            "permission": "web.admin.audit",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "settings",
+            "permission": "web.admin.settings",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "feature-flags",
+            "permission": "web.admin.feature-flags",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "ai-foundation",
+            "permission": "web.admin.ai-foundation",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "product-reports",
+            "permission": "web.admin.product-reports",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "cities",
+            "permission": "web.admin.cities",
+            "expected": 200,
+            "status": 200
+        },
+        {
+            "role": "super_admin",
+            "screen": "recipe-categories",
+            "permission": "web.admin.recipe-categories",
+            "expected": 200,
+            "status": 200
+        }
+    ],
+    "errors": [],
+    "role_screens": {
+        "catalog_admin": [
+            "dashboard",
+            "objectives",
+            "health-preferences",
+            "ingredients",
+            "ingredient-categories",
+            "nutrients",
+            "units-conversions",
+            "equivalences",
+            "food-tags",
+            "product-categories",
+            "products",
+            "product-requests",
+            "brands",
+            "barcodes",
+            "supermarkets",
+            "branches",
+            "supermarket-products",
+            "prices",
+            "promotions",
+            "payment-methods",
+            "supermarket-scraping",
+            "scraped-products",
+            "price-refresh-requests",
+            "scraping-alerts",
+            "product-reports",
+            "cities"
+        ],
+        "recipe_admin": [
+            "dashboard",
+            "official-recipes",
+            "imported-recipes",
+            "recipe-import",
+            "recipe-import-text",
+            "recipe-scraping",
+            "meal-types",
+            "recipe-tags",
+            "recipe-categories"
+        ],
+        "super_admin": [
+            "dashboard",
+            "users",
+            "roles-permissions",
+            "objectives",
+            "health-preferences",
+            "ingredients",
+            "ingredient-categories",
+            "nutrients",
+            "units-conversions",
+            "equivalences",
+            "food-tags",
+            "product-categories",
+            "products",
+            "product-requests",
+            "brands",
+            "barcodes",
+            "supermarkets",
+            "branches",
+            "supermarket-products",
+            "prices",
+            "promotions",
+            "payment-methods",
+            "supermarket-scraping",
+            "scraped-products",
+            "price-refresh-requests",
+            "official-recipes",
+            "imported-recipes",
+            "recipe-import",
+            "recipe-import-text",
+            "recipe-scraping",
+            "meal-types",
+            "recipe-tags",
+            "scraping-alerts",
+            "admin-reports",
+            "audit",
+            "settings",
+            "feature-flags",
+            "ai-foundation",
+            "product-reports",
+            "cities",
+            "recipe-categories"
+        ]
+    },
+    "result": "PASS"
+}

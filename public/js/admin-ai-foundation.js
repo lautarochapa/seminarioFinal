@@ -7,6 +7,7 @@
         testing: false,
         testResult: null,
         testError: null,
+        context: '',
     };
 
     function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
@@ -137,10 +138,10 @@
             disabledNotice +
             '<form data-ai-test-form>' +
             '<div style="margin-bottom:10px">' +
-            '<label style="font-size:11px;font-weight:700;display:block;margin-bottom:4px;color:#697681">CONTEXTO PARA LA SUGERENCIA *</label>' +
-            '<textarea class="form-control" name="context" rows="3" maxlength="500" ' +
+            '<label for="admin-ai-context" style="font-size:11px;font-weight:700;display:block;margin-bottom:4px;color:#697681">CONTEXTO PARA LA SUGERENCIA *</label>' +
+            '<textarea id="admin-ai-context" class="form-control" name="context" rows="3" maxlength="500" ' +
             'placeholder="Ej: Usuario quiere bajar de peso, tiene intolerancia a la lactosa y prefiere recetas rápidas." ' +
-            'style="resize:vertical;font-size:13px" required></textarea>' +
+            'style="resize:vertical;font-size:13px" required>' + escapeHtml(state.context) + '</textarea>' +
             '<div style="font-size:11px;color:#697681;margin-top:3px">Máx. 500 caracteres.</div>' +
             '</div>' +
             '<button type="submit" class="btn-main" data-ai-test-submit style="font-size:13px"' + (state.testing ? ' disabled' : '') + '>' +
@@ -161,6 +162,7 @@
     }
 
     function runTest(root, context) {
+        state.context   = context;
         state.testing    = true;
         state.testResult = null;
         state.testError  = null;
